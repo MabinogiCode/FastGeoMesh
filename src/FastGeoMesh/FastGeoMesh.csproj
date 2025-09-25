@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>FastGeoMesh</PackageId>
+    <Authors>FastGeo</Authors>
+    <Company>FastGeo</Company>
+    <Description>Quad meshing utilities for geotechnical geometry (geometry-only).</Description>
+    <RepositoryUrl>https://example.com/fastgeomesh</RepositoryUrl>
+    <PackageProjectUrl>https://example.com/fastgeomesh</PackageProjectUrl>
+    <PackageTags>mesh;quad;geometry;geotechnical</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="LibTessDotNet" Version="1.1.15" />
+  </ItemGroup>
+</Project>

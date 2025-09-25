@@ -1,0 +1,12 @@
+root = true
+
+[*.cs]
+dotnet_diagnostic.CA1303.severity = silent
+dotnet_diagnostic.IDE0058.severity = warning
+dotnet_diagnostic.IDE0005.severity = warning
+
+csharp_new_line_before_open_brace = all
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = true:suggestion
+csharp_prefer_braces = true:suggestion
