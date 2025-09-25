@@ -2,6 +2,7 @@ using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
 using System.Globalization;
+using FastGeoMesh.Meshing.Exporters;
 
 sealed class Program
 {
@@ -50,6 +51,15 @@ sealed class Program
             double cross = ax*by - ay*bx;
             if (cross < -1e-9) throw new InvalidOperationException("Found non-CCW quad");
         }
+
+        // Export: write custom text and OBJ
+        string outDir = Path.Combine(AppContext.BaseDirectory, "out");
+        Directory.CreateDirectory(outDir);
+        var txtPath = Path.Combine(outDir, "mesh.txt");
+        var objPath = Path.Combine(outDir, "mesh.obj");
+        indexed.WriteCustomTxt(txtPath);
+        ObjExporter.Write(indexed, objPath);
+        Console.WriteLine($"Wrote: {txtPath}\nWrote: {objPath}");
 
         // Example: read back sample file for comparison (if available)
         var samplePath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "tests", "FastGeoMesh.Tests", "0_maill.txt");

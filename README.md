@@ -1,11 +1,11 @@
 # FastGeoMesh
 
-Fast quad meshing for prismatic volumes from 2D footprints and Z elevations. Geometry-only (no geotech logic): build side faces and caps, refine near features, and export an indexed mesh.
+Fast quad meshing for prismatic volumes from 2D footprints and Z elevations. Geometry-only: build side faces and caps, refine near features, and export an indexed mesh.
 
 Features
 - Prism mesher (counter-clockwise quads)
   - Side faces: XY subdivision using TargetEdgeLengthXY
-  - Z subdivision: honors TargetEdgeLengthZ, constraint Zs ("liernes"), and geometry Zs
+  - Z subdivision: honors TargetEdgeLengthZ, constraint Zs (segments at Z), and geometry Zs
 - Caps (top/bottom)
   - Rectangle fast-path: grid quads with optional refinement near holes and near geometry segments
   - Generic: LibTessDotNet triangulation + quadification with quality scoring and threshold
@@ -17,7 +17,10 @@ Features
   - Constraint segments at a given Z affect vertical levels
 - IndexedMesh utilities
   - Vertex/edge/quad indexing, adjacency builder, simple text format IO (read/write)
-- Tests: L/T excavations, holes refinement, adjacency, quadification quality
+- Exporters
+  - OBJ export (quads as f v0 v1 v2 v3)
+  - glTF 2.0 export (.gltf JSON with embedded base64), quads triangulated
+- Tests: various shapes, holes refinement, adjacency, quadification quality
 
 Install / Build
 - Requires .NET 8 SDK
@@ -57,21 +60,24 @@ var options = new MesherOptions
     TargetEdgeLengthXY = 0.5,
     TargetEdgeLengthZ = 1.0,
     GenerateTopAndBottomCaps = true,
-    // Caps refinement (rectangle fast-path)
     HoleRefineBand = 1.0,
     SegmentRefineBand = 1.0,
     TargetEdgeLengthXYNearHoles = 0.25,
     TargetEdgeLengthXYNearSegments = 0.25,
-    // Quad pairing quality threshold (caps, generic path)
     MinCapQuadQuality = 0.75
 };
 
 // Mesh
 var mesh = new PrismMesher().Mesh(structure, options);
 
-// Convert to indexed mesh and export to custom text format
+// Convert to indexed mesh and export
 var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
 indexed.WriteCustomTxt("mesh.txt");
+
+// Export (OBJ / glTF)
+using FastGeoMesh.Meshing.Exporters;
+ObjExporter.Write(indexed, "mesh.obj");
+GltfExporter.Write(indexed, "mesh.gltf");
 ```
 
 Key options
