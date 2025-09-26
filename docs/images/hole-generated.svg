@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="120" viewBox="0 0 220 120" stroke="#222" fill="none" stroke-width="2">
+  <rect x="10" y="10" width="200" height="100" />
+  <rect x="70" y="40" width="80" height="40" stroke="#d33" />
+  <text x="110" y="20" font-size="12" text-anchor="middle" fill="#222">Generated Hole Mesh</text>
+</svg>

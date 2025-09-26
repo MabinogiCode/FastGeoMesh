@@ -1,0 +1,32 @@
+- name: FastGeoMesh Docs
+  href: ../README.md
+- name: Getting Started
+  href: getting-started.md
+- name: Mesher Options
+  href: mesher-options.md
+- name: Performance
+  href: perf-tuning.md
+- name: FAQ
+  href: faq.md
+- name: Formats
+  items:
+    - name: Indexed Text Format
+      href: indexed-mesh-format.md
+    - name: Exporters
+      items:
+        - name: OBJ
+          href: exporters-obj.md
+        - name: glTF
+          href: exporters-gltf.md
+        - name: SVG
+          href: exporters-svg.md
+- name: Project
+  items:
+    - name: Changelog
+      href: ../CHANGELOG.md
+    - name: Roadmap
+      href: ../ROADMAP.md
+    - name: Contributing
+      href: ../CONTRIBUTING.md
+    - name: Code of Conduct
+      href: ../CODE_OF_CONDUCT.md

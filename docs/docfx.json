@@ -1,0 +1,25 @@
+# DocFX configuration (minimal)
+# To generate docs locally:
+#   dotnet tool install -g docfx
+#   docfx build
+# Output default: _site
+
+metadata:
+  - src: ../src/FastGeoMesh
+    files: ["**/*.csproj"]
+    exclude: ["**/bin/**", "**/obj/**"]
+    properties:
+      TargetFramework: net8.0
+build:
+  content:
+    - files: ["**/*.md", "docfx-toc.yml"]
+  resource:
+    - files: ["images/**"]
+  destinations:
+    - _site
+  template: default
+  globalMetadata:
+    _appTitle: "FastGeoMesh"
+    _enableSearch: true
+  markdownEngineName: markdig
+  disableGitFeatures: false
