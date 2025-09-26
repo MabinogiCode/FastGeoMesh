@@ -3,8 +3,10 @@ using System.Text;
 
 namespace FastGeoMesh.Meshing.Exporters;
 
+/// <summary>Lightweight SVG top-view exporter (edges as lines).</summary>
 public static class SvgExporter
 {
+    /// <summary>Write a top-view SVG of the mesh edges.</summary>
     public static void Write(IndexedMesh im, string path, double strokeWidth = 1.0, double? scale = null)
     {
         ArgumentNullException.ThrowIfNull(im);

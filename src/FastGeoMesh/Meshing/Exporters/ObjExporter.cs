@@ -2,8 +2,10 @@ using System.Globalization;
 
 namespace FastGeoMesh.Meshing.Exporters;
 
+/// <summary>Wavefront OBJ exporter (quads only, geometry only).</summary>
 public static class ObjExporter
 {
+    /// <summary>Write mesh as OBJ file (quads). Vertices first then faces.</summary>
     public static void Write(IndexedMesh mesh, string path)
     {
         ArgumentNullException.ThrowIfNull(mesh);

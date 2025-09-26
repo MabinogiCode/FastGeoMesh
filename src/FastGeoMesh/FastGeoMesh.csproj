@@ -1,17 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>FastGeoMesh</PackageId>
-    <Authors>FastGeo</Authors>
-    <Company>FastGeo</Company>
-    <Description>Lightweight quad meshing utilities for generic 2.5D prism structures.</Description>
-    <RepositoryUrl>https://example.com/fastgeomesh</RepositoryUrl>
-    <PackageProjectUrl>https://example.com/fastgeomesh</PackageProjectUrl>
-    <PackageTags>mesh;quad;geometry</PackageTags>
+    <Version>1.0.0</Version>
+    <Authors>MabinogiCode</Authors>
+    <Description>Lightweight quad meshing utilities for generic 2.5D prism structures (side faces, caps, refinement, quality scoring, exporters).</Description>
+    <PackageTags>meshing;mesh;quad;geometry;prism;cad;gis;dotnet</PackageTags>
+    <RepositoryUrl>https://github.com/MabinogiCode/FastGeoMesh</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/MabinogiCode/FastGeoMesh</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>nuget-readme.md</PackageReadmeFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>First stable release 1.0.0: core prism mesher, caps (rectangle+generic), refinement bands, quad quality scoring, geometry integration, OBJ/glTF/SVG exporters, adjacency utilities.</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="LibTessDotNet" Version="1.1.15" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="nuget-readme.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 </Project>

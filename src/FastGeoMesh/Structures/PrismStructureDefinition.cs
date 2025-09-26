@@ -3,27 +3,28 @@ using FastGeoMesh.Geometry;
 
 namespace FastGeoMesh.Structures;
 
-/// <summary>
-/// Structure defined by an XY footprint and Z elevations (CoteBase, CoteTete).
-/// Holds geometry to enforce during meshing (points/segments) as well.
-/// </summary>
+/// <summary>Prismatic structure definition: footprint polygon and vertical extent, plus constraints and holes.</summary>
 public sealed class PrismStructureDefinition
 {
+    /// <summary>Outer footprint (CCW polygon).</summary>
     public Polygon2D Footprint { get; }
+    /// <summary>Base elevation (Z min).</summary>
     public double CoteBase { get; }
+    /// <summary>Top elevation (Z max).</summary>
     public double CoteTete { get; }
 
-    /// <summary>Constraint segments at a given Z (e.g., liernes).</summary>
+    /// <summary>Constraint segments at specified Z levels.</summary>
     public ReadOnlyCollection<(Segment2D segment, double z)> ConstraintSegments => _constraintSegments.AsReadOnly();
     private readonly List<(Segment2D segment, double z)> _constraintSegments = new();
 
-    /// <summary>Additional geometry to integrate in meshing (3D points/segments).</summary>
+    /// <summary>Auxiliary geometry to integrate.</summary>
     public MeshingGeometry Geometry { get; } = new();
 
-    /// <summary>Optional inner voids (holes) footprints to exclude from caps and to generate internal side faces.</summary>
+    /// <summary>Inner hole polygons.</summary>
     public ReadOnlyCollection<Polygon2D> Holes => _holes.AsReadOnly();
     private readonly List<Polygon2D> _holes = new();
 
+    /// <summary>Create structure with footprint and elevations.</summary>
     public PrismStructureDefinition(Polygon2D footprint, double coteBase, double coteTete)
     {
         if (coteTete <= coteBase)
@@ -33,6 +34,7 @@ public sealed class PrismStructureDefinition
         CoteTete = coteTete;
     }
 
+    /// <summary>Add a constraint segment at elevation z.</summary>
     public PrismStructureDefinition AddConstraintSegment(Segment2D segment, double z)
     {
         if (z < CoteBase || z > CoteTete)
@@ -41,7 +43,7 @@ public sealed class PrismStructureDefinition
         return this;
     }
 
-    /// <summary>Adds a hole (inner contour). The polygon should be CCW and inside the outer footprint.</summary>
+    /// <summary>Add a hole (inner contour).</summary>
     public PrismStructureDefinition AddHole(Polygon2D hole)
     {
         _holes.Add(hole ?? throw new ArgumentNullException(nameof(hole)));
