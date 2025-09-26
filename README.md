@@ -1,5 +1,12 @@
 # FastGeoMesh
 
+![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/MabinogiCode/FastGeoMesh/ci.yml?label=CI)](.github/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/vpre/FastGeoMesh.svg)](https://www.nuget.org/packages/FastGeoMesh)
+
+<!-- Keep badges above; adjust NuGet link after first publish if needed -->
+
 Lightweight quad meshing for generic prismatic volumes defined by a 2D footprint (plan view) and base/top elevations. Focus: simple, deterministic, dependency?light.
 
 Features
