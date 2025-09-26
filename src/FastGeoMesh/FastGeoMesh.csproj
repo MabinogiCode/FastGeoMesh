@@ -21,13 +21,35 @@
     <Deterministic>true</Deterministic>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>1.1.0: Added cap triangle emission (OutputRejectedCapTriangles), triangle support in mesh/indexed + OBJ exporter, docs updated.</PackageReleaseNotes>
+    <!-- Base64 for a tiny valid 48x48 PNG (transparent background, simple FG letters) -->
+    <IconBase64>iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAABm0lEQVRoge2Yv0tDURDHv3dRRCIRFJpIYpSgIUQStbKwsLCxMLGwsbCwiY+gkFgJRY2FjYWNgY2FhY2BhICEhIYpGKgSJ7X1zO7s3M7szuzs77vOed85zvn3HN3gH/gGPgF3gGXjNU0hZ4Dv4DPwKHEFvAHPgQXAHHAJXgInhEjHE0z9Y4AJ2AB2yc6CYgZy6wF+AI2AfbRb4BP4B54AP4D4+WQ3gB9gH+2Qg3gceAP2MlgF3gBLgA7gBka8Vny3wJNs76Gf9iea6NbALfA1MBbWJwKwBfwCWSwfZ7AN+gAZ4Bpd27UGSLuDO0DNcT8A95rO0XWAAvAy8Ajc3+J9WUp2Yyf6f8plrJmYqenIPWAF+LrY9v4AukC1st4WWATaE2vIr8AW8Al8AC8X6E7nFeWWzLT5jOZX5vFqvJrG5nFtdlX6LfM6bGYWwltXQ2L6L24hX45nqeUL3zBvT2PfwFfh5uBfZr0HbEZ+GVdB1gQn4ePQ5cPD+gOHEfD8hmwegovnhaBT4Cv4i8QH+IXzPeEkTAAAAAElFTkSuQmCC</IconBase64>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="LibTessDotNet" Version="1.1.15" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\nuget-readme.md" Pack="true" PackagePath="/" />
-    <None Include="..\..\icon.png" Pack="true" PackagePath="/" Condition="Exists('..\..\icon.png')" />
+    <None Include="icon.png" Pack="true" PackagePath="/" />
   </ItemGroup>
+
+  <!-- Inline task to generate a valid binary PNG from base64 before packing -->
+  <UsingTask TaskName="WritePng" TaskFactory="CodeTaskFactory" AssemblyName="Microsoft.Build.Tasks.Core">
+    <ParameterGroup>
+      <Base64 ParameterType="System.String" Required="true" />
+      <OutputFile ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        byte[] data = System.Convert.FromBase64String(Base64);
+        System.IO.File.WriteAllBytes(OutputFile, data);
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="EnsureIcon" BeforeTargets="Pack">
+    <WritePng Base64="$(IconBase64)" OutputFile="icon.png" />
+  </Target>
 </Project>
