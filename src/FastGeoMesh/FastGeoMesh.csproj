@@ -31,23 +31,4 @@
     <None Include="..\..\nuget-readme.md" Pack="true" PackagePath="/" />
     <None Include="mabinogi-icon.png" Pack="true" PackagePath="/" />
   </ItemGroup>
-
-  <!-- Inline task to generate a valid binary PNG from base64 before packing -->
-  <UsingTask TaskName="WritePng" TaskFactory="CodeTaskFactory" AssemblyName="Microsoft.Build.Tasks.Core">
-    <ParameterGroup>
-      <Base64 ParameterType="System.String" Required="true" />
-      <OutputFile ParameterType="System.String" Required="true" />
-    </ParameterGroup>
-    <Task>
-      <Reference Include="System" />
-      <Code Type="Fragment" Language="cs"><![CDATA[
-        byte[] data = System.Convert.FromBase64String(Base64);
-        System.IO.File.WriteAllBytes(OutputFile, data);
-      ]]></Code>
-    </Task>
-  </UsingTask>
-
-  <Target Name="EnsureIcon" BeforeTargets="Pack">
-    <WritePng Base64="$(IconBase64)" OutputFile="icon.png" />
-  </Target>
 </Project>
