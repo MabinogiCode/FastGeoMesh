@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net8.0": {
+      "LibTessDotNet": {
+        "type": "Transitive",
+        "resolved": "1.1.15",
+        "contentHash": "KuA7N3Nv/lIeawJdQBQJR6oqWD9KETHLbWzBqapwFs+Tby+R5I4crkKujKMm5bXcSuFZ8LNtflFQVadsWCbBjg=="
+      },
+      "fastgeomesh": {
+        "type": "Project",
+        "dependencies": {
+          "LibTessDotNet": "[1.1.15, )"
+        }
+      }
+    }
+  }
+}

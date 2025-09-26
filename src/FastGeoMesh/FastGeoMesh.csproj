@@ -25,4 +25,7 @@
     <PackageReference Include="LibTessDotNet" Version="1.1.15" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="nuget-readme.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>
