@@ -64,19 +64,17 @@ jobs:
           echo "Coverage: $COVERAGE%"
           dotnet run --project samples/FastGeoMesh.Sample/FastGeoMesh.Sample.csproj --configuration Release -- --obj --gltf --svg
           mkdir -p docs/images docs/badges
-          if [ -f sample_mesh.svg ]; then mv sample_mesh.svg docs/images/generated-sample.svg; fi
+          [ -f sample_mesh.svg ] && mv sample_mesh.svg docs/images/generated-sample.svg
           count=0
           [ -f sample_mesh.obj ] && count=$((count+1))
-          [ -f sample_mesh.gltf ] && count=$((count+1))
+            [ -f sample_mesh.gltf ] && count=$((count+1))
           [ -f docs/images/generated-sample.svg ] && count=$((count+1))
           pct=${COVERAGE:-0}
           color=$(awk 'BEGIN{r='"$pct"'; if(r>=90) c="brightgreen"; else if(r>=80) c="green"; else if(r>=70) c="yellow"; else if(r>=60) c="orange"; else c="red"; print c;}')
-          cat > docs/badges/coverage.svg <<SVG
-<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20" role="img" aria-label="coverage: $pct%"><linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><rect rx="3" width="130" height="20" fill="#555"/><rect rx="3" x="70" width="60" height="20" fill="${color}"/><path fill="${color}" d="M70 0h4v20h-4z"/><rect rx="3" width="130" height="20" fill="url(#s)"/><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11"><text x="35" y="15" fill="#010101" fill-opacity=".3">coverage</text><text x="35" y="14">coverage</text><text x="99" y="15" fill="#010101" fill-opacity=".3">${pct}%</text><text x="99" y="14">${pct}%</text></g></svg>
-SVG
-          cat > docs/badges/exports.svg <<SVG
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="20" role="img" aria-label="exports: $count"><linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><rect rx="3" width="120" height="20" fill="#555"/><rect rx="3" x="60" width="60" height="20" fill="blue"/><path fill="blue" d="M60 0h4v20h-4z"/><rect rx="3" width="120" height="20" fill="url(#s)"/><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11"><text x="30" y="15" fill="#010101" fill-opacity=".3">exports</text><text x="30" y="14">exports</text><text x="89" y="15" fill="#010101" fill-opacity=".3">${count}</text><text x="89" y="14">${count}</text></g></svg>
-SVG
+          # Generate coverage badge (single-line printf to avoid YAML heredoc issues)
+          printf '%s' "<svg xmlns='http://www.w3.org/2000/svg' width='130' height='20' role='img' aria-label='coverage ${pct}%%'><linearGradient id='s' x2='0' y2='100%'><stop offset='0' stop-color='#bbb' stop-opacity='.1'/><stop offset='1' stop-opacity='.1'/></linearGradient><rect rx='3' width='130' height='20' fill='#555'/><rect rx='3' x='70' width='60' height='20' fill='${color}'/><path fill='${color}' d='M70 0h4v20h-4z'/><rect rx='3' width='130' height='20' fill='url(#s)'/><g fill='#fff' text-anchor='middle' font-family='Verdana,Geneva,DejaVu Sans,sans-serif' font-size='11'><text x='35' y='15' fill='#010101' fill-opacity='.3'>coverage</text><text x='35' y='14'>coverage</text><text x='99' y='15' fill='#010101' fill-opacity='.3'>${pct}%%</text><text x='99' y='14'>${pct}%%</text></g></svg>" > docs/badges/coverage.svg
+          # Generate exports badge
+          printf '%s' "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='20' role='img' aria-label='exports ${count}'><linearGradient id='s' x2='0' y2='100%'><stop offset='0' stop-color='#bbb' stop-opacity='.1'/><stop offset='1' stop-opacity='.1'/></linearGradient><rect rx='3' width='120' height='20' fill='#555'/><rect rx='3' x='60' width='60' height='20' fill='blue'/><path fill='blue' d='M60 0h4v20h-4z'/><rect rx='3' width='120' height='20' fill='url(#s)'/><g fill='#fff' text-anchor='middle' font-family='Verdana,Geneva,DejaVu Sans,sans-serif' font-size='11'><text x='30' y='15' fill='#010101' fill-opacity='.3'>exports</text><text x='30' y='14'>exports</text><text x='89' y='15' fill='#010101' fill-opacity='.3'>${count}</text><text x='89' y='14'>${count}</text></g></svg>" > docs/badges/exports.svg
           git config user.name github-actions
           git config user.email actions@github.com
           git add docs/images/generated-sample.svg docs/badges/coverage.svg docs/badges/exports.svg || true
