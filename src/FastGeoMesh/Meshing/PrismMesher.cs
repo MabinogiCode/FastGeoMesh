@@ -6,8 +6,10 @@ using LTessVec3 = LibTessDotNet.Vec3;
 
 namespace FastGeoMesh.Meshing;
 
+/// <summary>Mesher producing quad meshes for prismatic structures.</summary>
 public sealed class PrismMesher : IMesher<PrismStructureDefinition>
 {
+    /// <summary>Generate a mesh from the given structure and options.</summary>
     public Mesh Mesh(PrismStructureDefinition structure, MesherOptions options)
     {
         ArgumentNullException.ThrowIfNull(structure);

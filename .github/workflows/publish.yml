@@ -1,0 +1,58 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-pack-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          RAW_TAG="${GITHUB_REF##*/}"
+            # remove leading 'v' if present
+          PKG_VERSION="${RAW_TAG#v}"
+          echo "RAW_TAG=$RAW_TAG" >> $GITHUB_ENV
+          echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
+          echo "Package version: $PKG_VERSION"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --verbosity minimal
+
+      - name: Pack
+        run: |
+          dotnet pack src/FastGeoMesh/FastGeoMesh.csproj -c Release \
+            -p:PackageVersion=${PKG_VERSION} \
+            -p:ContinuousIntegrationBuild=true \
+            -o artifacts
+
+      - name: Publish NuGet package
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          ls -1 artifacts
+          for pkg in artifacts/*.nupkg; do
+            echo "Publishing $pkg";
+            dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate;
+          done
+          for sym in artifacts/*.snupkg; do
+            echo "Publishing symbols $sym";
+            dotnet nuget push "$sym" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate;
+          done
