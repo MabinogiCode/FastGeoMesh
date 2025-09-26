@@ -4,7 +4,7 @@ using FastGeoMesh.Geometry;
 
 namespace FastGeoMesh.Meshing;
 
-/// <summary>Indexed representation of a mesh (vertices, edges, quads) with import/export helpers.</summary>
+/// <summary>Indexed representation of a mesh (vertices, edges, quads, triangles) with import/export helpers.</summary>
 public sealed class IndexedMesh
 {
     private static readonly char[] SplitSep = new[] { ' ', '\t' };
@@ -12,6 +12,7 @@ public sealed class IndexedMesh
     private readonly List<Vec3> _vertices = new();
     private readonly List<(int a, int b)> _edges = new();
     private readonly List<(int v0, int v1, int v2, int v3)> _quads = new();
+    private readonly List<(int v0, int v1, int v2)> _triangles = new();
 
     /// <summary>Vertex list.</summary>
     public ReadOnlyCollection<Vec3> Vertices => _vertices.AsReadOnly();
@@ -19,6 +20,8 @@ public sealed class IndexedMesh
     public ReadOnlyCollection<(int a, int b)> Edges => _edges.AsReadOnly();
     /// <summary>Quad list (four vertex indices).</summary>
     public ReadOnlyCollection<(int v0, int v1, int v2, int v3)> Quads => _quads.AsReadOnly();
+    /// <summary>Triangle list (three vertex indices).</summary>
+    public ReadOnlyCollection<(int v0, int v1, int v2)> Triangles => _triangles.AsReadOnly();
 
     /// <summary>Build adjacency (neighbors, boundary, non-manifold edges).</summary>
     public MeshAdjacency BuildAdjacency() => MeshAdjacency.Build(this);
@@ -34,38 +37,31 @@ public sealed class IndexedMesh
         if (exact)
         {
             var indexOf = new Dictionary<(double,double,double), int>();
-            int IndexFor(Vec3 v)
-            {
-                var key = (v.X, v.Y, v.Z);
-                if (indexOf.TryGetValue(key, out var idx)) return idx;
-                idx = im._vertices.Count; im._vertices.Add(v); indexOf[key] = idx; return idx;
-            }
+            int IndexFor(Vec3 v){ var key=(v.X,v.Y,v.Z); if(indexOf.TryGetValue(key,out var idx)) return idx; idx=im._vertices.Count; im._vertices.Add(v); indexOf[key]=idx; return idx; }
             foreach (var q in mesh.Quads)
-            { int i0 = IndexFor(q.V0); int i1 = IndexFor(q.V1); int i2 = IndexFor(q.V2); int i3 = IndexFor(q.V3); im._quads.Add((i0,i1,i2,i3)); AddEdge(i0,i1); AddEdge(i1,i2); AddEdge(i2,i3); AddEdge(i3,i0);}            
+            { int i0=IndexFor(q.V0); int i1=IndexFor(q.V1); int i2=IndexFor(q.V2); int i3=IndexFor(q.V3); im._quads.Add((i0,i1,i2,i3)); AddEdge(i0,i1); AddEdge(i1,i2); AddEdge(i2,i3); AddEdge(i3,i0);}            
+            foreach (var t in mesh.Triangles)
+            { int i0=IndexFor(t.V0); int i1=IndexFor(t.V1); int i2=IndexFor(t.V2); im._triangles.Add((i0,i1,i2)); AddEdge(i0,i1); AddEdge(i1,i2); AddEdge(i2,i0);}            
             foreach (var p in mesh.Points) _ = IndexFor(p);
-            foreach (var s in mesh.InternalSegments) { int ia = IndexFor(s.A); int ib = IndexFor(s.B); AddEdge(ia, ib); }
+            foreach (var s in mesh.InternalSegments){ int ia=IndexFor(s.A); int ib=IndexFor(s.B); AddEdge(ia,ib); }
         }
         else
         {
             var indexOf = new Dictionary<(long,long,long), int>();
-            int IndexFor(Vec3 v)
-            {
-                long qx = (long)Math.Round(v.X / epsilon); long qy = (long)Math.Round(v.Y / epsilon); long qz = (long)Math.Round(v.Z / epsilon);
-                var key = (qx,qy,qz);
-                if (indexOf.TryGetValue(key, out var idx)) return idx;
-                idx = im._vertices.Count; im._vertices.Add(v); indexOf[key] = idx; return idx;
-            }
+            int IndexFor(Vec3 v){ long qx=(long)Math.Round(v.X/epsilon); long qy=(long)Math.Round(v.Y/epsilon); long qz=(long)Math.Round(v.Z/epsilon); var key=(qx,qy,qz); if(indexOf.TryGetValue(key,out var idx)) return idx; idx=im._vertices.Count; im._vertices.Add(v); indexOf[key]=idx; return idx; }
             foreach (var q in mesh.Quads)
-            { int i0 = IndexFor(q.V0); int i1 = IndexFor(q.V1); int i2 = IndexFor(q.V2); int i3 = IndexFor(q.V3); im._quads.Add((i0,i1,i2,i3)); AddEdge(i0,i1); AddEdge(i1,i2); AddEdge(i2,i3); AddEdge(i3,i0);}            
+            { int i0=IndexFor(q.V0); int i1=IndexFor(q.V1); int i2=IndexFor(q.V2); int i3=IndexFor(q.V3); im._quads.Add((i0,i1,i2,i3)); AddEdge(i0,i1); AddEdge(i1,i2); AddEdge(i2,i3); AddEdge(i3,i0);}            
+            foreach (var t in mesh.Triangles)
+            { int i0=IndexFor(t.V0); int i1=IndexFor(t.V1); int i2=IndexFor(t.V2); im._triangles.Add((i0,i1,i2)); AddEdge(i0,i1); AddEdge(i1,i2); AddEdge(i2,i0);}            
             foreach (var p in mesh.Points) _ = IndexFor(p);
-            foreach (var s in mesh.InternalSegments) { int ia = IndexFor(s.A); int ib = IndexFor(s.B); AddEdge(ia, ib); }
+            foreach (var s in mesh.InternalSegments){ int ia=IndexFor(s.A); int ib=IndexFor(s.B); AddEdge(ia,ib); }
         }
         return im;
 
-        void AddEdge(int ia, int ib)
-        { if (ia == ib) return; var e = ia < ib ? (ia, ib) : (ib, ia); if (edgeSet.Add(e)) im._edges.Add(e); }
+        void AddEdge(int ia,int ib){ if(ia==ib) return; var e=ia<ib?(ia,ib):(ib,ia); if(edgeSet.Add(e)) im._edges.Add(e);}        
     }
 
+    // Existing read/write remains for backward compatibility (triangles not persisted in legacy format)
     /// <summary>Read custom text format.</summary>
     public static IndexedMesh ReadCustomTxt(string path)
     {

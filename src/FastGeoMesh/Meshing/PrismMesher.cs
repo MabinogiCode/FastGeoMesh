@@ -6,10 +6,15 @@ using LTessVec3 = LibTessDotNet.Vec3;
 
 namespace FastGeoMesh.Meshing;
 
-/// <summary>Mesher producing quad meshes for prismatic structures.</summary>
+/// <summary>
+/// Mesher producing quad-dominant prism meshes (side quads + cap quads). Can emit leftover cap
+/// triangles as true triangles when <see cref="MesherOptions.OutputRejectedCapTriangles"/> is true.
+/// </summary>
 public sealed class PrismMesher : IMesher<PrismStructureDefinition>
 {
-    /// <summary>Generate a mesh from the given structure and options.</summary>
+    /// <summary>Generate a mesh for the given prism structure definition.</summary>
+    /// <param name="structure">Prism structure (footprint, holes, geometry).</param>
+    /// <param name="options">Meshing options controlling subdivision, caps and quality.</param>
     public Mesh Mesh(PrismStructureDefinition structure, MesherOptions options)
     {
         ArgumentNullException.ThrowIfNull(structure);
@@ -17,28 +22,19 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
         options.Validate();
 
         var mesh = new Mesh();
-        var poly = structure.Footprint.Vertices;
         double z0 = structure.CoteBase;
         double z1 = structure.CoteTete;
-
-        // Build vertical levels honoring target length Z, constraint Zs, and geometry Zs
         var zLevels = BuildZLevels(z0, z1, options, structure);
 
-        // Side faces meshing (outer footprint)
-        AddSideFaces(mesh, poly, zLevels, options, outward: true);
-
-        // Side faces meshing (holes): invert orientation to face inward (still CCW when viewed from outside volume)
+        AddSideFaces(mesh, structure.Footprint.Vertices, zLevels, options, outward: true);
         foreach (var hole in structure.Holes)
             AddSideFaces(mesh, hole.Vertices, zLevels, options, outward: false);
 
-        // Caps (separate toggles)
         if (options.GenerateBottomCap || options.GenerateTopCap)
             AddCaps(mesh, structure, options, z0, z1);
 
-        // Integrate pure geometry elements into output
         foreach (var p in structure.Geometry.Points) mesh.AddPoint(p);
         foreach (var s in structure.Geometry.Segments) mesh.AddInternalSegment(s);
-
         return mesh;
     }
 
@@ -79,6 +75,7 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
         bool genBottom = options.GenerateBottomCap;
         bool genTop = options.GenerateTopCap;
         if (!genBottom && !genTop) return;
+        bool outputTris = options.OutputRejectedCapTriangles;
 
         // Rectangle fast-path with refinement
         if (structure.Footprint.IsRectangleAxisAligned(out var min, out var max))
@@ -102,59 +99,51 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
                 bool nearSeg = segBand > 0 && IsNearAnySegment(structure, cx, cy, segBand);
                 return nearHole || nearSeg;
             }
-
             static double LerpScalar(double a,double b,double t)=> a + (b - a)*t;
 
             void EmitGrid(int gx, int gy, Func<double,double,bool> predicate)
             {
                 for (int i = 0; i < gx; i++)
+                for (int j = 0; j < gy; j++)
                 {
-                    for (int j = 0; j < gy; j++)
+                    double x0 = LerpScalar(min.X, max.X, (double)i / gx);
+                    double x1 = LerpScalar(min.X, max.X, (double)(i+1) / gx);
+                    double y0 = LerpScalar(min.Y, max.Y, (double)j / gy);
+                    double y1 = LerpScalar(min.Y, max.Y, (double)(j+1) / gy);
+                    double cx = 0.5*(x0+x1);
+                    double cy = 0.5*(y0+y1);
+
+                    if (!PointInPolygon(structure.Footprint.Vertices, cx, cy)) continue;
+                    if (IsInsideAnyHole(structure, cx, cy)) continue;
+                    if (!predicate(cx, cy)) continue;
+
+                    if (genBottom)
                     {
-                        double x0 = LerpScalar(min.X, max.X, (double)i / gx);
-                        double x1 = LerpScalar(min.X, max.X, (double)(i+1) / gx);
-                        double y0 = LerpScalar(min.Y, max.Y, (double)j / gy);
-                        double y1 = LerpScalar(min.Y, max.Y, (double)(j+1) / gy);
-                        double cx = 0.5*(x0+x1);
-                        double cy = 0.5*(y0+y1);
-
-                        if (!PointInPolygon(structure.Footprint.Vertices, cx, cy)) continue;
-                        if (IsInsideAnyHole(structure, cx, cy)) continue;
-                        if (!predicate(cx, cy)) continue;
-
-                        if (genBottom)
-                        {
-                            var b0 = new GVec3(x0, y0, z0);
-                            var b1 = new GVec3(x0, y1, z0);
-                            var b2 = new GVec3(x1, y1, z0);
-                            var b3 = new GVec3(x1, y0, z0);
-                            mesh.AddQuad(new Quad(b0, b1, b2, b3));
-                        }
-                        if (genTop)
-                        {
-                            var t0 = new GVec3(x0, y0, z1);
-                            var t1 = new GVec3(x1, y0, z1);
-                            var t2 = new GVec3(x1, y1, z1);
-                            var t3 = new GVec3(x0, y1, z1);
-                            mesh.AddQuad(new Quad(t0, t1, t2, t3));
-                        }
+                        var b0 = new GVec3(x0, y0, z0);
+                        var b1 = new GVec3(x0, y1, z0);
+                        var b2 = new GVec3(x1, y1, z0);
+                        var b3 = new GVec3(x1, y0, z0);
+                        mesh.AddQuad(new Quad(b0, b1, b2, b3));
+                    }
+                    if (genTop)
+                    {
+                        var t0 = new GVec3(x0, y0, z1);
+                        var t1 = new GVec3(x1, y0, z1);
+                        var t2 = new GVec3(x1, y1, z1);
+                        var t3 = new GVec3(x0, y1, z1);
+                        mesh.AddQuad(new Quad(t0, t1, t2, t3));
                     }
                 }
             }
-
-            // Coarse away from refinement zones
             EmitGrid(nx, ny, (cx,cy) => !UseFineForCell(cx,cy));
-            // Fine near holes
             if (holeBand > 0 && fineHoles < options.TargetEdgeLengthXY)
                 EmitGrid(nxFineH, nyFineH, (cx,cy) => IsNearAnyHole(structure, cx, cy, holeBand));
-            // Fine near segments
             if (segBand > 0 && fineSegs < options.TargetEdgeLengthXY)
                 EmitGrid(nxFineS, nyFineS, (cx,cy) => IsNearAnySegment(structure, cx, cy, segBand));
-
             return;
         }
 
-        // Generic: Robust polygon tessellation with holes using LibTessDotNet
+        // Generic tessellation path (LibTessDotNet)
         var tess = new Tess();
         void AddContour(Polygon2D poly)
         {
@@ -170,7 +159,6 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
         foreach (var h in structure.Holes) AddContour(h);
 
         tess.Tessellate(WindingRule.EvenOdd, ElementType.Polygons, 3);
-
         var verts = tess.Vertices;
         var elements = tess.Elements;
         int triCount = tess.ElementCount;
@@ -194,15 +182,12 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
             AddEdge(c,a,ti);
         }
 
-        // Build candidate quads with quality scores
         var candidates = new List<(double score,int t0,int t1,(Vec2 v0,Vec2 v1,Vec2 v2,Vec2 v3) quad)>();
-        var usedEdge = new HashSet<(int,int)>();
         foreach (var kv in edgeToTris)
         {
             var inc = kv.Value;
             if (inc.Count != 2) continue;
             int t0 = inc[0], t1 = inc[1];
-
             var quad = MakeQuadFromTriPair(triangles[t0], triangles[t1], verts);
             if (!quad.HasValue) continue;
             var q = quad.Value;
@@ -211,7 +196,6 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
             candidates.Add((score, t0, t1, q));
         }
 
-        // Select best non-overlapping pairs greedily
         candidates.Sort((x,y) => y.score.CompareTo(x.score));
         bool[] paired = new bool[triangles.Count];
         foreach (var cand in candidates)
@@ -221,7 +205,6 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
             paired[cand.t0] = paired[cand.t1] = true;
         }
 
-        // Emit remaining triangles as degenerate quads
         for (int ti = 0; ti < triangles.Count; ti++)
         {
             if (paired[ti]) continue;
@@ -229,9 +212,16 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
             var v0 = new Vec2((float)verts[a].Position.X, (float)verts[a].Position.Y);
             var v1 = new Vec2((float)verts[b].Position.X, (float)verts[b].Position.Y);
             var v2 = new Vec2((float)verts[c].Position.X, (float)verts[c].Position.Y);
-            EmitQuad(mesh, (v0,v1,v2,v2), z0, z1, genBottom, genTop);
+            if (outputTris)
+            {
+                if (genBottom) mesh.AddTriangle(new Triangle(new GVec3(v0.X, v0.Y, z0), new GVec3(v1.X, v1.Y, z0), new GVec3(v2.X, v2.Y, z0)));
+                if (genTop)    mesh.AddTriangle(new Triangle(new GVec3(v0.X, v0.Y, z1), new GVec3(v1.X, v1.Y, z1), new GVec3(v2.X, v2.Y, z1)));
+            }
+            else
+            {
+                EmitQuad(mesh, (v0,v1,v2,v2), z0, z1, genBottom, genTop);
+            }
         }
-
         return;
 
         void AddEdge(int i,int j,int tri)
@@ -273,27 +263,22 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
 
         static double ScoreQuad((Vec2 v0,Vec2 v1,Vec2 v2,Vec2 v3) q)
         {
-            // edge lengths
             double l0 = (q.v1 - q.v0).Length();
             double l1 = (q.v2 - q.v1).Length();
             double l2 = (q.v3 - q.v2).Length();
             double l3 = (q.v0 - q.v3).Length();
             double minL = Math.Min(Math.Min(l0,l1), Math.Min(l2,l3));
             double maxL = Math.Max(Math.Max(l0,l1), Math.Max(l2,l3));
-            double aspect = minL <= 1e-9 ? 0 : minL / maxL; // in (0,1]
+            double aspect = minL <= 1e-9 ? 0 : minL / maxL;
 
-            // orthogonality: sum of |cos(theta)| for consecutive edges (lower is better)
             double o0 = Ortho((q.v1 - q.v0), (q.v2 - q.v1));
             double o1 = Ortho((q.v2 - q.v1), (q.v3 - q.v2));
             double o2 = Ortho((q.v3 - q.v2), (q.v0 - q.v3));
             double o3 = Ortho((q.v0 - q.v3), (q.v1 - q.v0));
-            double ortho = 1.0 - 0.25 * (o0 + o1 + o2 + o3); // closeness to 1 is good
+            double ortho = 1.0 - 0.25 * (o0 + o1 + o2 + o3);
 
-            // area stability (non-zero area)
             double area = Math.Abs(Polygon2D.SignedArea(new[] { q.v0, q.v1, q.v2, q.v3 }));
             double areaScore = area > 1e-12 ? 1.0 : 0.0;
-
-            // final score: weighted
             return 0.6 * aspect + 0.35 * ortho + 0.05 * areaScore;
         }
 
@@ -302,7 +287,7 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
             double na = Math.Sqrt(a.Dot(a));
             double nb = Math.Sqrt(b.Dot(b));
             if (na <= 1e-12 || nb <= 1e-12) return 0;
-            return 1.0 - Math.Abs(a.Dot(b) / (na * nb)); // 1 when perpendicular, 0 when parallel
+            return 1.0 - Math.Abs(a.Dot(b) / (na * nb));
         }
 
         void EmitQuad(Mesh m, (Vec2 v0,Vec2 v1,Vec2 v2,Vec2 v3) q, double zb, double zt, bool emitBottom, bool emitTop)
@@ -358,9 +343,7 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
     private static bool IsInsideAnyHole(PrismStructureDefinition structure, double x, double y)
     {
         foreach (var h in structure.Holes)
-        {
             if (PointInPolygon(h.Vertices, x, y)) return true;
-        }
         return false;
     }
 
@@ -373,7 +356,6 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
         return (p - c).Length();
     }
 
-    // Ray casting in 2D (XY) for arbitrary polygon (list of vertices)
     private static bool PointInPolygon(IReadOnlyList<Vec2> verts, double x, double y)
     {
         bool inside = false;
@@ -402,16 +384,12 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
         }
 
         foreach (var (_, z) in structure.ConstraintSegments)
-        {
             if (z > z0 + options.Epsilon && z < z1 - options.Epsilon)
                 levels.Add(z);
-        }
 
         foreach (var p in structure.Geometry.Points)
-        {
             if (p.Z > z0 + options.Epsilon && p.Z < z1 - options.Epsilon)
                 levels.Add(p.Z);
-        }
         foreach (var s in structure.Geometry.Segments)
         {
             if (s.A.Z > z0 + options.Epsilon && s.A.Z < z1 - options.Epsilon) levels.Add(s.A.Z);

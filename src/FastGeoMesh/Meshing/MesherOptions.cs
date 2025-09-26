@@ -33,6 +33,9 @@ public sealed class MesherOptions
     /// <summary>Minimum acceptable cap quad pairing quality [0,1].</summary>
     public double MinCapQuadQuality { get; set; } = 0.75;
 
+    /// <summary>Emit leftover (unpaired) cap triangles as true triangles instead of degenerate quads?</summary>
+    public bool OutputRejectedCapTriangles { get; set; }
+
     /// <summary>Validate option ranges.</summary>
     public void Validate()
     {

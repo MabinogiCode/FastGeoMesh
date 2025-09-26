@@ -25,6 +25,7 @@ Preview (real generated SVG + examples):
 - Caps (top / bottom)
   - Rectangle fast‑path: structured grid with optional local refinement near holes / near geometry segments
   - Generic path: LibTessDotNet triangulation + quadification (quality‑filtered)
+  - Optionally keep leftover low‑quality cap faces as real triangles (no degenerate quads) via `OutputRejectedCapTriangles`
 - Quality
   - `Quad.QualityScore` for cap quads (null on side faces)
   - `MinCapQuadQuality` (default 0.75) threshold
@@ -32,20 +33,20 @@ Preview (real generated SVG + examples):
   - Arbitrary points and 3D segments carried through (for later processing / exports)
   - Constraint segments at a Z force insertion of that Z level
 - IndexedMesh utilities
-  - Vertex / edge / quad arrays, adjacency builder
+  - Vertex / edge / quad / triangle arrays, adjacency builder
   - Simple text format IO (points / edges / quads with 1‑based ids)
 - Exporters
-  - OBJ (quads)
-  - glTF 2.0 (.gltf, embedded base64 buffer; quads triangulated)
+  - OBJ (quads + triangles)
+  - glTF 2.0 (.gltf, embedded base64 buffer; quads & triangles written as triangles)
   - SVG top view (edges only)
 - Tests: shape variants, holes/refinement, adjacency, quad quality, exporters
 
 ## Exporters
 FastGeoMesh can export the generated mesh to common 2D/3D formats:
 
-- **OBJ** (Wavefront) — quad faces  
-- **glTF 2.0** — triangulated for interoperability  
-- **SVG** — top‑view 2D vector export  
+- **OBJ** (Wavefront) — quad + triangle faces  
+- **glTF 2.0** — always triangles (quads are split)  
+- **SVG** — top‑view 2D vector export (edges)  
 
 ```csharp
 // Assuming 'indexed' is an IndexedMesh
@@ -77,9 +78,6 @@ var poly = Polygon2D.FromPoints(new[] {
 // Prism definition
 var structure = new PrismStructureDefinition(poly, z0: -10, z1: 10);
 
-// Optional: hole
-// structure.AddHole(Polygon2D.FromPoints(new[]{ new Vec2(8,2), new Vec2(9,2), new Vec2(9,3), new Vec2(8,3) }));
-
 // Optional: constraint level at Z=2.5 along one footprint edge
 structure.AddConstraintSegment(new Segment2D(new Vec2(0,0), new Vec2(20,0)), 2.5);
 
@@ -97,7 +95,8 @@ var options = new MesherOptions
     SegmentRefineBand = 1.0,
     TargetEdgeLengthXYNearHoles = 0.25,
     TargetEdgeLengthXYNearSegments = 0.25,
-    MinCapQuadQuality = 0.75
+    MinCapQuadQuality = 0.75,
+    OutputRejectedCapTriangles = true // keep leftover triangles explicitly
 };
 
 var mesh = new PrismMesher().Mesh(structure, options);
@@ -115,6 +114,7 @@ SvgExporter.Write(indexed, "mesh.svg");
 - `HoleRefineBand`, `SegmentRefineBand`: refinement influence distance (rectangle fast‑path only)
 - `TargetEdgeLengthXYNearHoles`, `TargetEdgeLengthXYNearSegments`: finer local XY target (≤ base)
 - `MinCapQuadQuality`: [0..1] min score to accept triangle pair into a quad (generic cap path)
+- `OutputRejectedCapTriangles`: emit unmatched cap triangles instead of forming degenerate quads
 - `Epsilon`: coordinate dedup / level comparison tolerance (default 1e-9)
 
 ## Quality score (caps)
