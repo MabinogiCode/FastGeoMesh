@@ -24,7 +24,8 @@ public sealed class HoleRefinementTests
         {
             TargetEdgeLengthXY = 2.0,
             TargetEdgeLengthZ = 1.0,
-            GenerateTopAndBottomCaps = true,
+            GenerateBottomCap = true,
+            GenerateTopCap = true,
             TargetEdgeLengthXYNearHoles = 0.5,
             HoleRefineBand = 1.0
         };

@@ -26,7 +26,8 @@ public sealed class SegmentRefinementTests
         {
             TargetEdgeLengthXY = 2.0,
             TargetEdgeLengthZ = 1.0,
-            GenerateTopAndBottomCaps = true,
+            GenerateBottomCap = true,
+            GenerateTopCap = true,
             TargetEdgeLengthXYNearSegments = 0.5,
             SegmentRefineBand = 1.0
         };

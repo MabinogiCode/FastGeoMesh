@@ -34,7 +34,7 @@ public sealed class EpsilonAndCapsTests
             new Vec2(0,0), new Vec2(20,0), new Vec2(20,5), new Vec2(0,5)
         });
         var structure = new PrismStructureDefinition(poly, -10, 10);
-        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateTopAndBottomCaps = true };
+        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true };
         var mesh = new PrismMesher().Mesh(structure, options);
 
         int capCount = mesh.Quads.Count(q =>
@@ -57,7 +57,7 @@ public sealed class EpsilonAndCapsTests
         var b = new Vec3(20, 4, 4);
         structure.Geometry.AddPoint(a).AddPoint(b).AddSegment(new Segment3D(a, b));
 
-        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateTopAndBottomCaps = false };
+        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = false, GenerateTopCap = false };
         var mesh = new PrismMesher().Mesh(structure, options);
         var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
@@ -77,7 +77,7 @@ public sealed class EpsilonAndCapsTests
         });
         var structure = new PrismStructureDefinition(poly, -10, 10);
         structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(10, 0)), 2.5);
-        var options = new MesherOptions { TargetEdgeLengthXY = 5.0, TargetEdgeLengthZ = 3.0, GenerateTopAndBottomCaps = false };
+        var options = new MesherOptions { TargetEdgeLengthXY = 5.0, TargetEdgeLengthZ = 3.0, GenerateBottomCap = false, GenerateTopCap = false };
         var mesh = new PrismMesher().Mesh(structure, options);
 
         bool hasZ = mesh.Quads.Any(q =>

@@ -25,7 +25,7 @@ public sealed class ReferenceFileComparisonTests
         structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(20, 0)), 2.5);
 
         // Reference uses XY = 1.0 m and Z = 0.5 m
-        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateTopAndBottomCaps = false };
+        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = false, GenerateTopCap = false };
         var mesh = new PrismMesher().Mesh(structure, options);
         var im = IndexedMesh.FromMesh(mesh, options.Epsilon); // use mesher epsilon for dedup
 

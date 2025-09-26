@@ -1,15 +1,15 @@
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
 using FastGeoMesh.Meshing.Exporters;
+using FastGeoMesh.Structures;
 using Xunit;
 
 namespace FastGeoMesh.Tests;
 
-public sealed class ObjExporterTests
+public sealed class SvgExporterTests
 {
     [Fact]
-    public void ExportsSimpleRectPrismOBJ()
+    public void ExportsTopViewSvg()
     {
         var poly = Polygon2D.FromPoints(new[]
         {
@@ -20,13 +20,13 @@ public sealed class ObjExporterTests
         var mesh = new PrismMesher().Mesh(st, opt);
         var im = IndexedMesh.FromMesh(mesh);
 
-        string path = Path.Combine(Path.GetTempPath(), $"fgm_test_{Guid.NewGuid():N}.obj");
-        ObjExporter.Write(im, path);
+        string path = Path.Combine(Path.GetTempPath(), $"fgm_test_{Guid.NewGuid():N}.svg");
+        SvgExporter.Write(im, path);
         Assert.True(File.Exists(path));
 
-        var lines = File.ReadAllLines(path);
-        Assert.Contains(lines, l => l.StartsWith("v ", StringComparison.Ordinal));
-        Assert.Contains(lines, l => l.StartsWith("f ", StringComparison.Ordinal));
+        var svg = File.ReadAllText(path);
+        Assert.Contains("<svg", svg, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("<line", svg, StringComparison.OrdinalIgnoreCase);
 
         File.Delete(path);
     }

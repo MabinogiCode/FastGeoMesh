@@ -20,7 +20,7 @@ public sealed class QuadQualityTests
             new Vec2(1,1), new Vec2(2,1), new Vec2(2,2), new Vec2(1,2)
         });
         var structure = new PrismStructureDefinition(outer, 0, 1).AddHole(hole);
-        var options = new MesherOptions { TargetEdgeLengthXY = 0.75, TargetEdgeLengthZ = 0.5, GenerateTopAndBottomCaps = true };
+        var options = new MesherOptions { TargetEdgeLengthXY = 0.75, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true };
 
         var mesh = new PrismMesher().Mesh(structure, options);
         var capQuads = mesh.Quads.Where(q => Math.Abs(q.V0.Z - q.V1.Z) < 1e-12 && Math.Abs(q.V1.Z - q.V2.Z) < 1e-12).ToList();
@@ -41,7 +41,7 @@ public sealed class QuadQualityTests
             new Vec2(0,0), new Vec2(4,0), new Vec2(4,2), new Vec2(0,2)
         });
         var structure = new PrismStructureDefinition(outer, 0, 1);
-        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateTopAndBottomCaps = false };
+        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = false, GenerateTopCap = false };
 
         var mesh = new PrismMesher().Mesh(structure, options);
         var sideQuads = mesh.Quads.Where(q => !(Math.Abs(q.V0.Z - q.V1.Z) < 1e-12 && Math.Abs(q.V1.Z - q.V2.Z) < 1e-12)).ToList();

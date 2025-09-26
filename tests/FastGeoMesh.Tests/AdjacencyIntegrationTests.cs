@@ -15,7 +15,7 @@ public sealed class AdjacencyIntegrationTests
             new Vec2(0,0), new Vec2(20,0), new Vec2(20,5), new Vec2(0,5)
         });
         var structure = new PrismStructureDefinition(poly, -10, 10);
-        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 1.0, GenerateTopAndBottomCaps = false };
+        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 1.0, GenerateBottomCap = false, GenerateTopCap = false };
         var mesh = new PrismMesher().Mesh(structure, options);
         var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
 

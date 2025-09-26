@@ -7,13 +7,17 @@ namespace FastGeoMesh.Meshing;
 /// <summary>
 /// Indexed mesh (vertices, edges, quads) built from a geometry-only Mesh.
 /// Provides import/export of the simple text format: count + items, 1-based indices with leading id per line.
+/// Format (no legacy triangle section):
+///   <pointsCount>\n
+///   id x y z (pointsCount lines)\n
+///   <edgesCount>\n
+///   id a b (edgesCount lines, 1-based point indices)\n
+///   <quadsCount>\n
+///   id v0 v1 v2 v3 (quadsCount lines, 1-based point indices)
 /// </summary>
 public sealed class IndexedMesh
 {
     private static readonly char[] SplitSep = new[] { ' ', '\t' };
-
-    internal void DebugAddVertex(Vec3 v) => _vertices.Add(v);
-    internal void DebugAddQuad(int v0, int v1, int v2, int v3) => _quads.Add((v0,v1,v2,v3));
 
     private readonly List<Vec3> _vertices = new();
     private readonly List<(int a, int b)> _edges = new();
@@ -32,10 +36,7 @@ public sealed class IndexedMesh
     {
         ArgumentNullException.ThrowIfNull(mesh);
         var im = new IndexedMesh();
-
-        // Use exact coordinate keying when epsilon is too small for safe quantization
         bool exact = !(epsilon > 0) || epsilon < 1e-12;
-
         var edgeSet = new HashSet<(int,int)>();
 
         if (exact)
@@ -50,30 +51,15 @@ public sealed class IndexedMesh
                 indexOf[key] = idx;
                 return idx;
             }
-
-            // Quads
             foreach (var q in mesh.Quads)
             {
-                int i0 = IndexFor(q.V0);
-                int i1 = IndexFor(q.V1);
-                int i2 = IndexFor(q.V2);
-                int i3 = IndexFor(q.V3);
+                int i0 = IndexFor(q.V0); int i1 = IndexFor(q.V1); int i2 = IndexFor(q.V2); int i3 = IndexFor(q.V3);
                 im._quads.Add((i0, i1, i2, i3));
-                AddEdge(i0, i1);
-                AddEdge(i1, i2);
-                AddEdge(i2, i3);
-                AddEdge(i3, i0);
+                AddEdge(i0, i1); AddEdge(i1, i2); AddEdge(i2, i3); AddEdge(i3, i0);
             }
-            foreach (var p in mesh.Points)
-            {
-                _ = IndexFor(p);
-            }
+            foreach (var p in mesh.Points) _ = IndexFor(p);
             foreach (var s in mesh.InternalSegments)
-            {
-                int ia = IndexFor(s.A);
-                int ib = IndexFor(s.B);
-                AddEdge(ia, ib);
-            }
+            { int ia = IndexFor(s.A); int ib = IndexFor(s.B); AddEdge(ia, ib); }
         }
         else
         {
@@ -90,40 +76,23 @@ public sealed class IndexedMesh
                 indexOf[key] = idx;
                 return idx;
             }
-
-            // Quads
             foreach (var q in mesh.Quads)
             {
-                int i0 = IndexFor(q.V0);
-                int i1 = IndexFor(q.V1);
-                int i2 = IndexFor(q.V2);
-                int i3 = IndexFor(q.V3);
+                int i0 = IndexFor(q.V0); int i1 = IndexFor(q.V1); int i2 = IndexFor(q.V2); int i3 = IndexFor(q.V3);
                 im._quads.Add((i0, i1, i2, i3));
-                AddEdge(i0, i1);
-                AddEdge(i1, i2);
-                AddEdge(i2, i3);
-                AddEdge(i3, i0);
+                AddEdge(i0, i1); AddEdge(i1, i2); AddEdge(i2, i3); AddEdge(i3, i0);
             }
-            foreach (var p in mesh.Points)
-            {
-                _ = IndexFor(p);
-            }
+            foreach (var p in mesh.Points) _ = IndexFor(p);
             foreach (var s in mesh.InternalSegments)
-            {
-                int ia = IndexFor(s.A);
-                int ib = IndexFor(s.B);
-                AddEdge(ia, ib);
-            }
+            { int ia = IndexFor(s.A); int ib = IndexFor(s.B); AddEdge(ia, ib); }
         }
-
         return im;
 
         void AddEdge(int ia, int ib)
         {
             if (ia == ib) return;
             var e = ia < ib ? (ia, ib) : (ib, ia);
-            if (edgeSet.Add(e))
-                im._edges.Add(e);
+            if (edgeSet.Add(e)) im._edges.Add(e);
         }
     }
 
@@ -131,55 +100,39 @@ public sealed class IndexedMesh
     {
         using var sr = new StreamReader(path);
         var culture = CultureInfo.InvariantCulture;
-        string? line;
-
-        // Points count
         int pointCount = int.Parse(ReadNonEmptyLine(sr)!, culture);
         var im = new IndexedMesh();
         for (int i = 0; i < pointCount; i++)
         {
-            line = ReadNonEmptyLine(sr);
-            var parts = line!.Split(SplitSep, StringSplitOptions.RemoveEmptyEntries);
-            // expected: id x y z
+            var parts = ReadNonEmptyLine(sr)!.Split(SplitSep, StringSplitOptions.RemoveEmptyEntries);
             double x = double.Parse(parts[1], culture);
             double y = double.Parse(parts[2], culture);
             double z = double.Parse(parts[3], culture);
             im._vertices.Add(new Vec3(x, y, z));
         }
-
-        // Edges count
         int edgeCount = int.Parse(ReadNonEmptyLine(sr)!, culture);
         for (int i = 0; i < edgeCount; i++)
         {
-            line = ReadNonEmptyLine(sr);
-            var parts = line!.Split(SplitSep, StringSplitOptions.RemoveEmptyEntries);
-            // expected: id a b (1-based)
+            var parts = ReadNonEmptyLine(sr)!.Split(SplitSep, StringSplitOptions.RemoveEmptyEntries);
             int a = int.Parse(parts[1], culture) - 1;
             int b = int.Parse(parts[2], culture) - 1;
             im._edges.Add((a, b));
         }
-
-        // Quads count
         int quadCount = int.Parse(ReadNonEmptyLine(sr)!, culture);
         for (int i = 0; i < quadCount; i++)
         {
-            line = ReadNonEmptyLine(sr);
-            var parts = line!.Split(SplitSep, StringSplitOptions.RemoveEmptyEntries);
-            // expected: id v0 v1 v2 v3 (1-based)
+            var parts = ReadNonEmptyLine(sr)!.Split(SplitSep, StringSplitOptions.RemoveEmptyEntries);
             int v0 = int.Parse(parts[1], culture) - 1;
             int v1 = int.Parse(parts[2], culture) - 1;
             int v2 = int.Parse(parts[3], culture) - 1;
             int v3 = int.Parse(parts[4], culture) - 1;
             im._quads.Add((v0, v1, v2, v3));
         }
-
         return im;
 
         static string? ReadNonEmptyLine(StreamReader sr)
         {
-            string? l;
-            do { l = sr.ReadLine(); } while (l != null && l.Trim().Length == 0);
-            return l;
+            string? l; do { l = sr.ReadLine(); } while (l != null && l.Trim().Length == 0); return l;
         }
     }
 
@@ -187,24 +140,18 @@ public sealed class IndexedMesh
     {
         using var sw = new StreamWriter(path);
         var culture = CultureInfo.InvariantCulture;
-
-        // Points
         sw.WriteLine(_vertices.Count.ToString(culture));
         for (int i = 0; i < _vertices.Count; i++)
         {
             var v = _vertices[i];
             sw.WriteLine(string.Format(culture, "{0} {1} {2} {3}", i + 1, v.X, v.Y, v.Z));
         }
-
-        // Edges
         sw.WriteLine(_edges.Count.ToString(culture));
         for (int i = 0; i < _edges.Count; i++)
         {
             var e = _edges[i];
             sw.WriteLine(string.Format(culture, "{0} {1} {2}", i + 1, e.a + 1, e.b + 1));
         }
-
-        // Quads
         sw.WriteLine(_quads.Count.ToString(culture));
         for (int i = 0; i < _quads.Count; i++)
         {

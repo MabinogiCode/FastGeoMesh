@@ -25,7 +25,7 @@ public sealed class GeotechnicalScenariosTests
             .AddHole(hole1)
             .AddHole(hole2);
 
-        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateTopAndBottomCaps = true };
+        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = false, GenerateTopCap = false };
         var mesh = new PrismMesher().Mesh(structure, options);
         var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
@@ -62,7 +62,7 @@ public sealed class GeotechnicalScenariosTests
         var inside = new Vec3(0, 0, 0);
         structure.Geometry.AddPoint(support).AddPoint(inside).AddSegment(new Segment3D(support, inside));
 
-        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 1.0, GenerateTopAndBottomCaps = false };
+        var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 1.0, GenerateBottomCap = false, GenerateTopCap = false };
         var mesh = new PrismMesher().Mesh(structure, options);
         var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
 

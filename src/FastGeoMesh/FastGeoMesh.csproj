@@ -3,10 +3,10 @@
     <PackageId>FastGeoMesh</PackageId>
     <Authors>FastGeo</Authors>
     <Company>FastGeo</Company>
-    <Description>Quad meshing utilities for geotechnical geometry (geometry-only).</Description>
+    <Description>Lightweight quad meshing utilities for generic 2.5D prism structures.</Description>
     <RepositoryUrl>https://example.com/fastgeomesh</RepositoryUrl>
     <PackageProjectUrl>https://example.com/fastgeomesh</PackageProjectUrl>
-    <PackageTags>mesh;quad;geometry;geotechnical</PackageTags>
+    <PackageTags>mesh;quad;geometry</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

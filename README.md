@@ -1,32 +1,34 @@
 # FastGeoMesh
 
-Fast quad meshing for prismatic volumes from 2D footprints and Z elevations. Geometry-only: build side faces and caps, refine near features, and export an indexed mesh.
+Lightweight quad meshing for generic prismatic volumes defined by a 2D footprint (plan view) and base/top elevations. Focus: simple, deterministic, dependency?light.
 
 Features
-- Prism mesher (counter-clockwise quads)
-  - Side faces: XY subdivision using TargetEdgeLengthXY
-  - Z subdivision: honors TargetEdgeLengthZ, constraint Zs (segments at Z), and geometry Zs
-- Caps (top/bottom)
-  - Rectangle fast-path: grid quads with optional refinement near holes and near geometry segments
-  - Generic: LibTessDotNet triangulation + quadification with quality scoring and threshold
+- Prism mesher (counter?clockwise quads on all faces)
+  - Side faces: XY subdivision via TargetEdgeLengthXY
+  - Vertical subdivision: TargetEdgeLengthZ + constraint Z levels + geometry Z levels
+- Caps (top / bottom)
+  - Rectangle fast?path: structured grid with optional local refinement near holes / near geometry segments
+  - Generic path: LibTessDotNet triangulation + quadification (quality?filtered)
 - Quality
-  - Quad.QualityScore exposed on caps quads (null on side faces)
-  - MinCapQuadQuality (default 0.75) to reject poor triangle pairings
-- Integration of pure geometry
-  - Points and 3D segments are carried through into the output Mesh
-  - Constraint segments at a given Z affect vertical levels
+  - Quad.QualityScore for cap quads (null on side faces)
+  - MinCapQuadQuality (default 0.75) threshold
+- Geometry integration
+  - Arbitrary points and 3D segments carried through (for later processing / exports)
+  - Constraint segments at a Z force insertion of that Z level
 - IndexedMesh utilities
-  - Vertex/edge/quad indexing, adjacency builder, simple text format IO (read/write)
+  - Vertex/edge/quad arrays, adjacency builder
+  - Simple text format IO (points / edges / quads with 1?based ids)
 - Exporters
-  - OBJ export (quads as f v0 v1 v2 v3)
-  - glTF 2.0 export (.gltf JSON with embedded base64), quads triangulated
-- Tests: various shapes, holes refinement, adjacency, quadification quality
+  - OBJ (quads)
+  - glTF 2.0 (.gltf, embedded base64 buffer; quads triangulated)
+  - SVG top view (edges only)
+- Tests: shape variants, holes/refinement, adjacency, quad quality, exporters
 
 Install / Build
-- Requires .NET 8 SDK
-- dotnet build
-- dotnet test
-- dotnet pack src/FastGeoMesh/FastGeoMesh.csproj -c Release
+- .NET 8 SDK required
+- `dotnet build`
+- `dotnet test`
+- `dotnet pack src/FastGeoMesh/FastGeoMesh.csproj -c Release`
 
 Quick start
 ```csharp
@@ -39,27 +41,25 @@ var poly = Polygon2D.FromPoints(new[] {
     new Vec2(0,0), new Vec2(20,0), new Vec2(20,5), new Vec2(0,5)
 });
 
-// Prism definition with base/top elevations
+// Prism definition
 var structure = new PrismStructureDefinition(poly, z0: -10, z1: 10);
 
-// Optional: holes
+// Optional: hole
 // structure.AddHole(Polygon2D.FromPoints(new[]{ new Vec2(8,2), new Vec2(9,2), new Vec2(9,3), new Vec2(8,3) }));
 
-// Optional: constraint segment (lierne) at Z = 2.5
+// Optional: constraint level at Z=2.5 along one footprint edge
 structure.AddConstraintSegment(new Segment2D(new Vec2(0,0), new Vec2(20,0)), 2.5);
 
-// Optional: pure geometry (points/segments)
+// Optional: reference geometry (points + segment)
 structure.Geometry
     .AddPoint(new Vec3(0, 4, 2))
     .AddPoint(new Vec3(20, 4, 4))
     .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(20, 4, 4)));
 
-// Mesher options
 var options = new MesherOptions
 {
     TargetEdgeLengthXY = 0.5,
     TargetEdgeLengthZ = 1.0,
-    GenerateTopAndBottomCaps = true,
     HoleRefineBand = 1.0,
     SegmentRefineBand = 1.0,
     TargetEdgeLengthXYNearHoles = 0.25,
@@ -67,36 +67,42 @@ var options = new MesherOptions
     MinCapQuadQuality = 0.75
 };
 
-// Mesh
 var mesh = new PrismMesher().Mesh(structure, options);
-
-// Convert to indexed mesh and export
 var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
 indexed.WriteCustomTxt("mesh.txt");
 
-// Export (OBJ / glTF)
 using FastGeoMesh.Meshing.Exporters;
 ObjExporter.Write(indexed, "mesh.obj");
 GltfExporter.Write(indexed, "mesh.gltf");
+SvgExporter.Write(indexed, "mesh.svg");
 ```
 
 Key options
-- `TargetEdgeLengthXY`: target edge length in XY (side faces and caps grids)
-- `TargetEdgeLengthZ`: target edge length along Z (vertical levels)
-- `GenerateTopAndBottomCaps`: include caps
-- `HoleRefineBand`: refine caps near holes within this band (rectangle fast-path)
-- `SegmentRefineBand`: refine caps near 3D segments (projected XY) within this band (rectangle fast-path)
-- `TargetEdgeLengthXYNearHoles`/`Segments`: finer XY near holes/segments (rectangle fast-path)
-- `MinCapQuadQuality`: minimal quality [0..1] to accept pairing triangles into a quad on caps (generic path)
+- `TargetEdgeLengthXY` / `TargetEdgeLengthZ`: base subdivision targets
+- `GenerateBottomCap` / `GenerateTopCap`: independently toggle caps
+- `HoleRefineBand`, `SegmentRefineBand`: refinement influence distance (rectangle fast?path only)
+- `TargetEdgeLengthXYNearHoles`, `TargetEdgeLengthXYNearSegments`: finer local XY target (? base)
+- `MinCapQuadQuality`: [0..1] min score to accept triangle pair into a quad (generic cap path)
+- `Epsilon`: coordinate dedup / level comparison tolerance (default 1e-9)
 
-Text format (IndexedMesh)
-- See `IndexedMesh.ReadCustomTxt`/`WriteCustomTxt`
-- Points: count, then lines: id x y z
-- Edges: count, then lines: id a b (1-based vertex ids)
-- Quads: count, then lines: id v0 v1 v2 v3 (1-based vertex ids)
+Quality score (caps)
+Weighted blend (aspect, orthogonality, non?degenerate area). Stored per cap quad for downstream filtering.
+
+Indexed text format
+```
+<pointCount>
+ id x y z
+ ... (pointCount lines)
+<edgeCount>
+ id a b
+ ... (edgeCount lines)  # 1-based vertex indices
+<quadCount>
+ id v0 v1 v2 v3
+ ... (quadCount lines)
+```
 
 Roadmap
-- See ROADMAP.md
+See ROADMAP.md
 
 License
-- MIT, see LICENSE
+MIT (see LICENSE)

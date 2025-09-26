@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Structures;
 using LibTessDotNet;
@@ -13,6 +12,7 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
     {
         ArgumentNullException.ThrowIfNull(structure);
         ArgumentNullException.ThrowIfNull(options);
+        options.Validate();
 
         var mesh = new Mesh();
         var poly = structure.Footprint.Vertices;
@@ -29,8 +29,8 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
         foreach (var hole in structure.Holes)
             AddSideFaces(mesh, hole.Vertices, zLevels, options, outward: false);
 
-        // Caps
-        if (options.GenerateTopAndBottomCaps)
+        // Caps (separate toggles)
+        if (options.GenerateBottomCap || options.GenerateTopCap)
             AddCaps(mesh, structure, options, z0, z1);
 
         // Integrate pure geometry elements into output
@@ -74,13 +74,16 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
 
     private static void AddCaps(Mesh mesh, PrismStructureDefinition structure, MesherOptions options, double z0, double z1)
     {
-        // Rectangle fast-path with holes and refinement
+        bool genBottom = options.GenerateBottomCap;
+        bool genTop = options.GenerateTopCap;
+        if (!genBottom && !genTop) return;
+
+        // Rectangle fast-path with refinement
         if (structure.Footprint.IsRectangleAxisAligned(out var min, out var max))
         {
             int nx = Math.Max(1, (int)Math.Ceiling((max.X - min.X) / options.TargetEdgeLengthXY));
             int ny = Math.Max(1, (int)Math.Ceiling((max.Y - min.Y) / options.TargetEdgeLengthXY));
 
-            // Refinement near holes and near segments
             double holeBand = Math.Max(0, options.HoleRefineBand);
             double fineHoles = options.TargetEdgeLengthXYNearHoles ?? options.TargetEdgeLengthXY;
             int nxFineH = Math.Max(1, (int)Math.Ceiling((max.X - min.X) / fineHoles));
@@ -98,36 +101,41 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
                 return nearHole || nearSeg;
             }
 
+            static double LerpScalar(double a,double b,double t)=> a + (b - a)*t;
+
             void EmitGrid(int gx, int gy, Func<double,double,bool> predicate)
             {
                 for (int i = 0; i < gx; i++)
                 {
                     for (int j = 0; j < gy; j++)
                     {
-                        double x0 = Lerp(min.X, max.X, (double)i / gx);
-                        double x1 = Lerp(min.X, max.X, (double)(i+1) / gx);
-                        double y0 = Lerp(min.Y, max.Y, (double)j / gy);
-                        double y1 = Lerp(min.Y, max.Y, (double)(j+1) / gy);
-
+                        double x0 = LerpScalar(min.X, max.X, (double)i / gx);
+                        double x1 = LerpScalar(min.X, max.X, (double)(i+1) / gx);
+                        double y0 = LerpScalar(min.Y, max.Y, (double)j / gy);
+                        double y1 = LerpScalar(min.Y, max.Y, (double)(j+1) / gy);
                         double cx = 0.5*(x0+x1);
                         double cy = 0.5*(y0+y1);
 
                         if (!PointInPolygon(structure.Footprint.Vertices, cx, cy)) continue;
                         if (IsInsideAnyHole(structure, cx, cy)) continue;
-
                         if (!predicate(cx, cy)) continue;
 
-                        var b0 = new GVec3(x0, y0, z0);
-                        var b1 = new GVec3(x0, y1, z0);
-                        var b2 = new GVec3(x1, y1, z0);
-                        var b3 = new GVec3(x1, y0, z0);
-                        mesh.AddQuad(new Quad(b0, b1, b2, b3));
-
-                        var t0 = new GVec3(x0, y0, z1);
-                        var t1 = new GVec3(x1, y0, z1);
-                        var t2 = new GVec3(x1, y1, z1);
-                        var t3 = new GVec3(x0, y1, z1);
-                        mesh.AddQuad(new Quad(t0, t1, t2, t3));
+                        if (genBottom)
+                        {
+                            var b0 = new GVec3(x0, y0, z0);
+                            var b1 = new GVec3(x0, y1, z0);
+                            var b2 = new GVec3(x1, y1, z0);
+                            var b3 = new GVec3(x1, y0, z0);
+                            mesh.AddQuad(new Quad(b0, b1, b2, b3));
+                        }
+                        if (genTop)
+                        {
+                            var t0 = new GVec3(x0, y0, z1);
+                            var t1 = new GVec3(x1, y0, z1);
+                            var t2 = new GVec3(x1, y1, z1);
+                            var t3 = new GVec3(x0, y1, z1);
+                            mesh.AddQuad(new Quad(t0, t1, t2, t3));
+                        }
                     }
                 }
             }
@@ -207,7 +215,7 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
         foreach (var cand in candidates)
         {
             if (paired[cand.t0] || paired[cand.t1]) continue;
-            EmitQuad(mesh, cand.quad, z0, z1);
+            EmitQuad(mesh, cand.quad, z0, z1, genBottom, genTop);
             paired[cand.t0] = paired[cand.t1] = true;
         }
 
@@ -219,7 +227,7 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
             var v0 = new Vec2((float)verts[a].Position.X, (float)verts[a].Position.Y);
             var v1 = new Vec2((float)verts[b].Position.X, (float)verts[b].Position.Y);
             var v2 = new Vec2((float)verts[c].Position.X, (float)verts[c].Position.Y);
-            EmitQuad(mesh, (v0,v1,v2,v2), z0, z1);
+            EmitQuad(mesh, (v0,v1,v2,v2), z0, z1, genBottom, genTop);
         }
 
         return;
@@ -249,8 +257,7 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
             var quad = (va, vc, vb, vd);
             if (IsConvex(quad)) return quad;
             quad = (va, vd, vb, vc);
-            if (IsConvex(quad)) return quad;
-            return null;
+            return IsConvex(quad) ? quad : null;
         }
 
         static bool IsConvex((Vec2 v0,Vec2 v1,Vec2 v2,Vec2 v3) q)
@@ -296,19 +303,25 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
             return 1.0 - Math.Abs(a.Dot(b) / (na * nb)); // 1 when perpendicular, 0 when parallel
         }
 
-        void EmitQuad(Mesh m, (Vec2 v0,Vec2 v1,Vec2 v2,Vec2 v3) q, double zb, double zt)
+        void EmitQuad(Mesh m, (Vec2 v0,Vec2 v1,Vec2 v2,Vec2 v3) q, double zb, double zt, bool emitBottom, bool emitTop)
         {
-            var b0 = new GVec3(q.v0.X, q.v0.Y, zb);
-            var b1 = new GVec3(q.v1.X, q.v1.Y, zb);
-            var b2 = new GVec3(q.v2.X, q.v2.Y, zb);
-            var b3 = new GVec3(q.v3.X, q.v3.Y, zb);
-            m.AddQuad(new Quad(b0,b1,b2,b3) { QualityScore = ScoreQuad(q) });
-
-            var t0 = new GVec3(q.v0.X, q.v0.Y, zt);
-            var t1 = new GVec3(q.v1.X, q.v1.Y, zt);
-            var t2 = new GVec3(q.v2.X, q.v2.Y, zt);
-            var t3 = new GVec3(q.v3.X, q.v3.Y, zt);
-            m.AddQuad(new Quad(t0,t1,t2,t3) { QualityScore = ScoreQuad(q) });
+            double score = ScoreQuad(q);
+            if (emitBottom)
+            {
+                var b0 = new GVec3(q.v0.X, q.v0.Y, zb);
+                var b1 = new GVec3(q.v1.X, q.v1.Y, zb);
+                var b2 = new GVec3(q.v2.X, q.v2.Y, zb);
+                var b3 = new GVec3(q.v3.X, q.v3.Y, zb);
+                m.AddQuad(new Quad(b0,b1,b2,b3) { QualityScore = score });
+            }
+            if (emitTop)
+            {
+                var t0 = new GVec3(q.v0.X, q.v0.Y, zt);
+                var t1 = new GVec3(q.v1.X, q.v1.Y, zt);
+                var t2 = new GVec3(q.v2.X, q.v2.Y, zt);
+                var t3 = new GVec3(q.v3.X, q.v3.Y, zt);
+                m.AddQuad(new Quad(t0,t1,t2,t3) { QualityScore = score });
+            }
         }
     }
 
@@ -407,5 +420,4 @@ public sealed class PrismMesher : IMesher<PrismStructureDefinition>
     }
 
     private static Vec2 Lerp(in Vec2 a, in Vec2 b, double t) => new(a.X + (b.X - a.X)*t, a.Y + (b.Y - a.Y)*t);
-    private static double Lerp(double a, double b, double t) => a + (b - a) * t;
 }

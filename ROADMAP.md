@@ -1,47 +1,62 @@
 # Roadmap
 
-Status summary
-- v0 delivered: core prism mesher, caps (rectangle fast-path + generic), holes, vertical constraints, quad quality, geometry integration, indexed/exporters, docs/tests.
-- v1 and later: more refinement/smoothing, per-cap options, alignment, performance.
+Status
+- v0 delivered: core prism mesher, caps (rectangle fast?path + generic), holes, constraint Z levels, quad quality, geometry integration, indexed/exporters, docs/tests.
+- v1+: refinement controls, alignment, performance, additional exporters & quality metrics.
 
 v0 (delivered)
 - [x] Prism meshing from CCW polygon footprint + [z0,z1]
-- [x] Side faces with XY subdivision (TargetEdgeLengthXY)
-- [x] Z subdivision honoring TargetEdgeLengthZ, constraint segments at Z, geometry Z
+- [x] Side faces (TargetEdgeLengthXY)
+- [x] Z subdivision (TargetEdgeLengthZ + constraint / geometry levels)
 - [x] Caps generation
-  - [x] Rectangle fast-path with refinement: near holes and near segments
-  - [x] Generic: LibTessDotNet triangulation + quad pairing with quality
-- [x] Quad quality
-  - [x] Expose Quad.QualityScore on caps quads
-  - [x] MinCapQuadQuality default 0.75 to reject poor pairings
-- [x] Geometry integration: points and 3D segments collected to output
-- [x] Indexed mesh export + adjacency + IO for custom txt
-- [x] Exporters: OBJ, glTF (.gltf JSON, embedded buffer)
-- [x] Docs: README, docs/README, MIT License
-- [x] Tests: shapes, holes refinement, adjacency, quadification quality, constraints integration
+  - [x] Rectangle fast?path with local refinement (holes / segments)
+  - [x] Generic LibTessDotNet triangulation + quad pairing
+- [x] Quad quality: score + MinCapQuadQuality filter
+- [x] Geometry integration (points + 3D segments)
+- [x] Indexed mesh (edges, adjacency, custom txt IO)
+- [x] Exporters: OBJ, glTF, SVG top view
+- [x] Tests & docs
 
-v1 (next)
-- [ ] Refinement heuristics
-  - [ ] Anisotropic refinement around internal segments (aligned cells)
-  - [ ] Per-hole/segment band and target values
-- [ ] Caps options
-  - [ ] Generate only top or only bottom cap
-  - [ ] Preserve exact rectangular grid alignment when mixing fine/coarse bands
-- [ ] Alignment and snapping
-  - [ ] Per-edge alignment options (snap to constraints in XY)
-  - [ ] Grid snapping for rectangle fast-path when requested
-- [ ] Quality improvements
-  - [ ] Optional smoothing pass on caps (Laplacian with boundary constraints)
-  - [ ] Additional quad quality metrics (skew, angle deviation) exposed
-- [ ] Samples
-  - [ ] Export example (glTF viewer link)
-  - [ ] Complex footprint with multiple holes
+v1 (planned)
+Refinement
+- [ ] Per?hole / per?segment refinement parameters (override global band & length)
+- [ ] Anisotropic / directional refinement (different X vs Y target)
 
-Later
-- [ ] Variable TargetEdgeLengthZ per band/schedule
-- [ ] Tags/metadata propagation on cells
-- [ ] Performance: pooling LibTessDotNet objects, span-based indexing, zero-alloc paths
+Caps & Alignment
+- [ ] Deterministic cell alignment when mixing coarse/fine bands (no overlap emission)
+- [ ] Optional snap of rectangular grid to user-supplied origin & spacing
+
+Quality & Post?processing
+- [ ] Extra metrics (skew, max angle deviation, aspect variance)
+- [ ] Optional smoothing (Laplacian) on generic caps (boundary + segment constrained)
+- [ ] Quality-driven re?pairing attempt (improve low score quads)
+
+API / Extensibility
+- [ ] IExporter abstraction (unify OBJ / glTF / SVG)
+- [ ] Fluent MesherOptions builder + preset profiles
+- [ ] CancellationToken support in mesher methods
+
+Performance
+- [ ] Object pooling for tessellation buffers
+- [ ] Span/struct enumerators to reduce allocations in FromMesh / adjacency
+- [ ] Parallel cap generation (rectangle path) when large grids
+
+Export
+- [ ] Binary glTF (.glb)
+- [ ] STL (triangulated) optional
+- [ ] Colored SVG (per Z band / per refinement region)
+
+Advanced
+- [ ] Variable vertical schedule (per band TargetEdgeLengthZ)
+- [ ] Metadata / tagging on quads (originating feature, level index)
+- [ ] Simple smoothing for side faces when large vertical aspect ratios
+
+Nice to have / Exploration
+- [ ] Multi-footprint stacking (layered prisms) -> compound mesh
+- [ ] Optional triangulated side faces export
+- [ ] Heightfield export utility (rasterization of top cap)
 
 Notes
-- Keep polygons CCW and simple (no self-intersections)
-- Holes must be inside the footprint and non-overlapping
+- Input polygons must be simple (no self-intersections) and CCW
+- Holes must be strictly inside footprint, non-overlapping
+- Epsilon tuning: 1e-9 default (adjust if coordinates are large magnitude)

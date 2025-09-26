@@ -29,7 +29,8 @@ public sealed class QuadificationTests
         {
             TargetEdgeLengthXY = 0.5,
             TargetEdgeLengthZ = 0.5,
-            GenerateTopAndBottomCaps = true
+            GenerateBottomCap = true,
+            GenerateTopCap = true
         };
 
         var mesh = new PrismMesher().Mesh(structure, options);
@@ -50,17 +51,15 @@ public sealed class QuadificationTests
     [Fact]
     public void GenericPolygonWithoutHolesProducesTopAndBottomCapsWithQuadsOnly()
     {
-        // Simple pentagon (convex), non-rectangular -> tessellation path
         var outer = Polygon2D.FromPoints(new[]
         {
             new Vec2(0,0), new Vec2(4,0), new Vec2(5,2), new Vec2(2.5,4), new Vec2(0,2)
         });
         var structure = new PrismStructureDefinition(outer, -2, -1);
-        var options = new MesherOptions { TargetEdgeLengthXY = 0.75, TargetEdgeLengthZ = 0.5, GenerateTopAndBottomCaps = true };
+        var options = new MesherOptions { TargetEdgeLengthXY = 0.75, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true };
 
         var mesh = new PrismMesher().Mesh(structure, options);
 
-        // Ensure we have caps quads and no triangles are needed (API has only quads)
         int top = mesh.Quads.Count(q => q.V0.Z == -1 && q.V1.Z == -1 && q.V2.Z == -1 && q.V3.Z == -1);
         int bottom = mesh.Quads.Count(q => q.V0.Z == -2 && q.V1.Z == -2 && q.V2.Z == -2 && q.V3.Z == -2);
 
