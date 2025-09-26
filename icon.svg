@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="48" fill="url(#g)"/>
+  <g fill="none" stroke="#fff" stroke-width="14" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M64 176V80l64-32 64 32v96l-64 32z" opacity="0.25"/>
+    <path d="M64 176V80l64-32 64 32v96l-64 32z"/>
+    <path d="M64 80l64 32 64-32M128 112v96" opacity="0.65"/>
+  </g>
+  <text x="128" y="148" font-size="56" font-family="'Segoe UI',Arial,sans-serif" text-anchor="middle" fill="#fff" font-weight="600">FG</text>
+</svg>
