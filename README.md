@@ -31,6 +31,22 @@ Features
   - SVG top view (edges only)
 - Tests: shape variants, holes/refinement, adjacency, quad quality, exporters
 
+### Exporters
+
+FastGeoMesh can export the generated mesh to common 2D/3D formats:
+
+- **OBJ** (Wavefront) — quad faces  
+- **glTF 2.0** — triangulated for interoperability  
+- **SVG** — top-view 2D vector export  
+
+```csharp
+// Assuming 'indexed' is an IndexedMesh
+using FastGeoMesh.Exporters;
+
+ObjExporter.Write(indexed, "mesh.obj");
+GltfExporter.Write(indexed, "mesh.gltf");
+SvgExporter.Write(indexed, "mesh.svg");
+
 Install / Build
 - .NET 8 SDK required
 - `dotnet build`
