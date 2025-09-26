@@ -30,7 +30,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-          cache: true
 
       - name: Restore (generate/update lock files)
         run: dotnet restore --use-lock-file
@@ -67,7 +66,7 @@ jobs:
           [ -f sample_mesh.svg ] && mv sample_mesh.svg docs/images/generated-sample.svg
           count=0
           [ -f sample_mesh.obj ] && count=$((count+1))
-            [ -f sample_mesh.gltf ] && count=$((count+1))
+          [ -f sample_mesh.gltf ] && count=$((count+1))
           [ -f docs/images/generated-sample.svg ] && count=$((count+1))
           pct=${COVERAGE:-0}
           color=$(awk 'BEGIN{r='"$pct"'; if(r>=90) c="brightgreen"; else if(r>=80) c="green"; else if(r>=70) c="yellow"; else if(r>=60) c="orange"; else c="red"; print c;}')
