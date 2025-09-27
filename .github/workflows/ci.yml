@@ -24,7 +24,7 @@ jobs:
         run: >-
           dotnet test --configuration Release --no-build
           /p:CollectCoverage=true
-          /p:CoverletOutputFormat=opencover,lcov
+          "/p:CoverletOutputFormat=opencover,lcov"
           /p:CoverletOutput=tests/FastGeoMesh.Tests/TestResults/coverage/
           /p:Threshold=80 /p:ThresholdType=line,branch,method /p:ThresholdStat=Total
       - name: Upload coverage artifact (LCOV)
@@ -40,7 +40,7 @@ jobs:
           path: tests/FastGeoMesh.Tests/TestResults/coverage/coverage.opencover.xml
           if-no-files-found: warn
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: tests/FastGeoMesh.Tests/TestResults/coverage/coverage.info
