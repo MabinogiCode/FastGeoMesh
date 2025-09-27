@@ -24,7 +24,7 @@ jobs:
         run: >-
           dotnet test --configuration Release --no-build
           /p:CollectCoverage=true
-          /p:CoverletOutputFormat=opencover\,lcov
+          /p:CoverletOutputFormat=opencover,lcov
           /p:CoverletOutput=tests/FastGeoMesh.Tests/TestResults/coverage/
           /p:Threshold=80 /p:ThresholdType=line,branch,method /p:ThresholdStat=Total
       - name: Upload coverage artifact (LCOV)
