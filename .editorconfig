@@ -1,12 +1,40 @@
 root = true
 
 [*.cs]
-dotnet_diagnostic.CA1303.severity = silent
-dotnet_diagnostic.IDE0058.severity = warning
-dotnet_diagnostic.IDE0005.severity = warning
+# Formatting (IDE0055) disabled per request
+dotnet_diagnostic.IDE0055.severity = none
+
+# Unused private member (IDE0052)
+dotnet_diagnostic.IDE0052.severity = error
+
+# Use compound assignment (IDE0054)
+dotnet_diagnostic.IDE0054.severity = error
+
+# Expression value not used (IDE0058) now disabled
+dotnet_diagnostic.IDE0058.severity = none
+
+# Namespace style (IDE0160) – prefer block scoped
+dotnet_diagnostic.IDE0160.severity = error
+csharp_style_namespace_declarations = block_scoped:error
+
+# Bracing rules
+csharp_prefer_braces = true:error
+# Force braces for single-line statements (Roslyn IDE0011)
+dotnet_diagnostic.IDE0011.severity = error
+# New line before else for clarity
+csharp_new_line_before_else = true
+
+# StyleCop strict brace consistency
+dotnet_diagnostic.SA1503.severity = error
+# StyleCop consistent braces formatting
+dotnet_diagnostic.SA1520.severity = error
+
+# Prefer discards (relaxed suggestions)
+csharp_style_unused_value_expression_statement_preference = discard_variable:suggestion
+csharp_style_unused_value_assignment_preference = discard_variable:suggestion
 
 csharp_new_line_before_open_brace = all
 csharp_style_var_for_built_in_types = false:suggestion
 csharp_style_var_when_type_is_apparent = true:suggestion
 csharp_style_var_elsewhere = true:suggestion
-csharp_prefer_braces = true:suggestion
+csharp_prefer_braces = true:error

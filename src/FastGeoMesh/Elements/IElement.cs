@@ -1,8 +1,9 @@
-namespace FastGeoMesh.Elements;
-
-/// <summary>Interface for geometry-only elements that may inform meshing.</summary>
-public interface IElement
+namespace FastGeoMesh.Elements
 {
-    /// <summary>Semantic kind of the element (e.g., SegmentAtZ, Beam, Tie).</summary>
-    string Kind { get; }
+    /// <summary>Interface for geometry-only elements that may inform meshing.</summary>
+    public interface IElement
+    {
+        /// <summary>Semantic kind of the element (e.g., SegmentAtZ, Beam, Tie).</summary>
+        string Kind { get; }
+    }
 }

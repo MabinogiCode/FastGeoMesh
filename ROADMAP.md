@@ -1,62 +1,114 @@
 # Roadmap
 
-Status
-- v0 delivered: core prism mesher, caps (rectangle fast?path + generic), holes, constraint Z levels, quad quality, geometry integration, indexed/exporters, docs/tests.
-- v1+: refinement controls, alignment, performance, additional exporters & quality metrics.
+Versions follow Semantic Versioning. Minor (x.Y) add features backward?compatible; major introduce breaking changes.
 
-v0 (delivered)
-- [x] Prism meshing from CCW polygon footprint + [z0,z1]
-- [x] Side faces (TargetEdgeLengthXY)
-- [x] Z subdivision (TargetEdgeLengthZ + constraint / geometry levels)
-- [x] Caps generation
-  - [x] Rectangle fast?path with local refinement (holes / segments)
-  - [x] Generic LibTessDotNet triangulation + quad pairing
-- [x] Quad quality: score + MinCapQuadQuality filter
-- [x] Geometry integration (points + 3D segments)
-- [x] Indexed mesh (edges, adjacency, custom txt IO)
-- [x] Exporters: OBJ, glTF, SVG top view
-- [x] Tests & docs
+## 1.1.x (Stabilisation / Maintenance)
+### Goals
+- Harden triangle emission path (multiple holes, thin slivers)
+- Add performance baseline (BenchmarkDotNet) for rectangle vs generic caps
+- Expose `QuadQuality` utility (public static) for external filtering
+- Add validation script: `dotnet pack` dry run + NuGet icon sanity
+- Improve test coverage >90% (holes+triangles)
 
-v1 (planned)
-Refinement
-- [ ] Per?hole / per?segment refinement parameters (override global band & length)
-- [ ] Anisotropic / directional refinement (different X vs Y target)
+### Tasks
+- [ ] Benchmark project `FastGeoMesh.Benchmarks`
+- [ ] Public method `QualityEvaluator.ScoreQuad(Vec2[])`
+- [ ] Additional tests: multi-hole, tiny notch, high refinement
+- [ ] CI: optional benchmark job (manual dispatch)
 
-Caps & Alignment
-- [ ] Deterministic cell alignment when mixing coarse/fine bands (no overlap emission)
-- [ ] Optional snap of rectangular grid to user-supplied origin & spacing
+## 1.2 (Refinement & Multi-Volume)
+### Goals
+- Support meshing several `PrismStructureDefinition` and merging results
+- Z offsets per hole (local base/top delta)
+- OBJ grouping (g side / g cap_top / g cap_bottom)
+- glTF optional normals (simple face averages)
+- SVG coloring: internal segments vs boundary
 
-Quality & Post?processing
-- [ ] Extra metrics (skew, max angle deviation, aspect variance)
-- [ ] Optional smoothing (Laplacian) on generic caps (boundary + segment constrained)
-- [ ] Quality-driven re?pairing attempt (improve low score quads)
+### Tasks
+- [ ] `CompositePrismMesher` (list -> merged Mesh)
+- [ ] Hole metadata: local elevation delta
+- [ ] OBJ exporter grouping
+- [ ] glTF normals flag (`IncludeNormals`)
+- [ ] SVG exporter color options
 
-API / Extensibility
-- [ ] IExporter abstraction (unify OBJ / glTF / SVG)
-- [ ] Fluent MesherOptions builder + preset profiles
-- [ ] CancellationToken support in mesher methods
+## 1.3 (Performance & Simplification)
+### Goals
+- Parallel rectangle cap generation
+- Quadification cache (avoid recomputing same triangle pair ordering)
+- Post-process: merge adjacent coplanar quads (optional)
+- New quality criteria: skew & area ratio
 
-Performance
-- [ ] Object pooling for tessellation buffers
-- [ ] Span/struct enumerators to reduce allocations in FromMesh / adjacency
-- [ ] Parallel cap generation (rectangle path) when large grids
+### Tasks
+- [ ] Parallel rectangle tiling (Partitioner)
+- [ ] Pair candidate hash + memo
+- [ ] `MeshSimplifier.MergeCoplanarQuads(epsilon)`
+- [ ] Extend quality struct (aspect, orthogonality, skew, area ratio)
 
-Export
-- [ ] Binary glTF (.glb)
-- [ ] STL (triangulated) optional
-- [ ] Colored SVG (per Z band / per refinement region)
+## 1.4 (Geometry Extensions)
+### Goals
+- Open polylines refinement (not full holes)
+- Weighted segments (priority refinement radius)
+- Local density points (radius + target XY override)
 
-Advanced
-- [ ] Variable vertical schedule (per band TargetEdgeLengthZ)
-- [ ] Metadata / tagging on quads (originating feature, level index)
-- [ ] Simple smoothing for side faces when large vertical aspect ratios
+### Tasks
+- [ ] `RefinementPolyline` support
+- [ ] Segment weight -> dynamic local target length
+- [ ] Point density rule evaluation pass
 
-Nice to have / Exploration
-- [ ] Multi-footprint stacking (layered prisms) -> compound mesh
-- [ ] Optional triangulated side faces export
-- [ ] Heightfield export utility (rasterization of top cap)
+## 1.5 (Export & Interop)
+### Goals
+- glTF binary (.glb)
+- PLY export (triangulated)
+- Simple OBJ import -> `IndexedMesh`
+- JSON metadata export (options + stats)
 
-Notes
-- Input polygons must be simple (no self-intersections) and CCW
-- Holes must be strictly inside footprint, non-overlapping
-- Epsilon tuning: 1e-9 default (adjust if coordinates are large magnitude)
+### Tasks
+- [ ] `GltfExporter.WriteGlb`
+- [ ] `PlyExporter`
+- [ ] `ObjImporter`
+- [ ] `MeshMetadata` (serialize JSON)
+
+## 1.6 (Tooling & CLI)
+### Goals
+- CLI tool `fastgeomesh` for scripting
+- GeoJSON footprint ingestion
+- Auto doc generation (DocFX or xml->md)
+- Bench suite integrated (command flag)
+
+### Tasks
+- [ ] New project `FastGeoMesh.Cli`
+- [ ] GeoJSON parser (footprint + holes)
+- [ ] Doc generation pipeline
+- [ ] Benchmark command
+
+## 2.0 (Planned Breaking Changes)
+### Goals
+- Immutable `MesherOptions` (record + builder)
+- Interface-based refinement rules (`IRefinementRule`)
+- Float precision mode (compile symbol FASTGEOMESH_SINGLE)
+- Unified export interface `IMeshWriter`
+- Source generator for options validation
+
+### Tasks
+- [ ] `MesherOptions` refactor
+- [ ] Rule pipeline & registration
+- [ ] Conditional float structs
+- [ ] Export registry
+- [ ] Analyzer / source generator project
+
+## Backlog / R&D
+- Adaptive curvature-guided subdivision (future non-prismatic variants)
+- Global quad optimization (improve shape regularity) heuristic pass
+- WebAssembly sample (Blazor) for interactive meshing
+
+## Priorities Snapshot
+P0: Triangle stability, benchmarks, normals support.  
+P1: Multi-volume, CLI, quad simplification.  
+P2: Additional exporters, refinement plugins.  
+P3: 2.0 refactor tasks.
+
+## Definition of Done (feature)
+- Tests updated / added, coverage unchanged or higher
+- Bench (if perf-sensitive) shows no regression >10%
+- CHANGELOG entry, README updated if user-visible
+- No new analyzer warnings (warnings-as-errors maintained)
