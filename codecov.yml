@@ -1,0 +1,39 @@
+# Codecov configuration
+# Docs: https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  precision: 2
+  round: down
+  range: 60..100
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 2%
+    patch:
+      default:
+        target: 80%
+        threshold: 5%
+        only_pulls: true
+
+# Define flags (we use 'unittests' in the workflow)
+flags:
+  unittests:
+    paths:
+      - src/
+    carryforward: true
+
+ignore:
+  - "tests/"
+  - "samples/"
+  - "**/Generated/"
+
+comment:
+  layout: "reach, diff, flags, files"
+  require_changes: true
+  behavior: default
+
+# Adjust path fixing if needed (GitHub checkout already normalizes)
+fixes:
+  # Example: "::src/" would strip a leading folder if CI produced absolute paths
+  - "C:\\Git\\FastGeoMesh/::"

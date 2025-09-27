@@ -2,6 +2,9 @@
 
 Fast quad meshing for prismatic volumes from 2D footprints and Z elevations.
 
+[![CI](https://github.com/MabinogiCode/FastGeoMesh/actions/workflows/ci.yml/badge.svg)](https://github.com/MabinogiCode/FastGeoMesh/actions/workflows/ci.yml)
+[![Codecov](https://codecov.io/gh/MabinogiCode/FastGeoMesh/branch/main/graph/badge.svg)](https://codecov.io/gh/MabinogiCode/FastGeoMesh)
+
 Features:
 - Prism mesher (side faces + caps)
 - Rectangle fast-path + generic tessellation
