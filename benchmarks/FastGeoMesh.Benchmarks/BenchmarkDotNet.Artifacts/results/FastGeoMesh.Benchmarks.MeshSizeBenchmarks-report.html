@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>FastGeoMesh.Benchmarks.MeshSizeBenchmarks-20250928-223631</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.6584)
+Intel Core Ultra 7 165U, 1 CPU, 14 logical and 12 physical cores
+.NET SDK 9.0.304
+  [Host]     : .NET 8.0.20 (8.0.2025.41914), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.20 (8.0.2025.41914), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method </th><th>TargetEdgeLength</th><th>GeometrySize</th><th>Mean   </th><th>Error </th><th>StdDev </th><th>Median </th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>MeshRectangle</td><td>0.25</td><td>10</td><td>129.44 &mu;s</td><td>11.753 &mu;s</td><td>33.150 &mu;s</td><td>114.82 &mu;s</td><td>157.2266</td><td>105.4688</td><td>-</td><td>968.89 KB</td>
+</tr><tr><td>MeshRectangle</td><td>0.25</td><td>50</td><td>46,089.47 &mu;s</td><td>2,742.889 &mu;s</td><td>8,087.470 &mu;s</td><td>45,322.86 &mu;s</td><td>4300.0000</td><td>2700.0000</td><td>1000.0000</td><td>25041.9 KB</td>
+</tr><tr><td>MeshRectangle</td><td>0.25</td><td>100</td><td>193,844.73 &mu;s</td><td>6,580.544 &mu;s</td><td>19,402.884 &mu;s</td><td>198,266.39 &mu;s</td><td>15600.0000</td><td>8800.0000</td><td>2000.0000</td><td>100148.31 KB</td>
+</tr><tr><td>MeshRectangle</td><td>0.5</td><td>10</td><td>112.58 &mu;s</td><td>2.209 &mu;s</td><td>2.630 &mu;s</td><td>111.88 &mu;s</td><td>39.8560</td><td>0.1221</td><td>-</td><td>244.16 KB</td>
+</tr><tr><td>MeshRectangle</td><td>0.5</td><td>50</td><td>7,070.71 &mu;s</td><td>180.168 &mu;s</td><td>525.558 &mu;s</td><td>7,035.51 &mu;s</td><td>941.4063</td><td>664.0625</td><td>304.6875</td><td>6263.6 KB</td>
+</tr><tr><td>MeshRectangle</td><td>0.5</td><td>100</td><td>52,164.21 &mu;s</td><td>1,007.396 &mu;s</td><td>1,199.233 &mu;s</td><td>52,471.22 &mu;s</td><td>4312.5000</td><td>2687.5000</td><td>1000.0000</td><td>25041.81 KB</td>
+</tr><tr><td>MeshRectangle</td><td>1</td><td>10</td><td>23.60 &mu;s</td><td>2.163 &mu;s</td><td>6.343 &mu;s</td><td>26.33 &mu;s</td><td>10.2463</td><td>1.9455</td><td>-</td><td>62.79 KB</td>
+</tr><tr><td>MeshRectangle</td><td>1</td><td>50</td><td>2,608.93 &mu;s</td><td>84.845 &mu;s</td><td>243.436 &mu;s</td><td>2,662.08 &mu;s</td><td>292.9688</td><td>230.4688</td><td>58.5938</td><td>1568.31 KB</td>
+</tr><tr><td>MeshRectangle</td><td>1</td><td>100</td><td>5,038.52 &mu;s</td><td>436.369 &mu;s</td><td>1,286.644 &mu;s</td><td>4,910.07 &mu;s</td><td>945.3125</td><td>671.8750</td><td>304.6875</td><td>6263.6 KB</td>
+</tr></tbody></table>
+</body>
+</html>

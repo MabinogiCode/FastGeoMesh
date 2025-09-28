@@ -44,3 +44,27 @@ jobs:
           verbose: true
           disable_search: true
           name: fastgeomesh-coverage
+
+  benchmarks:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore
+      - name: Build benchmarks
+        run: dotnet build benchmarks/FastGeoMesh.Benchmarks --configuration Release --no-restore
+      - name: Run rectangle vs tessellation benchmarks
+        run: dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- rectangle
+      - name: Run mesh size benchmarks
+        run: dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- size
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmarks/FastGeoMesh.Benchmarks/BenchmarkDotNet.Artifacts/**/*
