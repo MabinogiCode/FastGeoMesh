@@ -5,9 +5,9 @@ namespace FastGeoMesh.Meshing
     /// <summary>Options controlling prism meshing resolution, cap generation, refinement and quality thresholds.</summary>
     public sealed class MesherOptions
     {
-        /// <summary>Target horizontal edge length (XY plane) for regular regions.</summary>
+        /// <summary>Maximum desired edge length (XY plane) for regular regions. Actual edges may be smaller to fit geometry constraints.</summary>
         public double TargetEdgeLengthXY { get; set; } = 2.0;
-        /// <summary>Target vertical edge length (Z direction) for side face subdivision.</summary>
+        /// <summary>Maximum desired edge length (Z direction) for side face subdivision. Actual edges may be smaller to fit geometry constraints.</summary>
         public double TargetEdgeLengthZ  { get; set; } = 2.0;
         /// <summary>Generate bottom cap faces.</summary>
         public bool   GenerateBottomCap  { get; set; } = true;
@@ -15,11 +15,11 @@ namespace FastGeoMesh.Meshing
         public bool   GenerateTopCap     { get; set; } = true;
         /// <summary>Vertex merge epsilon for indexing / deduplication.</summary>
         public double  Epsilon                       { get; set; } = 1e-9;
-        /// <summary>Optional finer target edge near holes.</summary>
+        /// <summary>Optional finer maximum edge length near holes.</summary>
         public double? TargetEdgeLengthXYNearHoles   { get; set; }
         /// <summary>Refinement influence band distance around holes.</summary>
         public double  HoleRefineBand                { get; set; }
-        /// <summary>Optional finer target edge near internal segments.</summary>
+        /// <summary>Optional finer maximum edge length near internal segments.</summary>
         public double? TargetEdgeLengthXYNearSegments{ get; set; }
         /// <summary>Refinement influence band distance around internal segments.</summary>
         public double  SegmentRefineBand             { get; set; }
