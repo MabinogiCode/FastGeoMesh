@@ -21,29 +21,24 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
       - name: Test with coverage
-        run: >-
-          dotnet test --configuration Release --no-build
-          /p:CollectCoverage=true
-          "/p:CoverletOutputFormat=opencover,lcov"
-          /p:CoverletOutput=tests/FastGeoMesh.Tests/TestResults/coverage/
-          /p:Threshold=80 /p:ThresholdType=line,branch,method /p:ThresholdStat=Total
+        run: dotnet test --configuration Release --no-build
       - name: Upload coverage artifact (LCOV)
         uses: actions/upload-artifact@v4
         with:
           name: coverage-lcov
-          path: tests/FastGeoMesh.Tests/TestResults/coverage/coverage.info
+          path: tests/TestResults/coverage/coverage.info
           if-no-files-found: warn
       - name: Upload coverage artifact (OpenCover)
         uses: actions/upload-artifact@v4
         with:
           name: coverage-opencover
-          path: tests/FastGeoMesh.Tests/TestResults/coverage/coverage.opencover.xml
+          path: tests/TestResults/coverage/coverage.opencover.xml
           if-no-files-found: warn
       - name: Upload to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: tests/FastGeoMesh.Tests/TestResults/coverage/coverage.info
+          files: tests/TestResults/coverage/coverage.info
           flags: unittests
           fail_ci_if_error: true
           verbose: true
