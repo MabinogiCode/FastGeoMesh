@@ -81,8 +81,8 @@ namespace FastGeoMesh.Utils
         }
 
         /// <summary>
-        /// Point-in-polygon using ray casting with SIMD-friendly optimizations.
-        /// Points on boundary considered inside. Optimized for .NET 8 performance.
+        /// Point-in-polygon using corrected ray casting algorithm.
+        /// Points on boundary considered inside. Fixed algorithm that actually works.
         /// </summary>
         /// <param name="vertices">Polygon vertices as ReadOnlySpan for optimal performance.</param>
         /// <param name="x">Point X coordinate.</param>
@@ -92,39 +92,37 @@ namespace FastGeoMesh.Utils
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static bool PointInPolygon(ReadOnlySpan<Vec2> vertices, double x, double y, double tolerance = 0)
         {
-            tolerance = tolerance <= 0 ? GeometryConfig.DefaultTolerance : tolerance;
+            tolerance = tolerance <= 0 ? GeometryConfig.PointInPolygonTolerance : tolerance;
 
             int n = vertices.Length;
             if (n < 3)
             {
                 return false;
             }
-            
-            var p = new Vec2(x, y);
+
             bool inside = false;
-            
-            // Use ref iteration for better performance
-            ref readonly var firstVertex = ref vertices[0];
-            ref readonly var lastVertex = ref vertices[n - 1];
-            
-            // Check first edge separately to avoid modulo operations in tight loop
-            if (IsPointOnEdgeOrCrossesRay(lastVertex, firstVertex, p, tolerance, ref inside))
+
+            // Standard ray casting algorithm with proper edge case handling
+            for (int i = 0, j = n - 1; i < n; j = i++)
             {
-                return true; // Point is on boundary
-            }
-            
-            // Process remaining edges with vectorization-friendly loop
-            for (int i = 1; i < n; i++)
-            {
-                ref readonly var a = ref vertices[i - 1];
-                ref readonly var b = ref vertices[i];
-                
-                if (IsPointOnEdgeOrCrossesRay(a, b, p, tolerance, ref inside))
+                var vi = vertices[i];
+                var vj = vertices[j];
+
+                // Check if point is on edge
+                if (IsPointOnSegment(x, y, vi.X, vi.Y, vj.X, vj.Y, tolerance))
                 {
-                    return true; // Point is on boundary
+                    return true; // Point on boundary counts as inside
+                }
+
+                // Ray casting test: cast ray from point to the right (+X direction)
+                // Check if edge crosses the ray
+                if (((vi.Y > y) != (vj.Y > y)) &&
+                    (x < (vj.X - vi.X) * (y - vi.Y) / (vj.Y - vi.Y) + vi.X))
+                {
+                    inside = !inside;
                 }
             }
-            
+
             return inside;
         }
 
@@ -140,7 +138,9 @@ namespace FastGeoMesh.Utils
             Span<bool> results, double tolerance = 0)
         {
             if (points.Length != results.Length)
+            {
                 throw new ArgumentException("Points and results spans must have the same length");
+            }
 
             // Optimize for small batches with direct iteration
             for (int i = 0; i < points.Length; i++)
@@ -149,44 +149,35 @@ namespace FastGeoMesh.Utils
             }
         }
 
+        /// <summary>
+        /// Check if a point lies on a line segment within tolerance.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsPointOnEdgeOrCrossesRay(in Vec2 a, in Vec2 b, in Vec2 p, double tolerance, ref bool inside)
+        private static bool IsPointOnSegment(double px, double py, double ax, double ay, double bx, double by, double tolerance)
         {
-            // Fast bounding box rejection
-            double minX = Math.Min(a.X, b.X);
-            double maxX = Math.Max(a.X, b.X);
-            double minY = Math.Min(a.Y, b.Y);
-            double maxY = Math.Max(a.Y, b.Y);
+            // Vector from A to P
+            double apx = px - ax;
+            double apy = py - ay;
+
+            // Vector from A to B  
+            double abx = bx - ax;
+            double aby = by - ay;
+
+            // Cross product to check if point is on line
+            double cross = Math.Abs(apx * aby - apy * abx);
             
-            if (p.X + tolerance < minX || p.X - tolerance > maxX ||
-                p.Y + tolerance < minY || p.Y - tolerance > maxY)
+            // If not on line (within tolerance), return false
+            if (cross > tolerance)
             {
                 return false;
             }
-            
-            // Check if point is on edge
-            double area2 = (b - a).Cross(p - a);
-            if (Math.Abs(area2) <= tolerance)
-            {
-                // Point may be on edge - verify it's within segment bounds
-                var ap = p - a;
-                var ab = b - a;
-                double dot = ap.Dot(ab);
-                double len2 = ab.Dot(ab);
-                if (dot >= -tolerance && dot <= len2 + tolerance)
-                {
-                    return true; // Point is on boundary
-                }
-            }
-            
-            // Ray casting test
-            if (((a.Y > p.Y) != (b.Y > p.Y)) &&
-                (p.X < (b.X - a.X) * (p.Y - a.Y) / (b.Y - a.Y) + a.X))
-            {
-                inside = !inside;
-            }
-            
-            return false;
+
+            // Check if point is within segment bounds
+            double dot = apx * abx + apy * aby;
+            double squaredLength = abx * abx + aby * aby;
+
+            // Point is on segment if 0 <= dot <= squaredLength (with tolerance)
+            return dot >= -tolerance && dot <= squaredLength + tolerance;
         }
 
         /// <summary>
@@ -195,25 +186,20 @@ namespace FastGeoMesh.Utils
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static double PolygonArea(ReadOnlySpan<Vec2> vertices)
         {
-            if (vertices.Length < 3) return 0.0;
+            if (vertices.Length < 3) 
+            {
+                return 0.0;
+            }
             
             double area = 0.0;
             int n = vertices.Length;
             
-            // Unroll first iteration to avoid bounds check in tight loop
-            if (n > 0)
+            // Standard shoelace formula
+            for (int i = 0; i < n; i++)
             {
-                ref readonly var last = ref vertices[n - 1];
-                ref readonly var first = ref vertices[0];
-                area += last.X * first.Y - first.X * last.Y;
-                
-                // Vectorizable loop for remaining vertices
-                for (int i = 1; i < n; i++)
-                {
-                    ref readonly var current = ref vertices[i];
-                    ref readonly var previous = ref vertices[i - 1];
-                    area += previous.X * current.Y - current.X * previous.Y;
-                }
+                int j = (i + 1) % n;
+                area += vertices[i].X * vertices[j].Y;
+                area -= vertices[j].X * vertices[i].Y;
             }
             
             return Math.Abs(area) * 0.5;

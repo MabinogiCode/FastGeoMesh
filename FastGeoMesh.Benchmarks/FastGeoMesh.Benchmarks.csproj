@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\FastGeoMesh\FastGeoMesh.csproj" />
+    <ProjectReference Include="../src/FastGeoMesh/FastGeoMesh.csproj" />
   </ItemGroup>
 
 </Project>
