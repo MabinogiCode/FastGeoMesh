@@ -12,22 +12,23 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void InternalSurfaceWithMultipleHolesExcludesAllHoleAreas()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(10,0), new Vec2(10,10), new Vec2(0,10) });
-            var plate = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(10,0), new Vec2(10,10), new Vec2(0,10) });
-            var holeA = Polygon2D.FromPoints(new[] { new Vec2(2,2), new Vec2(4,2), new Vec2(4,4), new Vec2(2,4) });
-            var holeB = Polygon2D.FromPoints(new[] { new Vec2(6,6), new Vec2(8,6), new Vec2(8,8), new Vec2(6,8) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) });
+            var plate = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) });
+            var holeA = Polygon2D.FromPoints(new[] { new Vec2(2, 2), new Vec2(4, 2), new Vec2(4, 4), new Vec2(2, 4) });
+            var holeB = Polygon2D.FromPoints(new[] { new Vec2(6, 6), new Vec2(8, 6), new Vec2(8, 8), new Vec2(6, 8) });
             var st = new PrismStructureDefinition(outer, 0, 6)
                 .AddInternalSurface(plate, 3.0, holeA, holeB);
-            var opt = new MesherOptions { 
-                TargetEdgeLengthXY = 1.0, 
-                TargetEdgeLengthZ = 2.0, 
-                GenerateBottomCap = false, 
+            var opt = new MesherOptions
+            {
+                TargetEdgeLengthXY = 1.0,
+                TargetEdgeLengthZ = 2.0,
+                GenerateBottomCap = false,
                 GenerateTopCap = false,
                 MinCapQuadQuality = 0.0  // Allow all qualities to ensure some quads are generated
             };
             var mesh = new PrismMesher().Mesh(st, opt);
             var plateQuads = mesh.Quads.Where(q => q.V0.Z == 3.0 && q.V1.Z == 3.0 && q.V2.Z == 3.0 && q.V3.Z == 3.0).ToList();
-            
+
             // NOTE: This test may fail due to LibTessDotNet limitations with complex multi-hole tessellation.
             // If no quads are generated, verify that the fallback mechanism is working correctly.
             if (plateQuads.Count == 0)
@@ -37,7 +38,7 @@ namespace FastGeoMesh.Tests
                 mesh.Quads.Should().NotBeEmpty("Even if tessellation fails, side quads should be generated");
                 return; // Skip the hole exclusion test if tessellation completely failed
             }
-            
+
             plateQuads.Should().NotBeEmpty();
             foreach (var q in plateQuads)
             {

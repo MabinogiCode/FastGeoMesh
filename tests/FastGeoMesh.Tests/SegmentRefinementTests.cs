@@ -13,7 +13,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void CapsAreRefinedNearInternalSegments()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(20,0), new Vec2(20,10), new Vec2(0,10) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10) });
             var structure = new PrismStructureDefinition(outer, -1, 0);
             structure.Geometry.AddPoint(new Vec3(9, 5, -0.5)).AddPoint(new Vec3(11, 5, -0.5)).AddSegment(new Segment3D(new Vec3(9, 5, -0.5), new Vec3(11, 5, -0.5)));
             var options = new MesherOptions { TargetEdgeLengthXY = 2.0, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true, TargetEdgeLengthXYNearSegments = 0.5, SegmentRefineBand = 1.0 };

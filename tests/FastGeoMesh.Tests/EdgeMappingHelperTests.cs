@@ -21,7 +21,7 @@ namespace FastGeoMesh.Tests
 
             // Assert
             edgeToTris.Should().HaveCount(2, "Should have 2 unique edges");
-            
+
             var edge01 = edgeToTris[(0, 1)];
             edge01.Should().HaveCount(2, "Edge (0,1) should have 2 triangles");
             edge01.Should().Contain(100, "Should contain first triangle");
@@ -45,7 +45,7 @@ namespace FastGeoMesh.Tests
             // Assert - Should be stored under consistent key (smaller index first)
             edgeToTris.Should().ContainKey((2, 5), "Edge should be normalized to (2,5)");
             edgeToTris.Should().NotContainKey((5, 2), "Should not have reverse order key");
-            
+
             var triangles = edgeToTris[(2, 5)];
             triangles.Should().HaveCount(2, "Should have both triangles");
             triangles.Should().Contain(100).And.Contain(200);

@@ -13,8 +13,8 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void CapsQuadsExposeQualityScoresBetween0And1()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(6,0), new Vec2(6,3), new Vec2(3,3), new Vec2(3,6), new Vec2(0,6) });
-            var hole = Polygon2D.FromPoints(new[] { new Vec2(1,1), new Vec2(2,1), new Vec2(2,2), new Vec2(1,2) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(6, 0), new Vec2(6, 3), new Vec2(3, 3), new Vec2(3, 6), new Vec2(0, 6) });
+            var hole = Polygon2D.FromPoints(new[] { new Vec2(1, 1), new Vec2(2, 1), new Vec2(2, 2), new Vec2(1, 2) });
             var structure = new PrismStructureDefinition(outer, 0, 1).AddHole(hole);
             var options = new MesherOptions { TargetEdgeLengthXY = 0.75, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true };
             var mesh = new PrismMesher().Mesh(structure, options);
@@ -30,7 +30,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void SideQuadsHaveNoQualityScores()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(4,0), new Vec2(4,2), new Vec2(0,2) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 2), new Vec2(0, 2) });
             var structure = new PrismStructureDefinition(outer, 0, 1);
             var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = false, GenerateTopCap = false };
             var mesh = new PrismMesher().Mesh(structure, options);

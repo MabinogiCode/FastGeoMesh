@@ -15,14 +15,14 @@ namespace FastGeoMesh.Tests
         public void OptimizedMeshingProducesCorrectQuadCount()
         {
             // Arrange
-            var polygon = Polygon2D.FromPoints(new[] 
-            { 
-                new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10) 
+            var polygon = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10)
             });
             var structure = new PrismStructureDefinition(polygon, -5, 5);
-            var options = new MesherOptions 
-            { 
-                TargetEdgeLengthXY = 2.0, 
+            var options = new MesherOptions
+            {
+                TargetEdgeLengthXY = 2.0,
                 TargetEdgeLengthZ = 2.0,
                 GenerateBottomCap = true,
                 GenerateTopCap = true
@@ -34,7 +34,7 @@ namespace FastGeoMesh.Tests
 
             // Assert
             mesh.Quads.Should().NotBeEmpty();
-            
+
             // Expected: side faces + caps
             // Rectangle perimeter = (20+10)*2 = 60, divided by target 2.0 = 30 segments
             // Height = 10, divided by target 2.0 = 5 levels
@@ -48,19 +48,19 @@ namespace FastGeoMesh.Tests
         public void OptimizedMeshingWithHolesExcludesHoleAreas()
         {
             // Arrange
-            var outer = Polygon2D.FromPoints(new[] 
-            { 
-                new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 20), new Vec2(0, 20) 
+            var outer = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 20), new Vec2(0, 20)
             });
-            var hole = Polygon2D.FromPoints(new[] 
-            { 
-                new Vec2(5, 5), new Vec2(15, 5), new Vec2(15, 15), new Vec2(5, 15) 
+            var hole = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(5, 5), new Vec2(15, 5), new Vec2(15, 15), new Vec2(5, 15)
             });
-            
+
             var structure = new PrismStructureDefinition(outer, 0, 2).AddHole(hole);
-            var options = new MesherOptions 
-            { 
-                TargetEdgeLengthXY = 2.0, 
+            var options = new MesherOptions
+            {
+                TargetEdgeLengthXY = 2.0,
                 TargetEdgeLengthZ = 1.0,
                 GenerateBottomCap = true,
                 GenerateTopCap = true
@@ -72,16 +72,16 @@ namespace FastGeoMesh.Tests
 
             // Assert
             mesh.Quads.Should().NotBeEmpty();
-            
+
             // Verify no quads exist in hole area
-            var capQuads = mesh.Quads.Where(q => 
+            var capQuads = mesh.Quads.Where(q =>
                 Math.Abs(q.V0.Z - 0) < 0.1 || Math.Abs(q.V0.Z - 2) < 0.1).ToList();
-                
+
             foreach (var quad in capQuads)
             {
                 var centerX = (quad.V0.X + quad.V1.X + quad.V2.X + quad.V3.X) / 4.0;
                 var centerY = (quad.V0.Y + quad.V1.Y + quad.V2.Y + quad.V3.Y) / 4.0;
-                
+
                 // Quad center should not be in hole area
                 bool inHole = centerX > 5 && centerX < 15 && centerY > 5 && centerY < 15;
                 inHole.Should().BeFalse($"Quad center ({centerX}, {centerY}) should not be in hole area");
@@ -99,11 +99,11 @@ namespace FastGeoMesh.Tests
                 vertices[i] = new Vec2(10 + 8 * Math.Cos(angle), 10 + 8 * Math.Sin(angle));
             }
             var polygon = Polygon2D.FromPoints(vertices);
-            
+
             var structure = new PrismStructureDefinition(polygon, 0, 3);
-            var options = new MesherOptions 
-            { 
-                TargetEdgeLengthXY = 1.0, 
+            var options = new MesherOptions
+            {
+                TargetEdgeLengthXY = 1.0,
                 TargetEdgeLengthZ = 1.0,
                 GenerateBottomCap = true,
                 GenerateTopCap = true
@@ -118,7 +118,7 @@ namespace FastGeoMesh.Tests
             mesh.Quads.Should().NotBeEmpty();
             indexedMesh.Vertices.Should().NotBeEmpty();
             indexedMesh.Quads.Should().NotBeEmpty();
-            
+
             // Verify mesh topology is manifold
             var adjacency = indexedMesh.BuildAdjacency();
             adjacency.NonManifoldEdges.Should().BeEmpty("Optimized meshing should produce manifold geometry");
@@ -128,14 +128,14 @@ namespace FastGeoMesh.Tests
         public void ObjectPoolingDoesNotAffectMeshConsistency()
         {
             // Arrange
-            var polygon = Polygon2D.FromPoints(new[] 
-            { 
-                new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 8), new Vec2(0, 8) 
+            var polygon = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 8), new Vec2(0, 8)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 4);
-            var options = new MesherOptions 
-            { 
-                TargetEdgeLengthXY = 1.0, 
+            var options = new MesherOptions
+            {
+                TargetEdgeLengthXY = 1.0,
                 TargetEdgeLengthZ = 1.0,
                 GenerateBottomCap = true,
                 GenerateTopCap = true
@@ -150,7 +150,7 @@ namespace FastGeoMesh.Tests
             // Assert - All meshes should be identical
             mesh1.Quads.Count.Should().Be(mesh2.Quads.Count);
             mesh2.Quads.Count.Should().Be(mesh3.Quads.Count);
-            
+
             mesh1.Triangles.Count.Should().Be(mesh2.Triangles.Count);
             mesh2.Triangles.Count.Should().Be(mesh3.Triangles.Count);
         }
@@ -165,9 +165,9 @@ namespace FastGeoMesh.Tests
                 new Vec2(3, 3), new Vec2(3, 8), new Vec2(0, 8)
             });
             var structure = new PrismStructureDefinition(lShape, 0, 2);
-            var options = new MesherOptions 
-            { 
-                TargetEdgeLengthXY = 1.0, 
+            var options = new MesherOptions
+            {
+                TargetEdgeLengthXY = 1.0,
                 TargetEdgeLengthZ = 1.0,
                 GenerateBottomCap = true,
                 GenerateTopCap = true,
@@ -181,7 +181,7 @@ namespace FastGeoMesh.Tests
             // Assert
             var capQuads = mesh.Quads.Where(q => q.QualityScore.HasValue).ToList();
             capQuads.Should().NotBeEmpty("Cap quads should have quality scores");
-            
+
             foreach (var quad in capQuads)
             {
                 quad.QualityScore.Should().HaveValue();
@@ -193,21 +193,21 @@ namespace FastGeoMesh.Tests
         public void MeshCachingOptimizationWorksCorrectly()
         {
             // Arrange
-            var polygon = Polygon2D.FromPoints(new[] 
-            { 
-                new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5) 
+            var polygon = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
-            var options = new MesherOptions 
-            { 
-                TargetEdgeLengthXY = 1.0, 
-                TargetEdgeLengthZ = 1.0 
+            var options = new MesherOptions
+            {
+                TargetEdgeLengthXY = 1.0,
+                TargetEdgeLengthZ = 1.0
             };
             var mesher = new PrismMesher();
 
             // Act
             var mesh = mesher.Mesh(structure, options);
-            
+
             // Multiple accesses to cached ReadOnlyCollection properties
             var quads1 = mesh.Quads;
             var quads2 = mesh.Quads;
@@ -217,7 +217,7 @@ namespace FastGeoMesh.Tests
             // Assert
             ReferenceEquals(quads1, quads2).Should().BeTrue("ReadOnlyCollection should be cached");
             ReferenceEquals(triangles1, triangles2).Should().BeTrue("ReadOnlyCollection should be cached");
-            
+
             // After modification, cache should be invalidated
             mesh.AddQuad(new Quad(new Vec3(0, 0, 0), new Vec3(1, 0, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 0)));
             var quads3 = mesh.Quads;

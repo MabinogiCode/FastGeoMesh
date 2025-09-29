@@ -12,7 +12,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void InternalSurfaceElevationAppearsInSideQuadZLevels()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(5,0), new Vec2(5,5), new Vec2(0,5) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(outer, 0, 5)
                 .AddInternalSurface(outer, 2.5);
             var opt = new MesherOptions { TargetEdgeLengthXY = 5.0, TargetEdgeLengthZ = 10.0, GenerateBottomCap = false, GenerateTopCap = false };

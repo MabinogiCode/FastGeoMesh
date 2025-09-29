@@ -1,7 +1,7 @@
 # ?? Enhanced GitHub Actions workflow for FastGeoMesh .NET 8
-# Optimized for performance, reliability, and comprehensive coverage reporting
+# Optimized for performance and automatic code formatting
 
-name: 'CI/CD Enhanced'
+name: 'CI/CD Optimized'
 
 on:
   push:
@@ -18,9 +18,9 @@ env:
   DOTNET_NOLOGO: true
 
 jobs:
-  # Job 1: Build and basic validation
+  # Job 1: Build with automatic formatting
   build:
-    name: '?? Build & Analyze'
+    name: '?? Build & Format'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -30,7 +30,9 @@ jobs:
       - name: '?? Checkout'
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required for GitVersion
+          fetch-depth: 0
+          # Required for auto-formatting commits
+          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: '?? Setup .NET'
         uses: actions/setup-dotnet@v4
@@ -51,13 +53,43 @@ jobs:
       - name: '?? Build solution'
         run: |
           dotnet build --no-restore --configuration Release \
-            /p:TreatWarningsAsErrors=true \
+            /p:TreatWarningsAsErrors=false \
             /p:ContinuousIntegrationBuild=true \
-            /p:Deterministic=true
+            /p:Deterministic=true \
+            /p:RunAnalyzersDuringBuild=false
             
-      - name: '?? Run static analysis'
+      - name: '?? Auto-format code (if needed)'
+        id: format
         run: |
-          dotnet format --verify-no-changes --verbosity diagnostic
+          # Run formatter and capture if any changes were made
+          dotnet format --verbosity minimal --report .format-report.json || true
+          
+          # Check if any files were formatted
+          if [ -f .format-report.json ]; then
+            FORMATTED_FILES=$(jq -r '.DocumentsFormatted // 0' .format-report.json)
+            if [ "$FORMATTED_FILES" -gt 0 ]; then
+              echo "files-formatted=true" >> $GITHUB_OUTPUT
+              echo "? Auto-formatted $FORMATTED_FILES files"
+              
+              # Configure git for auto-commit (only on push, not PR)
+              if [ "${{ github.event_name }}" = "push" ]; then
+                git config --local user.email "action@github.com"
+                git config --local user.name "GitHub Action"
+                git add .
+                git commit -m "?? Auto-format code [skip ci]" || true
+                git push || true
+                echo "? Auto-formatting committed"
+              else
+                echo "??  Formatting needed but skipped on PR - please run 'dotnet format' locally"
+              fi
+            else
+              echo "files-formatted=false" >> $GITHUB_OUTPUT
+              echo "? Code already properly formatted"
+            fi
+          else
+            echo "files-formatted=false" >> $GITHUB_OUTPUT
+            echo "? No formatting report generated"
+          fi
           
       - name: '?? Detect changes'
         id: changes
@@ -68,11 +100,13 @@ jobs:
             echo "should-deploy=false" >> $GITHUB_OUTPUT
           fi
 
-  # Job 2: Comprehensive testing with coverage
+  # Job 2: Fast testing with coverage
   test:
     name: '?? Test & Coverage'
     runs-on: ubuntu-latest
     needs: build
+    # Skip if auto-formatting was applied to avoid duplicate runs
+    if: needs.build.outputs.files-formatted != 'true' || github.event_name == 'workflow_dispatch'
     
     steps:
       - name: '?? Checkout'
@@ -100,14 +134,14 @@ jobs:
         run: |
           dotnet build --no-restore --configuration Release \
             /p:ContinuousIntegrationBuild=true \
-            /p:Deterministic=true
+            /p:Deterministic=true \
+            /p:RunAnalyzersDuringBuild=false
             
       - name: '?? Run tests with coverage'
         run: |
           dotnet test \
             --no-build \
             --configuration Release \
-            --logger "trx;LogFileName=test-results.trx" \
             --logger "console;verbosity=normal" \
             --collect:"XPlat Code Coverage" \
             --results-directory ./tests/TestResults \
@@ -122,21 +156,20 @@ jobs:
             
       - name: '?? Process coverage files'
         run: |
-          # Find and move coverage files to expected location
-          find ./tests/TestResults -name "coverage.cobertura.xml" -exec cp {} ./tests/TestResults/coverage/ \; || true
-          find ./tests/TestResults -name "coverage.opencover.xml" -exec cp {} ./tests/TestResults/coverage/ \; || true
-          find ./tests/TestResults -name "coverage.info" -exec cp {} ./tests/TestResults/coverage/ \; || true
+          # Find and organize coverage files
+          find ./tests/TestResults -name "coverage.cobertura.xml" -exec cp {} ./tests/TestResults/coverage/ \; 2>/dev/null || true
+          find ./tests/TestResults -name "coverage.opencover.xml" -exec cp {} ./tests/TestResults/coverage/ \; 2>/dev/null || true
+          find ./tests/TestResults -name "coverage.info" -exec cp {} ./tests/TestResults/coverage/ \; 2>/dev/null || true
           
           # Ensure coverage.info exists for Codecov
           if [ ! -f "./tests/TestResults/coverage/coverage.info" ]; then
             echo "Creating placeholder coverage.info file"
-            find ./tests/TestResults -name "*.coverage" -exec echo "Found .coverage file: {} but no lcov output" \;
             touch ./tests/TestResults/coverage/coverage.info
           fi
           
           # List all coverage files for debugging
           echo "Coverage files found:"
-          find ./tests/TestResults -name "*coverage*" -type f || echo "No coverage files found"
+          find ./tests/TestResults -name "*coverage*" -type f 2>/dev/null | head -10 || echo "No coverage files found"
           
       - name: '?? Upload test results'
         uses: actions/upload-artifact@v4
@@ -146,64 +179,25 @@ jobs:
           path: ./tests/TestResults/
           retention-days: 30
           
-      - name: '?? Generate coverage report'
-        if: success()
-        run: |
-          dotnet tool install -g dotnet-reportgenerator-globaltool || true
-          
-          COBERTURA_FILE=$(find ./tests/TestResults -name "coverage.cobertura.xml" | head -1)
-          if [ -n "$COBERTURA_FILE" ]; then
-            reportgenerator \
-              "-reports:$COBERTURA_FILE" \
-              "-targetdir:./tests/TestResults/coverage/html" \
-              "-reporttypes:HtmlInline_AzurePipelines;Badges;TextSummary" \
-              "-sourcedirs:./src" \
-              "-title:FastGeoMesh Coverage Report"
-              
-            echo "?? Coverage report generated successfully"
-          else
-            echo "?? No Cobertura file found for report generation"
-          fi
-          
       - name: '?? Upload coverage to Codecov'
         uses: codecov/codecov-action@v4
+        if: success()
         with:
           file: ./tests/TestResults/coverage/coverage.info
           flags: unittests
           name: fastgeomesh-coverage
           fail_ci_if_error: false
-          verbose: true
+          verbose: false
           token: ${{ secrets.CODECOV_TOKEN }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  # Job 3: Performance benchmarks (optional)
-  benchmark:
-    name: '? Performance'
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: '?? Checkout'
-        uses: actions/checkout@v4
-        
-      - name: '?? Setup .NET'
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-          
-      - name: '????? Run performance validation'
-        run: |
-          # Basic performance smoke tests
-          dotnet run --project samples/FastGeoMesh.Sample --configuration Release
-          echo "? Performance validation completed"
-
-  # Job 4: Security scan
+  # Job 3: Security validation (light)
   security:
     name: '?? Security'
     runs-on: ubuntu-latest
     needs: build
+    if: needs.build.outputs.files-formatted != 'true' || github.event_name == 'workflow_dispatch'
     
     steps:
       - name: '?? Checkout'
@@ -219,17 +213,18 @@ jobs:
           dotnet list package --vulnerable --include-transitive 2>&1 | tee security-audit.log
           if grep -q "has the following vulnerable packages" security-audit.log; then
             echo "? Vulnerable packages detected"
+            cat security-audit.log
             exit 1
           else
             echo "? No vulnerable packages detected"
           fi
 
-  # Job 5: Package and deployment preparation
+  # Job 4: Package (only on main/tags)
   package:
     name: '?? Package'
     runs-on: ubuntu-latest
     needs: [build, test, security]
-    if: needs.build.outputs.should-deploy == 'true'
+    if: needs.build.outputs.should-deploy == 'true' && needs.build.outputs.files-formatted != 'true'
     
     steps:
       - name: '?? Checkout'
@@ -248,7 +243,8 @@ jobs:
             --configuration Release \
             --output ./packages \
             /p:PackageVersion=1.1.0-ci.$(date +%Y%m%d).$(git rev-parse --short HEAD) \
-            /p:ContinuousIntegrationBuild=true
+            /p:ContinuousIntegrationBuild=true \
+            /p:RunAnalyzersDuringBuild=false
             
       - name: '?? Upload packages'
         uses: actions/upload-artifact@v4

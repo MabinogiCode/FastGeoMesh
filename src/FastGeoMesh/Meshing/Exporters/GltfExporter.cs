@@ -36,7 +36,7 @@ namespace FastGeoMesh.Meshing.Exporters
             int idxBytes = totalTriCount * 3 * sizeof(uint);
 
             var (minX, minY, minZ, maxX, maxY, maxZ) = CalculateBounds(mesh);
-            
+
             // write quad-derived triangles
             foreach (var (v0, v1, v2, v3) in mesh.Quads)
             {
@@ -89,35 +89,35 @@ namespace FastGeoMesh.Meshing.Exporters
         {
             double minX = double.PositiveInfinity, minY = double.PositiveInfinity, minZ = double.PositiveInfinity;
             double maxX = double.NegativeInfinity, maxY = double.NegativeInfinity, maxZ = double.NegativeInfinity;
-            
+
             foreach (var v in mesh.Vertices)
             {
-                if (v.X < minX) 
+                if (v.X < minX)
                 {
                     minX = v.X;
                 }
-                if (v.Y < minY) 
+                if (v.Y < minY)
                 {
                     minY = v.Y;
                 }
-                if (v.Z < minZ) 
+                if (v.Z < minZ)
                 {
                     minZ = v.Z;
                 }
-                if (v.X > maxX) 
+                if (v.X > maxX)
                 {
                     maxX = v.X;
                 }
-                if (v.Y > maxY) 
+                if (v.Y > maxY)
                 {
                     maxY = v.Y;
                 }
-                if (v.Z > maxZ) 
+                if (v.Z > maxZ)
                 {
                     maxZ = v.Z;
                 }
             }
-            
+
             return (minX, minY, minZ, maxX, maxY, maxZ);
         }
     }

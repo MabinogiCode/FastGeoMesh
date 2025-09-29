@@ -13,7 +13,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void HighThresholdWithoutTriangleOutputProducesDegenerateQuads()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(4,0), new Vec2(4,1), new Vec2(3,1), new Vec2(3,2), new Vec2(4,2), new Vec2(4,4), new Vec2(0,4) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 1), new Vec2(3, 1), new Vec2(3, 2), new Vec2(4, 2), new Vec2(4, 4), new Vec2(0, 4) });
             var st = new PrismStructureDefinition(outer, 0, 1);
             var opt = new MesherOptions
             {
@@ -25,18 +25,18 @@ namespace FastGeoMesh.Tests
                 OutputRejectedCapTriangles = false
             };
             var mesh = new PrismMesher().Mesh(st, opt);
-            
+
             // S1244 fix: Use epsilon-based comparison instead of direct double comparison
             const double epsilon = 1e-9;
-            var bottomQuads = mesh.Quads.Where(q => 
-                Math.Abs(q.V0.Z - 0) < epsilon && Math.Abs(q.V1.Z - 0) < epsilon && 
+            var bottomQuads = mesh.Quads.Where(q =>
+                Math.Abs(q.V0.Z - 0) < epsilon && Math.Abs(q.V1.Z - 0) < epsilon &&
                 Math.Abs(q.V2.Z - 0) < epsilon && Math.Abs(q.V3.Z - 0) < epsilon).ToList();
             bottomQuads.Should().NotBeEmpty();
-            
+
             // S1244 fix: Use epsilon-based comparison for vertex equality
-            bool anyDegenerate = bottomQuads.Any(q => 
-                Math.Abs(q.V2.X - q.V3.X) < epsilon && 
-                Math.Abs(q.V2.Y - q.V3.Y) < epsilon && 
+            bool anyDegenerate = bottomQuads.Any(q =>
+                Math.Abs(q.V2.X - q.V3.X) < epsilon &&
+                Math.Abs(q.V2.Y - q.V3.Y) < epsilon &&
                 Math.Abs(q.V2.Z - q.V3.Z) < epsilon);
             anyDegenerate.Should().BeTrue("Triangle fallback should produce degenerate quads when triangles disabled");
         }
@@ -44,7 +44,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void HighThresholdWithTriangleOutputProducesTriangles()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(4,0), new Vec2(4,1), new Vec2(3,1), new Vec2(3,2), new Vec2(4,2), new Vec2(4,4), new Vec2(0,4) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 1), new Vec2(3, 1), new Vec2(3, 2), new Vec2(4, 2), new Vec2(4, 4), new Vec2(0, 4) });
             var st = new PrismStructureDefinition(outer, 0, 1);
             var opt = new MesherOptions
             {

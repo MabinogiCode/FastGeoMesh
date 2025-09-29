@@ -12,7 +12,7 @@ namespace FastGeoMesh.Utils
         public static double DistancePointToSegment(in Vec2 p, in Vec2 a, in Vec2 b, double tolerance = 0)
         {
             tolerance = tolerance <= 0 ? GeometryConfig.DefaultTolerance : tolerance;
-            
+
             var ab = b - a;
             var ap = p - a;
             double len2 = ab.Dot(ab);
@@ -43,7 +43,7 @@ namespace FastGeoMesh.Utils
         public static bool PointInPolygon(ReadOnlySpan<Vec2> vertices, double x, double y, double tolerance = 0)
         {
             tolerance = tolerance <= 0 ? GeometryConfig.DefaultTolerance : tolerance;
-            
+
             int n = vertices.Length;
             if (n < 3)
             {
@@ -55,7 +55,7 @@ namespace FastGeoMesh.Utils
                 var a = vertices[j];
                 var b = vertices[i];
                 // Fast bounding box rejection
-                if (x + tolerance < Math.Min(a.X, b.X) || x - tolerance > Math.Max(a.X, b.X) || 
+                if (x + tolerance < Math.Min(a.X, b.X) || x - tolerance > Math.Max(a.X, b.X) ||
                     y + tolerance < Math.Min(a.Y, b.Y) || y - tolerance > Math.Max(a.Y, b.Y))
                 {
                     continue;
@@ -92,13 +92,13 @@ namespace FastGeoMesh.Utils
             double c2 = (quad.v2 - quad.v1).Cross(quad.v3 - quad.v2);
             double c3 = (quad.v3 - quad.v2).Cross(quad.v0 - quad.v3);
             double c4 = (quad.v0 - quad.v3).Cross(quad.v1 - quad.v0);
-            
-            return c1 >= GeometryConfig.ConvexityTolerance && c2 >= GeometryConfig.ConvexityTolerance && 
+
+            return c1 >= GeometryConfig.ConvexityTolerance && c2 >= GeometryConfig.ConvexityTolerance &&
                    c3 >= GeometryConfig.ConvexityTolerance && c4 >= GeometryConfig.ConvexityTolerance;
         }
 
         /// <summary>Linear interpolation between two 2D points.</summary>
-        public static Vec2 Lerp(in Vec2 a, in Vec2 b, double t) 
+        public static Vec2 Lerp(in Vec2 a, in Vec2 b, double t)
             => new(a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
 
         /// <summary>Linear interpolation between two scalars.</summary>

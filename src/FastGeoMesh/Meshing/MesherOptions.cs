@@ -20,25 +20,25 @@ namespace FastGeoMesh.Meshing
         /// <summary>Maximum desired edge length (XY plane) for regular regions.</summary>
         public double TargetEdgeLengthXY { get; set; } = 2.0;
         /// <summary>Maximum desired edge length (Z direction) for side face subdivision.</summary>
-        public double TargetEdgeLengthZ  { get; set; } = 2.0;
+        public double TargetEdgeLengthZ { get; set; } = 2.0;
         /// <summary>Generate bottom cap faces.</summary>
-        public bool   GenerateBottomCap  { get; set; } = true;
+        public bool GenerateBottomCap { get; set; } = true;
         /// <summary>Generate top cap faces.</summary>
-        public bool   GenerateTopCap     { get; set; } = true;
+        public bool GenerateTopCap { get; set; } = true;
         /// <summary>Vertex merge epsilon (must be &gt; 0).</summary>
-        public double  Epsilon                       { get; set; } = 1e-9;
+        public double Epsilon { get; set; } = 1e-9;
         /// <summary>Optional finer maximum edge length near holes (must be &lt;= <see cref="TargetEdgeLengthXY"/>).</summary>
-        public double? TargetEdgeLengthXYNearHoles   { get; set; }
+        public double? TargetEdgeLengthXYNearHoles { get; set; }
         /// <summary>Refinement influence band distance around holes (>= 0).</summary>
-        public double  HoleRefineBand                { get; set; }
+        public double HoleRefineBand { get; set; }
         /// <summary>Optional finer maximum edge length near internal segments (must be &lt;= <see cref="TargetEdgeLengthXY"/>).</summary>
-        public double? TargetEdgeLengthXYNearSegments{ get; set; }
+        public double? TargetEdgeLengthXYNearSegments { get; set; }
         /// <summary>Refinement influence band distance around internal segments (>= 0).</summary>
-        public double  SegmentRefineBand             { get; set; }
+        public double SegmentRefineBand { get; set; }
         /// <summary>Minimum acceptable cap quad quality (0..1) to keep a paired quad.</summary>
-        public double  MinCapQuadQuality             { get; set; } = 0.3;
+        public double MinCapQuadQuality { get; set; } = 0.3;
         /// <summary>If true, rejected low-quality quad pairs are emitted as triangles instead of forced quads.</summary>
-        public bool    OutputRejectedCapTriangles    { get; set; }
+        public bool OutputRejectedCapTriangles { get; set; }
 
         /// <summary>Create a new builder for fluent configuration of mesher options.</summary>
         /// <returns>A new MesherOptionsBuilder instance.</returns>
@@ -49,36 +49,36 @@ namespace FastGeoMesh.Meshing
         {
             ValidateTargetEdgeLength(TargetEdgeLengthXY, nameof(TargetEdgeLengthXY));
             ValidateTargetEdgeLength(TargetEdgeLengthZ, nameof(TargetEdgeLengthZ));
-            
+
             if (Epsilon <= 0 || double.IsNaN(Epsilon) || double.IsInfinity(Epsilon))
             {
                 throw new ArgumentOutOfRangeException("Epsilon", Epsilon, "Epsilon must be a positive, finite number");
             }
-            
+
             if (TargetEdgeLengthXYNearHoles is { } h)
             {
                 ValidateTargetEdgeLength(h, nameof(TargetEdgeLengthXYNearHoles));
             }
-            
+
             ValidateRefinementBand(HoleRefineBand, nameof(HoleRefineBand));
-            
+
             if (TargetEdgeLengthXYNearSegments is { } s)
             {
                 ValidateTargetEdgeLength(s, nameof(TargetEdgeLengthXYNearSegments));
             }
-            
+
             ValidateRefinementBand(SegmentRefineBand, nameof(SegmentRefineBand));
-            
+
             if (MinCapQuadQuality < 0 || MinCapQuadQuality > 1 || double.IsNaN(MinCapQuadQuality))
             {
                 throw new ArgumentOutOfRangeException("MinCapQuadQuality", MinCapQuadQuality, "Quality must be between 0 and 1");
             }
-            
+
             if (TargetEdgeLengthXYNearHoles.HasValue && TargetEdgeLengthXYNearHoles > TargetEdgeLengthXY)
             {
                 throw new ArgumentException("Refined length near holes must be <= base target", "TargetEdgeLengthXYNearHoles");
             }
-            
+
             if (TargetEdgeLengthXYNearSegments.HasValue && TargetEdgeLengthXYNearSegments > TargetEdgeLengthXY)
             {
                 throw new ArgumentException("Refined length near segments must be <= base target", "TargetEdgeLengthXYNearSegments");
@@ -91,17 +91,17 @@ namespace FastGeoMesh.Meshing
             {
                 throw new ArgumentOutOfRangeException(paramName, value, "Target edge length must be positive");
             }
-            
+
             if (double.IsNaN(value) || double.IsInfinity(value))
             {
                 throw new ArgumentOutOfRangeException(paramName, value, "Target edge length must be a finite number");
             }
-            
+
             if (value < MIN_TARGET_EDGE_LENGTH)
             {
                 throw new ArgumentOutOfRangeException(paramName, value, $"Target edge length must be >= {MIN_TARGET_EDGE_LENGTH}");
             }
-            
+
             if (value > MAX_TARGET_EDGE_LENGTH)
             {
                 throw new ArgumentOutOfRangeException(paramName, value, $"Target edge length must be <= {MAX_TARGET_EDGE_LENGTH}");
@@ -114,12 +114,12 @@ namespace FastGeoMesh.Meshing
             {
                 throw new ArgumentOutOfRangeException(paramName, value, "Refinement band must be non-negative");
             }
-            
+
             if (double.IsNaN(value) || double.IsInfinity(value))
             {
                 throw new ArgumentOutOfRangeException(paramName, value, "Refinement band must be finite");
             }
-            
+
             if (value > MAX_REFINEMENT_BAND)
             {
                 throw new ArgumentOutOfRangeException(paramName, value, $"Refinement band must be <= {MAX_REFINEMENT_BAND}");

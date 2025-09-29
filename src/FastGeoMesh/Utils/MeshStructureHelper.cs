@@ -123,12 +123,12 @@ namespace FastGeoMesh.Utils
             foreach (var h in structure.Holes)
             {
                 // Convert IReadOnlyList to ReadOnlySpan for the modern API
-                ReadOnlySpan<Vec2> span = h.Vertices is List<Vec2> list 
+                ReadOnlySpan<Vec2> span = h.Vertices is List<Vec2> list
                     ? System.Runtime.InteropServices.CollectionsMarshal.AsSpan(list)
-                    : h.Vertices is Vec2[] array 
+                    : h.Vertices is Vec2[] array
                         ? array.AsSpan()
                         : h.Vertices.ToArray().AsSpan();
-                        
+
                 if (GeometryHelper.PointInPolygon(span, x, y))
                 {
                     return true;

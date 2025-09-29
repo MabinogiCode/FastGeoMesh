@@ -43,27 +43,27 @@ namespace FastGeoMesh.Meshing.Helpers
             {
                 // Add the outer contour (should be CCW)
                 AddContour(tess, plate.Outer);
-                
+
                 // Add hole contours (should be CW, opposite of outer)
                 foreach (var h in plate.Holes)
                 {
                     AddContour(tess, h);
                 }
-                
+
                 tess.Tessellate(WindingRule.EvenOdd, ElementType.Polygons, 3);
                 var verts = tess.Vertices;
                 var elements = tess.Elements;
                 int triCount = tess.ElementCount;
-                
+
                 if (verts == null || elements == null || triCount == 0)
                 {
                     // Fallback: if tessellation fails completely (especially with multiple holes),
                     // generate a simple quad covering the outer polygon and let the hole exclusion
                     // logic handle it properly at runtime
                     GenerateFallbackInternalSurface(mesh, plate, options);
-                    return; 
+                    return;
                 }
-                
+
                 var triangles = MeshingPools.TriangleListPool.Get();
                 var edgeToTris = MeshingPools.EdgeMapPool.Get();
                 var candidates = MeshingPools.CandidateListPool.Get();
@@ -75,7 +75,7 @@ namespace FastGeoMesh.Meshing.Helpers
                         int a = elements[i * 3 + 0];
                         int b = elements[i * 3 + 1];
                         int c = elements[i * 3 + 2];
-                        if (a == -1 || b == -1 || c == -1 || 
+                        if (a == -1 || b == -1 || c == -1 ||
                             a < 0 || b < 0 || c < 0 ||
                             a >= verts!.Length || b >= verts.Length || c >= verts.Length)
                         {
@@ -83,7 +83,7 @@ namespace FastGeoMesh.Meshing.Helpers
                         }
                         triangles.Add((a, b, c));
                     }
-                    
+
                     for (int ti = 0; ti < triangles.Count; ti++)
                     {
                         var (a, b, c) = triangles[ti];
@@ -134,17 +134,17 @@ namespace FastGeoMesh.Meshing.Helpers
                                 continue;
                             }
                             var (a, b, c) = triangles[ti];
-                            
+
                             // Additional safety check for array bounds
                             if (a < 0 || b < 0 || c < 0 || a >= verts!.Length || b >= verts.Length || c >= verts.Length)
                             {
                                 continue;
                             }
-                            
+
                             var v0 = new Vec2(verts[a].Position.X, verts[a].Position.Y);
                             var v1 = new Vec2(verts[b].Position.X, verts[b].Position.Y);
                             var v2 = new Vec2(verts[c].Position.X, verts[c].Position.Y);
-                            
+
                             if (options.OutputRejectedCapTriangles)
                             {
                                 mesh.AddTriangle(new Triangle(new GVec3(v0.X, v0.Y, plate.Elevation), new GVec3(v1.X, v1.Y, plate.Elevation), new GVec3(v2.X, v2.Y, plate.Elevation)));
@@ -154,7 +154,7 @@ namespace FastGeoMesh.Meshing.Helpers
                                 // Create degenerate quad from triangle
                                 var degenerateQuad = (v0, v1, v2, v2);
                                 double score = QuadQualityHelper.ScoreQuad(degenerateQuad);
-                                
+
                                 // Apply quality threshold to degenerate quads as well
                                 if (score < options.MinCapQuadQuality)
                                 {
@@ -171,7 +171,7 @@ namespace FastGeoMesh.Meshing.Helpers
                                         continue; // Skip this quad entirely
                                     }
                                 }
-                                
+
                                 EmitQuad(mesh, degenerateQuad, plate.Elevation, plate.Elevation, emitBottom: true, emitTop: false);
                             }
                         }
@@ -200,7 +200,7 @@ namespace FastGeoMesh.Meshing.Helpers
             // Find bounding box of outer polygon
             double minX = double.MaxValue, minY = double.MaxValue;
             double maxX = double.MinValue, maxY = double.MinValue;
-            
+
             foreach (var v in plate.Outer.Vertices)
             {
                 minX = Math.Min(minX, v.X);
@@ -208,11 +208,11 @@ namespace FastGeoMesh.Meshing.Helpers
                 maxX = Math.Max(maxX, v.X);
                 maxY = Math.Max(maxY, v.Y);
             }
-            
+
             // Generate a simple 2x2 grid over the bounding box
             double midX = (minX + maxX) * 0.5;
             double midY = (minY + maxY) * 0.5;
-            
+
             // Create 4 quads covering the outer polygon
             var quads = new[]
             {
@@ -221,20 +221,20 @@ namespace FastGeoMesh.Meshing.Helpers
                 (new Vec2(minX, midY), new Vec2(midX, midY), new Vec2(midX, maxY), new Vec2(minX, maxY)),
                 (new Vec2(midX, midY), new Vec2(maxX, midY), new Vec2(maxX, maxY), new Vec2(midX, maxY))
             };
-            
+
             foreach (var quad in quads)
             {
                 // Check if quad center is inside outer polygon and not in any hole
                 double cx = (quad.Item1.X + quad.Item2.X + quad.Item3.X + quad.Item4.X) * 0.25;
                 double cy = (quad.Item1.Y + quad.Item2.Y + quad.Item3.Y + quad.Item4.Y) * 0.25;
-                
+
                 // Simple point-in-polygon check for outer boundary
                 bool insideOuter = GeometryHelper.PointInPolygon(plate.Outer.Vertices.ToArray(), cx, cy);
-                if (!insideOuter) 
+                if (!insideOuter)
                 {
                     continue;
                 }
-                
+
                 // Check if inside any hole
                 bool insideAnyHole = false;
                 foreach (var hole in plate.Holes)
@@ -245,7 +245,7 @@ namespace FastGeoMesh.Meshing.Helpers
                         break;
                     }
                 }
-                
+
                 if (!insideAnyHole)
                 {
                     EmitQuad(mesh, quad, plate.Elevation, plate.Elevation, emitBottom: true, emitTop: false);
@@ -298,8 +298,8 @@ namespace FastGeoMesh.Meshing.Helpers
             double[] xBase = X(nx); double[] yBase = Y(ny);
             double[] xHole = (holeBand > 0 && fineHoles < options.TargetEdgeLengthXY) ? X(nxFineH) : Array.Empty<double>();
             double[] yHole = (holeBand > 0 && fineHoles < options.TargetEdgeLengthXY) ? Y(nyFineH) : Array.Empty<double>();
-            double[] xSeg  = (segBand  > 0 && fineSegs  < options.TargetEdgeLengthXY) ? X(nxFineS) : Array.Empty<double>();
-            double[] ySeg  = (segBand  > 0 && fineSegs  < options.TargetEdgeLengthXY) ? Y(nyFineS) : Array.Empty<double>();
+            double[] xSeg = (segBand > 0 && fineSegs < options.TargetEdgeLengthXY) ? X(nxFineS) : Array.Empty<double>();
+            double[] ySeg = (segBand > 0 && fineSegs < options.TargetEdgeLengthXY) ? Y(nyFineS) : Array.Empty<double>();
 
             EmitGrid(mesh, xBase, yBase, z0, z1, genBottom, genTop, footprintIndex, holeIndices,
                 (cx, cy) => !(holeBand > 0 && MeshStructureHelper.IsNearAnyHole(structure, cx, cy, holeBand)) &&
@@ -316,7 +316,7 @@ namespace FastGeoMesh.Meshing.Helpers
             }
         }
 
-        private static void EmitGrid(Mesh mesh, double[] xs, double[] ys, double z0, double z1, bool genBottom, bool genTop, SpatialPolygonIndex footprint, SpatialPolygonIndex[] holes, Func<double,double,bool> predicate)
+        private static void EmitGrid(Mesh mesh, double[] xs, double[] ys, double z0, double z1, bool genBottom, bool genTop, SpatialPolygonIndex footprint, SpatialPolygonIndex[] holes, Func<double, double, bool> predicate)
         {
             for (int i = 0; i < xs.Length - 1; i++)
             {
@@ -337,18 +337,18 @@ namespace FastGeoMesh.Meshing.Helpers
                     {
                         continue;
                     }
-                    
+
                     // Calculate quality score for rectangle cap quads
                     var quadShape = (new Vec2(x0, y0), new Vec2(x0, y1), new Vec2(x1, y1), new Vec2(x1, y0));
                     double score = QuadQualityHelper.ScoreQuad(quadShape);
-                    
+
                     if (genBottom)
                     {
-                        mesh.AddQuad(new Quad(new GVec3(x0,y0,z0), new GVec3(x0,y1,z0), new GVec3(x1,y1,z0), new GVec3(x1,y0,z0), score));
+                        mesh.AddQuad(new Quad(new GVec3(x0, y0, z0), new GVec3(x0, y1, z0), new GVec3(x1, y1, z0), new GVec3(x1, y0, z0), score));
                     }
                     if (genTop)
                     {
-                        mesh.AddQuad(new Quad(new GVec3(x0,y0,z1), new GVec3(x1,y0,z1), new GVec3(x1,y1,z1), new GVec3(x0,y1,z1), score));
+                        mesh.AddQuad(new Quad(new GVec3(x0, y0, z1), new GVec3(x1, y0, z1), new GVec3(x1, y1, z1), new GVec3(x0, y1, z1), score));
                     }
                 }
             }
@@ -381,7 +381,7 @@ namespace FastGeoMesh.Meshing.Helpers
                         int a = elements[i * 3 + 0];
                         int b = elements[i * 3 + 1];
                         int c = elements[i * 3 + 2];
-                        if (a == -1 || b == -1 || c == -1 || 
+                        if (a == -1 || b == -1 || c == -1 ||
                             a < 0 || b < 0 || c < 0 ||
                             verts == null || a >= verts.Length || b >= verts.Length || c >= verts.Length)
                         {
@@ -389,7 +389,7 @@ namespace FastGeoMesh.Meshing.Helpers
                         }
                         triangles.Add((a, b, c));
                     }
-                    
+
                     for (int ti = 0; ti < triangles.Count; ti++)
                     {
                         var (a, b, c) = triangles[ti];
@@ -430,7 +430,7 @@ namespace FastGeoMesh.Meshing.Helpers
                         EmitQuad(mesh, cand.quad, z0, z1, genBottom, genTop);
                         paired[cand.t0] = paired[cand.t1] = true;
                     }
-                    
+
                     // Process remaining unpaired triangles with bounds validation
                     for (int ti = 0; ti < triangles.Count; ti++)
                     {
@@ -439,17 +439,17 @@ namespace FastGeoMesh.Meshing.Helpers
                             continue;
                         }
                         var (a, b, c) = triangles[ti];
-                        
+
                         // Additional safety check (should not be needed after the earlier validation, but defensive)
                         if (a < 0 || b < 0 || c < 0 || verts == null || a >= verts.Length || b >= verts.Length || c >= verts.Length)
                         {
                             continue;
                         }
-                        
+
                         var v0 = new Vec2(verts[a].Position.X, verts[a].Position.Y);
                         var v1 = new Vec2(verts[b].Position.X, verts[b].Position.Y);
                         var v2 = new Vec2(verts[c].Position.X, verts[c].Position.Y);
-                        
+
                         if (outputTris)
                         {
                             if (genBottom)
@@ -466,7 +466,7 @@ namespace FastGeoMesh.Meshing.Helpers
                             // Create degenerate quad from triangle
                             var degenerateQuad = (v0, v1, v2, v2);
                             double score = QuadQualityHelper.ScoreQuad(degenerateQuad);
-                            
+
                             // Apply quality threshold to degenerate quads as well
                             if (score < options.MinCapQuadQuality)
                             {
@@ -490,7 +490,7 @@ namespace FastGeoMesh.Meshing.Helpers
                                     continue; // Skip this quad entirely
                                 }
                             }
-                            
+
                             EmitQuad(mesh, degenerateQuad, z0, z1, genBottom, genTop);
                         }
                     }
@@ -516,7 +516,7 @@ namespace FastGeoMesh.Meshing.Helpers
                 contour[i].Position = new LTessVec3((float)poly.Vertices[i].X, (float)poly.Vertices[i].Y, 0f);
                 contour[i].Data = null;
             }
-            
+
             // For now, use Original orientation for all contours since it works for single holes
             // The complex orientation logic might be causing issues with multiple holes
             tess.AddContour(contour, ContourOrientation.Original);

@@ -13,8 +13,8 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void HoleRefinementIncreasesQuadDensityAroundHole()
         {
-            var rect = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(20,0), new Vec2(20,10), new Vec2(0,10) });
-            var hole = Polygon2D.FromPoints(new[] { new Vec2(8,4), new Vec2(12,4), new Vec2(12,6), new Vec2(8,6) });
+            var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10) });
+            var hole = Polygon2D.FromPoints(new[] { new Vec2(8, 4), new Vec2(12, 4), new Vec2(12, 6), new Vec2(8, 6) });
             var baseStruct = new PrismStructureDefinition(rect, 0, 1).AddHole(hole);
             var coarse = new MesherOptions { TargetEdgeLengthXY = 2.5, TargetEdgeLengthZ = 1, GenerateBottomCap = true, GenerateTopCap = false };
             var refined = new MesherOptions { TargetEdgeLengthXY = 2.5, TargetEdgeLengthZ = 1, GenerateBottomCap = true, GenerateTopCap = false, TargetEdgeLengthXYNearHoles = 1.0, HoleRefineBand = 2.5 };
@@ -28,10 +28,10 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void SegmentRefinementIncreasesQuadDensityAlongSegment()
         {
-            var rect = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(30,0), new Vec2(30,10), new Vec2(0,10) });
+            var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(30, 0), new Vec2(30, 10), new Vec2(0, 10) });
             var structure = new PrismStructureDefinition(rect, 0, 1);
             // Add internal segment across the rectangle midline
-            var seg = new Segment3D(new Vec3(0,5,0), new Vec3(30,5,0));
+            var seg = new Segment3D(new Vec3(0, 5, 0), new Vec3(30, 5, 0));
             structure.Geometry.AddSegment(seg);
             var coarse = new MesherOptions { TargetEdgeLengthXY = 3.0, TargetEdgeLengthZ = 1, GenerateBottomCap = true, GenerateTopCap = false };
             var refined = new MesherOptions { TargetEdgeLengthXY = 3.0, TargetEdgeLengthZ = 1, GenerateBottomCap = true, GenerateTopCap = false, TargetEdgeLengthXYNearSegments = 1.2, SegmentRefineBand = 3.5 };
@@ -45,7 +45,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void RefinementBandsDoNotAffectSideQuadsCountSignificantly()
         {
-            var rect = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(20,0), new Vec2(20,5), new Vec2(0,5) });
+            var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(rect, 0, 4);
             var baseOpt = new MesherOptions { TargetEdgeLengthXY = 2.5, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true };
             var refinedOpt = new MesherOptions { TargetEdgeLengthXY = 2.5, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true, TargetEdgeLengthXYNearHoles = 1.25, HoleRefineBand = 2.0 };

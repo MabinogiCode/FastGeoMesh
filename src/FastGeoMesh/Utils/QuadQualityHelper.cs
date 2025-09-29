@@ -20,7 +20,7 @@ namespace FastGeoMesh.Utils
             {
                 return ScoreQuadSIMD(quad);
             }
-            
+
             return ScoreQuadScalar(quad);
         }
 
@@ -34,17 +34,17 @@ namespace FastGeoMesh.Utils
             double minL = Math.Min(Math.Min(l0, l1), Math.Min(l2, l3));
             double maxL = Math.Max(Math.Max(l0, l1), Math.Max(l2, l3));
             double aspect = minL <= 1e-9 ? 0 : minL / maxL;
-            
+
             // Calculate orthogonality - how close adjacent edges are to 90 degrees
             double o0 = CalculateOrtho((quad.v1 - quad.v0), (quad.v2 - quad.v1));
             double o1 = CalculateOrtho((quad.v2 - quad.v1), (quad.v3 - quad.v2));
             double o2 = CalculateOrtho((quad.v3 - quad.v2), (quad.v0 - quad.v3));
             double o3 = CalculateOrtho((quad.v0 - quad.v3), (quad.v1 - quad.v0));
             double ortho = 0.25 * (o0 + o1 + o2 + o3); // Average orthogonality
-            
+
             double area = Math.Abs(Polygon2D.SignedArea(new[] { quad.v0, quad.v1, quad.v2, quad.v3 }));
             double areaScore = area > 1e-12 ? 1.0 : 0.0;
-            
+
             // Rebalanced weights to ensure perfect square gets > 0.8
             return 0.5 * aspect + 0.4 * ortho + 0.1 * areaScore;
         }
@@ -55,35 +55,35 @@ namespace FastGeoMesh.Utils
             // Pack coordinates into SIMD vectors for parallel computation
             var x = Vector256.Create(quad.v0.X, quad.v1.X, quad.v2.X, quad.v3.X);
             var y = Vector256.Create(quad.v0.Y, quad.v1.Y, quad.v2.Y, quad.v3.Y);
-            
+
             // Calculate edge vectors using SIMD
             var dx = Vector256.Create(quad.v1.X - quad.v0.X, quad.v2.X - quad.v1.X, quad.v3.X - quad.v2.X, quad.v0.X - quad.v3.X);
             var dy = Vector256.Create(quad.v1.Y - quad.v0.Y, quad.v2.Y - quad.v1.Y, quad.v3.Y - quad.v2.Y, quad.v0.Y - quad.v3.Y);
-            
+
             // Calculate edge lengths using SIMD
             var lengthsSquared = Avx.Add(Avx.Multiply(dx, dx), Avx.Multiply(dy, dy));
-            
+
             // Extract individual lengths for min/max calculation
             Span<double> lengths = stackalloc double[4];
             for (int i = 0; i < 4; i++)
             {
                 lengths[i] = Math.Sqrt(lengthsSquared.GetElement(i));
             }
-            
+
             double minL = Math.Min(Math.Min(lengths[0], lengths[1]), Math.Min(lengths[2], lengths[3]));
             double maxL = Math.Max(Math.Max(lengths[0], lengths[1]), Math.Max(lengths[2], lengths[3]));
             double aspect = minL <= 1e-9 ? 0 : minL / maxL;
-            
+
             // Calculate orthogonality (fallback to scalar for complex operations)
             double o0 = CalculateOrtho(new Vec2(dx.GetElement(0), dy.GetElement(0)), new Vec2(dx.GetElement(1), dy.GetElement(1)));
             double o1 = CalculateOrtho(new Vec2(dx.GetElement(1), dy.GetElement(1)), new Vec2(dx.GetElement(2), dy.GetElement(2)));
             double o2 = CalculateOrtho(new Vec2(dx.GetElement(2), dy.GetElement(2)), new Vec2(dx.GetElement(3), dy.GetElement(3)));
             double o3 = CalculateOrtho(new Vec2(dx.GetElement(3), dy.GetElement(3)), new Vec2(dx.GetElement(0), dy.GetElement(0)));
             double ortho = 0.25 * (o0 + o1 + o2 + o3);
-            
+
             double area = Math.Abs(Polygon2D.SignedArea(new[] { quad.v0, quad.v1, quad.v2, quad.v3 }));
             double areaScore = area > 1e-12 ? 1.0 : 0.0;
-            
+
             return 0.5 * aspect + 0.4 * ortho + 0.1 * areaScore;
         }
 
@@ -93,7 +93,7 @@ namespace FastGeoMesh.Utils
             (int a, int b, int c) t0, (int a, int b, int c) t1, ContourVertex[] vertices)
         {
             ArgumentNullException.ThrowIfNull(vertices);
-            
+
             // Validate all indices before proceeding
             if (t0.a < 0 || t0.a >= vertices.Length ||
                 t0.b < 0 || t0.b >= vertices.Length ||
@@ -104,12 +104,12 @@ namespace FastGeoMesh.Utils
             {
                 return null;
             }
-            
+
             // Find shared vertices manually using stack-allocated arrays for better performance
             int shared0 = -1, shared1 = -1, sharedCount = 0;
             Span<int> tmp0 = stackalloc int[3] { t0.a, t0.b, t0.c };
             Span<int> tmp1 = stackalloc int[3] { t1.a, t1.b, t1.c };
-            
+
             for (int i = 0; i < 3 && sharedCount < 2; i++)
             {
                 int vi = tmp0[i];
@@ -130,12 +130,12 @@ namespace FastGeoMesh.Utils
                     }
                 }
             }
-            
+
             if (sharedCount != 2 || shared0 == -1 || shared1 == -1)
             {
                 return null;
             }
-            
+
             int unique0 = -1, unique1 = -1;
             for (int i = 0; i < 3; i++)
             {
@@ -155,25 +155,25 @@ namespace FastGeoMesh.Utils
                     break;
                 }
             }
-            
+
             if (unique0 == -1 || unique1 == -1 ||
                 unique0 < 0 || unique0 >= vertices.Length ||
                 unique1 < 0 || unique1 >= vertices.Length)
             {
                 return null;
             }
-            
+
             var va = new Vec2(vertices[shared0].Position.X, vertices[shared0].Position.Y);
             var vb = new Vec2(vertices[shared1].Position.X, vertices[shared1].Position.Y);
             var vc = new Vec2(vertices[unique0].Position.X, vertices[unique0].Position.Y);
             var vd = new Vec2(vertices[unique1].Position.X, vertices[unique1].Position.Y);
-            
+
             var quad = (va, vc, vb, vd);
             if (GeometryHelper.IsConvex(quad))
             {
                 return quad;
             }
-            
+
             quad = (va, vd, vb, vc);
             return GeometryHelper.IsConvex(quad) ? quad : null;
         }

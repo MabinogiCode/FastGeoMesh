@@ -54,7 +54,7 @@ namespace FastGeoMesh.Utils
         public static void Clear()
         {
             _isShuttingDown = true;
-            
+
             while (_pool.TryTake(out var tess))
             {
                 if (tess is IDisposable disposable)

@@ -90,7 +90,7 @@ namespace FastGeoMesh.Tests
 
             // Use minimum viable geometry size (at least 2x2 to ensure meshing occurs)
             var actualSize = Math.Max(s, 2);
-            
+
             var square = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(actualSize, 0), new Vec2(actualSize, actualSize), new Vec2(0, actualSize)
@@ -107,23 +107,23 @@ namespace FastGeoMesh.Tests
             };
 
             var mesh = new PrismMesher().Mesh(structure, options);
-            
+
             // Test basic mesh validity rather than specific cap quad expectations
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
-            
+
             // Invariants that should always hold:
             // 1. Mesh has some geometry (at least side faces)
             bool hasGeometry = indexed.Vertices.Count > 0 && indexed.Quads.Count > 0;
-            
+
             // 2. All quality scores (when present) are in valid range
-            bool validQualityScores = mesh.Quads.All(q => 
-                !q.QualityScore.HasValue || 
+            bool validQualityScores = mesh.Quads.All(q =>
+                !q.QualityScore.HasValue ||
                 (q.QualityScore.Value >= 0.0 && q.QualityScore.Value <= 1.0));
-            
+
             // 3. No degenerate vertices
-            bool noNaNVertices = indexed.Vertices.All(v => 
+            bool noNaNVertices = indexed.Vertices.All(v =>
                 !double.IsNaN(v.X) && !double.IsNaN(v.Y) && !double.IsNaN(v.Z));
-            
+
             return hasGeometry && validQualityScores && noNaNVertices;
         }
 
@@ -244,7 +244,7 @@ namespace FastGeoMesh.Tests
                 var edge4 = Length(q.V0 - q.V3);
 
                 // Edges should respect the maximum constraint (can be smaller, but not larger)
-                return edge1 <= tolerance && edge2 <= tolerance && 
+                return edge1 <= tolerance && edge2 <= tolerance &&
                        edge3 <= tolerance && edge4 <= tolerance;
             });
         }

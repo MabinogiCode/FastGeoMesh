@@ -10,7 +10,7 @@ namespace FastGeoMesh.Meshing
     {
         /// <summary>Create mesh from the provided structure and options.</summary>
         Mesh Mesh(TStructure input, MesherOptions options);
-        
+
         /// <summary>Create mesh from the provided structure and options asynchronously with cancellation support.</summary>
         /// <param name="input">Structure definition to mesh.</param>
         /// <param name="options">Meshing options.</param>
@@ -27,7 +27,7 @@ namespace FastGeoMesh.Meshing
         /// <param name="options">Meshing parameters and options.</param>
         /// <returns>Generated mesh containing quads and triangles.</returns>
         Mesh Mesh(PrismStructureDefinition structureDefinition, MesherOptions options);
-        
+
         /// <summary>Asynchronously generate a mesh from the given structure and options.</summary>
         /// <param name="structureDefinition">The structure definition to mesh.</param>
         /// <param name="options">Meshing parameters and options.</param>

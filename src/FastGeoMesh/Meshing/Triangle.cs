@@ -22,7 +22,7 @@ namespace FastGeoMesh.Meshing
             V2 = v2;
             QualityScore = null;
         }
-        
+
         /// <summary>Create a triangle from three vertices with quality score.</summary>
         public Triangle(Vec3 v0, Vec3 v1, Vec3 v2, double? qualityScore) : this()
         {

@@ -15,7 +15,7 @@ namespace FastGeoMesh.Meshing
         public Vec3 V3 { get; init; }
         /// <summary>Optional quality score in [0,1] for cap quads; null for side quads or when not computed.</summary>
         public double? QualityScore { get; init; }
-        
+
         /// <summary>Create a quad from four vertices (assumed CCW).</summary>
         public Quad(Vec3 v0, Vec3 v1, Vec3 v2, Vec3 v3) : this()
         {
@@ -25,7 +25,7 @@ namespace FastGeoMesh.Meshing
             V3 = v3;
             QualityScore = null;
         }
-        
+
         /// <summary>Create a quad from four vertices with quality score.</summary>
         public Quad(Vec3 v0, Vec3 v1, Vec3 v2, Vec3 v3, double? qualityScore) : this()
         {

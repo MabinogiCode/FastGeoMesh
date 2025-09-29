@@ -13,9 +13,9 @@ namespace FastGeoMesh.Tests
         public void SpatialPolygonIndexDetectsInsidePoints()
         {
             // Arrange - Square polygon
-            var square = new Vec2[] 
-            { 
-                new(0, 0), new(10, 0), new(10, 10), new(0, 10) 
+            var square = new Vec2[]
+            {
+                new(0, 0), new(10, 0), new(10, 10), new(0, 10)
             };
             var index = new SpatialPolygonIndex(square);
 
@@ -29,9 +29,9 @@ namespace FastGeoMesh.Tests
         public void SpatialPolygonIndexDetectsOutsidePoints()
         {
             // Arrange
-            var square = new Vec2[] 
-            { 
-                new(0, 0), new(10, 0), new(10, 10), new(0, 10) 
+            var square = new Vec2[]
+            {
+                new(0, 0), new(10, 0), new(10, 10), new(0, 10)
             };
             var index = new SpatialPolygonIndex(square);
 
@@ -47,16 +47,16 @@ namespace FastGeoMesh.Tests
         public void SpatialPolygonIndexHandlesBoundaryPoints()
         {
             // Arrange
-            var square = new Vec2[] 
-            { 
-                new(0, 0), new(10, 0), new(10, 10), new(0, 10) 
+            var square = new Vec2[]
+            {
+                new(0, 0), new(10, 0), new(10, 10), new(0, 10)
             };
             var index = new SpatialPolygonIndex(square);
 
             // Act & Assert - Boundary behavior may vary but should be consistent
             var corner = index.IsInside(0, 0);
             var edge = index.IsInside(5, 0);
-            
+
             // Just verify it gives results without crashing
             Assert.True(corner || !corner, "Corner test should not crash");
             Assert.True(edge || !edge, "Edge test should not crash");
@@ -66,10 +66,10 @@ namespace FastGeoMesh.Tests
         public void SpatialPolygonIndexWorksWithComplexPolygon()
         {
             // Arrange - L-shaped polygon
-            var lShape = new Vec2[] 
-            { 
-                new(0, 0), new(6, 0), new(6, 3), 
-                new(3, 3), new(3, 6), new(0, 6) 
+            var lShape = new Vec2[]
+            {
+                new(0, 0), new(6, 0), new(6, 3),
+                new(3, 3), new(3, 6), new(0, 6)
             };
             var index = new SpatialPolygonIndex(lShape);
 
@@ -120,18 +120,18 @@ namespace FastGeoMesh.Tests
         public void SpatialPolygonIndexHandlesDifferentGridResolutions()
         {
             // Arrange
-            var square = new Vec2[] 
-            { 
-                new(0, 0), new(10, 0), new(10, 10), new(0, 10) 
+            var square = new Vec2[]
+            {
+                new(0, 0), new(10, 0), new(10, 10), new(0, 10)
             };
-            
+
             var coarseIndex = new SpatialPolygonIndex(square, gridResolution: 4);
             var fineIndex = new SpatialPolygonIndex(square, gridResolution: 64);
 
             // Act & Assert - Both should give same results for clear inside/outside points
             coarseIndex.IsInside(5, 5).Should().BeTrue("Coarse index should detect inside");
             fineIndex.IsInside(5, 5).Should().BeTrue("Fine index should detect inside");
-            
+
             coarseIndex.IsInside(-1, -1).Should().BeFalse("Coarse index should detect outside");
             fineIndex.IsInside(-1, -1).Should().BeFalse("Fine index should detect outside");
         }
@@ -140,9 +140,9 @@ namespace FastGeoMesh.Tests
         public void SpatialPolygonIndexHandlesTriangle()
         {
             // Arrange - Simple triangle
-            var triangle = new Vec2[] 
-            { 
-                new(0, 0), new(10, 0), new(5, 10) 
+            var triangle = new Vec2[]
+            {
+                new(0, 0), new(10, 0), new(5, 10)
             };
             var index = new SpatialPolygonIndex(triangle);
 
@@ -155,7 +155,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void SpatialPolygonIndexMatchesReferenceImplementation()
         {
-            var poly = new Vec2[] { new(0,0), new(10,0), new(10,5), new(0,5) };
+            var poly = new Vec2[] { new(0, 0), new(10, 0), new(10, 5), new(0, 5) };
             var idx = new SpatialPolygonIndex(poly, gridResolution: 32);
             for (double x = -1; x <= 11; x += 0.8)
             {

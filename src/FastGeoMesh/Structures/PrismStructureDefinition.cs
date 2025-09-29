@@ -27,7 +27,7 @@ namespace FastGeoMesh.Structures
 
         /// <summary>Create base structure.</summary>
         public PrismStructureDefinition(Polygon2D footprint, double baseElevation, double topElevation)
-            : this(footprint, baseElevation, topElevation, Array.Empty<(Segment2D,double)>(), Array.Empty<Polygon2D>(), Array.Empty<InternalSurfaceDefinition>(), null) { }
+            : this(footprint, baseElevation, topElevation, Array.Empty<(Segment2D, double)>(), Array.Empty<Polygon2D>(), Array.Empty<InternalSurfaceDefinition>(), null) { }
 
         private PrismStructureDefinition(
             Polygon2D footprint,
@@ -69,7 +69,7 @@ namespace FastGeoMesh.Structures
             {
                 throw new ArgumentOutOfRangeException(nameof(z), "Constraint Z must be within [BaseElevation, TopElevation].");
             }
-            var list = new List<(Segment2D,double)>(ConstraintSegments.Count + 1);
+            var list = new List<(Segment2D, double)>(ConstraintSegments.Count + 1);
             list.AddRange(ConstraintSegments);
             list.Add((segment, z));
             return new PrismStructureDefinition(Footprint, BaseElevation, TopElevation, list, Holes, InternalSurfaces, Geometry);

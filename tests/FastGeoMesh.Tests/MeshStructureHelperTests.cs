@@ -102,11 +102,11 @@ namespace FastGeoMesh.Tests
             // Arrange
             var hole1 = Polygon2D.FromPoints(new[] { new Vec2(2, 2), new Vec2(4, 2), new Vec2(4, 4), new Vec2(2, 4) });
             var hole2 = Polygon2D.FromPoints(new[] { new Vec2(6, 6), new Vec2(8, 6), new Vec2(8, 8), new Vec2(6, 8) });
-            
-            var holeIndices = new SpatialPolygonIndex[] 
-            { 
-                new(hole1.Vertices), 
-                new(hole2.Vertices) 
+
+            var holeIndices = new SpatialPolygonIndex[]
+            {
+                new(hole1.Vertices),
+                new(hole2.Vertices)
             };
 
             // Act & Assert
@@ -136,12 +136,12 @@ namespace FastGeoMesh.Tests
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(1, 1), new Vec2(0, 1) });
             var structure = new PrismStructureDefinition(polygon, 5, 15);
-            
+
             // Add points outside the Z range - should be excluded
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 2));   // Below range
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 18));  // Above range
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 10));  // Inside range
-            
+
             var options = new MesherOptions { TargetEdgeLengthZ = 5.0, Epsilon = 0.1 };
 
             // Act

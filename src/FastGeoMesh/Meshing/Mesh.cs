@@ -11,10 +11,10 @@ namespace FastGeoMesh.Meshing
         private readonly List<Triangle> _triangles;
         private readonly List<Vec3> _points;
         private readonly List<Segment3D> _internalSegments;
-        
+
         // Use ReaderWriterLockSlim for better read performance
         private readonly ReaderWriterLockSlim _lock = new();
-        
+
         // Lazy initialization with double-check locking
         private ReadOnlyCollection<Quad>? _quadsReadOnly;
         private ReadOnlyCollection<Triangle>? _trianglesReadOnly;
@@ -43,7 +43,7 @@ namespace FastGeoMesh.Meshing
             _points = new List<Vec3>(initialPointCapacity);
             _internalSegments = new List<Segment3D>(initialSegmentCapacity);
         }
-        
+
         /// <summary>Collection of quads.</summary>
         public ReadOnlyCollection<Quad> Quads
         {
@@ -60,7 +60,7 @@ namespace FastGeoMesh.Meshing
                 }
             }
         }
-        
+
         /// <summary>Collection of triangles.</summary>
         public ReadOnlyCollection<Triangle> Triangles
         {
@@ -77,7 +77,7 @@ namespace FastGeoMesh.Meshing
                 }
             }
         }
-        
+
         /// <summary>Auxiliary points carried through to indexed mesh.</summary>
         public ReadOnlyCollection<Vec3> Points
         {
@@ -94,7 +94,7 @@ namespace FastGeoMesh.Meshing
                 }
             }
         }
-        
+
         /// <summary>Internal 3D segments preserved in the indexed mesh.</summary>
         public ReadOnlyCollection<Segment3D> InternalSegments
         {
@@ -111,7 +111,7 @@ namespace FastGeoMesh.Meshing
                 }
             }
         }
-        
+
         /// <summary>Add a quad.</summary>
         public void AddQuad(Quad quad)
         {
@@ -126,13 +126,13 @@ namespace FastGeoMesh.Meshing
                 _lock.ExitWriteLock();
             }
         }
-        
+
         /// <summary>Add multiple quads efficiently.</summary>
         /// <param name="quads">Quads to add.</param>
         public void AddQuads(IEnumerable<Quad> quads)
         {
             ArgumentNullException.ThrowIfNull(quads);
-            
+
             _lock.EnterWriteLock();
             try
             {
@@ -144,7 +144,7 @@ namespace FastGeoMesh.Meshing
                 _lock.ExitWriteLock();
             }
         }
-        
+
         /// <summary>Add a triangle.</summary>
         public void AddTriangle(Triangle tri)
         {
@@ -159,13 +159,13 @@ namespace FastGeoMesh.Meshing
                 _lock.ExitWriteLock();
             }
         }
-        
+
         /// <summary>Add multiple triangles efficiently.</summary>
         /// <param name="triangles">Triangles to add.</param>
         public void AddTriangles(IEnumerable<Triangle> triangles)
         {
             ArgumentNullException.ThrowIfNull(triangles);
-            
+
             _lock.EnterWriteLock();
             try
             {
@@ -177,7 +177,7 @@ namespace FastGeoMesh.Meshing
                 _lock.ExitWriteLock();
             }
         }
-        
+
         /// <summary>Add an auxiliary point.</summary>
         public void AddPoint(Vec3 p)
         {
@@ -192,7 +192,7 @@ namespace FastGeoMesh.Meshing
                 _lock.ExitWriteLock();
             }
         }
-        
+
         /// <summary>Add an internal 3D segment.</summary>
         public void AddInternalSegment(Segment3D s)
         {
@@ -218,7 +218,7 @@ namespace FastGeoMesh.Meshing
                 _triangles.Clear();
                 _points.Clear();
                 _internalSegments.Clear();
-                
+
                 _quadsReadOnly = null;
                 _trianglesReadOnly = null;
                 _pointsReadOnly = null;

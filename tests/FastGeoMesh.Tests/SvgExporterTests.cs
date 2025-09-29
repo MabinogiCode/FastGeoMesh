@@ -14,7 +14,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void ExportsTopViewSvg()
         {
-            var poly = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(4,0), new Vec2(4,2), new Vec2(0,2) });
+            var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 2), new Vec2(0, 2) });
             var st = new PrismStructureDefinition(poly, 0, 1);
             var opt = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true };
             var mesh = new PrismMesher().Mesh(st, opt);
@@ -31,8 +31,8 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void SvgExporterHandlesHolesAndRefinement()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(10,0), new Vec2(10,6), new Vec2(0,6) });
-            var hole = Polygon2D.FromPoints(new[] { new Vec2(2,2), new Vec2(4,2), new Vec2(4,4), new Vec2(2,4) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 6), new Vec2(0, 6) });
+            var hole = Polygon2D.FromPoints(new[] { new Vec2(2, 2), new Vec2(4, 2), new Vec2(4, 4), new Vec2(2, 4) });
             var st = new PrismStructureDefinition(outer, 0, 2).AddHole(hole);
             _ = st.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(10, 0)), 1.0);
             var opt = new MesherOptions { TargetEdgeLengthXY = 1.5, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true, HoleRefineBand = 1.0, TargetEdgeLengthXYNearHoles = 0.75 };

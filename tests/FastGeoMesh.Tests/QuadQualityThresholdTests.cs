@@ -13,7 +13,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void MinCapQuadQualityRejectsPoorPairs()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(5,0), new Vec2(5,1), new Vec2(2.6,1), new Vec2(2.4,3), new Vec2(5,3), new Vec2(5,5), new Vec2(0,5) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 1), new Vec2(2.6, 1), new Vec2(2.4, 3), new Vec2(5, 3), new Vec2(5, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(outer, 0, 1);
             var strict = new MesherOptions { TargetEdgeLengthXY = 0.5, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true, MinCapQuadQuality = 0.5 };
             var loose = new MesherOptions { TargetEdgeLengthXY = 0.5, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true, MinCapQuadQuality = 0.0 };
@@ -33,7 +33,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void DefaultQualityThresholdApplies()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(5,0), new Vec2(5,1), new Vec2(2.6,1), new Vec2(2.4,3), new Vec2(5,3), new Vec2(5,5), new Vec2(0,5) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 1), new Vec2(2.6, 1), new Vec2(2.4, 3), new Vec2(5, 3), new Vec2(5, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(outer, 0, 1);
             var withDefault = new MesherOptions { TargetEdgeLengthXY = 0.5, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true };
             var loose = new MesherOptions { TargetEdgeLengthXY = 0.5, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true, MinCapQuadQuality = 0.0 };

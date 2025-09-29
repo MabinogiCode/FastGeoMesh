@@ -13,7 +13,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void LShapeWithoutExtraGeometryMeshesCapsAndSidesManifold()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(8,0), new Vec2(8,3), new Vec2(3,3), new Vec2(3,8), new Vec2(0,8) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(8, 0), new Vec2(8, 3), new Vec2(3, 3), new Vec2(3, 8), new Vec2(0, 8) });
             var structure = new PrismStructureDefinition(outer, 0, 4);
             var options = new MesherOptions { TargetEdgeLengthXY = 0.75, TargetEdgeLengthZ = 0.5 };
             var mesh = new PrismMesher().Mesh(structure, options);
@@ -29,7 +29,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void LShapeWithExtraGeometryIntegratesConstraintAndSegments()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(8,0), new Vec2(8,3), new Vec2(3,3), new Vec2(3,8), new Vec2(0,8) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(8, 0), new Vec2(8, 3), new Vec2(3, 3), new Vec2(3, 8), new Vec2(0, 8) });
             var structure = new PrismStructureDefinition(outer, 0, 6);
             // FIXED: AddConstraintSegment returns new immutable instance - must reassign
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0.5, 1.0), new Vec2(7.5, 1.0)), 2.0);
@@ -61,7 +61,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void TShapeWithoutExtraGeometryMeshesCapsAndSidesManifold()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(7,0), new Vec2(7,2), new Vec2(5,2), new Vec2(5,5), new Vec2(2,5), new Vec2(2,2), new Vec2(0,2) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(7, 0), new Vec2(7, 2), new Vec2(5, 2), new Vec2(5, 5), new Vec2(2, 5), new Vec2(2, 2), new Vec2(0, 2) });
             var structure = new PrismStructureDefinition(outer, -3, 0);
             var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5 };
             var mesh = new PrismMesher().Mesh(structure, options);
@@ -77,7 +77,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void TShapeWithExtraGeometryIntegratesConstraints()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(7,0), new Vec2(7,2), new Vec2(5,2), new Vec2(5,5), new Vec2(2,5), new Vec2(2,2), new Vec2(0,2) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(7, 0), new Vec2(7, 2), new Vec2(5, 2), new Vec2(5, 5), new Vec2(2, 5), new Vec2(2, 2), new Vec2(0, 2) });
             var structure = new PrismStructureDefinition(outer, -4, 0);
             // FIXED: AddConstraintSegment returns new immutable instance - must reassign
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0.5, 0.5), new Vec2(6.5, 0.5)), -2.0);

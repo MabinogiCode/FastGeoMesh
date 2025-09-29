@@ -13,7 +13,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void GenerateSideQuadsProducesExpectedVerticalLayers()
         {
-            var loop = new[] { new Vec2(0,0), new Vec2(4,0), new Vec2(4,2), new Vec2(0,2) };
+            var loop = new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 2), new Vec2(0, 2) };
             var zLevels = new double[] { 0, 1, 2 };
             var options = new MesherOptions { TargetEdgeLengthXY = 2.0, TargetEdgeLengthZ = 1.0 };
             var quads = SideFaceMeshingHelper.GenerateSideQuads(loop, zLevels, options, outward: true);
@@ -27,7 +27,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void GenerateSideQuadsRespectsOutwardFlagOrientation()
         {
-            var loop = new[] { new Vec2(0,0), new Vec2(1,0), new Vec2(1,1), new Vec2(0,1) };
+            var loop = new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(1, 1), new Vec2(0, 1) };
             var z = new double[] { 0, 1 };
             var opt = new MesherOptions { TargetEdgeLengthXY = 2.0, TargetEdgeLengthZ = 1.0 };
             var outward = SideFaceMeshingHelper.GenerateSideQuads(loop, z, opt, true);

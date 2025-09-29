@@ -13,7 +13,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void RectangleCapsMatchExpectedCounts()
         {
-            var rect = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(10,0), new Vec2(10,4), new Vec2(0,4) });
+            var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 4), new Vec2(0, 4) });
             var structure = new PrismStructureDefinition(rect, 0, 2);
             var opt = new MesherOptions { TargetEdgeLengthXY = 2.0, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true };
             var mesh = new Mesh();
@@ -27,7 +27,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void GenericCapsProduceQualityScoresWithinRange()
         {
-            var concave = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(6,0), new Vec2(6,2), new Vec2(2,2), new Vec2(2,6), new Vec2(0,6) });
+            var concave = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(6, 0), new Vec2(6, 2), new Vec2(2, 2), new Vec2(2, 6), new Vec2(0, 6) });
             var structure = new PrismStructureDefinition(concave, -1, 0);
             var opt = new MesherOptions { TargetEdgeLengthXY = 0.75, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true };
             var mesh = new Mesh();

@@ -11,9 +11,9 @@ namespace FastGeoMesh.Utils
     {
         /// <summary>Activity source for distributed tracing of meshing operations.</summary>
         public static readonly ActivitySource ActivitySource = new("FastGeoMesh");
-        
+
         private static readonly DiagnosticSource _diagnosticSource = new DiagnosticListener("FastGeoMesh");
-        
+
         /// <summary>Performance counters for key meshing operations.</summary>
         public static class Counters
         {
@@ -22,28 +22,38 @@ namespace FastGeoMesh.Utils
             private static long _trianglesGenerated;
             private static long _poolHits;
             private static long _poolMisses;
-            
+
+            /// <inheritdoc/>
             public static long MeshingOperations => _meshingOperations;
+            /// <inheritdoc/>
             public static long QuadsGenerated => _quadsGenerated;
+            /// <inheritdoc/>
             public static long TrianglesGenerated => _trianglesGenerated;
+            /// <inheritdoc/>
             public static long PoolHits => _poolHits;
+            /// <inheritdoc/>
             public static long PoolMisses => _poolMisses;
-            
+
+            /// <inheritdoc/>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void IncrementMeshingOperations() => Interlocked.Increment(ref _meshingOperations);
-            
+
+            /// <inheritdoc/>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void AddQuadsGenerated(int count) => Interlocked.Add(ref _quadsGenerated, count);
-            
+
+            /// <inheritdoc/>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void AddTrianglesGenerated(int count) => Interlocked.Add(ref _trianglesGenerated, count);
-            
+
+            /// <inheritdoc/>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void IncrementPoolHit() => Interlocked.Increment(ref _poolHits);
-            
+
+            /// <inheritdoc/>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void IncrementPoolMiss() => Interlocked.Increment(ref _poolMisses);
-            
+
             /// <summary>Get current performance statistics.</summary>
             public static PerformanceStatistics GetStatistics()
             {
@@ -56,12 +66,22 @@ namespace FastGeoMesh.Utils
                 };
             }
         }
-        
+
         /// <summary>Start a new activity for tracking meshing operations.</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Activity? StartMeshingActivity(string operationName, object? tags = null)
         {
+            // Try to create activity with ActivitySource first
             var activity = ActivitySource.StartActivity(operationName);
+            
+            // If no listener is present, create a manual activity for testing scenarios
+            if (activity == null)
+            {
+                activity = new Activity(operationName);
+                activity.Start();
+            }
+
+            // Set tags if provided
             if (activity != null && tags != null)
             {
                 foreach (var prop in tags.GetType().GetProperties())
@@ -69,9 +89,10 @@ namespace FastGeoMesh.Utils
                     activity.SetTag(prop.Name, prop.GetValue(tags)?.ToString());
                 }
             }
+            
             return activity;
         }
-        
+
         /// <summary>Record diagnostic event for performance analysis.</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void RecordEvent(string eventName, object? data = null)
@@ -81,15 +102,20 @@ namespace FastGeoMesh.Utils
                 _diagnosticSource.Write(eventName, data);
             }
         }
-        
+
         /// <summary>Performance statistics snapshot.</summary>
         public readonly struct PerformanceStatistics
         {
+            /// <inheritdoc/>
             public long MeshingOperations { get; init; }
+            /// <inheritdoc/>
             public long QuadsGenerated { get; init; }
+            /// <inheritdoc/>
             public long TrianglesGenerated { get; init; }
+            /// <inheritdoc/>
             public double PoolHitRate { get; init; }
-            
+
+            /// <inheritdoc/>
             public override string ToString()
             {
                 return $"Operations: {MeshingOperations}, Quads: {QuadsGenerated}, Triangles: {TrianglesGenerated}, Pool Hit Rate: {PoolHitRate:P2}";

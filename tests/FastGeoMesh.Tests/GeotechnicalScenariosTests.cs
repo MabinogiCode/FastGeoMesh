@@ -13,9 +13,9 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void SlabWithHolesDoesNotMeshHolesOnCapsAndGeneratesInnerSideFaces()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(20,0), new Vec2(20,10), new Vec2(0,10) });
-            var hole1 = Polygon2D.FromPoints(new[] { new Vec2(5,3), new Vec2(7,3), new Vec2(7,5), new Vec2(5,5) });
-            var hole2 = Polygon2D.FromPoints(new[] { new Vec2(12,6), new Vec2(13,6), new Vec2(13,8), new Vec2(12,8) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10) });
+            var hole1 = Polygon2D.FromPoints(new[] { new Vec2(5, 3), new Vec2(7, 3), new Vec2(7, 5), new Vec2(5, 5) });
+            var hole2 = Polygon2D.FromPoints(new[] { new Vec2(12, 6), new Vec2(13, 6), new Vec2(13, 8), new Vec2(12, 8) });
             var structure = new PrismStructureDefinition(outer, -1, 0).AddHole(hole1).AddHole(hole2);
             var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = false, GenerateTopCap = false };
             var mesh = new PrismMesher().Mesh(structure, options);
@@ -33,7 +33,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void BraceFootingOutsideIsCarriedAsInternalSegment()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(10,0), new Vec2(10,5), new Vec2(0,5) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(outer, -2, 0);
             var support = new Vec3(-5, -2, 0);
             var inside = new Vec3(0, 0, 0);

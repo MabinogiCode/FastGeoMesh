@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using FastGeoMesh.Geometry;
@@ -92,15 +93,41 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void PerformanceMonitorActivitySourceWorks()
         {
-            // Arrange & Act
-            using var activity = PerformanceMonitor.StartMeshingActivity("TestOperation", new { 
-                EdgeLength = 1.0, 
-                QuadCount = 100 
+            // Arrange & Act - Test both with and without listener
+            using var activity1 = PerformanceMonitor.StartMeshingActivity("TestOperation", new
+            {
+                EdgeLength = 1.0,
+                QuadCount = 100
             });
 
-            // Assert
-            activity.Should().NotBeNull();
-            activity!.OperationName.Should().Be("TestOperation");
+            // Act with listener for full functionality test
+            using var listener = new ActivityListener
+            {
+                ShouldListenTo = source => source.Name == "FastGeoMesh",
+                Sample = (ref ActivityCreationOptions<ActivityContext> options) => ActivitySamplingResult.AllData
+            };
+            ActivitySource.AddActivityListener(listener);
+
+            using var activity2 = PerformanceMonitor.StartMeshingActivity("TestOperationWithListener", new
+            {
+                EdgeLength = 2.0,
+                QuadCount = 200
+            });
+
+            // Assert - At least one activity should be created (fallback mechanism)
+            // Either from the listener or from the fallback implementation
+            activity1.Should().NotBeNull("Activity should be created via fallback mechanism");
+            activity2.Should().NotBeNull("Activity should be created with listener present");
+            
+            if (activity1 != null)
+            {
+                activity1.OperationName.Should().Be("TestOperation");
+            }
+            
+            if (activity2 != null)
+            {
+                activity2.OperationName.Should().Be("TestOperationWithListener");
+            }
         }
 
         [Fact]
@@ -119,13 +146,13 @@ namespace FastGeoMesh.Tests
         {
             // Arrange - Perfect square
             var perfectSquare = (
-                new Vec2(0, 0), new Vec2(1, 0), 
+                new Vec2(0, 0), new Vec2(1, 0),
                 new Vec2(1, 1), new Vec2(0, 1)
             );
-            
+
             // Degenerate quad (very thin)
             var degenerateQuad = (
-                new Vec2(0, 0), new Vec2(10, 0), 
+                new Vec2(0, 0), new Vec2(10, 0),
                 new Vec2(10, 0.1), new Vec2(0, 0.1)
             );
 
@@ -144,9 +171,9 @@ namespace FastGeoMesh.Tests
         {
             // Arrange
             var mesher = new TestAsyncMesher();
-            var polygon = Polygon2D.FromPoints(new[] 
-            { 
-                new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5) 
+            var polygon = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build();

@@ -13,7 +13,7 @@ namespace FastGeoMesh.Utils
         private readonly int _gridSize;
         private readonly double _cellSizeX, _cellSizeY;
         private readonly CellResult[][] _grid; // jagged array replacing 2D array
-        
+
         /// <summary>Create spatial index for a polygon.</summary>
         public SpatialPolygonIndex(IReadOnlyList<Vec2> vertices, int gridResolution = 64)
         {
@@ -25,11 +25,11 @@ namespace FastGeoMesh.Utils
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(gridResolution);
             _vertices = vertices;
             _gridSize = gridResolution;
-            
+
             // Compute bounding box
             _minX = _maxX = vertices[0].X;
             _minY = _maxY = vertices[0].Y;
-            
+
             for (int i = 1; i < vertices.Count; i++)
             {
                 var v = vertices[i];
@@ -38,14 +38,14 @@ namespace FastGeoMesh.Utils
                 if (v.Y < _minY) { _minY = v.Y; }
                 if (v.Y > _maxY) { _maxY = v.Y; }
             }
-            
+
             // Add small margin to avoid edge cases
             double margin = Math.Max((_maxX - _minX), (_maxY - _minY)) * 0.01;
             _minX -= margin;
             _maxX += margin;
             _minY -= margin;
             _maxY += margin;
-            
+
             _cellSizeX = (_maxX - _minX) / _gridSize;
             _cellSizeY = (_maxY - _minY) / _gridSize;
             _grid = new CellResult[_gridSize][];
@@ -53,11 +53,11 @@ namespace FastGeoMesh.Utils
             {
                 _grid[i] = new CellResult[_gridSize];
             }
-            
+
             // Pre-compute grid cells
             BuildIndex();
         }
-        
+
         /// <summary>Fast point-in-polygon test using spatial index.</summary>
         public bool IsInside(double x, double y)
         {
@@ -66,13 +66,13 @@ namespace FastGeoMesh.Utils
             {
                 return false;
             }
-            
+
             // Get grid cell
             int cellX = Math.Min(_gridSize - 1, (int)((x - _minX) / _cellSizeX));
             int cellY = Math.Min(_gridSize - 1, (int)((y - _minY) / _cellSizeY));
-            
+
             var cellResult = _grid[cellX][cellY];
-            
+
             return cellResult switch
             {
                 CellResult.Inside => true,
@@ -80,7 +80,7 @@ namespace FastGeoMesh.Utils
                 _ => PointInPolygonRayCasting(x, y)
             };
         }
-        
+
         private void BuildIndex()
         {
             // Sample each grid cell to determine if it's entirely inside, outside, or crosses boundary
@@ -92,13 +92,13 @@ namespace FastGeoMesh.Utils
                     double cellMaxX = _minX + (i + 1) * _cellSizeX;
                     double cellMinY = _minY + j * _cellSizeY;
                     double cellMaxY = _minY + (j + 1) * _cellSizeY;
-                    
+
                     // Sample corner points of cell
                     bool tl = PointInPolygonRayCasting(cellMinX, cellMinY);
                     bool tr = PointInPolygonRayCasting(cellMaxX, cellMinY);
                     bool bl = PointInPolygonRayCasting(cellMinX, cellMaxY);
                     bool br = PointInPolygonRayCasting(cellMaxX, cellMaxY);
-                    
+
                     if (tl && tr && bl && br)
                     {
                         _grid[i][j] = CellResult.Inside;
@@ -117,16 +117,16 @@ namespace FastGeoMesh.Utils
                 }
             }
         }
-        
+
         private bool PointInPolygonRayCasting(double x, double y)
         {
             // Convert IReadOnlyList to ReadOnlySpan for optimal performance
-            ReadOnlySpan<Vec2> span = _vertices is List<Vec2> list 
+            ReadOnlySpan<Vec2> span = _vertices is List<Vec2> list
                 ? System.Runtime.InteropServices.CollectionsMarshal.AsSpan(list)
-                : _vertices is Vec2[] array 
+                : _vertices is Vec2[] array
                     ? array.AsSpan()
                     : _vertices.ToArray().AsSpan();
-                    
+
             return GeometryHelper.PointInPolygon(span, x, y);
         }
     }

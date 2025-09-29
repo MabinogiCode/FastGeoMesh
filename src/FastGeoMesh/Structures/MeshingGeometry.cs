@@ -13,7 +13,7 @@ namespace FastGeoMesh.Structures
         private readonly List<Vec3> _points = new();
         private readonly List<Segment3D> _segments = new();
         private readonly object _syncLock = new();
-        
+
         // Cache ReadOnlyCollection to avoid repeated allocations
         private volatile ReadOnlyCollection<Vec3>? _pointsReadOnly;
         private volatile ReadOnlyCollection<Segment3D>? _segmentsReadOnly;
@@ -27,14 +27,14 @@ namespace FastGeoMesh.Structures
                 {
                     return _pointsReadOnly;
                 }
-                    
+
                 lock (_syncLock)
                 {
                     return _pointsReadOnly ??= _points.AsReadOnly();
                 }
             }
         }
-        
+
         /// <summary>Read-only list of registered 3D segments.</summary>
         public ReadOnlyCollection<Segment3D> Segments
         {
@@ -44,7 +44,7 @@ namespace FastGeoMesh.Structures
                 {
                     return _segmentsReadOnly;
                 }
-                    
+
                 lock (_syncLock)
                 {
                     return _segmentsReadOnly ??= _segments.AsReadOnly();
@@ -55,27 +55,27 @@ namespace FastGeoMesh.Structures
         /// <summary>Add a point to the geometry set.</summary>
         /// <param name="p">Point to add.</param>
         /// <returns>This instance for method chaining.</returns>
-        public MeshingGeometry AddPoint(Vec3 p) 
-        { 
+        public MeshingGeometry AddPoint(Vec3 p)
+        {
             lock (_syncLock)
             {
-                _points.Add(p); 
+                _points.Add(p);
                 _pointsReadOnly = null; // Invalidate cache
             }
-            return this; 
+            return this;
         }
-        
+
         /// <summary>Add a 3D segment to the geometry set.</summary>
         /// <param name="s">Segment to add.</param>
         /// <returns>This instance for method chaining.</returns>
-        public MeshingGeometry AddSegment(Segment3D s) 
-        { 
+        public MeshingGeometry AddSegment(Segment3D s)
+        {
             lock (_syncLock)
             {
-                _segments.Add(s); 
+                _segments.Add(s);
                 _segmentsReadOnly = null; // Invalidate cache
             }
-            return this; 
+            return this;
         }
 
         /// <summary>Add multiple points efficiently.</summary>
@@ -84,7 +84,7 @@ namespace FastGeoMesh.Structures
         public MeshingGeometry AddPoints(IEnumerable<Vec3> points)
         {
             ArgumentNullException.ThrowIfNull(points);
-            
+
             lock (_syncLock)
             {
                 _points.AddRange(points);
@@ -99,7 +99,7 @@ namespace FastGeoMesh.Structures
         public MeshingGeometry AddSegments(IEnumerable<Segment3D> segments)
         {
             ArgumentNullException.ThrowIfNull(segments);
-            
+
             lock (_syncLock)
             {
                 _segments.AddRange(segments);

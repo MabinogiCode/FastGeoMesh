@@ -16,7 +16,7 @@ namespace FastGeoMesh.Meshing
 
         /// <summary>Create a mesher with default cap strategy.</summary>
         public PrismMesher() : this(new DefaultCapMeshingStrategy()) { }
-        
+
         /// <summary>Create a mesher with a custom cap strategy.</summary>
         public PrismMesher(ICapMeshingStrategy capStrategy)
         {
@@ -29,7 +29,7 @@ namespace FastGeoMesh.Meshing
             ArgumentNullException.ThrowIfNull(structure);
             ArgumentNullException.ThrowIfNull(options);
             options.Validate();
-            
+
             return CreateMeshInternal(structure, options);
         }
 
@@ -39,7 +39,7 @@ namespace FastGeoMesh.Meshing
             ArgumentNullException.ThrowIfNull(structure);
             ArgumentNullException.ThrowIfNull(options);
             options.Validate();
-            
+
             cancellationToken.ThrowIfCancellationRequested();
 
             // For CPU-bound operations in library code, use Task.Run to offload to thread pool
@@ -53,7 +53,7 @@ namespace FastGeoMesh.Meshing
             double z0 = structure.BaseElevation;
             double z1 = structure.TopElevation;
             var zLevels = MeshStructureHelper.BuildZLevels(z0, z1, options, structure);
-            
+
             // Side faces (outer + holes)
             foreach (var q in SideFaceMeshingHelper.GenerateSideQuads(structure.Footprint.Vertices, zLevels, options, outward: true))
             {
@@ -66,13 +66,13 @@ namespace FastGeoMesh.Meshing
                     mesh.AddQuad(q);
                 }
             }
-            
+
             // Caps via strategy
             if (options.GenerateBottomCap || options.GenerateTopCap)
             {
                 _capStrategy.GenerateCaps(mesh, structure, options, z0, z1);
             }
-            
+
             // Auxiliary geometry
             foreach (var p in structure.Geometry.Points)
             {
@@ -82,7 +82,7 @@ namespace FastGeoMesh.Meshing
             {
                 mesh.AddInternalSegment(s);
             }
-            
+
             return mesh;
         }
     }

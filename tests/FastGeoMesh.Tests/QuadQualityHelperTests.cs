@@ -15,13 +15,13 @@ namespace FastGeoMesh.Tests
         {
             // Arrange - Perfect square
             var perfectSquare = (
-                new Vec2(0, 0), new Vec2(1, 0), 
+                new Vec2(0, 0), new Vec2(1, 0),
                 new Vec2(1, 1), new Vec2(0, 1)
             );
-            
+
             // Degenerate quad (very thin)
             var degenerateQuad = (
-                new Vec2(0, 0), new Vec2(10, 0), 
+                new Vec2(0, 0), new Vec2(10, 0),
                 new Vec2(10, 0.1), new Vec2(0, 0.1)
             );
 
@@ -40,7 +40,7 @@ namespace FastGeoMesh.Tests
         {
             // Arrange - Zero area quad (all points collinear)
             var zeroAreaQuad = (
-                new Vec2(0, 0), new Vec2(1, 0), 
+                new Vec2(0, 0), new Vec2(1, 0),
                 new Vec2(2, 0), new Vec2(3, 0)
             );
 
@@ -125,7 +125,7 @@ namespace FastGeoMesh.Tests
         {
             // Arrange
             var quad = (
-                new Vec2(0, 0), new Vec2(width, 0), 
+                new Vec2(0, 0), new Vec2(width, 0),
                 new Vec2(width, height), new Vec2(0, height)
             );
 
@@ -134,7 +134,7 @@ namespace FastGeoMesh.Tests
 
             // Assert
             score.Should().BeInRange(0.0, 1.0, "Score should be in valid range");
-            
+
             // Perfect square should have highest score among the test cases
             if (Math.Abs(width - height) < 1e-9 && Math.Abs(width - 1.0) < 1e-9)
             {
