@@ -7,6 +7,7 @@ namespace FastGeoMesh.Benchmarks.Geometry;
 /// <summary>
 /// Benchmarks for Vec2 operations comparing optimized vs non-optimized implementations.
 /// Tests the impact of AggressiveInlining and .NET 8 optimizations.
+/// Now includes new batch/SIMD helper benchmarks.
 /// </summary>
 [MemoryDiagnoser]
 [SimpleJob]
@@ -14,6 +15,8 @@ namespace FastGeoMesh.Benchmarks.Geometry;
 public class Vec2OperationsBenchmark
 {
     private Vec2[] _vectors = null!;
+    private Vec2[] _vectorsB = null!;
+    private Vec2[] _results = null!;
     private const int VectorCount = 10000;
 
     [GlobalSetup]
@@ -21,10 +24,16 @@ public class Vec2OperationsBenchmark
     {
         var random = new Random(42);
         _vectors = new Vec2[VectorCount];
+        _vectorsB = new Vec2[VectorCount];
+        _results = new Vec2[VectorCount];
         
         for (int i = 0; i < VectorCount; i++)
         {
             _vectors[i] = new Vec2(
+                random.NextDouble() * 100 - 50,
+                random.NextDouble() * 100 - 50
+            );
+            _vectorsB[i] = new Vec2(
                 random.NextDouble() * 100 - 50,
                 random.NextDouble() * 100 - 50
             );
@@ -75,6 +84,39 @@ public class Vec2OperationsBenchmark
             sum += DotProductSlow(_vectors[i], _vectors[i + 1]);
         }
         return sum;
+    }
+
+    // NEW: Batch operations benchmarks
+    [Benchmark]
+    public double Vec2AccumulateDot_Batch()
+    {
+        return Vec2.AccumulateDot(_vectors, _vectorsB);
+    }
+
+    [Benchmark]
+    public double Vec2AccumulateDot_Loop()
+    {
+        double sum = 0;
+        for (int i = 0; i < _vectors.Length; i++)
+        {
+            sum += _vectors[i].Dot(_vectorsB[i]);
+        }
+        return sum;
+    }
+
+    [Benchmark]
+    public void Vec2Add_Batch()
+    {
+        Vec2.Add(_vectors, _vectorsB, _results);
+    }
+
+    [Benchmark]
+    public void Vec2Add_Loop()
+    {
+        for (int i = 0; i < _vectors.Length; i++)
+        {
+            _results[i] = _vectors[i] + _vectorsB[i];
+        }
     }
 
     [Benchmark]

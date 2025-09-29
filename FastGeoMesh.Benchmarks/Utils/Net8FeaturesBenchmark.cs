@@ -2,6 +2,7 @@ using BenchmarkDotNet.Attributes;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Utils;
 using System.Collections.Frozen;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace FastGeoMesh.Benchmarks.Utils;
@@ -57,19 +58,6 @@ public class Net8FeaturesBenchmark
             // Simulate traditional struct operations without record optimizations
             var v = _vectors[i];
             results[i] = TraditionalAdd(v, ScaleTraditional(Vec2.UnitX, 0.5));
-        }
-        return results;
-    }
-
-    [Benchmark]
-    public double[] Generic_Math_Operations()
-    {
-        var results = new double[_values.Length];
-        
-        for (int i = 0; i < _values.Length; i++)
-        {
-            // Test .NET 8 generic math improvements
-            results[i] = GenericMathHelper<double>.Sqrt(_values[i]);
         }
         return results;
     }
@@ -230,12 +218,5 @@ public class Net8FeaturesBenchmark
     private static Vec2 ScaleTraditional(Vec2 v, double scale)
     {
         return new Vec2(v.X * scale, v.Y * scale);
-    }
-
-    /// <summary>Generic math helper demonstrating .NET 8 static abstract members.</summary>
-    private static class GenericMathHelper<T> where T : struct, IFloatingPoint<T>
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Sqrt(T value) => T.Sqrt(value);
     }
 }

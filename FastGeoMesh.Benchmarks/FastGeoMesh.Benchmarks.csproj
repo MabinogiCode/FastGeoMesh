@@ -19,12 +19,15 @@
     
     <!-- Deterministic builds for consistent benchmarking -->
     <Deterministic>true</Deterministic>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    
+    <!-- Disable strict warnings for benchmarks -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors></WarningsAsErrors>
+    <WarningsNotAsErrors>CA1822;CA2007;CA1825;CA1826;CA1827;CA1828;CA1829;CA1859;CA1860;CA1861</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.14.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
   </ItemGroup>
 

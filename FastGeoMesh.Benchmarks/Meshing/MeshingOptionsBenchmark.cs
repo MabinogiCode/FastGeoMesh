@@ -170,4 +170,125 @@ public class MeshingOptionsBenchmark
             .WithEpsilon(1e-12)
             .Build();
     }
+
+    private MesherOptions _options = null!;
+    private MesherOptionsBuilder _builder = null!;
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        _options = new MesherOptions
+        {
+            TargetEdgeLengthXY = 1.0,
+            TargetEdgeLengthZ = 1.5,
+            GenerateBottomCap = true,
+            GenerateTopCap = true,
+            MinCapQuadQuality = 0.5
+        };
+        _builder = MesherOptions.CreateBuilder();
+    }
+
+    [Benchmark(Baseline = true)]
+    public void Validate_WithCaching()
+    {
+        // First call does validation, subsequent calls are cached
+        _options.Validate();
+        _options.Validate();
+        _options.Validate();
+    }
+
+    [Benchmark]
+    public void Validate_ForcedRevalidation()
+    {
+        // Force revalidation every time (worst case)
+        _options.ResetValidation();
+        _options.Validate();
+        _options.ResetValidation();
+        _options.Validate();
+        _options.ResetValidation();
+        _options.Validate();
+    }
+
+    [Benchmark]
+    public MesherOptions BuilderPattern_Simple()
+    {
+        return MesherOptions.CreateBuilder()
+            .WithTargetEdgeLengthXY(1.0)
+            .WithTargetEdgeLengthZ(1.5)
+            .WithMinCapQuadQuality(0.5)
+            .Build();
+    }
+
+    [Benchmark]
+    public MesherOptions BuilderPattern_Complex()
+    {
+        return MesherOptions.CreateBuilder()
+            .WithTargetEdgeLengthXY(1.0)
+            .WithTargetEdgeLengthZ(1.5)
+            .WithCaps(true, true)
+            .WithEpsilon(1e-9)
+            .WithHoleRefinement(0.5, 2.0)
+            .WithSegmentRefinement(0.3, 1.5)
+            .WithMinCapQuadQuality(0.6)
+            .WithRejectedCapTriangles(true)
+            .Build();
+    }
+
+    [Benchmark]
+    public MesherOptions BuilderPattern_HighQualityPreset()
+    {
+        return MesherOptions.CreateBuilder()
+            .WithHighQualityPreset()
+            .Build();
+    }
+
+    [Benchmark]
+    public MesherOptions BuilderPattern_FastPreset()
+    {
+        return MesherOptions.CreateBuilder()
+            .WithFastPreset()
+            .Build();
+    }
+
+    [Benchmark]
+    public MesherOptions DirectConstruction()
+    {
+        var options = new MesherOptions
+        {
+            TargetEdgeLengthXY = 1.0,
+            TargetEdgeLengthZ = 1.5,
+            GenerateBottomCap = true,
+            GenerateTopCap = true,
+            MinCapQuadQuality = 0.5
+        };
+        options.Validate();
+        return options;
+    }
+
+    [Benchmark]
+    public void ValidationOverhead_RepeatedCalls()
+    {
+        // Simulate multiple validation calls in hot path
+        for (int i = 0; i < 100; i++)
+        {
+            _options.Validate(); // Should be very fast due to caching
+        }
+    }
+
+    [Benchmark]
+    public void PropertyChanges_WithRevalidation()
+    {
+        // Simulate changing properties and revalidating
+        _options.TargetEdgeLengthXY = 0.8;
+        _options.ResetValidation();
+        _options.Validate();
+        
+        _options.MinCapQuadQuality = 0.7;
+        _options.ResetValidation();
+        _options.Validate();
+        
+        _options.TargetEdgeLengthZ = 2.0;
+        _options.ResetValidation();
+        _options.Validate();
+    }
 }

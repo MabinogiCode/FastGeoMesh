@@ -24,6 +24,9 @@
     <!-- Essential error enforcement only -->
     <WarningsAsErrors>$(WarningsAsErrors);CS0168;CS0219;IDE0059</WarningsAsErrors>
     
+    <!-- STRICT CODE STYLE ENFORCEMENT -->
+    <WarningsAsErrors>$(WarningsAsErrors);IDE0011;IDE0160;IDE0052;IDE0054</WarningsAsErrors>
+    
     <!-- Critical security warnings only (performance optimized) -->
     <WarningsAsErrors>$(WarningsAsErrors);CA2100;CA3001;CA3002;CA3003</WarningsAsErrors>
     

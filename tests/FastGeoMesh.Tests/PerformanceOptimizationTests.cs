@@ -219,21 +219,5 @@ namespace FastGeoMesh.Tests
             MeshingPools.DoubleListPool.Return(reusedList2);
             MeshingPools.Vec2ListPool.Return(reusedVec2List);
         }
-
-        /// <summary>Test implementation of async mesher interface.</summary>
-        private sealed class TestAsyncMesher : IPrismMesher
-        {
-            public Mesh Mesh(PrismStructureDefinition structureDefinition, MesherOptions options)
-            {
-                return new PrismMesher().Mesh(structureDefinition, options);
-            }
-
-            public async ValueTask<Mesh> MeshAsync(PrismStructureDefinition structureDefinition, MesherOptions options, CancellationToken cancellationToken = default)
-            {
-                // Simulate async work
-                await Task.Delay(1, cancellationToken);
-                return await Task.Run(() => new PrismMesher().Mesh(structureDefinition, options), cancellationToken);
-            }
-        }
     }
 }
