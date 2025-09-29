@@ -30,7 +30,7 @@ namespace FastGeoMesh.Meshing
         {
             ArgumentNullException.ThrowIfNull(mesh);
             var im = new IndexedMesh();
-            bool exact = !(epsilon > 0) || epsilon < 1e-12;
+            bool exact = epsilon <= 0 || epsilon < 1e-12;
             var edgeSet = new HashSet<(int, int)>();
             if (exact)
             {

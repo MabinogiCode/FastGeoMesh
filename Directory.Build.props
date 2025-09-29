@@ -3,5 +3,9 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TargetFramework>net8.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Strict enforcement of unused variables/parameters (S1244 equivalent) -->
+    <WarningsAsErrors>$(WarningsAsErrors);CS0168;CS0219;IDE0059;IDE0060</WarningsAsErrors>
   </PropertyGroup>
 </Project>

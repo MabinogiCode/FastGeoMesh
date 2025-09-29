@@ -31,7 +31,8 @@ namespace FastGeoMesh.Tests
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(8,0), new Vec2(8,3), new Vec2(3,3), new Vec2(3,8), new Vec2(0,8) });
             var structure = new PrismStructureDefinition(outer, 0, 6);
-            _ = structure.AddConstraintSegment(new Segment2D(new Vec2(0.5, 1.0), new Vec2(7.5, 1.0)), 2.0);
+            // FIXED: AddConstraintSegment returns new immutable instance - must reassign
+            structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0.5, 1.0), new Vec2(7.5, 1.0)), 2.0);
             var pA = new Vec3(0.5, 2.5, 1.0);
             var pB = new Vec3(2.5, 2.5, 3.0);
             _ = structure.Geometry.AddPoint(pA).AddPoint(pB).AddSegment(new Segment3D(pA, pB));
@@ -78,7 +79,8 @@ namespace FastGeoMesh.Tests
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(7,0), new Vec2(7,2), new Vec2(5,2), new Vec2(5,5), new Vec2(2,5), new Vec2(2,2), new Vec2(0,2) });
             var structure = new PrismStructureDefinition(outer, -4, 0);
-            _ = structure.AddConstraintSegment(new Segment2D(new Vec2(0.5, 0.5), new Vec2(6.5, 0.5)), -2.0);
+            // FIXED: AddConstraintSegment returns new immutable instance - must reassign
+            structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0.5, 0.5), new Vec2(6.5, 0.5)), -2.0);
             var b1 = new Vec3(2.5, 3.5, -1.0);
             var b2 = new Vec3(4.5, 3.5, -1.0);
             _ = structure.Geometry.AddSegment(new Segment3D(b1, b2));

@@ -29,9 +29,21 @@ dotnet_diagnostic.SA1503.severity = error
 # StyleCop consistent braces formatting
 dotnet_diagnostic.SA1520.severity = error
 
-# Prefer discards (relaxed suggestions)
-csharp_style_unused_value_expression_statement_preference = discard_variable:suggestion
-csharp_style_unused_value_assignment_preference = discard_variable:suggestion
+# S1244 equivalent - Unused variables and parameters (STRICT enforcement)
+# Unused variable (equivalent to S1244)
+dotnet_diagnostic.IDE0059.severity = error
+dotnet_diagnostic.CS0168.severity = error
+dotnet_diagnostic.CS0219.severity = error
+# Unused parameter (part of S1244 scope)
+dotnet_diagnostic.IDE0060.severity = error
+
+# S1244 SonarSource - Float/double comparison enforcement (the REAL S1244)
+# Note: .NET analyzers don't have direct equivalent, but we can use CA1065 for custom rules
+# For now, we'll implement manual fixes and document the pattern
+
+# Prefer discards for intentionally unused values
+csharp_style_unused_value_expression_statement_preference = discard_variable:error
+csharp_style_unused_value_assignment_preference = discard_variable:error
 
 csharp_new_line_before_open_brace = all
 csharp_style_var_for_built_in_types = false:suggestion

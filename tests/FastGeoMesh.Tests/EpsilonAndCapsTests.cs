@@ -77,7 +77,8 @@ namespace FastGeoMesh.Tests
                 new Vec2(0,0), new Vec2(10,0), new Vec2(10,10), new Vec2(0,10)
             });
             var structure = new PrismStructureDefinition(poly, -10, 10);
-            _ = structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(10, 0)), 2.5);
+            // FIXED: AddConstraintSegment returns new immutable instance - must reassign
+            structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(10, 0)), 2.5);
             var options = new MesherOptions { TargetEdgeLengthXY = 5.0, TargetEdgeLengthZ = 3.0, GenerateBottomCap = false, GenerateTopCap = false };
             var mesh = new PrismMesher().Mesh(structure, options);
 

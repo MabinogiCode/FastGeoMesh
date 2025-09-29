@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using FastGeoMesh.Structures;
 
 namespace FastGeoMesh.Meshing
@@ -8,5 +10,12 @@ namespace FastGeoMesh.Meshing
     {
         /// <summary>Create mesh from the provided structure and options.</summary>
         Mesh Mesh(TStructure input, MesherOptions options);
+        
+        /// <summary>Create mesh from the provided structure and options asynchronously with cancellation support.</summary>
+        /// <param name="input">Structure definition to mesh.</param>
+        /// <param name="options">Meshing options.</param>
+        /// <param name="cancellationToken">Cancellation token to cancel the operation.</param>
+        /// <returns>ValueTask representing the meshing operation for better performance.</returns>
+        ValueTask<Mesh> MeshAsync(TStructure input, MesherOptions options, CancellationToken cancellationToken = default);
     }
 }
