@@ -29,7 +29,7 @@ namespace FastGeoMesh.Tests
             var goodScore = QuadQualityHelper.ScoreQuad(perfectSquare);
             var badScore = QuadQualityHelper.ScoreQuad(degenerateQuad);
 
-            // Assert - Un carré parfait DOIT avoir un score >= 0.8
+            // Assert - Un carrÃ© parfait DOIT avoir un score >= 0.8
             goodScore.Should().BeGreaterThanOrEqualTo(0.8, "Perfect square must have high quality >= 0.8");
             badScore.Should().BeLessThan(0.6, "Degenerate quad should have moderate quality due to orthogonality");
             goodScore.Should().BeGreaterThan(badScore, "Good quad should score higher than bad quad");

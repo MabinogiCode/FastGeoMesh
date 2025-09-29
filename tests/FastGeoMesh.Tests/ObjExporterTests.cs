@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
 using FastGeoMesh.Meshing.Exporters;
+using FastGeoMesh.Structures;
 using Xunit;
 
 namespace FastGeoMesh.Tests

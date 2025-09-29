@@ -1,5 +1,5 @@
-using System.Linq;
 using System;
+using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;

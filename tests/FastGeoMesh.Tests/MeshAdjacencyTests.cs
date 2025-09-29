@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
+using FastGeoMesh.Geometry;
+using FastGeoMesh.Meshing;
 using FluentAssertions;
 using Xunit;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Geometry;
 
 namespace FastGeoMesh.Tests
 {

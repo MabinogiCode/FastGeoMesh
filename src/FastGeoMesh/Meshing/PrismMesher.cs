@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FastGeoMesh.Geometry;
+using FastGeoMesh.Meshing.Helpers;
 using FastGeoMesh.Structures;
 using FastGeoMesh.Utils;
-using FastGeoMesh.Meshing.Helpers;
 
 namespace FastGeoMesh.Meshing
 {
@@ -23,7 +23,7 @@ namespace FastGeoMesh.Meshing
             _capStrategy = capStrategy ?? throw new ArgumentNullException(nameof(capStrategy));
         }
 
-        /// <summary>Generate a mesh from the given prism structure definition and meshing options (thread-safe – no shared state).</summary>
+        /// <summary>Generate a mesh from the given prism structure definition and meshing options (thread-safe â€“ no shared state).</summary>
         public Mesh Mesh(PrismStructureDefinition structure, MesherOptions options)
         {
             ArgumentNullException.ThrowIfNull(structure);

@@ -55,28 +55,39 @@ jobs:
             /p:Deterministic=true \
             /p:RunAnalyzersDuringBuild=false
             
-      - name: '?? Check code formatting'
+      - name: '🎨 Check code formatting'
         run: |
-          echo "?? Checking code formatting..."
+          echo "🔍 Checking code formatting..."
           
-          # Run format check and capture result
+          # On Linux CI, we need to ensure consistent line endings first
+          echo "📝 Normalizing line endings for CI..."
+          find . -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.yml" -o -name "*.yaml" -o -name "*.md" -o -name "*.json" -o -name "*.xml" | \
+            xargs dos2unix 2>/dev/null || true
+          
+          # Check code formatting
           if dotnet format --verify-no-changes --verbosity minimal; then
-            echo "? Code is properly formatted"
+            echo "✅ Code is properly formatted"
           else
-            echo "? Code formatting issues detected"
+            echo "❌ Code formatting issues detected"
             echo ""
             echo "Files that need formatting:"
             dotnet format --dry-run --verbosity normal || true
             echo ""
-            echo "To fix formatting issues, run locally:"
+            echo "To fix formatting issues locally:"
             echo "  dotnet format"
             echo "  # OR use the provided scripts:"
             echo "  ./scripts/format-code.ps1 -Fix   # Windows"
             echo "  ./scripts/format-code.sh --fix   # Linux/macOS"
             echo ""
+            echo "Note: On Windows, ensure Git is configured with:"
+            echo "  git config core.autocrlf false"
+            echo "  git config core.eol lf"
+            echo ""
             echo "Then commit and push the changes."
             exit 1
           fi
+          
+          echo "✅ Code formatting check passed!"
           
       - name: '?? Determine deployment'
         id: changes
