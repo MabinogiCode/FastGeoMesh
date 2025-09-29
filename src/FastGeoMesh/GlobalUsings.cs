@@ -1,8 +1,6 @@
-// Global using directives - Essential types for high-performance geometric meshing library
+// Global using directives - Optimized for .NET 8 high-performance geometric meshing library
 global using System;
-// Performance-critical .NET 8 types
 global using System.Buffers;
-// Common patterns for async operations
 global using System.Collections.Concurrent;
 global using System.Collections.Generic;
 global using System.Diagnostics.CodeAnalysis;
@@ -11,3 +9,10 @@ global using System.Runtime.CompilerServices;
 global using System.Runtime.InteropServices;
 global using System.Threading;
 global using System.Threading.Tasks;
+
+// .NET 8 specific performance types
+global using System.Collections.Frozen;
+global using System.Text.Json;
+
+// Diagnostic and performance monitoring
+global using System.Diagnostics;

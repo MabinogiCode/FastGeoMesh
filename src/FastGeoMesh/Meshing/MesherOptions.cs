@@ -1,4 +1,5 @@
 using System;
+using FastGeoMesh.Utils;
 
 namespace FastGeoMesh.Meshing
 {
@@ -47,8 +48,8 @@ namespace FastGeoMesh.Meshing
         /// <summary>Validate option values. Throws <see cref="ArgumentOutOfRangeException"/> / <see cref="ArgumentException"/> on invalid configuration.</summary>
         public void Validate()
         {
-            ValidateTargetEdgeLength(TargetEdgeLengthXY, nameof(TargetEdgeLengthXY));
-            ValidateTargetEdgeLength(TargetEdgeLengthZ, nameof(TargetEdgeLengthZ));
+            ValidateTargetEdgeLength(TargetEdgeLengthXY, nameof(TargetEdgeLengthXY), "XY");
+            ValidateTargetEdgeLength(TargetEdgeLengthZ, nameof(TargetEdgeLengthZ), "Z");
 
             if (Epsilon <= 0 || double.IsNaN(Epsilon) || double.IsInfinity(Epsilon))
             {
@@ -57,17 +58,17 @@ namespace FastGeoMesh.Meshing
 
             if (TargetEdgeLengthXYNearHoles is { } h)
             {
-                ValidateTargetEdgeLength(h, nameof(TargetEdgeLengthXYNearHoles));
+                ValidateTargetEdgeLength(h, nameof(TargetEdgeLengthXYNearHoles), "HoleRefinement");
             }
 
-            ValidateRefinementBand(HoleRefineBand, nameof(HoleRefineBand));
+            ValidateRefinementBand(HoleRefineBand, nameof(HoleRefineBand), "HoleRefinement");
 
             if (TargetEdgeLengthXYNearSegments is { } s)
             {
-                ValidateTargetEdgeLength(s, nameof(TargetEdgeLengthXYNearSegments));
+                ValidateTargetEdgeLength(s, nameof(TargetEdgeLengthXYNearSegments), "SegmentRefinement");
             }
 
-            ValidateRefinementBand(SegmentRefineBand, nameof(SegmentRefineBand));
+            ValidateRefinementBand(SegmentRefineBand, nameof(SegmentRefineBand), "SegmentRefinement");
 
             if (MinCapQuadQuality < 0 || MinCapQuadQuality > 1 || double.IsNaN(MinCapQuadQuality))
             {
@@ -85,7 +86,7 @@ namespace FastGeoMesh.Meshing
             }
         }
 
-        private static void ValidateTargetEdgeLength(double value, string paramName)
+        private static void ValidateTargetEdgeLength(double value, string paramName, string category)
         {
             if (value <= 0)
             {
@@ -108,7 +109,7 @@ namespace FastGeoMesh.Meshing
             }
         }
 
-        private static void ValidateRefinementBand(double value, string paramName)
+        private static void ValidateRefinementBand(double value, string paramName, string category)
         {
             if (value < 0)
             {

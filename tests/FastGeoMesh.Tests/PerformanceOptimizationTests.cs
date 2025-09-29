@@ -221,14 +221,14 @@ namespace FastGeoMesh.Tests
         }
 
         /// <summary>Test implementation of async mesher interface.</summary>
-        private sealed class TestAsyncMesher : IMesher
+        private sealed class TestAsyncMesher : IPrismMesher
         {
             public Mesh Mesh(PrismStructureDefinition structureDefinition, MesherOptions options)
             {
                 return new PrismMesher().Mesh(structureDefinition, options);
             }
 
-            public async Task<Mesh> MeshAsync(PrismStructureDefinition structureDefinition, MesherOptions options, CancellationToken cancellationToken = default)
+            public async ValueTask<Mesh> MeshAsync(PrismStructureDefinition structureDefinition, MesherOptions options, CancellationToken cancellationToken = default)
             {
                 // Simulate async work
                 await Task.Delay(1, cancellationToken);
