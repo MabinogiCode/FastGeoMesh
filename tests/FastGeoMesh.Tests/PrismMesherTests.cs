@@ -12,7 +12,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void SideQuadsAreGeneratedCcw()
         {
-            var poly = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(10,0), new Vec2(10,10), new Vec2(0,10) });
+            var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) });
             var structure = new PrismStructureDefinition(poly, -10, 10);
             var options = new MesherOptions { TargetEdgeLengthXY = 10.0, TargetEdgeLengthZ = 20.0, GenerateBottomCap = false, GenerateTopCap = false };
             var mesher = new PrismMesher();

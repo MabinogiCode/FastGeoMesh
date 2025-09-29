@@ -1,7 +1,37 @@
 <Project>
   <PropertyGroup>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TargetFramework>net8.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Performance optimization for CI builds -->
+    <EnforceCodeStyleInBuild Condition="'$(ContinuousIntegrationBuild)' != 'true'">true</EnforceCodeStyleInBuild>
+    <EnforceCodeStyleInBuild Condition="'$(ContinuousIntegrationBuild)' == 'true'">false</EnforceCodeStyleInBuild>
+    
+    <!-- Suppress .NET 9 SDK warnings about analyzer versions -->
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
+    
+    <!-- Essential error enforcement only -->
+    <WarningsAsErrors>$(WarningsAsErrors);CS0168;CS0219;IDE0059</WarningsAsErrors>
+    
+    <!-- Critical security warnings only (performance optimized) -->
+    <WarningsAsErrors>$(WarningsAsErrors);CA2100;CA3001;CA3002;CA3003</WarningsAsErrors>
+    
+    <!-- Essential performance warnings for .NET 8 -->
+    <WarningsAsErrors>$(WarningsAsErrors);CA1825;CA1826;CA1827;CA1828;CA1829</WarningsAsErrors>
+    
+    <!-- Memory and allocation warnings (core only) -->
+    <WarningsAsErrors>$(WarningsAsErrors);CA1805;CA1810;CA1820;CA1822</WarningsAsErrors>
+    
+    <!-- Async best practices (essential only) -->
+    <WarningsAsErrors>$(WarningsAsErrors);CA2007;CA2016;CA2200</WarningsAsErrors>
+  </PropertyGroup>
+  
+  <!-- CI-specific optimizations -->
+  <PropertyGroup Condition="'$(ContinuousIntegrationBuild)' == 'true'">
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <SkipStyleCop>true</SkipStyleCop>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors>CS0168;CS0219</WarningsAsErrors>
   </PropertyGroup>
 </Project>

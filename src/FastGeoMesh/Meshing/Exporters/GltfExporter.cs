@@ -35,38 +35,8 @@ namespace FastGeoMesh.Meshing.Exporters
             int totalTriCount = quadPairTriCount + extraTriCount;
             int idxBytes = totalTriCount * 3 * sizeof(uint);
 
-            double minX = double.PositiveInfinity, minY = double.PositiveInfinity, minZ = double.PositiveInfinity;
-            double maxX = double.NegativeInfinity, maxY = double.NegativeInfinity, maxZ = double.NegativeInfinity;
-            foreach (var v in mesh.Vertices)
-            {
-                double x = v.X;
-                double y = v.Y;
-                double z = v.Z;
-                if (x < minX)
-                {
-                    minX = x;
-                }
-                if (y < minY)
-                {
-                    minY = y;
-                }
-                if (z < minZ)
-                {
-                    minZ = z;
-                }
-                if (x > maxX)
-                {
-                    maxX = x;
-                }
-                if (y > maxY)
-                {
-                    maxY = y;
-                }
-                if (z > maxZ)
-                {
-                    maxZ = z;
-                }
-            }
+            var (minX, minY, minZ, maxX, maxY, maxZ) = CalculateBounds(mesh);
+
             // write quad-derived triangles
             foreach (var (v0, v1, v2, v3) in mesh.Quads)
             {
@@ -102,7 +72,7 @@ namespace FastGeoMesh.Meshing.Exporters
                 },
                 accessors = new object[]
                 {
-                    new { bufferView = 0, componentType = 5126, count = vCount, type = "VEC3", min = new[]{ (double)minX, (double)minY, (double)minZ }, max = new[]{ (double)maxX, (double)maxY, (double)maxZ } },
+                    new { bufferView = 0, componentType = 5126, count = vCount, type = "VEC3", min = new[]{ minX, minY, minZ }, max = new[]{ maxX, maxY, maxZ } },
                     new { bufferView = 1, componentType = 5125, count = totalTriCount * 3, type = "SCALAR" }
                 },
                 meshes = new object[] { new { primitives = new object[] { new { attributes = new { POSITION = 0 }, indices = 1, mode = 4 } } } },
@@ -113,6 +83,42 @@ namespace FastGeoMesh.Meshing.Exporters
 
             string json = JsonSerializer.Serialize(gltf, Indented);
             File.WriteAllText(path, json);
+        }
+
+        private static (double minX, double minY, double minZ, double maxX, double maxY, double maxZ) CalculateBounds(IndexedMesh mesh)
+        {
+            double minX = double.PositiveInfinity, minY = double.PositiveInfinity, minZ = double.PositiveInfinity;
+            double maxX = double.NegativeInfinity, maxY = double.NegativeInfinity, maxZ = double.NegativeInfinity;
+
+            foreach (var v in mesh.Vertices)
+            {
+                if (v.X < minX)
+                {
+                    minX = v.X;
+                }
+                if (v.Y < minY)
+                {
+                    minY = v.Y;
+                }
+                if (v.Z < minZ)
+                {
+                    minZ = v.Z;
+                }
+                if (v.X > maxX)
+                {
+                    maxX = v.X;
+                }
+                if (v.Y > maxY)
+                {
+                    maxY = v.Y;
+                }
+                if (v.Z > maxZ)
+                {
+                    maxZ = v.Z;
+                }
+            }
+
+            return (minX, minY, minZ, maxX, maxY, maxZ);
         }
     }
 }

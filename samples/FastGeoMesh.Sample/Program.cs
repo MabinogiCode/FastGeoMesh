@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
 using FastGeoMesh.Meshing.Exporters;
+using FastGeoMesh.Structures;
 
 sealed class Program
 {
@@ -17,7 +17,7 @@ sealed class Program
         double width = 5.0;
         double z0 = -10.0;
         double z1 = 10.0;
-        var poly = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(length,0), new Vec2(length,width), new Vec2(0,width) });
+        var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(length, 0), new Vec2(length, width), new Vec2(0, width) });
         var structure = new PrismStructureDefinition(poly, z0, z1);
         structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(length, 0)), 2.5);
         structure.Geometry

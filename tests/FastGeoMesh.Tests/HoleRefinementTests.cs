@@ -13,8 +13,8 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void CapsAreRefinedNearHoles()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(20,0), new Vec2(20,10), new Vec2(0,10) });
-            var hole = Polygon2D.FromPoints(new[] { new Vec2(10,4), new Vec2(12,4), new Vec2(12,6), new Vec2(10,6) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10) });
+            var hole = Polygon2D.FromPoints(new[] { new Vec2(10, 4), new Vec2(12, 4), new Vec2(12, 6), new Vec2(10, 6) });
             var structure = new PrismStructureDefinition(outer, -1, 0).AddHole(hole);
             var options = new MesherOptions { TargetEdgeLengthXY = 2.0, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true, TargetEdgeLengthXYNearHoles = 0.5, HoleRefineBand = 1.0 };
             var mesh = new PrismMesher().Mesh(structure, options);

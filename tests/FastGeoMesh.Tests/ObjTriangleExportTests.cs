@@ -13,7 +13,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void ObjContainsTriangleFacesWhenCapTrianglesEnabled()
         {
-            var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(5,0), new Vec2(5,2), new Vec2(3,2), new Vec2(3,4), new Vec2(5,4), new Vec2(5,6), new Vec2(0,6) });
+            var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 2), new Vec2(3, 2), new Vec2(3, 4), new Vec2(5, 4), new Vec2(5, 6), new Vec2(0, 6) });
             var structure = new PrismStructureDefinition(outer, 0, 1);
             var options = new MesherOptions
             {

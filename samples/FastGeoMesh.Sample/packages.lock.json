@@ -7,10 +7,16 @@
         "resolved": "1.1.15",
         "contentHash": "KuA7N3Nv/lIeawJdQBQJR6oqWD9KETHLbWzBqapwFs+Tby+R5I4crkKujKMm5bXcSuFZ8LNtflFQVadsWCbBjg=="
       },
+      "Microsoft.Extensions.ObjectPool": {
+        "type": "Transitive",
+        "resolved": "8.0.11",
+        "contentHash": "6ApKcHNJigXBfZa6XlDQ8feJpq7SG1ogZXg6M4FiNzgd6irs3LUAzo0Pfn4F2ZI9liGnH1XIBR/OtSbZmJAV5w=="
+      },
       "fastgeomesh": {
         "type": "Project",
         "dependencies": {
-          "LibTessDotNet": "[1.1.15, )"
+          "LibTessDotNet": "[1.1.15, )",
+          "Microsoft.Extensions.ObjectPool": "[8.0.11, )"
         }
       }
     }

@@ -1,9 +1,9 @@
 using System;
 using System.IO;
-using FastGeoMesh.Meshing.Exporters;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
 using FastGeoMesh.Geometry;
+using FastGeoMesh.Meshing;
+using FastGeoMesh.Meshing.Exporters;
+using FastGeoMesh.Structures;
 using Xunit;
 
 namespace FastGeoMesh.Tests
@@ -13,7 +13,7 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void ExportsGLTFWithEmbeddedBuffer()
         {
-            var poly = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(2,0), new Vec2(2,1), new Vec2(0,1) });
+            var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(2, 0), new Vec2(2, 1), new Vec2(0, 1) });
             var st = new PrismStructureDefinition(poly, 0, 1);
             var opt = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5 };
             var mesh = new PrismMesher().Mesh(st, opt);

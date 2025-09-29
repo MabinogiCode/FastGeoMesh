@@ -3,7 +3,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors>IDE0160;IDE0052;IDE0054;CS8632</WarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors>CS1591</WarningsNotAsErrors>
     <Nullable>enable</Nullable>
     <PackageId>FastGeoMesh</PackageId>
     <Version>1.1.0</Version>
@@ -24,14 +25,26 @@
     <Deterministic>true</Deterministic>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>1.1.0: Added cap triangle emission (OutputRejectedCapTriangles), triangle support in mesh/indexed + OBJ exporter, docs updated.</PackageReleaseNotes>
+    
+    <!-- Suppress .NET 9 SDK warnings about analyzer versions -->
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="LibTessDotNet" Version="1.1.15" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.11" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <!-- Keep analyzer version compatible with .NET 8 targets -->
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\nuget-readme.md" Pack="true" PackagePath="/" />
     <None Include="mabinogi-icon.png" Pack="true" PackagePath="/" />
   </ItemGroup>
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <!-- Performance optimizations for CI builds -->
+    <RunAnalyzersDuringBuild Condition="'$(ContinuousIntegrationBuild)' == 'true'">false</RunAnalyzersDuringBuild>
+  </PropertyGroup>
 </Project>

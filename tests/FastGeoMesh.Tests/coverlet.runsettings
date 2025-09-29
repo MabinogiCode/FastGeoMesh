@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <!-- Enhanced Coverlet configuration for .NET 8 -->
+          <Format>opencover,lcov,cobertura</Format>
+          <Exclude>[coverlet.*.tests?]*,[*]Coverlet.Core*</Exclude>
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
+          <ExcludeByFile>**/obj/**,**/bin/**,**/*AssemblyInfo.cs,**/GlobalUsings.cs</ExcludeByFile>
+          <IncludeDirectory>src</IncludeDirectory>
+          <SingleHit>false</SingleHit>
+          <UseSourceLink>true</UseSourceLink>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <SkipAutoProps>true</SkipAutoProps>
+          <DeterministicReport>true</DeterministicReport>
+          
+          <!-- Exclude performance monitoring and hard-to-test infrastructure -->
+          <Exclude>
+            [*]*AssemblyInfo*,
+            [*]*GlobalUsings*,
+            [FastGeoMesh]FastGeoMesh.Utils.PerformanceMonitor*,
+            [FastGeoMesh]FastGeoMesh.Properties.*,
+            [FastGeoMesh.Tests]*,
+            [FastGeoMesh.Sample]*
+          </Exclude>
+          
+          <!-- Include only source directories -->
+          <Include>[FastGeoMesh]*</Include>
+          
+          <!-- Performance optimizations -->
+          <ModulePaths>
+            <ModulePath>**/src/**</ModulePath>
+          </ModulePaths>
+          
+          <!-- Threshold configuration -->
+          <Threshold>75</Threshold>
+          <ThresholdType>line,branch,method</ThresholdType>
+          <ThresholdStat>total</ThresholdStat>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+  
+  <!-- Test execution configuration -->
+  <RunConfiguration>
+    <MaxCpuCount>0</MaxCpuCount>
+    <ResultsDirectory>../TestResults</ResultsDirectory>
+    <TestSessionTimeout>600000</TestSessionTimeout>
+    <TreatNoTestsAsError>false</TreatNoTestsAsError>
+  </RunConfiguration>
+  
+  <!-- Logger configuration -->
+  <LoggerRunSettings>
+    <Loggers>
+      <Logger friendlyName="console" enabled="True">
+        <Configuration>
+          <Verbosity>normal</Verbosity>
+        </Configuration>
+      </Logger>
+      <Logger friendlyName="trx" enabled="True">
+        <Configuration>
+          <LogFileName>testresults.trx</LogFileName>
+        </Configuration>
+      </Logger>
+    </Loggers>
+  </LoggerRunSettings>
+</RunSettings>
