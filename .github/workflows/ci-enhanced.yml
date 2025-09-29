@@ -1,5 +1,5 @@
 # ?? Enhanced GitHub Actions workflow for FastGeoMesh .NET 8
-# Optimized for performance and robust code formatting
+# Optimized for performance - NO AUTO-COMMIT
 
 name: 'CI/CD Enhanced'
 
@@ -24,15 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should-deploy: ${{ steps.changes.outputs.should-deploy }}
-      format-needed: ${{ steps.format-check.outputs.format-needed }}
     
     steps:
       - name: '?? Checkout'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # Required for auto-formatting commits
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: '?? Setup .NET'
         uses: actions/setup-dotnet@v4
@@ -59,59 +56,27 @@ jobs:
             /p:RunAnalyzersDuringBuild=false
             
       - name: '?? Check code formatting'
-        id: format-check
         run: |
           echo "?? Checking code formatting..."
           
           # Run format check and capture result
           if dotnet format --verify-no-changes --verbosity minimal; then
             echo "? Code is properly formatted"
-            echo "format-needed=false" >> $GITHUB_OUTPUT
           else
-            echo "?? Code formatting issues detected"
-            echo "format-needed=true" >> $GITHUB_OUTPUT
-            
-            # Show what would be formatted (for PR comments)
+            echo "? Code formatting issues detected"
+            echo ""
             echo "Files that need formatting:"
             dotnet format --dry-run --verbosity normal || true
+            echo ""
+            echo "To fix formatting issues, run locally:"
+            echo "  dotnet format"
+            echo "  # OR use the provided scripts:"
+            echo "  ./scripts/format-code.ps1 -Fix   # Windows"
+            echo "  ./scripts/format-code.sh --fix   # Linux/macOS"
+            echo ""
+            echo "Then commit and push the changes."
+            exit 1
           fi
-          
-      - name: '?? Auto-format code (push only)'
-        if: steps.format-check.outputs.format-needed == 'true' && github.event_name == 'push'
-        run: |
-          echo "?? Auto-formatting code..."
-          
-          # Apply formatting
-          dotnet format --verbosity minimal
-          
-          # Check if any files were actually changed
-          if git diff --quiet; then
-            echo "? No changes after formatting"
-          else
-            echo "?? Files were formatted, committing changes..."
-            
-            # Configure git
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            
-            # Commit formatted files
-            git add .
-            git commit -m "?? Auto-format code [skip ci]"
-            git push
-            
-            echo "? Auto-formatting committed"
-          fi
-          
-      - name: '? Fail on format issues (PR only)'
-        if: steps.format-check.outputs.format-needed == 'true' && github.event_name == 'pull_request'
-        run: |
-          echo "? Code formatting issues detected in PR"
-          echo "Please run 'dotnet format' locally and commit the changes"
-          echo ""
-          echo "Or use the provided script:"
-          echo "  ./scripts/format-code.ps1 -Fix   # Windows"
-          echo "  ./scripts/format-code.sh --fix   # Linux/macOS"
-          exit 1
           
       - name: '?? Determine deployment'
         id: changes
@@ -127,7 +92,6 @@ jobs:
     name: '?? Test & Coverage'
     runs-on: ubuntu-latest
     needs: build
-    if: needs.build.outputs.format-needed != 'true' || github.event_name == 'workflow_dispatch'
     
     steps:
       - name: '?? Checkout'
@@ -222,7 +186,6 @@ jobs:
     name: '?? Security'
     runs-on: ubuntu-latest
     needs: build
-    if: needs.build.outputs.format-needed != 'true'
     
     steps:
       - name: '?? Checkout'
@@ -249,7 +212,7 @@ jobs:
     name: '?? Package'
     runs-on: ubuntu-latest
     needs: [build, test, security]
-    if: needs.build.outputs.should-deploy == 'true' && needs.build.outputs.format-needed != 'true'
+    if: needs.build.outputs.should-deploy == 'true'
     
     steps:
       - name: '?? Checkout'
