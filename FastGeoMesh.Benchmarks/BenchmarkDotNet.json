@@ -1,0 +1,54 @@
+{
+  "jobs": [
+    {
+      "id": "default",
+      "runtime": {
+        "version": "net8.0"
+      },
+      "jit": "RyuJit",
+      "platform": "X64",
+      "gc": {
+        "server": false,
+        "concurrent": true,
+        "force": false
+      }
+    }
+  ],
+  "exporters": [
+    {
+      "type": "html"
+    },
+    {
+      "type": "markdown"
+    },
+    {
+      "type": "csv"
+    },
+    {
+      "type": "json"
+    }
+  ],
+  "columns": [
+    "Method",
+    "Mean",
+    "Error",
+    "StdDev",
+    "Median",
+    "Min",
+    "Max",
+    "Ratio",
+    "RatioSD",
+    "Gen0",
+    "Gen1",
+    "Gen2",
+    "Allocated",
+    "Alloc Ratio"
+  ],
+  "diagnosers": [
+    {
+      "type": "memory"
+    }
+  ],
+  "outliers": "RemoveUpper",
+  "affinity": "auto"
+}

@@ -4,11 +4,15 @@ using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Meshing.Exporters;
 using FastGeoMesh.Structures;
+using FastGeoMesh.Utils;
 
 sealed class Program
 {
     static void Main(string[] args)
     {
+        // Test notre correction de PointInPolygon
+        TestPointInPolygon();
+        
         bool exportObj = args.Contains("--obj", StringComparer.OrdinalIgnoreCase);
         bool exportGltf = args.Contains("--gltf", StringComparer.OrdinalIgnoreCase);
         bool exportSvg = args.Contains("--svg", StringComparer.OrdinalIgnoreCase);
@@ -41,5 +45,41 @@ sealed class Program
         {
             SvgExporter.Write(indexed, prefix + ".svg");
         }
+    }
+    
+    static void TestPointInPolygon()
+    {
+        Console.WriteLine("=== Testing PointInPolygon Fix ===");
+        
+        // Test du carré
+        var square = new Vec2[]
+        {
+            new(0, 0), new(10, 0), new(10, 10), new(0, 10)
+        };
+
+        // Test du point central (5,5) - doit être TRUE
+        bool centerInside = GeometryHelper.PointInPolygon(square, 5, 5);
+        Console.WriteLine($"Point (5,5) inside square: {centerInside} {(centerInside ? "✅" : "❌")}");
+
+        // Test de points sur les bords - doivent être TRUE
+        bool cornerInside = GeometryHelper.PointInPolygon(square, 0, 0);
+        Console.WriteLine($"Point (0,0) on corner: {cornerInside} {(cornerInside ? "✅" : "❌")}");
+
+        bool edgeInside = GeometryHelper.PointInPolygon(square, 5, 0);
+        Console.WriteLine($"Point (5,0) on edge: {edgeInside} {(edgeInside ? "✅" : "❌")}");
+
+        // Test de points à l'extérieur - doivent être FALSE
+        bool outsideLeft = GeometryHelper.PointInPolygon(square, -1, 5);
+        Console.WriteLine($"Point (-1,5) outside left: {outsideLeft} {(!outsideLeft ? "✅" : "❌")}");
+
+        bool outsideRight = GeometryHelper.PointInPolygon(square, 11, 5);
+        Console.WriteLine($"Point (11,5) outside right: {outsideRight} {(!outsideRight ? "✅" : "❌")}");
+
+        // Test SpatialPolygonIndex aussi
+        var spatialIndex = new SpatialPolygonIndex(square);
+        bool spatialCenterInside = spatialIndex.IsInside(5, 5);
+        Console.WriteLine($"SpatialIndex (5,5): {spatialCenterInside} {(spatialCenterInside ? "✅" : "❌")}");
+        
+        Console.WriteLine("=== Point-in-Polygon Test Complete ===\n");
     }
 }

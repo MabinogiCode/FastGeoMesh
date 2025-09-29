@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>FastGeoMesh.Benchmarks.Geometry.GeometryHelperBenchmark-20250929-201609</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.6584)
+Intel Core Ultra 7 165U, 1 CPU, 14 logical and 12 physical cores
+.NET SDK 9.0.304
+  [Host]     : .NET 8.0.20 (8.0.2025.41914), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.20 (8.0.2025.41914), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method                    </th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Median</th><th>Min   </th><th>Max   </th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Allocated</th><th>Alloc Ratio</th>
+</tr>
+</thead><tbody><tr><td>PointInPolygon_OptimizedSpan</td><td>177,439.7 ns</td><td>2,857.51 ns</td><td>2,672.92 ns</td><td>176,684.8 ns</td><td>174,731.4 ns</td><td>183,151.6 ns</td><td>1.000</td><td>0.02</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>PointInPolygon_NonOptimized</td><td>136,738.0 ns</td><td>590.19 ns</td><td>523.19 ns</td><td>136,780.0 ns</td><td>135,508.7 ns</td><td>137,478.7 ns</td><td>0.771</td><td>0.01</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>BatchPointInPolygon_Optimized</td><td>178,455.5 ns</td><td>3,169.78 ns</td><td>4,934.96 ns</td><td>176,738.4 ns</td><td>173,192.3 ns</td><td>192,918.7 ns</td><td>1.006</td><td>0.03</td><td>-</td><td>1024 B</td><td>NA</td>
+</tr><tr><td>PolygonArea_OptimizedSpan</td><td>128.3 ns</td><td>2.13 ns</td><td>1.99 ns</td><td>127.8 ns</td><td>125.8 ns</td><td>132.0 ns</td><td>0.001</td><td>0.00</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>PolygonArea_NonOptimized</td><td>127.5 ns</td><td>2.31 ns</td><td>1.81 ns</td><td>127.0 ns</td><td>125.3 ns</td><td>131.9 ns</td><td>0.001</td><td>0.00</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>DistancePointToSegment_Optimized</td><td>4,383.8 ns</td><td>280.40 ns</td><td>826.77 ns</td><td>4,176.8 ns</td><td>2,865.8 ns</td><td>6,400.0 ns</td><td>0.025</td><td>0.00</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>LinearInterpolation_Optimized</td><td>925.3 ns</td><td>18.30 ns</td><td>39.39 ns</td><td>908.7 ns</td><td>883.2 ns</td><td>1,040.9 ns</td><td>0.005</td><td>0.00</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>ScalarInterpolation_Optimized</td><td>863.6 ns</td><td>17.03 ns</td><td>35.17 ns</td><td>847.2 ns</td><td>829.5 ns</td><td>960.6 ns</td><td>0.005</td><td>0.00</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>ConvexityTest_Optimized</td><td>1,421.0 ns</td><td>28.28 ns</td><td>55.16 ns</td><td>1,401.3 ns</td><td>1,369.3 ns</td><td>1,587.5 ns</td><td>0.008</td><td>0.00</td><td>0.0439</td><td>280 B</td><td>NA</td>
+</tr></tbody></table>
+</body>
+</html>

@@ -4,6 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
+    <!-- .NET 8 Performance optimizations -->
+    <TieredCompilation>true</TieredCompilation>
+    <TieredPGO>true</TieredPGO>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <OptimizationPreference>Speed</OptimizationPreference>
+    
+    <!-- Modern C# language features -->
+    <LangVersion>12.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    
     <!-- Performance optimization for CI builds -->
     <EnforceCodeStyleInBuild Condition="'$(ContinuousIntegrationBuild)' != 'true'">true</EnforceCodeStyleInBuild>
     <EnforceCodeStyleInBuild Condition="'$(ContinuousIntegrationBuild)' == 'true'">false</EnforceCodeStyleInBuild>
@@ -14,11 +24,14 @@
     <!-- Essential error enforcement only -->
     <WarningsAsErrors>$(WarningsAsErrors);CS0168;CS0219;IDE0059</WarningsAsErrors>
     
+    <!-- STRICT CODE STYLE ENFORCEMENT -->
+    <WarningsAsErrors>$(WarningsAsErrors);IDE0011;IDE0160;IDE0052;IDE0054</WarningsAsErrors>
+    
     <!-- Critical security warnings only (performance optimized) -->
     <WarningsAsErrors>$(WarningsAsErrors);CA2100;CA3001;CA3002;CA3003</WarningsAsErrors>
     
-    <!-- Essential performance warnings for .NET 8 -->
-    <WarningsAsErrors>$(WarningsAsErrors);CA1825;CA1826;CA1827;CA1828;CA1829</WarningsAsErrors>
+    <!-- Essential .NET 8 performance warnings -->
+    <WarningsAsErrors>$(WarningsAsErrors);CA1825;CA1826;CA1827;CA1828;CA1829;CA1859;CA1860;CA1861</WarningsAsErrors>
     
     <!-- Memory and allocation warnings (core only) -->
     <WarningsAsErrors>$(WarningsAsErrors);CA1805;CA1810;CA1820;CA1822</WarningsAsErrors>
