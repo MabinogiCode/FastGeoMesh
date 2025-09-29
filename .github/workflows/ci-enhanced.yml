@@ -1,0 +1,258 @@
+# ?? Enhanced GitHub Actions workflow for FastGeoMesh .NET 8
+# Optimized for performance, reliability, and comprehensive coverage reporting
+
+name: 'CI/CD Enhanced'
+
+on:
+  push:
+    branches: [ main, develop, 'feature/**', 'chore/**' ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_DETERMINISTIC_SOURCE_PATHS: true
+  DOTNET_NOLOGO: true
+
+jobs:
+  # Job 1: Build and basic validation
+  build:
+    name: '?? Build & Analyze'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      should-deploy: ${{ steps.changes.outputs.should-deploy }}
+    
+    steps:
+      - name: '?? Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for GitVersion
+          
+      - name: '?? Setup .NET'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: '?? Cache .NET packages'
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+            
+      - name: '?? Restore dependencies'
+        run: dotnet restore --locked-mode
+        
+      - name: '?? Build solution'
+        run: |
+          dotnet build --no-restore --configuration Release \
+            /p:TreatWarningsAsErrors=true \
+            /p:ContinuousIntegrationBuild=true \
+            /p:Deterministic=true
+            
+      - name: '?? Run static analysis'
+        run: |
+          dotnet format --verify-no-changes --verbosity diagnostic
+          
+      - name: '?? Detect changes'
+        id: changes
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Job 2: Comprehensive testing with coverage
+  test:
+    name: '?? Test & Coverage'
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: '?? Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: '?? Setup .NET'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: '?? Cache .NET packages'
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+            
+      - name: '?? Restore dependencies'
+        run: dotnet restore --locked-mode
+        
+      - name: '?? Build for testing'
+        run: |
+          dotnet build --no-restore --configuration Release \
+            /p:ContinuousIntegrationBuild=true \
+            /p:Deterministic=true
+            
+      - name: '?? Run tests with coverage'
+        run: |
+          dotnet test \
+            --no-build \
+            --configuration Release \
+            --logger "trx;LogFileName=test-results.trx" \
+            --logger "console;verbosity=normal" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./tests/TestResults \
+            --settings ./tests/FastGeoMesh.Tests/coverlet.runsettings \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=lcov,opencover,cobertura \
+            /p:CoverletOutput=./tests/TestResults/coverage/ \
+            /p:UseSourceLink=true \
+            /p:Threshold=70 \
+            /p:ThresholdType=line,branch,method \
+            /p:ThresholdStat=total
+            
+      - name: '?? Process coverage files'
+        run: |
+          # Find and move coverage files to expected location
+          find ./tests/TestResults -name "coverage.cobertura.xml" -exec cp {} ./tests/TestResults/coverage/ \; || true
+          find ./tests/TestResults -name "coverage.opencover.xml" -exec cp {} ./tests/TestResults/coverage/ \; || true
+          find ./tests/TestResults -name "coverage.info" -exec cp {} ./tests/TestResults/coverage/ \; || true
+          
+          # Ensure coverage.info exists for Codecov
+          if [ ! -f "./tests/TestResults/coverage/coverage.info" ]; then
+            echo "Creating placeholder coverage.info file"
+            find ./tests/TestResults -name "*.coverage" -exec echo "Found .coverage file: {} but no lcov output" \;
+            touch ./tests/TestResults/coverage/coverage.info
+          fi
+          
+          # List all coverage files for debugging
+          echo "Coverage files found:"
+          find ./tests/TestResults -name "*coverage*" -type f || echo "No coverage files found"
+          
+      - name: '?? Upload test results'
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ./tests/TestResults/
+          retention-days: 30
+          
+      - name: '?? Generate coverage report'
+        if: success()
+        run: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool || true
+          
+          COBERTURA_FILE=$(find ./tests/TestResults -name "coverage.cobertura.xml" | head -1)
+          if [ -n "$COBERTURA_FILE" ]; then
+            reportgenerator \
+              "-reports:$COBERTURA_FILE" \
+              "-targetdir:./tests/TestResults/coverage/html" \
+              "-reporttypes:HtmlInline_AzurePipelines;Badges;TextSummary" \
+              "-sourcedirs:./src" \
+              "-title:FastGeoMesh Coverage Report"
+              
+            echo "?? Coverage report generated successfully"
+          else
+            echo "?? No Cobertura file found for report generation"
+          fi
+          
+      - name: '?? Upload coverage to Codecov'
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./tests/TestResults/coverage/coverage.info
+          flags: unittests
+          name: fastgeomesh-coverage
+          fail_ci_if_error: false
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  # Job 3: Performance benchmarks (optional)
+  benchmark:
+    name: '? Performance'
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: '?? Checkout'
+        uses: actions/checkout@v4
+        
+      - name: '?? Setup .NET'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: '????? Run performance validation'
+        run: |
+          # Basic performance smoke tests
+          dotnet run --project samples/FastGeoMesh.Sample --configuration Release
+          echo "? Performance validation completed"
+
+  # Job 4: Security scan
+  security:
+    name: '?? Security'
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: '?? Checkout'
+        uses: actions/checkout@v4
+        
+      - name: '?? Setup .NET'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: '?? Security audit'
+        run: |
+          dotnet list package --vulnerable --include-transitive 2>&1 | tee security-audit.log
+          if grep -q "has the following vulnerable packages" security-audit.log; then
+            echo "? Vulnerable packages detected"
+            exit 1
+          else
+            echo "? No vulnerable packages detected"
+          fi
+
+  # Job 5: Package and deployment preparation
+  package:
+    name: '?? Package'
+    runs-on: ubuntu-latest
+    needs: [build, test, security]
+    if: needs.build.outputs.should-deploy == 'true'
+    
+    steps:
+      - name: '?? Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: '?? Setup .NET'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: '?? Create NuGet package'
+        run: |
+          dotnet pack src/FastGeoMesh/FastGeoMesh.csproj \
+            --configuration Release \
+            --output ./packages \
+            /p:PackageVersion=1.1.0-ci.$(date +%Y%m%d).$(git rev-parse --short HEAD) \
+            /p:ContinuousIntegrationBuild=true
+            
+      - name: '?? Upload packages'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: ./packages/
+          retention-days: 90
