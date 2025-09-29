@@ -27,27 +27,36 @@ try {
     if ($Fix) {
         Write-Host "?? Running code formatter (fixing issues)..." -ForegroundColor Yellow
         
-        # Run formatter with fixes
-        $result = & dotnet format --verbosity normal --report .format-report.json
+        # Save current git status
+        $gitStatusBefore = & git status --porcelain 2>$null
+        
+        # Run formatter
+        $formatResult = & dotnet format --verbosity normal 2>&1
         $exitCode = $LASTEXITCODE
+        
+        # Check git status after formatting
+        $gitStatusAfter = & git status --porcelain 2>$null
         
         if ($exitCode -eq 0) {
             Write-Host "? Code formatting completed successfully" -ForegroundColor Green
             
-            # Show formatting report if available
-            if (Test-Path .format-report.json) {
-                $report = Get-Content .format-report.json | ConvertFrom-Json -ErrorAction SilentlyContinue
-                if ($report -and $report.DocumentsFormatted) {
-                    Write-Host "?? Formatted $($report.DocumentsFormatted) file(s)" -ForegroundColor Cyan
-                    
-                    if ($report.DocumentsFormatted -gt 0) {
-                        Write-Host "?? Files have been auto-formatted. Please review and commit changes." -ForegroundColor Yellow
-                    }
+            # Compare git status to detect changes
+            if ($gitStatusBefore -ne $gitStatusAfter) {
+                $changedFiles = & git diff --name-only 2>$null
+                if ($changedFiles) {
+                    Write-Host "?? Formatted files:" -ForegroundColor Cyan
+                    $changedFiles | ForEach-Object { Write-Host "  - $_" -ForegroundColor Yellow }
+                    Write-Host "?? Files have been auto-formatted. Please review and commit changes." -ForegroundColor Yellow
+                } else {
+                    Write-Host "? No changes detected after formatting." -ForegroundColor Green
                 }
-                Remove-Item .format-report.json -ErrorAction SilentlyContinue
+            } else {
+                Write-Host "? No formatting changes needed." -ForegroundColor Green
             }
         } else {
             Write-Host "? Code formatting failed with exit code: $exitCode" -ForegroundColor Red
+            Write-Host "Output:" -ForegroundColor Yellow
+            $formatResult | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
             exit $exitCode
         }
         
@@ -55,13 +64,15 @@ try {
         Write-Host "?? Checking code formatting (no changes)..." -ForegroundColor Yellow
         
         # Check formatting without making changes
-        $result = & dotnet format --verify-no-changes --verbosity normal
+        $result = & dotnet format --verify-no-changes --verbosity normal 2>&1
         $exitCode = $LASTEXITCODE
         
         if ($exitCode -eq 0) {
             Write-Host "? Code is properly formatted" -ForegroundColor Green
         } else {
             Write-Host "??  Code formatting issues detected" -ForegroundColor Yellow
+            Write-Host "Output:" -ForegroundColor Yellow
+            $result | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
             Write-Host "?? Run './scripts/format-code.ps1 -Fix' to auto-fix formatting" -ForegroundColor Cyan
             exit $exitCode
         }
@@ -76,8 +87,20 @@ try {
         
         # Quick status check
         Write-Host "?? Quick formatting status check..." -ForegroundColor Yellow
-        $result = & dotnet format --verify-no-changes --verbosity quiet 2>$null
+        
+        # Save current state
+        $gitStatusBefore = & git status --porcelain 2>$null
+        
+        # Run quick format check
+        $result = & dotnet format --verify-no-changes --verbosity quiet 2>&1
         $exitCode = $LASTEXITCODE
+        
+        # Ensure no changes were made during check
+        $gitStatusAfter = & git status --porcelain 2>$null
+        if ($gitStatusBefore -ne $gitStatusAfter) {
+            Write-Host "??  Unexpected: Check mode modified files. Reverting..." -ForegroundColor Yellow
+            & git checkout . 2>$null
+        }
         
         if ($exitCode -eq 0) {
             Write-Host "? Code is properly formatted" -ForegroundColor Green

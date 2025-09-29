@@ -73,7 +73,7 @@ namespace FastGeoMesh.Utils
         {
             // Try to create activity with ActivitySource first
             var activity = ActivitySource.StartActivity(operationName);
-            
+
             // If no listener is present, create a manual activity for testing scenarios
             if (activity == null)
             {
@@ -89,7 +89,7 @@ namespace FastGeoMesh.Utils
                     activity.SetTag(prop.Name, prop.GetValue(tags)?.ToString());
                 }
             }
-            
+
             return activity;
         }
 

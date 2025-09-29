@@ -118,12 +118,12 @@ namespace FastGeoMesh.Tests
             // Either from the listener or from the fallback implementation
             activity1.Should().NotBeNull("Activity should be created via fallback mechanism");
             activity2.Should().NotBeNull("Activity should be created with listener present");
-            
+
             if (activity1 != null)
             {
                 activity1.OperationName.Should().Be("TestOperation");
             }
-            
+
             if (activity2 != null)
             {
                 activity2.OperationName.Should().Be("TestOperationWithListener");
