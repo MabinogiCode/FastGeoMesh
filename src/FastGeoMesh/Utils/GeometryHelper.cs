@@ -6,11 +6,10 @@ using FastGeoMesh.Geometry;
 
 namespace FastGeoMesh.Utils
 {
-    /// <summary>Helper class for geometric calculations and polygon operations optimized for .NET 8.</summary>
+    /// <summary>Helper class for geometric calculations and polygon operations.</summary>
     public static class GeometryHelper
     {
-        /// <summary>Compute distance from a point to a line segment using optimized arithmetic.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>Compute distance from a point to a line segment.</summary>
         public static double DistancePointToSegment(in Vec2 p, in Vec2 a, in Vec2 b, double tolerance = 0)
         {
             tolerance = tolerance <= 0 ? GeometryConfig.DefaultTolerance : tolerance;
@@ -37,21 +36,18 @@ namespace FastGeoMesh.Utils
         }
 
         /// <summary>Linear interpolation between two 2D points.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vec2 Lerp(in Vec2 a, in Vec2 b, double t)
         {
             return new Vec2(a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
         }
 
         /// <summary>Linear interpolation between two scalar values.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double LerpScalar(double a, double b, double t)
         {
             return a + (b - a) * t;
         }
 
         /// <summary>Check if a quadrilateral defined by four 2D points is convex.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsConvex((Vec2 a, Vec2 b, Vec2 c, Vec2 d) quad)
         {
             // Check if all cross products have the same sign (indicating consistent winding)
@@ -67,29 +63,18 @@ namespace FastGeoMesh.Utils
         }
 
         /// <summary>
-        /// High-performance point-in-polygon test using ray casting optimized for .NET 8.
-        /// Uses ReadOnlySpan for zero-copy vertex access and aggressive inlining.
+        /// Simple and fast point-in-polygon test using ray casting.
+        /// Uses standard array access for predictable performance.
         /// </summary>
-        /// <param name="vertices">Polygon vertices as ReadOnlySpan for optimal performance.</param>
-        /// <param name="point">Point to test.</param>
-        /// <param name="tolerance">Geometric tolerance (uses default if not specified).</param>
-        /// <returns>True if point is inside or on boundary of polygon.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool PointInPolygon(ReadOnlySpan<Vec2> vertices, in Vec2 point, double tolerance = 0)
         {
             return PointInPolygon(vertices, point.X, point.Y, tolerance);
         }
 
         /// <summary>
-        /// Point-in-polygon using corrected ray casting algorithm.
-        /// Points on boundary considered inside. Fixed algorithm that actually works.
+        /// Simple point-in-polygon using ray casting algorithm.
+        /// Points on boundary considered inside. Optimized for simplicity and speed.
         /// </summary>
-        /// <param name="vertices">Polygon vertices as ReadOnlySpan for optimal performance.</param>
-        /// <param name="x">Point X coordinate.</param>
-        /// <param name="y">Point Y coordinate.</param>
-        /// <param name="tolerance">Geometric tolerance (uses default if not specified).</param>
-        /// <returns>True if point is inside or on boundary of polygon.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static bool PointInPolygon(ReadOnlySpan<Vec2> vertices, double x, double y, double tolerance = 0)
         {
             tolerance = tolerance <= 0 ? GeometryConfig.PointInPolygonTolerance : tolerance;
@@ -102,20 +87,19 @@ namespace FastGeoMesh.Utils
 
             bool inside = false;
 
-            // Standard ray casting algorithm with proper edge case handling
+            // Simple ray casting algorithm - cast ray to the right
             for (int i = 0, j = n - 1; i < n; j = i++)
             {
                 var vi = vertices[i];
                 var vj = vertices[j];
 
-                // Check if point is on edge
+                // Check if point is on edge (simple distance check)
                 if (IsPointOnSegment(x, y, vi.X, vi.Y, vj.X, vj.Y, tolerance))
                 {
                     return true; // Point on boundary counts as inside
                 }
 
-                // Ray casting test: cast ray from point to the right (+X direction)
-                // Check if edge crosses the ray
+                // Ray casting test: does edge cross horizontal ray to the right?
                 if (((vi.Y > y) != (vj.Y > y)) &&
                     (x < (vj.X - vi.X) * (y - vi.Y) / (vj.Y - vi.Y) + vi.X))
                 {
@@ -127,13 +111,8 @@ namespace FastGeoMesh.Utils
         }
 
         /// <summary>
-        /// Fast batch point-in-polygon test for multiple points using .NET 8 Span optimizations.
+        /// Batch point-in-polygon test for multiple points.
         /// </summary>
-        /// <param name="vertices">Polygon vertices.</param>
-        /// <param name="points">Points to test.</param>
-        /// <param name="results">Results span to write to (must be same length as points).</param>
-        /// <param name="tolerance">Geometric tolerance.</param>
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static void BatchPointInPolygon(ReadOnlySpan<Vec2> vertices, ReadOnlySpan<Vec2> points, 
             Span<bool> results, double tolerance = 0)
         {
@@ -142,17 +121,13 @@ namespace FastGeoMesh.Utils
                 throw new ArgumentException("Points and results spans must have the same length");
             }
 
-            // Optimize for small batches with direct iteration
             for (int i = 0; i < points.Length; i++)
             {
                 results[i] = PointInPolygon(vertices, points[i], tolerance);
             }
         }
 
-        /// <summary>
-        /// Check if a point lies on a line segment within tolerance.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>Check if a point lies on a line segment within tolerance.</summary>
         private static bool IsPointOnSegment(double px, double py, double ax, double ay, double bx, double by, double tolerance)
         {
             // Vector from A to P
@@ -181,9 +156,8 @@ namespace FastGeoMesh.Utils
         }
 
         /// <summary>
-        /// Optimized polygon area calculation using Shoelace formula with Span.
+        /// Polygon area calculation using Shoelace formula.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static double PolygonArea(ReadOnlySpan<Vec2> vertices)
         {
             if (vertices.Length < 3) 

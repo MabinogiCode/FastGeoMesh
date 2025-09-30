@@ -3,13 +3,21 @@
 BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.6584)
 Intel Core Ultra 7 165U, 1 CPU, 14 logical and 12 physical cores
 .NET SDK 9.0.304
-  [Host] : .NET 8.0.20 (8.0.2025.41914), X64 RyuJIT AVX2
+  [Host]     : .NET 8.0.20 (8.0.2025.41914), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.20 (8.0.2025.41914), X64 RyuJIT AVX2
 
 
 ```
-| Method                    | Mean | Error | Min | Max | Median | Ratio | RatioSD | Alloc Ratio |
-|-------------------------- |-----:|------:|----:|----:|-------:|------:|--------:|------------:|
-| SimpleMeshing_FastOptions |   NA |    NA |  NA |  NA |     NA |     ? |       ? |           ? |
-
-Benchmarks with issues:
-  PrismMeshingBenchmark.SimpleMeshing_FastOptions: DefaultJob
+| Method                               | Mean        | Error     | StdDev      | Median      | Min        | Max         | Ratio | RatioSD | Gen0      | Gen1      | Gen2      | Allocated   | Alloc Ratio |
+|------------------------------------- |------------:|----------:|------------:|------------:|-----------:|------------:|------:|--------:|----------:|----------:|----------:|------------:|------------:|
+| SimpleMeshing_FastOptions            |    308.5 μs |   7.45 μs |    21.01 μs |    313.2 μs |   206.9 μs |    318.8 μs |  1.01 |    0.12 |   13.6719 |    1.9531 |         - |    86.87 KB |        1.00 |
+| SimpleMeshing_HighQualityOptions     |    899.6 μs |  80.77 μs |   238.15 μs |    787.4 μs |   651.7 μs |  1,416.0 μs |  2.93 |    0.82 |  285.1563 |  285.1563 |  285.1563 |  1246.61 KB |       14.35 |
+| ComplexMeshing_FastOptions           |    186.4 μs |  10.44 μs |    30.45 μs |    174.8 μs |   143.8 μs |    263.1 μs |  0.61 |    0.11 |   71.2891 |   35.6445 |   35.6445 |    352.7 KB |        4.06 |
+| ComplexMeshing_HighQualityOptions    |  1,437.3 μs |  32.80 μs |    94.11 μs |  1,427.4 μs | 1,090.0 μs |  1,684.0 μs |  4.69 |    0.54 | 1027.3438 |  998.0469 |  996.0938 |  5762.43 KB |       66.34 |
+| MeshingWithHoles_FastOptions         |    868.0 μs |  17.33 μs |    19.26 μs |    867.2 μs |   841.0 μs |    922.5 μs |  2.83 |    0.28 |  249.0234 |  249.0234 |  249.0234 |  1117.74 KB |       12.87 |
+| MeshingWithHoles_HighQualityOptions  | 11,308.6 μs | 508.21 μs | 1,458.15 μs | 10,920.7 μs | 9,248.9 μs | 15,062.5 μs | 36.89 |    5.90 | 1234.3750 | 1000.0000 | 1000.0000 | 17813.07 KB |      205.06 |
+| MeshingWithRefinement_HoleRefinement |  1,390.3 μs |  49.06 μs |   140.77 μs |  1,382.8 μs | 1,196.2 μs |  1,743.1 μs |  4.54 |    0.63 |  285.1563 |  285.1563 |  285.1563 |   1255.5 KB |       14.45 |
+| MeshingCapsOnly_BottomCap            |    360.7 μs |  11.31 μs |    32.99 μs |    353.4 μs |   307.5 μs |    453.0 μs |  1.18 |    0.15 |  153.8086 |  153.8086 |  153.8086 |   716.91 KB |        8.25 |
+| MeshingCapsOnly_TopCap               |    372.6 μs |  11.80 μs |    32.50 μs |    363.8 μs |   323.3 μs |    476.1 μs |  1.22 |    0.16 |  153.8086 |  153.8086 |  153.8086 |   716.91 KB |        8.25 |
+| MeshingCapsOnly_BothCaps             |    330.1 μs |   6.55 μs |    17.59 μs |    327.2 μs |   243.4 μs |    362.5 μs |  1.08 |    0.12 |  153.8086 |  153.8086 |  153.8086 |   716.91 KB |        8.25 |
+| MeshingWithTriangleOutput            |    336.7 μs |   9.19 μs |    25.93 μs |    330.9 μs |   255.0 μs |    394.2 μs |  1.10 |    0.13 |  153.8086 |  153.8086 |  153.8086 |   718.74 KB |        8.27 |
