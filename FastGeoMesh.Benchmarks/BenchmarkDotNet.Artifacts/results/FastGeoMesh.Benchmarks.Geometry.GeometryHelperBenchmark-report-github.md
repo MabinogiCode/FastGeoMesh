@@ -8,14 +8,14 @@ Intel Core Ultra 7 165U, 1 CPU, 14 logical and 12 physical cores
 
 
 ```
-| Method                           | Mean         | Error       | StdDev      | Median       | Min          | Max          | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
-|--------------------------------- |-------------:|------------:|------------:|-------------:|-------------:|-------------:|------:|--------:|-------:|----------:|------------:|
-| PointInPolygon_OptimizedSpan     | 177,439.7 ns | 2,857.51 ns | 2,672.92 ns | 176,684.8 ns | 174,731.4 ns | 183,151.6 ns | 1.000 |    0.02 |      - |         - |          NA |
-| PointInPolygon_NonOptimized      | 136,738.0 ns |   590.19 ns |   523.19 ns | 136,780.0 ns | 135,508.7 ns | 137,478.7 ns | 0.771 |    0.01 |      - |         - |          NA |
-| BatchPointInPolygon_Optimized    | 178,455.5 ns | 3,169.78 ns | 4,934.96 ns | 176,738.4 ns | 173,192.3 ns | 192,918.7 ns | 1.006 |    0.03 |      - |    1024 B |          NA |
-| PolygonArea_OptimizedSpan        |     128.3 ns |     2.13 ns |     1.99 ns |     127.8 ns |     125.8 ns |     132.0 ns | 0.001 |    0.00 |      - |         - |          NA |
-| PolygonArea_NonOptimized         |     127.5 ns |     2.31 ns |     1.81 ns |     127.0 ns |     125.3 ns |     131.9 ns | 0.001 |    0.00 |      - |         - |          NA |
-| DistancePointToSegment_Optimized |   4,383.8 ns |   280.40 ns |   826.77 ns |   4,176.8 ns |   2,865.8 ns |   6,400.0 ns | 0.025 |    0.00 |      - |         - |          NA |
-| LinearInterpolation_Optimized    |     925.3 ns |    18.30 ns |    39.39 ns |     908.7 ns |     883.2 ns |   1,040.9 ns | 0.005 |    0.00 |      - |         - |          NA |
-| ScalarInterpolation_Optimized    |     863.6 ns |    17.03 ns |    35.17 ns |     847.2 ns |     829.5 ns |     960.6 ns | 0.005 |    0.00 |      - |         - |          NA |
-| ConvexityTest_Optimized          |   1,421.0 ns |    28.28 ns |    55.16 ns |   1,401.3 ns |   1,369.3 ns |   1,587.5 ns | 0.008 |    0.00 | 0.0439 |     280 B |          NA |
+| Method                           | Mean         | Error       | StdDev      | Median       | Min          | Max          | Ratio | Gen0   | Allocated | Alloc Ratio |
+|--------------------------------- |-------------:|------------:|------------:|-------------:|-------------:|-------------:|------:|-------:|----------:|------------:|
+| PointInPolygon_OptimizedSpan     | 275,646.3 ns |   246.31 ns |   230.40 ns | 275,611.0 ns | 275,204.7 ns | 276,079.0 ns | 1.000 |      - |         - |          NA |
+| PointInPolygon_NonOptimized      | 161,121.8 ns | 1,244.15 ns | 1,102.90 ns | 161,362.0 ns | 158,267.2 ns | 162,325.6 ns | 0.585 |      - |         - |          NA |
+| BatchPointInPolygon_Optimized    | 275,958.9 ns |   676.29 ns |   632.60 ns | 275,930.3 ns | 274,933.3 ns | 277,122.7 ns | 1.001 |      - |    1024 B |          NA |
+| PolygonArea_OptimizedSpan        |     180.2 ns |     0.39 ns |     0.37 ns |     180.3 ns |     179.2 ns |     180.7 ns | 0.001 |      - |         - |          NA |
+| PolygonArea_NonOptimized         |     177.1 ns |     1.18 ns |     1.04 ns |     177.5 ns |     174.7 ns |     178.1 ns | 0.001 |      - |         - |          NA |
+| DistancePointToSegment_Optimized |   6,526.1 ns |   208.84 ns |   615.77 ns |   6,490.0 ns |   2,948.6 ns |   7,705.1 ns | 0.024 |      - |         - |          NA |
+| LinearInterpolation_Optimized    |   2,542.2 ns |    74.06 ns |   218.38 ns |   2,545.6 ns |   1,336.6 ns |   2,856.6 ns | 0.009 |      - |         - |          NA |
+| ScalarInterpolation_Optimized    |   2,325.6 ns |   131.85 ns |   363.16 ns |   2,428.9 ns |     932.3 ns |   2,643.9 ns | 0.008 |      - |         - |          NA |
+| ConvexityTest_Optimized          |   2,983.7 ns |    62.49 ns |   170.00 ns |   3,024.8 ns |   1,967.6 ns |   3,062.1 ns | 0.011 | 0.0420 |     280 B |          NA |

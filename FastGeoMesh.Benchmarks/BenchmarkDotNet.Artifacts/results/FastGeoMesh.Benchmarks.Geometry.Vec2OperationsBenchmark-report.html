@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>FastGeoMesh.Benchmarks.Geometry.Vec2OperationsBenchmark-20250929-195152</title>
+<title>FastGeoMesh.Benchmarks.Geometry.Vec2OperationsBenchmark-20250930-132504</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -24,18 +24,18 @@ Intel Core Ultra 7 165U, 1 CPU, 14 logical and 12 physical cores
 <table>
 <thead><tr><th>Method               </th><th>Mean</th><th>Error</th><th>StdDev</th><th>Median</th><th>Min</th><th>Max</th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th><th>Alloc Ratio</th>
 </tr>
-</thead><tbody><tr><td>Vec2Addition_Optimized</td><td>11.434 &mu;s</td><td>0.8280 &mu;s</td><td>2.4413 &mu;s</td><td>10.710 &mu;s</td><td>8.728 &mu;s</td><td>17.512 &mu;s</td><td>1.04</td><td>0.30</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2Addition_NonOptimized</td><td>19.158 &mu;s</td><td>0.9139 &mu;s</td><td>2.5627 &mu;s</td><td>18.117 &mu;s</td><td>16.764 &mu;s</td><td>26.548 &mu;s</td><td>1.74</td><td>0.41</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2DotProduct_Optimized</td><td>7.918 &mu;s</td><td>0.1582 &mu;s</td><td>0.3850 &mu;s</td><td>7.791 &mu;s</td><td>7.493 &mu;s</td><td>9.010 &mu;s</td><td>0.72</td><td>0.14</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2DotProduct_NonOptimized</td><td>15.571 &mu;s</td><td>0.6139 &mu;s</td><td>1.7514 &mu;s</td><td>15.001 &mu;s</td><td>13.522 &mu;s</td><td>20.642 &mu;s</td><td>1.42</td><td>0.31</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2AccumulateDot_Batch</td><td>6.040 &mu;s</td><td>0.0995 &mu;s</td><td>0.1329 &mu;s</td><td>5.984 &mu;s</td><td>5.906 &mu;s</td><td>6.340 &mu;s</td><td>0.55</td><td>0.11</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2AccumulateDot_Loop</td><td>7.347 &mu;s</td><td>0.0945 &mu;s</td><td>0.0884 &mu;s</td><td>7.334 &mu;s</td><td>7.230 &mu;s</td><td>7.548 &mu;s</td><td>0.67</td><td>0.13</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2Add_Batch</td><td>6.399 &mu;s</td><td>0.0950 &mu;s</td><td>0.0742 &mu;s</td><td>6.374 &mu;s</td><td>6.327 &mu;s</td><td>6.580 &mu;s</td><td>0.58</td><td>0.11</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2Add_Loop</td><td>10.023 &mu;s</td><td>0.1355 &mu;s</td><td>0.1131 &mu;s</td><td>10.003 &mu;s</td><td>9.849 &mu;s</td><td>10.255 &mu;s</td><td>0.91</td><td>0.17</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2Length_Optimized</td><td>12.746 &mu;s</td><td>0.2509 &mu;s</td><td>0.2347 &mu;s</td><td>12.727 &mu;s</td><td>12.430 &mu;s</td><td>13.333 &mu;s</td><td>1.16</td><td>0.22</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2LengthSquared_Optimized</td><td>5.860 &mu;s</td><td>0.3894 &mu;s</td><td>1.1359 &mu;s</td><td>5.360 &mu;s</td><td>4.883 &mu;s</td><td>8.902 &mu;s</td><td>0.53</td><td>0.15</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
-</tr><tr><td>Vec2Normalize_Optimized</td><td>62.837 &mu;s</td><td>1.2275 &mu;s</td><td>1.0881 &mu;s</td><td>62.897 &mu;s</td><td>60.462 &mu;s</td><td>64.839 &mu;s</td><td>5.72</td><td>1.09</td><td>49.9268</td><td>49.9268</td><td>49.9268</td><td>160041 B</td><td>NA</td>
-</tr><tr><td>Vec2Cross_Optimized</td><td>7.743 &mu;s</td><td>0.1505 &mu;s</td><td>0.1848 &mu;s</td><td>7.671 &mu;s</td><td>7.542 &mu;s</td><td>8.192 &mu;s</td><td>0.71</td><td>0.14</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</thead><tbody><tr><td>Vec2Addition_Optimized</td><td>14.39 &mu;s</td><td>1.122 &mu;s</td><td>3.309 &mu;s</td><td>14.66 &mu;s</td><td>9.268 &mu;s</td><td>19.42 &mu;s</td><td>1.06</td><td>0.36</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2Addition_NonOptimized</td><td>28.51 &mu;s</td><td>1.448 &mu;s</td><td>4.271 &mu;s</td><td>29.22 &mu;s</td><td>18.761 &mu;s</td><td>33.47 &mu;s</td><td>2.09</td><td>0.60</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2DotProduct_Optimized</td><td>17.52 &mu;s</td><td>0.571 &mu;s</td><td>1.675 &mu;s</td><td>17.87 &mu;s</td><td>8.630 &mu;s</td><td>18.04 &mu;s</td><td>1.29</td><td>0.33</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2DotProduct_NonOptimized</td><td>28.10 &mu;s</td><td>0.561 &mu;s</td><td>1.608 &mu;s</td><td>28.40 &mu;s</td><td>16.998 &mu;s</td><td>28.60 &mu;s</td><td>2.06</td><td>0.51</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2AccumulateDot_Batch</td><td>12.98 &mu;s</td><td>0.633 &mu;s</td><td>1.847 &mu;s</td><td>13.56 &mu;s</td><td>6.708 &mu;s</td><td>14.07 &mu;s</td><td>0.95</td><td>0.27</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2AccumulateDot_Loop</td><td>15.36 &mu;s</td><td>0.307 &mu;s</td><td>0.871 &mu;s</td><td>15.32 &mu;s</td><td>11.625 &mu;s</td><td>17.30 &mu;s</td><td>1.13</td><td>0.28</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2Add_Batch</td><td>16.41 &mu;s</td><td>0.312 &mu;s</td><td>0.306 &mu;s</td><td>16.34 &mu;s</td><td>15.920 &mu;s</td><td>17.00 &mu;s</td><td>1.21</td><td>0.29</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2Add_Loop</td><td>19.85 &mu;s</td><td>0.362 &mu;s</td><td>0.739 &mu;s</td><td>19.42 &mu;s</td><td>19.065 &mu;s</td><td>22.16 &mu;s</td><td>1.46</td><td>0.36</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2Length_Optimized</td><td>35.19 &mu;s</td><td>0.417 &mu;s</td><td>0.390 &mu;s</td><td>35.14 &mu;s</td><td>34.588 &mu;s</td><td>36.14 &mu;s</td><td>2.58</td><td>0.62</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2LengthSquared_Optimized</td><td>11.15 &mu;s</td><td>0.171 &mu;s</td><td>0.160 &mu;s</td><td>11.17 &mu;s</td><td>10.754 &mu;s</td><td>11.35 &mu;s</td><td>0.82</td><td>0.20</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>Vec2Normalize_Optimized</td><td>116.67 &mu;s</td><td>2.331 &mu;s</td><td>5.164 &mu;s</td><td>116.59 &mu;s</td><td>82.169 &mu;s</td><td>123.65 &mu;s</td><td>8.57</td><td>2.10</td><td>49.9268</td><td>49.9268</td><td>49.9268</td><td>160041 B</td><td>NA</td>
+</tr><tr><td>Vec2Cross_Optimized</td><td>17.81 &mu;s</td><td>0.813 &mu;s</td><td>2.331 &mu;s</td><td>17.86 &mu;s</td><td>8.583 &mu;s</td><td>20.75 &mu;s</td><td>1.31</td><td>0.36</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
 </tr></tbody></table>
 </body>
 </html>
