@@ -23,7 +23,7 @@ namespace FastGeoMesh.Tests
 
             // Act & Assert - Functional validation only
             using var mesh = new Mesh();
-            
+
             // Sequential addition should work
             foreach (var quad in testQuads.Take(50))
             {
@@ -47,7 +47,7 @@ namespace FastGeoMesh.Tests
             var vertices = new Vec2[]
             {
                 new(0, 0),
-                new(2, 0), 
+                new(2, 0),
                 new(2, 2),
                 new(0, 2)
             };
@@ -78,20 +78,20 @@ namespace FastGeoMesh.Tests
             list1.Count.Should().Be(2);
 
             MeshingPools.IntListPool.Return(list1);
-            
+
             var list3 = MeshingPools.IntListPool.Get();
             list3.Should().BeEmpty("Returned lists should be cleared");
-            
+
             MeshingPools.IntListPool.Return(list2);
             MeshingPools.IntListPool.Return(list3);
         }
 
-        [Fact]  
+        [Fact]
         public void IndexedMeshConversionWorksCorrectly()
         {
             // Arrange
             var testQuads = GenerateTestQuads(50);
-            
+
             using var mesh = new Mesh();
             mesh.AddQuads(testQuads);
 
@@ -102,7 +102,7 @@ namespace FastGeoMesh.Tests
             indexed.QuadCount.Should().Be(50);
             indexed.VertexCount.Should().BeGreaterThan(0);
             indexed.EdgeCount.Should().BeGreaterThan(0);
-            
+
             // Test caching works
             var vertices1 = indexed.Vertices;
             var vertices2 = indexed.Vertices;

@@ -5,7 +5,8 @@
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
           <Format>opencover,cobertura</Format>
-          <!-- Remove lcov to fix the deterministic report error -->
+          <Output>./tests/TestResults/coverage</Output>
+          <!-- Exclude patterns -->
           <Exclude>[*]FastGeoMesh.Properties*</Exclude>
           <Exclude>[*]System*</Exclude>
           <Exclude>[*]Microsoft*</Exclude>

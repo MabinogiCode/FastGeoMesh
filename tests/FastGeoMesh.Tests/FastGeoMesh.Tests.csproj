@@ -9,9 +9,9 @@
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>opencover,cobertura</CoverletOutputFormat>
     <!-- Remove lcov format which causes deterministic report errors -->
-    <CoverletOutput>../TestResults/coverage/</CoverletOutput>
+    <CoverletOutput>./tests/TestResults/coverage/</CoverletOutput>
     <UseSourceLink>true</UseSourceLink>
-    <IncludeTestAssembly>true</IncludeTestAssembly>
+    <IncludeTestAssembly>false</IncludeTestAssembly>
     <SingleHit>false</SingleHit>
     <SkipAutoProps>true</SkipAutoProps>
     
