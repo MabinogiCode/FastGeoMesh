@@ -25,16 +25,16 @@ namespace FastGeoMesh.Utils
 
             /// <summary>Gets the total number of meshing operations performed.</summary>
             public static long MeshingOperations => _meshingOperations;
-            
+
             /// <summary>Gets the total number of quads generated across all operations.</summary>
             public static long QuadsGenerated => _quadsGenerated;
-            
+
             /// <summary>Gets the total number of triangles generated across all operations.</summary>
             public static long TrianglesGenerated => _trianglesGenerated;
-            
+
             /// <summary>Gets the total number of object pool cache hits.</summary>
             public static long PoolHits => _poolHits;
-            
+
             /// <summary>Gets the total number of object pool cache misses.</summary>
             public static long PoolMisses => _poolMisses;
 
@@ -114,13 +114,13 @@ namespace FastGeoMesh.Utils
         {
             /// <summary>Total number of meshing operations performed.</summary>
             public long MeshingOperations { get; init; }
-            
+
             /// <summary>Total number of quads generated.</summary>
             public long QuadsGenerated { get; init; }
-            
+
             /// <summary>Total number of triangles generated.</summary>
             public long TrianglesGenerated { get; init; }
-            
+
             /// <summary>Object pool hit rate as a percentage (0.0 to 1.0).</summary>
             public double PoolHitRate { get; init; }
 

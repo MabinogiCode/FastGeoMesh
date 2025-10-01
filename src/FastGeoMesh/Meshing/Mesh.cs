@@ -45,27 +45,27 @@ namespace FastGeoMesh.Meshing
         }
 
         /// <summary>Gets the total number of quads in the mesh.</summary>
-        public int QuadCount 
-        { 
-            get 
-            { 
-                lock (_lock) 
-                { 
-                    return _quads.Count; 
-                } 
-            } 
+        public int QuadCount
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _quads.Count;
+                }
+            }
         }
 
         /// <summary>Gets the total number of triangles in the mesh.</summary>
-        public int TriangleCount 
-        { 
-            get 
-            { 
-                lock (_lock) 
-                { 
-                    return _triangles.Count; 
-                } 
-            } 
+        public int TriangleCount
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _triangles.Count;
+                }
+            }
         }
 
         /// <summary>Collection of quads.</summary>
@@ -73,8 +73,11 @@ namespace FastGeoMesh.Meshing
         {
             get
             {
-                if (_quadsReadOnly != null) return _quadsReadOnly;
-                
+                if (_quadsReadOnly != null)
+                {
+                    return _quadsReadOnly;
+                }
+
                 lock (_lock)
                 {
                     return _quadsReadOnly ??= _quads.AsReadOnly();
@@ -87,8 +90,11 @@ namespace FastGeoMesh.Meshing
         {
             get
             {
-                if (_trianglesReadOnly != null) return _trianglesReadOnly;
-                
+                if (_trianglesReadOnly != null)
+                {
+                    return _trianglesReadOnly;
+                }
+
                 lock (_lock)
                 {
                     return _trianglesReadOnly ??= _triangles.AsReadOnly();
@@ -101,8 +107,11 @@ namespace FastGeoMesh.Meshing
         {
             get
             {
-                if (_pointsReadOnly != null) return _pointsReadOnly;
-                
+                if (_pointsReadOnly != null)
+                {
+                    return _pointsReadOnly;
+                }
+
                 lock (_lock)
                 {
                     return _pointsReadOnly ??= _points.AsReadOnly();
@@ -115,8 +124,11 @@ namespace FastGeoMesh.Meshing
         {
             get
             {
-                if (_segmentsReadOnly != null) return _segmentsReadOnly;
-                
+                if (_segmentsReadOnly != null)
+                {
+                    return _segmentsReadOnly;
+                }
+
                 lock (_lock)
                 {
                     return _segmentsReadOnly ??= _internalSegments.AsReadOnly();
@@ -240,7 +252,7 @@ namespace FastGeoMesh.Meshing
                 _triangles.Clear();
                 _points.Clear();
                 _internalSegments.Clear();
-                
+
                 // Simple cache invalidation
                 _quadsReadOnly = null;
                 _trianglesReadOnly = null;

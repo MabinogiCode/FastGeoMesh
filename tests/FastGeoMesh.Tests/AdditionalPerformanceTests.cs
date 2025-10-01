@@ -23,14 +23,14 @@ namespace FastGeoMesh.Tests
         }
 
         [Fact]
-        public void MeshPool_ShowsSignificantPerformanceGains()
+        public void MeshPoolShowsSignificantPerformanceGains()
         {
             // Arrange
             const int iterations = 1000;
             const int quadCount = 100;
-            
+
             var testQuads = GenerateTestQuads(quadCount);
-            
+
             _output.WriteLine($"🏊 Mesh Pooling Performance Test");
             _output.WriteLine($"Testing {iterations} mesh operations with {quadCount} quads each");
 
@@ -59,15 +59,15 @@ namespace FastGeoMesh.Tests
         }
 
         [Fact]
-        public void AdvancedSpanOperations_ShowPerformanceGains()
+        public void AdvancedSpanOperationsShowPerformanceGains()
         {
             // Arrange
             const int vertexCount = 10000;
             const int iterations = 100;
-            
+
             var vertices2D = GenerateTestVertices2D(vertexCount);
             var vertices3D = new Vec3[vertexCount];
-            
+
             _output.WriteLine($"🧮 Advanced Span Operations Performance Test");
             _output.WriteLine($"Testing {vertexCount} vertices over {iterations} iterations");
 
@@ -89,14 +89,14 @@ namespace FastGeoMesh.Tests
             var transformImprovement = (traditionalTransformTime.TotalMicroseconds - spanTransformTime.TotalMicroseconds) / traditionalTransformTime.TotalMicroseconds;
             // Note: Span transform may not always be faster due to method call overhead in micro-benchmarks
             _output.WriteLine($"📊 Span transform comparison: {transformImprovement * 100:F1}% change from traditional");
-            
+
             // Both should be reasonably fast - the main benefit is in API design
             traditionalTransformTime.TotalMicroseconds.Should().BeLessThan(3000, "Traditional transform should be reasonably fast");
             spanTransformTime.TotalMicroseconds.Should().BeLessThan(3000, "Span transform should be reasonably fast");
 
             // Test 2: Area calculation
             var square = new Vec2[] { new(0, 0), new(10, 0), new(10, 10), new(0, 10) };
-            
+
             var traditionalAreaTime = MeasureOperation("Traditional Area", iterations * 100, () =>
             {
                 double area = 0.0;
@@ -116,25 +116,25 @@ namespace FastGeoMesh.Tests
             });
 
             var areaImprovement = (traditionalAreaTime.TotalMicroseconds - spanAreaTime.TotalMicroseconds) / traditionalAreaTime.TotalMicroseconds;
-            
+
             _output.WriteLine($"📈 Span area calculation: {areaImprovement * 100:F1}% change from traditional");
-            
+
             // Both should be reasonably fast
             traditionalAreaTime.TotalMicroseconds.Should().BeLessThan(200, "Traditional area should be fast");
             spanAreaTime.TotalMicroseconds.Should().BeLessThan(200, "Span area should be fast");
         }
 
         [Fact]
-        public void BatchPointInPolygon_ShowsScalabilityGains()
+        public void BatchPointInPolygonShowsScalabilityGains()
         {
             // Arrange
             const int pointCount = 1000;
             const int iterations = 50;
-            
+
             var polygon = new Vec2[] { new(0, 0), new(100, 0), new(100, 100), new(0, 100) };
             var testPoints = GenerateTestVertices2D(pointCount);
             var results = new bool[pointCount];
-            
+
             _output.WriteLine($"🎯 Batch Point-in-Polygon Performance Test");
             _output.WriteLine($"Testing {pointCount} points against polygon over {iterations} iterations");
 
@@ -154,23 +154,23 @@ namespace FastGeoMesh.Tests
 
             // Batch should be at least comparable performance
             var batchImprovement = (individualTime.TotalMicroseconds - batchTime.TotalMicroseconds) / individualTime.TotalMicroseconds;
-            
+
             _output.WriteLine($"📈 Batch point-in-polygon: {batchImprovement * 100:F1}% change from individual");
-            
+
             // Both should be reasonably fast
             individualTime.TotalMicroseconds.Should().BeLessThan(10000, "Individual tests should be reasonably fast");
             batchTime.TotalMicroseconds.Should().BeLessThan(10000, "Batch test should be reasonably fast");
         }
 
         [Fact]
-        public void PaddedBounds_OptimizedImplementation()
+        public void PaddedBoundsOptimizedImplementation()
         {
             // Arrange
             const int vertexCount = 10000;
             const int iterations = 100;
-            
+
             var vertices = GenerateTestVertices2D(vertexCount);
-            
+
             _output.WriteLine($"📐 Padded Bounds Performance Test");
             _output.WriteLine($"Testing {vertexCount} vertices over {iterations} iterations");
 
@@ -188,9 +188,9 @@ namespace FastGeoMesh.Tests
             });
 
             var improvement = (traditionalTime.TotalMicroseconds - optimizedTime.TotalMicroseconds) / traditionalTime.TotalMicroseconds;
-            
+
             _output.WriteLine($"📈 Optimized padded bounds: {improvement * 100:F1}% change from traditional");
-            
+
             // Both should be fast
             traditionalTime.TotalMicroseconds.Should().BeLessThan(5000, "Traditional bounds should be fast");
             optimizedTime.TotalMicroseconds.Should().BeLessThan(5000, "Optimized bounds should be fast");
@@ -207,7 +207,7 @@ namespace FastGeoMesh.Tests
                 var v1 = new Vec3(v0.X + 1, v0.Y, v0.Z);
                 var v2 = new Vec3(v0.X + 1, v0.Y + 1, v0.Z);
                 var v3 = new Vec3(v0.X, v0.Y + 1, v0.Z);
-                
+
                 quads[i] = new Quad(v0, v1, v2, v3);
             }
 
@@ -236,17 +236,17 @@ namespace FastGeoMesh.Tests
             GC.Collect();
 
             var stopwatch = Stopwatch.StartNew();
-            
+
             for (int i = 0; i < iterations; i++)
             {
                 operation();
             }
-            
+
             stopwatch.Stop();
-            
+
             var avgTime = TimeSpan.FromTicks(stopwatch.ElapsedTicks / iterations);
             _output.WriteLine($"  {name}: {avgTime.TotalMicroseconds:F2} μs (avg over {iterations} iterations)");
-            
+
             return avgTime;
         }
     }

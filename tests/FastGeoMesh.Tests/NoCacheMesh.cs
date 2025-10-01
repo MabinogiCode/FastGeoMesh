@@ -22,15 +22,15 @@ namespace FastGeoMesh.Tests
         }
 
         /// <summary>Gets the total number of quads in the mesh.</summary>
-        public int QuadCount 
-        { 
-            get 
-            { 
-                lock (_lock) 
-                { 
-                    return _quads.Count; 
-                } 
-            } 
+        public int QuadCount
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _quads.Count;
+                }
+            }
         }
 
         /// <summary>Collection of quads - NO CACHING (creates new ReadOnlyCollection every time).</summary>

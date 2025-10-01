@@ -1,5 +1,5 @@
-using FastGeoMesh.Geometry;
 using System.Runtime.CompilerServices;
+using FastGeoMesh.Geometry;
 
 namespace FastGeoMesh.Utils
 {
@@ -17,7 +17,10 @@ namespace FastGeoMesh.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vec2 ComputeCentroid(this ReadOnlySpan<Vec2> vertices)
         {
-            if (vertices.IsEmpty) return Vec2.Zero;
+            if (vertices.IsEmpty)
+            {
+                return Vec2.Zero;
+            }
 
             double sumX = 0, sumY = 0;
             foreach (var vertex in vertices)
@@ -25,7 +28,7 @@ namespace FastGeoMesh.Utils
                 sumX += vertex.X;
                 sumY += vertex.Y;
             }
-            
+
             double count = vertices.Length;
             return new Vec2(sumX / count, sumY / count);
         }
@@ -38,7 +41,10 @@ namespace FastGeoMesh.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vec3 ComputeCentroid(this ReadOnlySpan<Vec3> vertices)
         {
-            if (vertices.IsEmpty) return Vec3.Zero;
+            if (vertices.IsEmpty)
+            {
+                return Vec3.Zero;
+            }
 
             double sumX = 0, sumY = 0, sumZ = 0;
             foreach (var vertex in vertices)
@@ -47,7 +53,7 @@ namespace FastGeoMesh.Utils
                 sumY += vertex.Y;
                 sumZ += vertex.Z;
             }
-            
+
             double count = vertices.Length;
             return new Vec3(sumX / count, sumY / count, sumZ / count);
         }
@@ -62,7 +68,9 @@ namespace FastGeoMesh.Utils
         public static void TransformTo3D(this ReadOnlySpan<Vec2> source, Span<Vec3> destination, double z)
         {
             if (source.Length > destination.Length)
+            {
                 throw new ArgumentException("Destination span too small", nameof(destination));
+            }
 
             for (int i = 0; i < source.Length; i++)
             {
@@ -80,7 +88,9 @@ namespace FastGeoMesh.Utils
         public static (Vec2 min, Vec2 max) ComputeBounds(this ReadOnlySpan<Vec2> vertices)
         {
             if (vertices.IsEmpty)
+            {
                 return (Vec2.Zero, Vec2.Zero);
+            }
 
             var first = vertices[0];
             double minX = first.X, maxX = first.X;
@@ -89,10 +99,25 @@ namespace FastGeoMesh.Utils
             for (int i = 1; i < vertices.Length; i++)
             {
                 var v = vertices[i];
-                if (v.X < minX) minX = v.X;
-                if (v.X > maxX) maxX = v.X;
-                if (v.Y < minY) minY = v.Y;
-                if (v.Y > maxY) maxY = v.Y;
+                if (v.X < minX)
+                {
+                    minX = v.X;
+                }
+
+                if (v.X > maxX)
+                {
+                    maxX = v.X;
+                }
+
+                if (v.Y < minY)
+                {
+                    minY = v.Y;
+                }
+
+                if (v.Y > maxY)
+                {
+                    maxY = v.Y;
+                }
             }
 
             return (new Vec2(minX, minY), new Vec2(maxX, maxY));

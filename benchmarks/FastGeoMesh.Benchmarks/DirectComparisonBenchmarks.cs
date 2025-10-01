@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Configs;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 
@@ -27,7 +27,7 @@ namespace FastGeoMesh.Benchmarks
             _testTriangles = new List<Triangle>();
 
             var random = new Random(42);
-            
+
             // Generate 1000 test quads
             for (int i = 0; i < 1000; i++)
             {
@@ -35,7 +35,7 @@ namespace FastGeoMesh.Benchmarks
                 var v1 = new Vec3(v0.X + 1, v0.Y, v0.Z);
                 var v2 = new Vec3(v0.X + 1, v0.Y + 1, v0.Z);
                 var v3 = new Vec3(v0.X, v0.Y + 1, v0.Z);
-                
+
                 _testQuads.Add(new Quad(v0, v1, v2, v3));
             }
 
@@ -45,7 +45,7 @@ namespace FastGeoMesh.Benchmarks
                 var v0 = new Vec3(random.NextDouble() * 100, random.NextDouble() * 100, random.NextDouble() * 10);
                 var v1 = new Vec3(v0.X + 1, v0.Y, v0.Z);
                 var v2 = new Vec3(v0.X + 0.5, v0.Y + 1, v0.Z);
-                
+
                 _testTriangles.Add(new Triangle(v0, v1, v2));
             }
         }
@@ -93,14 +93,14 @@ namespace FastGeoMesh.Benchmarks
             mesh.AddTriangles(_testTriangles);
 
             int total = 0;
-            
+
             // Simulate multiple accesses to collections
             for (int i = 0; i < 100; i++)
             {
                 total += mesh.Quads.Count;
                 total += mesh.Triangles.Count;
             }
-            
+
             return total;
         }
 
@@ -113,14 +113,14 @@ namespace FastGeoMesh.Benchmarks
             mesh.AddTriangles(_testTriangles);
 
             int total = 0;
-            
+
             // Simulate multiple accesses to collections
             for (int i = 0; i < 100; i++)
             {
                 total += mesh.Quads.Count;
                 total += mesh.Triangles.Count;
             }
-            
+
             return total;
         }
 
@@ -133,14 +133,14 @@ namespace FastGeoMesh.Benchmarks
             mesh.AddTriangles(_testTriangles);
 
             int total = 0;
-            
+
             // Use optimized count properties
             for (int i = 0; i < 100; i++)
             {
                 total += mesh.QuadCount;
                 total += mesh.TriangleCount;
             }
-            
+
             return total;
         }
 
@@ -151,7 +151,7 @@ namespace FastGeoMesh.Benchmarks
         public void OldImplementation_MixedReadWrite()
         {
             using var mesh = new OldMeshImplementation();
-            
+
             // Add some initial data
             foreach (var quad in _testQuads.Take(100))
             {
@@ -173,7 +173,7 @@ namespace FastGeoMesh.Benchmarks
         public void NewImplementation_MixedReadWrite()
         {
             using var mesh = new Mesh();
-            
+
             // Add some initial data
             foreach (var quad in _testQuads.Take(100))
             {
@@ -199,7 +199,7 @@ namespace FastGeoMesh.Benchmarks
             using var mesh = new OldMeshImplementation();
             mesh.AddQuads(_testQuads);
             mesh.AddTriangles(_testTriangles);
-            
+
             // Access collections to trigger cache creation
             _ = mesh.Quads.Count;
             _ = mesh.Triangles.Count;
@@ -212,7 +212,7 @@ namespace FastGeoMesh.Benchmarks
             using var mesh = new Mesh();
             mesh.AddQuads(_testQuads);
             mesh.AddTriangles(_testTriangles);
-            
+
             // Access collections to trigger cache creation
             _ = mesh.Quads.Count;
             _ = mesh.Triangles.Count;

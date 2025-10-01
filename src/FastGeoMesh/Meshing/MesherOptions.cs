@@ -36,7 +36,7 @@ namespace FastGeoMesh.Meshing
             {
                 throw new ArgumentOutOfRangeException("Target edge lengths must be positive");
             }
-            
+
             if (MinCapQuadQuality < 0 || MinCapQuadQuality > 1)
             {
                 throw new ArgumentOutOfRangeException("MinCapQuadQuality", MinCapQuadQuality, "Quality must be between 0 and 1");
@@ -54,7 +54,7 @@ namespace FastGeoMesh.Meshing
             if (TargetEdgeLengthXYNearHoles is { } h)
             {
                 ValidateTargetEdgeLength(h, nameof(TargetEdgeLengthXYNearHoles), "HoleRefinement");
-                
+
                 if (h > TargetEdgeLengthXY)
                 {
                     throw new ArgumentException("Refined length near holes must be <= base target", "TargetEdgeLengthXYNearHoles");
@@ -69,7 +69,7 @@ namespace FastGeoMesh.Meshing
             if (TargetEdgeLengthXYNearSegments is { } s)
             {
                 ValidateTargetEdgeLength(s, nameof(TargetEdgeLengthXYNearSegments), "SegmentRefinement");
-                
+
                 if (s > TargetEdgeLengthXY)
                 {
                     throw new ArgumentException("Refined length near segments must be <= base target", "TargetEdgeLengthXYNearSegments");

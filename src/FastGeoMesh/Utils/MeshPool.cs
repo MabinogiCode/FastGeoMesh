@@ -11,12 +11,12 @@ namespace FastGeoMesh.Utils
     public static class MeshPool
     {
         private static readonly DefaultObjectPoolProvider _provider = new();
-        
+
         /// <summary>
         /// Pool for Mesh instances optimized for typical meshing workloads.
         /// Pre-sized for common scenarios to minimize reallocations.
         /// </summary>
-        public static readonly ObjectPool<Mesh> Instance = 
+        public static readonly ObjectPool<Mesh> Instance =
             _provider.Create(new MeshPoolPolicy());
 
         /// <summary>Get a mesh instance from the pool.</summary>
@@ -48,7 +48,7 @@ namespace FastGeoMesh.Utils
         {
             return new Mesh(
                 initialQuadCapacity: DefaultQuadCapacity,
-                initialTriangleCapacity: DefaultTriangleCapacity, 
+                initialTriangleCapacity: DefaultTriangleCapacity,
                 initialPointCapacity: DefaultPointCapacity,
                 initialSegmentCapacity: DefaultSegmentCapacity
             );
@@ -57,15 +57,17 @@ namespace FastGeoMesh.Utils
         public override bool Return(Mesh mesh)
         {
             if (mesh == null)
+            {
                 return false;
+            }
 
             // Clear all data to ensure clean state
             mesh.Clear();
 
             // Only retain meshes that haven't grown too large
             // This prevents memory bloat from exceptional cases
-            return mesh.QuadCount == 0 && 
-                   mesh.TriangleCount == 0 && 
+            return mesh.QuadCount == 0 &&
+                   mesh.TriangleCount == 0 &&
                    mesh.Points.Count == 0 &&
                    mesh.InternalSegments.Count == 0;
         }

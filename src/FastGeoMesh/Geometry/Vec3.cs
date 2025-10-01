@@ -42,7 +42,8 @@ namespace FastGeoMesh.Geometry
 
         // Basic metrics -----------------------------------------------------
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(in Vec3 b) => X * b.X + Y * b.Y + Z * b.Z;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public Vec3 Cross(in Vec3 b) => new(
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec3 Cross(in Vec3 b) => new(
             Y * b.Z - Z * b.Y,
             Z * b.X - X * b.Z,
             X * b.Y - Y * b.X);

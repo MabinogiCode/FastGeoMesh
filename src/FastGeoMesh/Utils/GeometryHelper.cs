@@ -113,7 +113,7 @@ namespace FastGeoMesh.Utils
         /// <summary>
         /// Batch point-in-polygon test for multiple points.
         /// </summary>
-        public static void BatchPointInPolygon(ReadOnlySpan<Vec2> vertices, ReadOnlySpan<Vec2> points, 
+        public static void BatchPointInPolygon(ReadOnlySpan<Vec2> vertices, ReadOnlySpan<Vec2> points,
             Span<bool> results, double tolerance = 0)
         {
             if (points.Length != results.Length)
@@ -140,7 +140,7 @@ namespace FastGeoMesh.Utils
 
             // Cross product to check if point is on line
             double cross = Math.Abs(apx * aby - apy * abx);
-            
+
             // If not on line (within tolerance), return false
             if (cross > tolerance)
             {
@@ -160,14 +160,14 @@ namespace FastGeoMesh.Utils
         /// </summary>
         public static double PolygonArea(ReadOnlySpan<Vec2> vertices)
         {
-            if (vertices.Length < 3) 
+            if (vertices.Length < 3)
             {
                 return 0.0;
             }
-            
+
             double area = 0.0;
             int n = vertices.Length;
-            
+
             // Standard shoelace formula
             for (int i = 0; i < n; i++)
             {
@@ -175,7 +175,7 @@ namespace FastGeoMesh.Utils
                 area += vertices[i].X * vertices[j].Y;
                 area -= vertices[j].X * vertices[i].Y;
             }
-            
+
             return Math.Abs(area) * 0.5;
         }
     }
