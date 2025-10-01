@@ -41,13 +41,13 @@ namespace FastGeoMesh.Tests
         {
             var mesh = new Mesh();
             var verts = _verts.ToArray();
-            
+
             foreach (var q in _quads)
             {
                 var quad = new Quad(verts[q.Item1], verts[q.Item2], verts[q.Item3], verts[q.Item4]);
                 mesh.AddQuad(quad);
             }
-            
+
             return IndexedMesh.FromMesh(mesh);
         }
     }

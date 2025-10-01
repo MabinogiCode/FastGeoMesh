@@ -7,10 +7,11 @@
     
     <!-- Code coverage settings optimized for .NET 8 -->
     <CollectCoverage>true</CollectCoverage>
-    <CoverletOutputFormat>lcov,opencover,cobertura</CoverletOutputFormat>
-    <CoverletOutput>../TestResults/coverage/</CoverletOutput>
+    <CoverletOutputFormat>opencover,cobertura</CoverletOutputFormat>
+    <!-- Remove lcov format which causes deterministic report errors -->
+    <CoverletOutput>./tests/TestResults/coverage/</CoverletOutput>
     <UseSourceLink>true</UseSourceLink>
-    <IncludeTestAssembly>true</IncludeTestAssembly>
+    <IncludeTestAssembly>false</IncludeTestAssembly>
     <SingleHit>false</SingleHit>
     <SkipAutoProps>true</SkipAutoProps>
     

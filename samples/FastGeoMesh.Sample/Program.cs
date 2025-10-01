@@ -12,7 +12,7 @@ sealed class Program
     {
         // Test notre correction de PointInPolygon
         TestPointInPolygon();
-        
+
         bool exportObj = args.Contains("--obj", StringComparer.OrdinalIgnoreCase);
         bool exportGltf = args.Contains("--gltf", StringComparer.OrdinalIgnoreCase);
         bool exportSvg = args.Contains("--svg", StringComparer.OrdinalIgnoreCase);
@@ -46,11 +46,11 @@ sealed class Program
             SvgExporter.Write(indexed, prefix + ".svg");
         }
     }
-    
+
     static void TestPointInPolygon()
     {
         Console.WriteLine("=== Testing PointInPolygon Fix ===");
-        
+
         // Test du carré
         var square = new Vec2[]
         {
@@ -79,7 +79,7 @@ sealed class Program
         var spatialIndex = new SpatialPolygonIndex(square);
         bool spatialCenterInside = spatialIndex.IsInside(5, 5);
         Console.WriteLine($"SpatialIndex (5,5): {spatialCenterInside} {(spatialCenterInside ? "✅" : "❌")}");
-        
+
         Console.WriteLine("=== Point-in-Polygon Test Complete ===\n");
     }
 }
