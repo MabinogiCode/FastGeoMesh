@@ -12,14 +12,14 @@ namespace FastGeoMesh.Meshing
         private readonly List<Vec3> _points;
         private readonly List<Segment3D> _internalSegments;
 
-        // Use ReaderWriterLockSlim for better read performance
-        private readonly ReaderWriterLockSlim _lock = new();
+        // Use simple lock for better performance than ReaderWriterLockSlim
+        private readonly object _lock = new();
 
-        // Lazy initialization with double-check locking
+        // 🚀 OPTIMIZATION: Simple caching that's proven to work without overhead
         private ReadOnlyCollection<Quad>? _quadsReadOnly;
         private ReadOnlyCollection<Triangle>? _trianglesReadOnly;
         private ReadOnlyCollection<Vec3>? _pointsReadOnly;
-        private ReadOnlyCollection<Segment3D>? _internalSegmentsReadOnly;
+        private ReadOnlyCollection<Segment3D>? _segmentsReadOnly;
 
         /// <summary>Create mesh with default initial capacity.</summary>
         public Mesh() : this(initialQuadCapacity: 16, initialTriangleCapacity: 16, initialPointCapacity: 8, initialSegmentCapacity: 8)
@@ -44,19 +44,40 @@ namespace FastGeoMesh.Meshing
             _internalSegments = new List<Segment3D>(initialSegmentCapacity);
         }
 
+        /// <summary>Gets the total number of quads in the mesh.</summary>
+        public int QuadCount 
+        { 
+            get 
+            { 
+                lock (_lock) 
+                { 
+                    return _quads.Count; 
+                } 
+            } 
+        }
+
+        /// <summary>Gets the total number of triangles in the mesh.</summary>
+        public int TriangleCount 
+        { 
+            get 
+            { 
+                lock (_lock) 
+                { 
+                    return _triangles.Count; 
+                } 
+            } 
+        }
+
         /// <summary>Collection of quads.</summary>
         public ReadOnlyCollection<Quad> Quads
         {
             get
             {
-                _lock.EnterReadLock();
-                try
+                if (_quadsReadOnly != null) return _quadsReadOnly;
+                
+                lock (_lock)
                 {
                     return _quadsReadOnly ??= _quads.AsReadOnly();
-                }
-                finally
-                {
-                    _lock.ExitReadLock();
                 }
             }
         }
@@ -66,14 +87,11 @@ namespace FastGeoMesh.Meshing
         {
             get
             {
-                _lock.EnterReadLock();
-                try
+                if (_trianglesReadOnly != null) return _trianglesReadOnly;
+                
+                lock (_lock)
                 {
                     return _trianglesReadOnly ??= _triangles.AsReadOnly();
-                }
-                finally
-                {
-                    _lock.ExitReadLock();
                 }
             }
         }
@@ -83,14 +101,11 @@ namespace FastGeoMesh.Meshing
         {
             get
             {
-                _lock.EnterReadLock();
-                try
+                if (_pointsReadOnly != null) return _pointsReadOnly;
+                
+                lock (_lock)
                 {
                     return _pointsReadOnly ??= _points.AsReadOnly();
-                }
-                finally
-                {
-                    _lock.ExitReadLock();
                 }
             }
         }
@@ -100,14 +115,11 @@ namespace FastGeoMesh.Meshing
         {
             get
             {
-                _lock.EnterReadLock();
-                try
+                if (_segmentsReadOnly != null) return _segmentsReadOnly;
+                
+                lock (_lock)
                 {
-                    return _internalSegmentsReadOnly ??= _internalSegments.AsReadOnly();
-                }
-                finally
-                {
-                    _lock.ExitReadLock();
+                    return _segmentsReadOnly ??= _internalSegments.AsReadOnly();
                 }
             }
         }
@@ -115,15 +127,10 @@ namespace FastGeoMesh.Meshing
         /// <summary>Add a quad.</summary>
         public void AddQuad(Quad quad)
         {
-            _lock.EnterWriteLock();
-            try
+            lock (_lock)
             {
                 _quads.Add(quad);
-                _quadsReadOnly = null; // Only invalidate quads cache
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
+                _quadsReadOnly = null; // Invalidate cache
             }
         }
 
@@ -133,30 +140,34 @@ namespace FastGeoMesh.Meshing
         {
             ArgumentNullException.ThrowIfNull(quads);
 
-            _lock.EnterWriteLock();
-            try
+            lock (_lock)
             {
                 _quads.AddRange(quads);
-                _quadsReadOnly = null;
+                _quadsReadOnly = null; // Invalidate cache
             }
-            finally
+        }
+
+        /// <summary>Add multiple quads from span for zero-allocation bulk operations.</summary>
+        /// <param name="quads">Quads to add.</param>
+        public void AddQuadsSpan(ReadOnlySpan<Quad> quads)
+        {
+            lock (_lock)
             {
-                _lock.ExitWriteLock();
+                foreach (var quad in quads)
+                {
+                    _quads.Add(quad);
+                }
+                _quadsReadOnly = null; // Invalidate cache
             }
         }
 
         /// <summary>Add a triangle.</summary>
         public void AddTriangle(Triangle tri)
         {
-            _lock.EnterWriteLock();
-            try
+            lock (_lock)
             {
                 _triangles.Add(tri);
-                _trianglesReadOnly = null; // Only invalidate triangles cache
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
+                _trianglesReadOnly = null; // Invalidate cache
             }
         }
 
@@ -166,74 +177,83 @@ namespace FastGeoMesh.Meshing
         {
             ArgumentNullException.ThrowIfNull(triangles);
 
-            _lock.EnterWriteLock();
-            try
+            lock (_lock)
             {
                 _triangles.AddRange(triangles);
-                _trianglesReadOnly = null;
+                _trianglesReadOnly = null; // Invalidate cache
             }
-            finally
+        }
+
+        /// <summary>Add multiple triangles from span for zero-allocation bulk operations.</summary>
+        /// <param name="triangles">Triangles to add.</param>
+        public void AddTrianglesSpan(ReadOnlySpan<Triangle> triangles)
+        {
+            lock (_lock)
             {
-                _lock.ExitWriteLock();
+                foreach (var triangle in triangles)
+                {
+                    _triangles.Add(triangle);
+                }
+                _trianglesReadOnly = null; // Invalidate cache
             }
         }
 
         /// <summary>Add an auxiliary point.</summary>
         public void AddPoint(Vec3 p)
         {
-            _lock.EnterWriteLock();
-            try
+            lock (_lock)
             {
                 _points.Add(p);
-                _pointsReadOnly = null;
+                _pointsReadOnly = null; // Invalidate cache
             }
-            finally
+        }
+
+        /// <summary>Add multiple points efficiently.</summary>
+        /// <param name="points">Points to add.</param>
+        public void AddPoints(IEnumerable<Vec3> points)
+        {
+            ArgumentNullException.ThrowIfNull(points);
+
+            lock (_lock)
             {
-                _lock.ExitWriteLock();
+                _points.AddRange(points);
+                _pointsReadOnly = null; // Invalidate cache
             }
         }
 
         /// <summary>Add an internal 3D segment.</summary>
         public void AddInternalSegment(Segment3D s)
         {
-            _lock.EnterWriteLock();
-            try
+            lock (_lock)
             {
                 _internalSegments.Add(s);
-                _internalSegmentsReadOnly = null;
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
+                _segmentsReadOnly = null; // Invalidate cache
             }
         }
 
-        /// <summary>Clear all mesh data.</summary>
+        /// <summary>Clear all mesh data efficiently.</summary>
         public void Clear()
         {
-            _lock.EnterWriteLock();
-            try
+            lock (_lock)
             {
                 _quads.Clear();
                 _triangles.Clear();
                 _points.Clear();
                 _internalSegments.Clear();
-
+                
+                // Simple cache invalidation
                 _quadsReadOnly = null;
                 _trianglesReadOnly = null;
                 _pointsReadOnly = null;
-                _internalSegmentsReadOnly = null;
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
+                _segmentsReadOnly = null;
             }
         }
 
         /// <summary>Dispose of resources.</summary>
         public void Dispose()
         {
-            _lock?.Dispose();
+            // Simple lock doesn't need disposal
+            GC.SuppressFinalize(this);
         }
     }
 }

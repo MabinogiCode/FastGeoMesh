@@ -23,34 +23,40 @@ namespace FastGeoMesh.Utils
             private static long _poolHits;
             private static long _poolMisses;
 
-            /// <inheritdoc/>
+            /// <summary>Gets the total number of meshing operations performed.</summary>
             public static long MeshingOperations => _meshingOperations;
-            /// <inheritdoc/>
+            
+            /// <summary>Gets the total number of quads generated across all operations.</summary>
             public static long QuadsGenerated => _quadsGenerated;
-            /// <inheritdoc/>
+            
+            /// <summary>Gets the total number of triangles generated across all operations.</summary>
             public static long TrianglesGenerated => _trianglesGenerated;
-            /// <inheritdoc/>
+            
+            /// <summary>Gets the total number of object pool cache hits.</summary>
             public static long PoolHits => _poolHits;
-            /// <inheritdoc/>
+            
+            /// <summary>Gets the total number of object pool cache misses.</summary>
             public static long PoolMisses => _poolMisses;
 
-            /// <inheritdoc/>
+            /// <summary>Increments the count of meshing operations.</summary>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void IncrementMeshingOperations() => Interlocked.Increment(ref _meshingOperations);
 
-            /// <inheritdoc/>
+            /// <summary>Adds to the count of generated quads.</summary>
+            /// <param name="count">Number of quads to add to the total.</param>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void AddQuadsGenerated(int count) => Interlocked.Add(ref _quadsGenerated, count);
 
-            /// <inheritdoc/>
+            /// <summary>Adds to the count of generated triangles.</summary>
+            /// <param name="count">Number of triangles to add to the total.</param>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void AddTrianglesGenerated(int count) => Interlocked.Add(ref _trianglesGenerated, count);
 
-            /// <inheritdoc/>
+            /// <summary>Increments the object pool hit counter.</summary>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void IncrementPoolHit() => Interlocked.Increment(ref _poolHits);
 
-            /// <inheritdoc/>
+            /// <summary>Increments the object pool miss counter.</summary>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void IncrementPoolMiss() => Interlocked.Increment(ref _poolMisses);
 
@@ -106,16 +112,19 @@ namespace FastGeoMesh.Utils
         /// <summary>Performance statistics snapshot.</summary>
         public readonly struct PerformanceStatistics
         {
-            /// <inheritdoc/>
+            /// <summary>Total number of meshing operations performed.</summary>
             public long MeshingOperations { get; init; }
-            /// <inheritdoc/>
+            
+            /// <summary>Total number of quads generated.</summary>
             public long QuadsGenerated { get; init; }
-            /// <inheritdoc/>
+            
+            /// <summary>Total number of triangles generated.</summary>
             public long TrianglesGenerated { get; init; }
-            /// <inheritdoc/>
+            
+            /// <summary>Object pool hit rate as a percentage (0.0 to 1.0).</summary>
             public double PoolHitRate { get; init; }
 
-            /// <inheritdoc/>
+            /// <summary>Returns a string representation of the performance statistics.</summary>
             public override string ToString()
             {
                 return $"Operations: {MeshingOperations}, Quads: {QuadsGenerated}, Triangles: {TrianglesGenerated}, Pool Hit Rate: {PoolHitRate:P2}";

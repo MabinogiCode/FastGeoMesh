@@ -31,6 +31,18 @@ namespace FastGeoMesh.Meshing
                 return;
             }
 
+            // 🚀 OPTIMIZATION: Early validation of most common cases
+            if (TargetEdgeLengthXY <= 0 || TargetEdgeLengthZ <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Target edge lengths must be positive");
+            }
+            
+            if (MinCapQuadQuality < 0 || MinCapQuadQuality > 1)
+            {
+                throw new ArgumentOutOfRangeException("MinCapQuadQuality", MinCapQuadQuality, "Quality must be between 0 and 1");
+            }
+
+            // Detailed validation only if basic checks pass
             ValidateTargetEdgeLength(TargetEdgeLengthXY, nameof(TargetEdgeLengthXY), "XY");
             ValidateTargetEdgeLength(TargetEdgeLengthZ, nameof(TargetEdgeLengthZ), "Z");
 
@@ -42,30 +54,36 @@ namespace FastGeoMesh.Meshing
             if (TargetEdgeLengthXYNearHoles is { } h)
             {
                 ValidateTargetEdgeLength(h, nameof(TargetEdgeLengthXYNearHoles), "HoleRefinement");
+                
+                if (h > TargetEdgeLengthXY)
+                {
+                    throw new ArgumentException("Refined length near holes must be <= base target", "TargetEdgeLengthXYNearHoles");
+                }
             }
 
-            ValidateRefinementBand(HoleRefineBand, nameof(HoleRefineBand), "HoleRefinement");
+            if (HoleRefineBand != 0.0) // Only validate if used
+            {
+                ValidateRefinementBand(HoleRefineBand, nameof(HoleRefineBand), "HoleRefinement");
+            }
 
             if (TargetEdgeLengthXYNearSegments is { } s)
             {
                 ValidateTargetEdgeLength(s, nameof(TargetEdgeLengthXYNearSegments), "SegmentRefinement");
+                
+                if (s > TargetEdgeLengthXY)
+                {
+                    throw new ArgumentException("Refined length near segments must be <= base target", "TargetEdgeLengthXYNearSegments");
+                }
             }
 
-            ValidateRefinementBand(SegmentRefineBand, nameof(SegmentRefineBand), "SegmentRefinement");
-
-            if (MinCapQuadQuality < 0 || MinCapQuadQuality > 1 || double.IsNaN(MinCapQuadQuality))
+            if (SegmentRefineBand != 0.0) // Only validate if used
             {
-                throw new ArgumentOutOfRangeException("MinCapQuadQuality", MinCapQuadQuality, "Quality must be between 0 and 1");
+                ValidateRefinementBand(SegmentRefineBand, nameof(SegmentRefineBand), "SegmentRefinement");
             }
 
-            if (TargetEdgeLengthXYNearHoles.HasValue && TargetEdgeLengthXYNearHoles > TargetEdgeLengthXY)
+            if (double.IsNaN(MinCapQuadQuality))
             {
-                throw new ArgumentException("Refined length near holes must be <= base target", "TargetEdgeLengthXYNearHoles");
-            }
-
-            if (TargetEdgeLengthXYNearSegments.HasValue && TargetEdgeLengthXYNearSegments > TargetEdgeLengthXY)
-            {
-                throw new ArgumentException("Refined length near segments must be <= base target", "TargetEdgeLengthXYNearSegments");
+                throw new ArgumentOutOfRangeException("MinCapQuadQuality", MinCapQuadQuality, "Quality cannot be NaN");
             }
 
             _validated = true;
