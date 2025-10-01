@@ -123,7 +123,10 @@ namespace FastGeoMesh.Tests
             // Act & Assert - Bounds Calculation
             var traditionalBoundsTime = MeasureOperation("Traditional Bounds", iterations, () =>
             {
-                if (vertices.Length == 0) return;
+                if (vertices.Length == 0)
+                {
+                    return;
+                }
 
                 var first = vertices[0];
                 double minX = first.X, maxX = first.X;
@@ -132,10 +135,22 @@ namespace FastGeoMesh.Tests
                 for (int i = 1; i < vertices.Length; i++)
                 {
                     var v = vertices[i];
-                    if (v.X < minX) minX = v.X;
-                    if (v.X > maxX) maxX = v.X;
-                    if (v.Y < minY) minY = v.Y;
-                    if (v.Y > maxY) maxY = v.Y;
+                    if (v.X < minX)
+                    {
+                        minX = v.X;
+                    }
+                    if (v.X > maxX)
+                    {
+                        maxX = v.X;
+                    }
+                    if (v.Y < minY)
+                    {
+                        minY = v.Y;
+                    }
+                    if (v.Y > maxY)
+                    {
+                        maxY = v.Y;
+                    }
                 }
             });
 

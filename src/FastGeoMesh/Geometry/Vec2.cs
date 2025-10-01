@@ -56,7 +56,10 @@ namespace FastGeoMesh.Geometry
         {
             // Compute 1/len directly to allow potential HW rsqrt in future JITs
             double lsq = X * X + Y * Y;
-            if (lsq <= 0d) return Zero;
+            if (lsq <= 0d)
+            {
+                return Zero;
+            }
             double inv = 1.0 / Math.Sqrt(lsq);
             return new Vec2(X * inv, Y * inv);
         }
@@ -108,7 +111,10 @@ namespace FastGeoMesh.Geometry
                 dest[i + 2] = a[i + 2] + b[i + 2];
                 dest[i + 3] = a[i + 3] + b[i + 3];
             }
-            for (; i < len; i++) dest[i] = a[i] + b[i];
+            for (; i < len; i++)
+            {
+                dest[i] = a[i] + b[i];
+            }
         }
 
         // Equality / hashing -----------------------------------------------

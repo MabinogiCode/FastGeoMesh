@@ -53,7 +53,10 @@ namespace FastGeoMesh.Geometry
         public Vec3 Normalize()
         {
             double lsq = X * X + Y * Y + Z * Z;
-            if (lsq <= 0d) return Zero;
+            if (lsq <= 0d)
+            {
+                return Zero;
+            }
             double inv = 1.0 / Math.Sqrt(lsq);
             return new Vec3(X * inv, Y * inv, Z * inv);
         }
@@ -98,7 +101,10 @@ namespace FastGeoMesh.Geometry
                 dest[i + 2] = a[i + 2] + b[i + 2];
                 dest[i + 3] = a[i + 3] + b[i + 3];
             }
-            for (; i < len; i++) dest[i] = a[i] + b[i];
+            for (; i < len; i++)
+            {
+                dest[i] = a[i] + b[i];
+            }
         }
 
         /// <summary>Compute cross product for element pairs of spans into destination.</summary>
