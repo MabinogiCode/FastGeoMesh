@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
@@ -32,6 +33,7 @@ namespace FastGeoMesh.Tests
 
             _output.WriteLine($"🚀 Intelligent Cache Performance Test");
             _output.WriteLine($"Testing {quadCount} quads with {accessIterations} collection accesses");
+            _output.WriteLine($"Environment: {CIEnvironmentHelper.GetEnvironmentInfo()}");
             _output.WriteLine("");
 
             using var mesh = new Mesh();
@@ -80,12 +82,15 @@ namespace FastGeoMesh.Tests
                 _ = mesh.Quads.Count;
             });
 
-            // Assert performance characteristics - more lenient for development environments
-            collectionAccessTime.TotalMicroseconds.Should().BeLessThan(10000,
-                "Cached collection access should be reasonably fast");
+            // Assert performance characteristics - environment-aware thresholds
+            var baseThreshold = 10000.0; // Base threshold for development
+            var adjustedThreshold = CIEnvironmentHelper.AdjustThreshold(baseThreshold);
 
-            countAccessTime.TotalMicroseconds.Should().BeLessThan(10000,
-                "Direct count access should be reasonably fast");
+            collectionAccessTime.TotalMicroseconds.Should().BeLessThan(adjustedThreshold,
+                $"Cached collection access should be reasonably fast (threshold: {adjustedThreshold:F0}μs)");
+
+            countAccessTime.TotalMicroseconds.Should().BeLessThan(adjustedThreshold,
+                $"Direct count access should be reasonably fast (threshold: {adjustedThreshold:F0}μs)");
 
             _output.WriteLine($"📊 Collection access: {collectionAccessTime.TotalMicroseconds:F2} μs for {accessIterations} operations");
             _output.WriteLine($"📊 Count access: {countAccessTime.TotalMicroseconds:F2} μs for {accessIterations} operations");

@@ -10,10 +10,27 @@ namespace FastGeoMesh.Geometry
     /// </summary>
     public readonly struct Vec3 : IEquatable<Vec3>
     {
+        /// <summary>
+        /// Gets the X coordinate of the vector.
+        /// </summary>
         public double X { get; }
+
+        /// <summary>
+        /// Gets the Y coordinate of the vector.
+        /// </summary>
         public double Y { get; }
+
+        /// <summary>
+        /// Gets the Z coordinate of the vector.
+        /// </summary>
         public double Z { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Vec3"/> struct with the specified coordinates.
+        /// </summary>
+        /// <param name="x">The X coordinate.</param>
+        /// <param name="y">The Y coordinate.</param>
+        /// <param name="z">The Z coordinate.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vec3(double x, double y, double z)
         {
@@ -30,26 +47,98 @@ namespace FastGeoMesh.Geometry
         public static readonly Vec3 UnitZ = new(0, 0, 1);
 
         // Operators ---------------------------------------------------------
+        /// <summary>
+        /// Adds two vectors.
+        /// </summary>
+        /// <param name="a">First vector.</param>
+        /// <param name="b">Second vector.</param>
+        /// <returns>Sum of the two vectors.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vec3 operator +(Vec3 a, Vec3 b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+
+        /// <summary>
+        /// Subtracts the second vector from the first.
+        /// </summary>
+        /// <param name="a">First vector.</param>
+        /// <param name="b">Second vector.</param>
+        /// <returns>Difference of the two vectors.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vec3 operator -(Vec3 a, Vec3 b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+
+        /// <summary>
+        /// Multiplies a vector by a scalar.
+        /// </summary>
+        /// <param name="a">The vector.</param>
+        /// <param name="k">The scalar multiplier.</param>
+        /// <returns>Scaled vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vec3 operator *(Vec3 a, double k) => new(a.X * k, a.Y * k, a.Z * k);
+
+        /// <summary>
+        /// Multiplies a vector by a scalar (commutative version).
+        /// </summary>
+        /// <param name="k">The scalar multiplier.</param>
+        /// <param name="a">The vector.</param>
+        /// <returns>Scaled vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vec3 operator *(double k, Vec3 a) => new(a.X * k, a.Y * k, a.Z * k);
 
         // API compatibility static helpers
+        /// <summary>
+        /// Adds two vectors (static method version).
+        /// </summary>
+        /// <param name="a">First vector.</param>
+        /// <param name="b">Second vector.</param>
+        /// <returns>Sum of the two vectors.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vec3 Add(Vec3 a, Vec3 b) => a + b;
+
+        /// <summary>
+        /// Subtracts the second vector from the first (static method version).
+        /// </summary>
+        /// <param name="a">First vector.</param>
+        /// <param name="b">Second vector.</param>
+        /// <returns>Difference of the two vectors.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vec3 Subtract(Vec3 a, Vec3 b) => a - b;
+
+        /// <summary>
+        /// Multiplies a vector by a scalar (static method version).
+        /// </summary>
+        /// <param name="a">The vector.</param>
+        /// <param name="k">The scalar multiplier.</param>
+        /// <returns>Scaled vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vec3 Multiply(Vec3 a, double k) => a * k;
 
         // Basic metrics -----------------------------------------------------
+        /// <summary>
+        /// Computes the dot product of this vector with another vector.
+        /// </summary>
+        /// <param name="b">The other vector.</param>
+        /// <returns>Dot product result.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(in Vec3 b) => X * b.X + Y * b.Y + Z * b.Z;
+
+        /// <summary>
+        /// Computes the cross product of this vector with another vector.
+        /// </summary>
+        /// <param name="b">The other vector.</param>
+        /// <returns>Cross product result vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vec3 Cross(in Vec3 b) => new(
             Y * b.Z - Z * b.Y,
             Z * b.X - X * b.Z,
             X * b.Y - Y * b.X);
+
+        /// <summary>
+        /// Computes the length (magnitude) of the vector.
+        /// </summary>
+        /// <returns>Length of the vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public double Length() => Math.Sqrt(X * X + Y * Y + Z * Z);
+
+        /// <summary>
+        /// Computes the squared length of the vector (faster than Length() as it avoids square root).
+        /// </summary>
+        /// <returns>Squared length of the vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public double LengthSquared() => X * X + Y * Y + Z * Z;
 
+        /// <summary>
+        /// Returns a normalized (unit length) version of this vector.
+        /// </summary>
+        /// <returns>Normalized vector, or zero vector if original has zero length.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vec3 Normalize()
         {
@@ -124,14 +213,49 @@ namespace FastGeoMesh.Geometry
         }
 
         // Equality / hashing ------------------------------------------------
+        /// <summary>
+        /// Determines whether the specified <see cref="Vec3"/> is equal to this instance.
+        /// </summary>
+        /// <param name="other">The other vector to compare.</param>
+        /// <returns>True if the vectors are equal; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public bool Equals(Vec3 other) => X == other.X && Y == other.Y && Z == other.Z;
+
+        /// <summary>
+        /// Determines whether the specified object is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The object to compare.</param>
+        /// <returns>True if the objects are equal; otherwise, false.</returns>
         public override bool Equals(object? obj) => obj is Vec3 v && Equals(v);
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>A hash code for this instance.</returns>
         public override int GetHashCode() => HashCode.Combine(X, Y, Z);
+
+        /// <summary>
+        /// Determines whether two vectors are equal.
+        /// </summary>
+        /// <param name="l">First vector.</param>
+        /// <param name="r">Second vector.</param>
+        /// <returns>True if the vectors are equal; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static bool operator ==(Vec3 l, Vec3 r) => l.Equals(r);
+
+        /// <summary>
+        /// Determines whether two vectors are not equal.
+        /// </summary>
+        /// <param name="l">First vector.</param>
+        /// <param name="r">Second vector.</param>
+        /// <returns>True if the vectors are not equal; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static bool operator !=(Vec3 l, Vec3 r) => !l.Equals(r);
 
         /// <summary>Deconstruct for compatibility with previous record struct.</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public void Deconstruct(out double x, out double y, out double z) { x = X; y = Y; z = Z; }
+
+        /// <summary>
+        /// Returns a string representation of this vector.
+        /// </summary>
+        /// <returns>String representation in the format "(X, Y, Z)".</returns>
         public override string ToString() => $"({X}, {Y}, {Z})";
     }
 }
