@@ -37,8 +37,8 @@ namespace FastGeoMesh.Tests
             var outward = SideFaceMeshingHelper.GenerateSideQuads(loop, z, opt, true);
             var inward = SideFaceMeshingHelper.GenerateSideQuads(loop, z, opt, false);
             outward.Should().HaveCount(inward.Count);
-            var oq = outward.First();
-            var iq = inward.First();
+            var oq = outward[0];
+            var iq = inward[0];
             double oCross = (oq.V1.X - oq.V0.X) * (oq.V2.Y - oq.V1.Y) - (oq.V1.Y - oq.V0.Y) * (oq.V2.X - oq.V1.X);
             double iCross = (iq.V1.X - iq.V0.X) * (iq.V2.Y - iq.V1.Y) - (iq.V1.Y - iq.V0.Y) * (iq.V2.X - iq.V1.X);
             (oCross >= 0).Should().BeTrue();

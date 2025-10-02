@@ -19,16 +19,26 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void GeneratedMeshIsSubsetOfReferenceWithDoubleEpsilonTolerance()
         {
-            var path = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "0_maill.txt");
+            var path = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", TestFileConstants.LegacyMeshFileName);
             File.Exists(path).Should().BeTrue($"Reference file not found at {path}");
             var refMesh = IndexedMesh.ReadCustomTxt(path);
-            var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 5), new Vec2(0, 5) });
-            var structure = new PrismStructureDefinition(poly, -10, 10)
-                .AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(20, 0)), 2.5);
-            var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = false, GenerateTopCap = false };
+            var poly = Polygon2D.FromPoints(new[] { 
+                new Vec2(0, 0), 
+                new Vec2(TestGeometries.StandardRectangleWidth, 0), 
+                new Vec2(TestGeometries.StandardRectangleWidth, TestGeometries.StandardRectangleHeight), 
+                new Vec2(0, TestGeometries.StandardRectangleHeight) 
+            });
+            var structure = new PrismStructureDefinition(poly, TestGeometries.StandardBottomZ, TestGeometries.StandardTopZ)
+                .AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(TestGeometries.StandardRectangleWidth, 0)), TestGeometries.StandardConstraintZ);
+            var options = new MesherOptions { 
+                TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY, 
+                TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ, 
+                GenerateBottomCap = false, 
+                GenerateTopCap = false 
+            };
             var mesh = new PrismMesher().Mesh(structure, options);
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
-            const double tolerance = 1e-9;
+            const double tolerance = TestTolerances.Epsilon;
             var refIndexByPos = new Dictionary<(double x, double y, double z), int>();
             for (int i = 0; i < refMesh.Vertices.Count; i++)
             {

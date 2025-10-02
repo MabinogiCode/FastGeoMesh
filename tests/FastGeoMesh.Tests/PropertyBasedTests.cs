@@ -1,11 +1,11 @@
 #pragma warning disable IDE0005, CS1591
 using System;
-using FsCheck;
-using FsCheck.Xunit;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
 using FluentAssertions;
+using FsCheck;
+using FsCheck.Xunit;
 using Xunit;
 
 namespace FastGeoMesh.Tests

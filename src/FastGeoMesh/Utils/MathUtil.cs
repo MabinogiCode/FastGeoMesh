@@ -1,5 +1,3 @@
-using System;
-
 namespace FastGeoMesh.Utils
 {
     /// <summary>Math helper utilities.</summary>

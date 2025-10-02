@@ -8,197 +8,45 @@ on:
         required: true
         default: 'all'
         type: choice
-        options:
-          - all
-          - prism-meshing
-          - geometry
-          - object-pooling
-          - vector-operations
-      configuration:
-        description: 'Build configuration'
-        required: true
-        default: 'Release'
-        type: choice
-        options:
-          - Release
-          - Debug
-      iterations:
-        description: 'Number of benchmark iterations'
-        required: false
-        default: '3'
+        options: [ all, prism-meshing, geometry, object-pooling, quick-check ]
+
+permissions:
+  contents: read
 
 jobs:
-  benchmark:
+  run-benchmarks:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    
+
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Full history for better context
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
+      - name: Restore
         run: dotnet restore
 
-      - name: Build solution
-        run: dotnet build --configuration ${{ inputs.configuration }} --no-restore
+      - name: Build benchmarks
+        run: dotnet build benchmarks/FastGeoMesh.Benchmarks --configuration Release --no-restore
 
-      - name: Build benchmarks project
-        run: dotnet build benchmarks/FastGeoMesh.Benchmarks --configuration ${{ inputs.configuration }} --no-restore
-
-      - name: Run Prism Meshing Benchmarks
-        if: inputs.benchmark_type == 'all' || inputs.benchmark_type == 'prism-meshing'
+      - name: Run benchmarks
         run: |
-          dotnet run --project benchmarks/FastGeoMesh.Benchmarks \
-            --configuration ${{ inputs.configuration }} \
-            -- --filter "*PrismMeshingBenchmark*" \
-               --iterationCount ${{ inputs.iterations }} \
-               --warmupCount 1 \
-               --exporters json,html
-
-      - name: Run Geometry Benchmarks
-        if: inputs.benchmark_type == 'all' || inputs.benchmark_type == 'geometry'
-        run: |
-          dotnet run --project benchmarks/FastGeoMesh.Benchmarks \
-            --configuration ${{ inputs.configuration }} \
-            -- --filter "*GeometryHelperBenchmark*,*Vec*Benchmark*" \
-               --iterationCount ${{ inputs.iterations }} \
-               --warmupCount 1 \
-               --exporters json,html
-
-      - name: Run Object Pooling Benchmarks
-        if: inputs.benchmark_type == 'all' || inputs.benchmark_type == 'object-pooling'
-        run: |
-          dotnet run --project benchmarks/FastGeoMesh.Benchmarks \
-            --configuration ${{ inputs.configuration }} \
-            -- --filter "*ObjectPoolingBenchmark*" \
-               --iterationCount ${{ inputs.iterations }} \
-               --warmupCount 1 \
-               --exporters json,html
-
-      - name: Run Vector Operations Benchmarks
-        if: inputs.benchmark_type == 'all' || inputs.benchmark_type == 'vector-operations'
-        run: |
-          dotnet run --project benchmarks/FastGeoMesh.Benchmarks \
-            --configuration ${{ inputs.configuration }} \
-            -- --filter "*Vec*OperationsBenchmark*" \
-               --iterationCount ${{ inputs.iterations }} \
-               --warmupCount 1 \
-               --exporters json,html
-
-      - name: Run All Benchmarks
-        if: inputs.benchmark_type == 'all'
-        run: |
-          dotnet run --project benchmarks/FastGeoMesh.Benchmarks \
-            --configuration ${{ inputs.configuration }} \
-            -- --iterationCount ${{ inputs.iterations }} \
-               --warmupCount 1 \
-               --exporters json,html,markdown
+          set -e
+          TYPE="${{ github.event.inputs.benchmark_type }}"
+          if [ "$TYPE" = "quick-check" ]; then
+            dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- \
+              --filter "*QuickPerformanceTest*" --iterationCount 1 --warmupCount 0 --exporters json
+          elif [ "$TYPE" = "all" ]; then
+            dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- --exporters json
+          else
+            dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- --filter "$TYPE*" --exporters json
+          fi
 
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-results-${{ inputs.benchmark_type }}-${{ inputs.configuration }}
+          name: benchmark-results
           path: benchmarks/FastGeoMesh.Benchmarks/BenchmarkDotNet.Artifacts/**/*
-          retention-days: 30
-
-      - name: Extract benchmark summary
-        run: |
-          echo "## 🚀 Benchmark Results Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Configuration:** ${{ inputs.configuration }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Benchmark Type:** ${{ inputs.benchmark_type }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Iterations:** ${{ inputs.iterations }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # Find and display markdown reports if they exist
-          if find benchmarks/FastGeoMesh.Benchmarks/BenchmarkDotNet.Artifacts -name "*.md" -type f | head -1 | grep -q .; then
-            echo "### Detailed Results" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          # Display first markdown report (if exists)
-          if [ -f "$(find benchmarks/FastGeoMesh.Benchmarks/BenchmarkDotNet.Artifacts -name "*-report-github.md" -type f | head -1)" ]; then
-            cat "$(find benchmarks/FastGeoMesh.Benchmarks/BenchmarkDotNet.Artifacts -name "*-report-github.md" -type f | head -1)" >> $GITHUB_STEP_SUMMARY
-          fi
-
-      - name: Comment PR with benchmark results
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const path = require('path');
-            
-            // Find benchmark markdown files
-            const artifactsDir = 'benchmarks/FastGeoMesh.Benchmarks/BenchmarkDotNet.Artifacts';
-            let markdownContent = '## 🚀 Benchmark Results\n\n';
-            markdownContent += `**Configuration:** ${{ inputs.configuration }}\n`;
-            markdownContent += `**Benchmark Type:** ${{ inputs.benchmark_type }}\n`;
-            markdownContent += `**Iterations:** ${{ inputs.iterations }}\n\n`;
-            
-            try {
-              const files = fs.readdirSync(artifactsDir, { recursive: true });
-              const markdownFiles = files.filter(f => f.endsWith('-report-github.md'));
-              
-              if (markdownFiles.length > 0) {
-                const reportPath = path.join(artifactsDir, markdownFiles[0]);
-                const reportContent = fs.readFileSync(reportPath, 'utf8');
-                markdownContent += reportContent;
-              } else {
-                markdownContent += 'No detailed results available. Check artifacts for full reports.';
-              }
-            } catch (error) {
-              markdownContent += `Error reading benchmark results: ${error.message}`;
-            }
-            
-            // Post comment
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: markdownContent
-            });
-
-  performance-regression-check:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Restore and build
-        run: |
-          dotnet restore
-          dotnet build --configuration Release --no-restore
-          dotnet build benchmarks/FastGeoMesh.Benchmarks --configuration Release --no-restore
-
-      - name: Run quick performance regression check
-        run: |
-          dotnet run --project benchmarks/FastGeoMesh.Benchmarks \
-            --configuration Release \
-            -- --filter "*QuickPerformanceTest*" \
-               --iterationCount 1 \
-               --warmupCount 0 \
-               --exporters json
-
-      - name: Check for performance regressions
-        run: |
-          echo "## 🔍 Performance Regression Check" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Quick performance validation completed." >> $GITHUB_STEP_SUMMARY
-          echo "For detailed performance analysis, run the full benchmark workflow." >> $GITHUB_STEP_SUMMARY

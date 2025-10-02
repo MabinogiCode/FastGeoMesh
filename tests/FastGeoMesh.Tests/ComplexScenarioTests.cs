@@ -1,6 +1,4 @@
 #pragma warning disable IDE0005, CS1591
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -62,6 +60,7 @@ namespace FastGeoMesh.Tests
 
             // Should have some triangles due to complex hole topology
             var triangleCount = indexed.TriangleCount;
+            triangleCount.Should().BeGreaterThan(0, "Complex hole topology should produce some triangles");
 
             // Verify no degenerate geometry
             foreach (var quad in indexed.Quads)

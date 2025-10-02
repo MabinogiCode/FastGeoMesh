@@ -1,0 +1,51 @@
+name: Sync docs to Wiki
+
+on:
+  push:
+    branches: [ master ]            # change en [ main ] si besoin
+    paths:
+      - 'docs/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wiki-sync-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout wiki repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync Markdown files from docs/ to wiki/
+        run: |
+          rsync -av --delete --include="*/" --include="*.md" --exclude="*" docs/ wiki/
+          # rsync -av --delete docs/assets/ wiki/assets/  # décommente si tu as des images
+
+          # Page d’accueil du wiki = Home.md
+          if [ -f wiki/toc.md ] && [ ! -f wiki/Home.md ]; then
+            mv wiki/toc.md wiki/Home.md
+          fi
+
+      - name: Commit & push if changes
+        working-directory: wiki
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "docs(wiki): sync from docs/"
+            git push
+          else
+            echo "No changes to commit."
+          fi

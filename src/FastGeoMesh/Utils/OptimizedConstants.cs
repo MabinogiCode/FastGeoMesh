@@ -1,6 +1,3 @@
-using System.Collections.Frozen;
-using System.Runtime.CompilerServices;
-
 namespace FastGeoMesh.Utils
 {
     /// <summary>

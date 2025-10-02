@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -11,7 +13,7 @@ namespace FastGeoMesh.Tests
     /// </summary>
     public sealed class LegacyFilesLoadTests
     {
-        private static string Res(string folder) => Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Resources", folder, "0_maill.txt");
+        private static string Res(string folder) => TestFileConstants.GetLegacyResourcePath(folder);
 
         /// <summary>
         /// Parameterized test loading multiple legacy folders to ensure parsing and basic invariants.
@@ -46,8 +48,8 @@ namespace FastGeoMesh.Tests
             double minZ = double.MaxValue, maxZ = double.MinValue;
             foreach (var v in legacy.Vertices)
             {
-                if (v.Z < minZ) minZ = v.Z;
-                if (v.Z > maxZ) maxZ = v.Z;
+                if (v.Z < minZ) { minZ = v.Z; }
+                if (v.Z > maxZ) { maxZ = v.Z; }
             }
             Assert.True(maxZ > minZ);
         }

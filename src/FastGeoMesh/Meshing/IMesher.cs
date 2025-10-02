@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using FastGeoMesh.Structures;
 
 namespace FastGeoMesh.Meshing

@@ -150,14 +150,14 @@ namespace FastGeoMesh.Tests
         {
             // Arrange - Perfect square
             var perfectSquare = (
-                new Vec2(0, 0), new Vec2(1, 0),
-                new Vec2(1, 1), new Vec2(0, 1)
+                new Vec2(0, 0), new Vec2(TestGeometries.UnitSquareSide, 0),
+                new Vec2(TestGeometries.UnitSquareSide, TestGeometries.UnitSquareSide), new Vec2(0, TestGeometries.UnitSquareSide)
             );
 
             // Degenerate quad (very thin)
             var degenerateQuad = (
-                new Vec2(0, 0), new Vec2(10, 0),
-                new Vec2(10, 0.1), new Vec2(0, 0.1)
+                new Vec2(0, 0), new Vec2(TestGeometries.StandardSquareSide, 0),
+                new Vec2(TestGeometries.StandardSquareSide, 0.1), new Vec2(0, 0.1)
             );
 
             // Act
@@ -165,8 +165,8 @@ namespace FastGeoMesh.Tests
             var badScore = QuadQualityHelper.ScoreQuad(degenerateQuad);
 
             // Assert - The optimized version should produce same results
-            goodScore.Should().BeGreaterThanOrEqualTo(0.8, "Perfect square must have high quality >= 0.8");
-            badScore.Should().BeLessThan(0.6, "Degenerate quad should have moderate quality");
+            goodScore.Should().BeGreaterThanOrEqualTo(TestQualityThresholds.PerfectSquareMinQuality, "Perfect square must have high quality >= 0.8");
+            badScore.Should().BeLessThan(TestQualityThresholds.MediumQualityThreshold, "Degenerate quad should have moderate quality");
             goodScore.Should().BeGreaterThan(badScore, "Good quad should score higher than bad quad");
         }
 
@@ -178,7 +178,10 @@ namespace FastGeoMesh.Tests
             var mesher = new TestAsyncMesher();
             var polygon = Polygon2D.FromPoints(new[]
             {
-                new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
+                new Vec2(0, 0), 
+                new Vec2(TestGeometries.SmallSquareSide, 0), 
+                new Vec2(TestGeometries.SmallSquareSide, TestGeometries.SmallSquareSide), 
+                new Vec2(0, TestGeometries.SmallSquareSide)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build();

@@ -2,13 +2,25 @@ name: CI
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ master, main, develop ]
+    paths-ignore:
+      - 'docs/**'
+      - '.github/workflows/wiki-sync.yml'
+      - '**/*.md'
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ master, main, develop ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,14 +29,30 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      
+      # ✅ Vérification 1 type par fichier
+      - name: Check one type per file
+        run: python3 scripts/check_one_type_per_file.py
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
       - name: Restore
         run: dotnet restore
 
-      - name: Build
+      - name: Build (Release)
         run: dotnet build --configuration Release --no-restore
 
-      - name: Test with coverage
+      - name: Verify formatting
+        run: dotnet format --verify-no-changes
+
+      # coverlet.collector est déjà référencé en 6.x dans tes projets de tests
+      - name: Test with coverage (Cobertura)
         run: |
           dotnet test --configuration Release --no-build \
             --collect:"XPlat Code Coverage" \
@@ -33,11 +61,21 @@ jobs:
             --verbosity normal
 
       - name: Debug Coverage Files
+        if: always()
         run: |
           echo "=== Searching for coverage files ==="
           find . -name "*coverage*.xml" -type f || echo "No coverage files found"
           echo "=== Listing ./tests/TestResults ==="
           ls -la ./tests/TestResults/ || echo "TestResults directory not found"
+
+      - name: Upload test results (TRX)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-trx
+          path: "**/*.trx"
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload coverage artifacts (Cobertura)
         uses: actions/upload-artifact@v4
@@ -45,6 +83,7 @@ jobs:
           name: coverage-cobertura
           path: "**/coverage.cobertura.xml"
           if-no-files-found: error
+          retention-days: 7
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
@@ -56,27 +95,3 @@ jobs:
           name: fastgeomesh-coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-  benchmarks:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-      - name: Restore
-        run: dotnet restore
-      - name: Build benchmarks
-        run: dotnet build benchmarks/FastGeoMesh.Benchmarks --configuration Release --no-restore
-      - name: Run rectangle vs tessellation benchmarks
-        run: dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- rectangle
-      - name: Run mesh size benchmarks
-        run: dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- size
-      - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
-        with:
-          name: benchmark-results
-          path: benchmarks/FastGeoMesh.Benchmarks/BenchmarkDotNet.Artifacts/**/*
