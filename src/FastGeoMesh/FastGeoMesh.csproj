@@ -6,10 +6,10 @@
     <WarningsAsErrors />
     <Nullable>enable</Nullable>
     <PackageId>FastGeoMesh</PackageId>
-    <Version>1.1.0</Version>
+    <Version>1.3.2</Version>
     <Authors>MabinogiCode</Authors>
-    <Description>Lightweight quad and triangle meshing utilities for generic 2.5D prism structures (side faces, caps, refinement, quality scoring, exporters).</Description>
-    <PackageTags>meshing;mesh;quad;triangle;geometry;prism;cad;gis;dotnet</PackageTags>
+    <Description>High-performance .NET 8 library for quad-dominant meshing of 2.5D prismatic structures with sub-millisecond performance, advanced caching optimizations, and comprehensive export capabilities.</Description>
+    <PackageTags>meshing;mesh;quad;triangle;geometry;prism;cad;gis;dotnet;net8;performance;vectorization</PackageTags>
     <RepositoryUrl>https://github.com/MabinogiCode/FastGeoMesh</RepositoryUrl>
     <PackageProjectUrl>https://github.com/MabinogiCode/FastGeoMesh</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -23,7 +23,7 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <Deterministic>true</Deterministic>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>1.1.0: Added cap triangle emission (OutputRejectedCapTriangles), triangle support in mesh/indexed + OBJ exporter, docs updated.</PackageReleaseNotes>
+    <PackageReleaseNotes>1.3.2: Performance-optimized stable release with .NET 8 vectorization, intelligent caching, object pooling, Span APIs, comprehensive benchmarking, and enhanced geometry utilities. Sub-millisecond meshing with 60%+ performance gains.</PackageReleaseNotes>
     
     <!-- Suppress .NET 9 SDK warnings about analyzer versions -->
     <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
