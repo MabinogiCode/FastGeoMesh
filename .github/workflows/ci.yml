@@ -88,9 +88,7 @@ jobs:
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: |
-            **/TestResults/**/coverage.cobertura.xml
-            **/coverage.cobertura.xml
+          files: "**/TestResults/**/coverage.cobertura.xml,**/coverage.cobertura.xml"
           flags: unittests
           fail_ci_if_error: true
           verbose: true
