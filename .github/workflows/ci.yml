@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ master, main, develop ]
+    branches: [master, main, develop]
     paths-ignore:
-      - 'docs/**'
-      - '.github/workflows/wiki-sync.yml'
-      - '**/*.md'
+      - "docs/**"
+      - ".github/workflows/wiki-sync.yml"
+      - "**/*.md"
   pull_request:
-    branches: [ master, main, develop ]
+    branches: [master, main, develop]
 
 permissions:
   contents: read
@@ -20,7 +20,6 @@ concurrency:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,11 +27,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
-      
-      # ✅ Vérification 1 type par fichier
-      - name: Check one type per file
-        run: python3 scripts/check_one_type_per_file.py
+          dotnet-version: "8.0.x"
 
       - name: Cache NuGet
         uses: actions/cache@v4
@@ -41,6 +36,9 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
+
+      - name: Check one type per file
+        run: python3 scripts/check_one_type_per_file.py
 
       - name: Restore
         run: dotnet restore
@@ -51,29 +49,29 @@ jobs:
       - name: Verify formatting
         run: dotnet format --verify-no-changes
 
-      # coverlet.collector est déjà référencé en 6.x dans tes projets de tests
       - name: Test with coverage (Cobertura)
         run: |
           dotnet test --configuration Release --no-build \
             --collect:"XPlat Code Coverage" \
-            --results-directory ./tests/TestResults \
+            --settings tests/coverlet.runsettings \
+            --results-directory ./TestResults \
             --logger trx \
             --verbosity normal
 
       - name: Debug Coverage Files
         if: always()
         run: |
-          echo "=== Searching for coverage files ==="
-          find . -name "*coverage*.xml" -type f || echo "No coverage files found"
-          echo "=== Listing ./tests/TestResults ==="
-          ls -la ./tests/TestResults/ || echo "TestResults directory not found"
+          echo "=== Searching for coverage files (.trx/.cobertura.xml) ==="
+          find . -path "*/TestResults/*" -name "*.trx" -o -name "coverage.cobertura.xml" -print || true
+          echo "=== Listing ./TestResults (if exists) ==="
+          ls -la ./TestResults || echo "TestResults directory not found"
 
       - name: Upload test results (TRX)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-trx
-          path: "**/*.trx"
+          path: "**/TestResults/**/*.trx"
           if-no-files-found: ignore
           retention-days: 7
 
@@ -81,14 +79,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-cobertura
-          path: "**/coverage.cobertura.xml"
+          path: |
+            **/TestResults/**/coverage.cobertura.xml
+            **/coverage.cobertura.xml
           if-no-files-found: error
           retention-days: 7
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: "**/coverage.cobertura.xml"
+          files: "**/TestResults/**/coverage.cobertura.xml,**/coverage.cobertura.xml"
           flags: unittests
           fail_ci_if_error: true
           verbose: true

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <!-- On veut du Cobertura -->
+          <Format>cobertura</Format>
+
+          <!-- INCLUSIONS : toutes tes libs de prod -->
+          <!-- Adapte si nécessaire, ex: [FastGeoMesh*]* inclut FastGeoMesh, FastGeoMesh.Core, etc. -->
+          <Include>[FastGeoMesh*]*</Include>
+
+          <!-- EXCLUSIONS : les projets de tests / auto-gen -->
+          <Exclude>[*.Tests]*</Exclude>
+          <ExcludeByFile>**/*Tests.cs;**/*.g.cs;**/*.designer.cs;**/Migrations/*.cs</ExcludeByFile>
+
+          <!-- Optionnel: merge multi-projets -->
+          <SingleHit>true</SingleHit>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
