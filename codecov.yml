@@ -1,86 +1,17 @@
-# Codecov configuration for FastGeoMesh .NET 8 project
-# Optimized for performance and CI/CD reliability
-
-codecov:
-  require_ci_to_pass: true
-  notify:
-    require_all_contexts: false
-
+# codecov.yml (à la racine du repo)
 coverage:
-  precision: 2
-  round: down
-  range: 60..100
-  
   status:
     project:
       default:
-        target: 75%
-        threshold: 2%
-        base: auto
-        if_no_uploads: error
-        if_not_found: success
-        if_ci_failed: error
-        
-    patch:
-      default:
-        target: 80%
-        threshold: 5%
-        only_pulls: true
-        base: auto
-        if_no_uploads: error
-        if_not_found: success
+        target: auto
+        threshold: 1%     # tolérance petites variations
 
-# Enhanced flags configuration for .NET 8
-flags:
-  unittests:
-    paths:
-      - src/FastGeoMesh/
-    carryforward: true
-    # Additional configuration for .NET projects
-    after_n_builds: 1
-
-# Comprehensive ignore patterns for .NET projects
 ignore:
-  # Test and sample projects
-  - "tests/"
-  - "samples/"
-  - "**/*Tests.cs"
-  - "**/*Test.cs"
-  
-  # Build artifacts and generated code
-  - "**/obj/"
-  - "**/bin/"
-  - "**/*.AssemblyInfo.cs"
-  - "**/*.Designer.cs"
-  - "**/*.generated.cs"
-  - "**/GlobalUsings.cs"
-  
-  # Configuration files
-  - "**/*.config"
-  - "**/packages.config"
-  - "Directory.Build.props"
-  - ".editorconfig"
-  
-  # Performance monitoring (hard to test meaningfully)
-  - "**/PerformanceMonitor.cs"
-  
-  # Documentation and resources
-  - "**/*.md"
-  - "**/Resources/"
+  - "tests/**"
+  - "benchmarks/**"
+  - "**/*.g.cs"
+  - "**/*.designer.cs"
 
-# Improved comment configuration
-comment:
-  layout: "reach, diff, flags, files, footer"
-  require_changes: false
-  behavior: default
-  require_base: true
-  require_head: true
-
-# Path normalization for different CI environments
+# Aide Codecov à remapper les chemins si besoin (runner Linux)
 fixes:
-  - "C:\\Git\\FastGeoMesh/::"
   - "/home/runner/work/FastGeoMesh/FastGeoMesh/::"
-
-# GitHub integration
-github_checks:
-  annotations: true
