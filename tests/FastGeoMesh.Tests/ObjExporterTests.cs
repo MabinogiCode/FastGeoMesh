@@ -18,18 +18,19 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void ExportsSimpleRectPrismOBJ()
         {
-            var poly = Polygon2D.FromPoints(new[] { 
-                new Vec2(0, 0), 
-                new Vec2(TestGeometries.SmallRectangleWidth, 0), 
-                new Vec2(TestGeometries.SmallRectangleWidth, TestGeometries.SmallRectangleHeight), 
-                new Vec2(0, TestGeometries.SmallRectangleHeight) 
+            var poly = Polygon2D.FromPoints(new[] {
+                new Vec2(0, 0),
+                new Vec2(TestGeometries.SmallRectangleWidth, 0),
+                new Vec2(TestGeometries.SmallRectangleWidth, TestGeometries.SmallRectangleHeight),
+                new Vec2(0, TestGeometries.SmallRectangleHeight)
             });
             var st = new PrismStructureDefinition(poly, 0, 1);
-            var opt = new MesherOptions { 
-                TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY, 
-                TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ, 
-                GenerateBottomCap = true, 
-                GenerateTopCap = true 
+            var opt = new MesherOptions
+            {
+                TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY,
+                TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ,
+                GenerateBottomCap = true,
+                GenerateTopCap = true
             };
             var mesh = new PrismMesher().Mesh(st, opt);
             var im = IndexedMesh.FromMesh(mesh);

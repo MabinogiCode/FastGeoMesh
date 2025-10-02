@@ -178,9 +178,9 @@ namespace FastGeoMesh.Tests
             var mesher = new TestAsyncMesher();
             var polygon = Polygon2D.FromPoints(new[]
             {
-                new Vec2(0, 0), 
-                new Vec2(TestGeometries.SmallSquareSide, 0), 
-                new Vec2(TestGeometries.SmallSquareSide, TestGeometries.SmallSquareSide), 
+                new Vec2(0, 0),
+                new Vec2(TestGeometries.SmallSquareSide, 0),
+                new Vec2(TestGeometries.SmallSquareSide, TestGeometries.SmallSquareSide),
                 new Vec2(0, TestGeometries.SmallSquareSide)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);

@@ -33,12 +33,12 @@ sealed class Program
         bool exportGltf = args.Contains("--gltf", StringComparer.OrdinalIgnoreCase);
         bool exportSvg = args.Contains("--svg", StringComparer.OrdinalIgnoreCase);
         bool exportAll = !exportObj && !exportGltf && !exportSvg;
-        
-        var poly = Polygon2D.FromPoints(new[] { 
-            new Vec2(0, 0), 
-            new Vec2(SampleLength, 0), 
-            new Vec2(SampleLength, SampleWidth), 
-            new Vec2(0, SampleWidth) 
+
+        var poly = Polygon2D.FromPoints(new[] {
+            new Vec2(0, 0),
+            new Vec2(SampleLength, 0),
+            new Vec2(SampleLength, SampleWidth),
+            new Vec2(0, SampleWidth)
         });
         var structure = new PrismStructureDefinition(poly, SampleBottomZ, SampleTopZ);
         structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(SampleLength, 0)), SampleConstraintZ);
@@ -46,14 +46,15 @@ sealed class Program
             .AddPoint(new Vec3(0, 4, 2))
             .AddPoint(new Vec3(SampleLength, 4, 4))
             .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(SampleLength, 4, 2)));
-        var options = new MesherOptions { 
-            TargetEdgeLengthXY = SampleTargetEdgeLengthXY, 
-            TargetEdgeLengthZ = SampleTargetEdgeLengthZ 
+        var options = new MesherOptions
+        {
+            TargetEdgeLengthXY = SampleTargetEdgeLengthXY,
+            TargetEdgeLengthZ = SampleTargetEdgeLengthZ
         };
         var mesh = new PrismMesher().Mesh(structure, options);
         var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
         Console.WriteLine($"Indexed: V={indexed.Vertices.Count}, E={indexed.Edges.Count}, Q={indexed.Quads.Count}");
-        
+
         if (exportAll || exportObj)
         {
             ObjExporter.Write(indexed, SampleMeshPrefix + ".obj");

@@ -22,19 +22,20 @@ namespace FastGeoMesh.Tests
             var path = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", TestFileConstants.LegacyMeshFileName);
             File.Exists(path).Should().BeTrue($"Reference file not found at {path}");
             var refMesh = IndexedMesh.ReadCustomTxt(path);
-            var poly = Polygon2D.FromPoints(new[] { 
-                new Vec2(0, 0), 
-                new Vec2(TestGeometries.StandardRectangleWidth, 0), 
-                new Vec2(TestGeometries.StandardRectangleWidth, TestGeometries.StandardRectangleHeight), 
-                new Vec2(0, TestGeometries.StandardRectangleHeight) 
+            var poly = Polygon2D.FromPoints(new[] {
+                new Vec2(0, 0),
+                new Vec2(TestGeometries.StandardRectangleWidth, 0),
+                new Vec2(TestGeometries.StandardRectangleWidth, TestGeometries.StandardRectangleHeight),
+                new Vec2(0, TestGeometries.StandardRectangleHeight)
             });
             var structure = new PrismStructureDefinition(poly, TestGeometries.StandardBottomZ, TestGeometries.StandardTopZ)
                 .AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(TestGeometries.StandardRectangleWidth, 0)), TestGeometries.StandardConstraintZ);
-            var options = new MesherOptions { 
-                TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY, 
-                TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ, 
-                GenerateBottomCap = false, 
-                GenerateTopCap = false 
+            var options = new MesherOptions
+            {
+                TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY,
+                TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ,
+                GenerateBottomCap = false,
+                GenerateTopCap = false
             };
             var mesh = new PrismMesher().Mesh(structure, options);
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);

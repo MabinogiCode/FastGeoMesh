@@ -14,15 +14,15 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void ObjContainsTriangleFacesWhenCapTrianglesEnabled()
         {
-            var outer = Polygon2D.FromPoints(new[] { 
-                new Vec2(0, 0), 
-                new Vec2(TestGeometries.SmallSquareSide, 0), 
-                new Vec2(TestGeometries.SmallSquareSide, TestGeometries.SmallRectangleHeight), 
-                new Vec2(3, TestGeometries.SmallRectangleHeight), 
-                new Vec2(3, TestGeometries.SmallRectangleHeight * 2), 
-                new Vec2(TestGeometries.SmallSquareSide, TestGeometries.SmallRectangleHeight * 2), 
-                new Vec2(TestGeometries.SmallSquareSide, TestGeometries.SmallSquareSide + 1), 
-                new Vec2(0, TestGeometries.SmallSquareSide + 1) 
+            var outer = Polygon2D.FromPoints(new[] {
+                new Vec2(0, 0),
+                new Vec2(TestGeometries.SmallSquareSide, 0),
+                new Vec2(TestGeometries.SmallSquareSide, TestGeometries.SmallRectangleHeight),
+                new Vec2(3, TestGeometries.SmallRectangleHeight),
+                new Vec2(3, TestGeometries.SmallRectangleHeight * 2),
+                new Vec2(TestGeometries.SmallSquareSide, TestGeometries.SmallRectangleHeight * 2),
+                new Vec2(TestGeometries.SmallSquareSide, TestGeometries.SmallSquareSide + 1),
+                new Vec2(0, TestGeometries.SmallSquareSide + 1)
             });
             var structure = new PrismStructureDefinition(outer, 0, 1);
             var options = new MesherOptions
