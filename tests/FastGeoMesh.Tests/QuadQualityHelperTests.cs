@@ -1,15 +1,18 @@
 using System;
+using LibTessDotNet;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Utils;
 using FluentAssertions;
-using LibTessDotNet;
 using Xunit;
 
 namespace FastGeoMesh.Tests
 {
-    /// <summary>Tests for QuadQualityHelper scoring and tessellation functions.</summary>
+    /// <summary>Tests for <see cref="QuadQualityHelper"/> scoring and tessellation functions.</summary>
     public sealed class QuadQualityHelperTests
     {
+        /// <summary>
+        /// Ensures good quads (square) have higher scores than degenerate thin quads.
+        /// </summary>
         [Fact]
         public void ScoreQuadReturnsHighScoreForGoodQuads()
         {
@@ -35,6 +38,9 @@ namespace FastGeoMesh.Tests
             goodScore.Should().BeGreaterThan(badScore, "Good quad should score higher than bad quad");
         }
 
+        /// <summary>
+        /// Validates that zero-area quads receive a low score.
+        /// </summary>
         [Fact]
         public void ScoreQuadHandlesZeroAreaQuads()
         {
@@ -51,6 +57,9 @@ namespace FastGeoMesh.Tests
             score.Should().BeLessThanOrEqualTo(0.2, "Zero area quad should have low score");
         }
 
+        /// <summary>
+        /// Verifies MakeQuadFromTrianglePair succeeds with two triangles forming a quad.
+        /// </summary>
         [Fact]
         public void MakeQuadFromTrianglePairWorksWithValidTriangles()
         {
@@ -73,6 +82,9 @@ namespace FastGeoMesh.Tests
             quad.Value.v2.Should().Be(new Vec2(1, 1));
         }
 
+        /// <summary>
+        /// Ensures MakeQuadFromTrianglePair returns null when triangles don't share an edge.
+        /// </summary>
         [Fact]
         public void MakeQuadFromTrianglePairReturnsNullForInvalidTriangles()
         {
@@ -93,6 +105,9 @@ namespace FastGeoMesh.Tests
             quad.Should().BeNull("Triangles with no shared edge should not create quad");
         }
 
+        /// <summary>
+        /// Validates MakeQuadFromTrianglePair rejects non-convex results or produces convex quads only.
+        /// </summary>
         [Fact]
         public void MakeQuadFromTrianglePairRejectsNonConvexResults()
         {
@@ -116,6 +131,9 @@ namespace FastGeoMesh.Tests
             }
         }
 
+        /// <summary>
+        /// Tests scoring stability across a variety of aspect ratios including perfect square and thin quads.
+        /// </summary>
         [Theory]
         [InlineData(1.0, 1.0)]   // Perfect square
         [InlineData(2.0, 1.0)]   // Rectangle

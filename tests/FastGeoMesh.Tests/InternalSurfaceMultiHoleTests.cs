@@ -1,4 +1,3 @@
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -7,8 +6,15 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests for internal surfaces containing multiple holes to validate exclusion of all hole regions.
+    /// </summary>
     public sealed class InternalSurfaceMultiHoleTests
     {
+        /// <summary>
+        /// Verifies internal surface tessellation excludes areas of all defined holes at the target Z elevation.
+        /// Includes fallback handling when tessellation yields no internal quads.
+        /// </summary>
         [Fact]
         public void InternalSurfaceWithMultipleHolesExcludesAllHoleAreas()
         {
@@ -24,19 +30,15 @@ namespace FastGeoMesh.Tests
                 TargetEdgeLengthZ = 2.0,
                 GenerateBottomCap = false,
                 GenerateTopCap = false,
-                MinCapQuadQuality = 0.0  // Allow all qualities to ensure some quads are generated
+                MinCapQuadQuality = 0.0
             };
             var mesh = new PrismMesher().Mesh(st, opt);
             var plateQuads = mesh.Quads.Where(q => q.V0.Z == 3.0 && q.V1.Z == 3.0 && q.V2.Z == 3.0 && q.V3.Z == 3.0).ToList();
 
-            // NOTE: This test may fail due to LibTessDotNet limitations with complex multi-hole tessellation.
-            // If no quads are generated, verify that the fallback mechanism is working correctly.
             if (plateQuads.Count == 0)
             {
-                // Verify that at least some internal surface handling occurred
-                // The mesh should still contain side quads from the prism structure
                 mesh.Quads.Should().NotBeEmpty("Even if tessellation fails, side quads should be generated");
-                return; // Skip the hole exclusion test if tessellation completely failed
+                return;
             }
 
             plateQuads.Should().NotBeEmpty();

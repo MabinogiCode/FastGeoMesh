@@ -1,4 +1,3 @@
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -7,8 +6,10 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>Tests for internal surface functionality.</summary>
     public sealed class InternalSurfaceTests
     {
+        /// <summary>Tests that internal surface with hole generates plate quads correctly.</summary>
         [Fact]
         public void InternalSurfaceWithHoleGeneratesPlateQuads()
         {
@@ -32,6 +33,7 @@ namespace FastGeoMesh.Tests
             }
         }
 
+        /// <summary>Tests that internal surface without outer cap still generates only plate quads.</summary>
         [Fact]
         public void InternalSurfaceWithoutOuterCapStillGeneratesOnlyPlate()
         {

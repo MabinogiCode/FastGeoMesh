@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -11,6 +9,7 @@ namespace FastGeoMesh.Tests
     /// <summary>Tests validating that our performance optimizations maintain correctness.</summary>
     public sealed class OptimizationValidationTests
     {
+        /// <summary>Tests that optimized meshing produces correct quad count for simple rectangles.</summary>
         [Fact]
         public void OptimizedMeshingProducesCorrectQuadCount()
         {
@@ -44,6 +43,7 @@ namespace FastGeoMesh.Tests
             mesh.Quads.Count.Should().BeGreaterThan(200).And.BeLessThan(300);
         }
 
+        /// <summary>Tests that optimized meshing with holes excludes hole areas correctly.</summary>
         [Fact]
         public void OptimizedMeshingWithHolesExcludesHoleAreas()
         {
@@ -75,7 +75,7 @@ namespace FastGeoMesh.Tests
 
             // Verify no quads exist in hole area
             var capQuads = mesh.Quads.Where(q =>
-                Math.Abs(q.V0.Z - 0) < 0.1 || Math.Abs(q.V0.Z - 2) < 0.1).ToList();
+                System.Math.Abs(q.V0.Z - 0) < 0.1 || System.Math.Abs(q.V0.Z - 2) < 0.1).ToList();
 
             foreach (var quad in capQuads)
             {
@@ -88,6 +88,7 @@ namespace FastGeoMesh.Tests
             }
         }
 
+        /// <summary>Tests that spatial indexing gives same results as original algorithm.</summary>
         [Fact]
         public void SpatialIndexingGivesSameResultsAsOriginalAlgorithm()
         {
@@ -95,8 +96,8 @@ namespace FastGeoMesh.Tests
             var vertices = new Vec2[8];
             for (int i = 0; i < 8; i++)
             {
-                double angle = i * 2 * Math.PI / 8;
-                vertices[i] = new Vec2(10 + 8 * Math.Cos(angle), 10 + 8 * Math.Sin(angle));
+                double angle = i * 2 * System.Math.PI / 8;
+                vertices[i] = new Vec2(10 + 8 * System.Math.Cos(angle), 10 + 8 * System.Math.Sin(angle));
             }
             var polygon = Polygon2D.FromPoints(vertices);
 
@@ -124,6 +125,7 @@ namespace FastGeoMesh.Tests
             adjacency.NonManifoldEdges.Should().BeEmpty("Optimized meshing should produce manifold geometry");
         }
 
+        /// <summary>Tests that object pooling does not affect mesh consistency.</summary>
         [Fact]
         public void ObjectPoolingDoesNotAffectMeshConsistency()
         {
@@ -155,6 +157,7 @@ namespace FastGeoMesh.Tests
             mesh2.Triangles.Count.Should().Be(mesh3.Triangles.Count);
         }
 
+        /// <summary>Tests that optimized structs preserve quality scores correctly.</summary>
         [Fact]
         public void OptimizedStructsPreserveQualityScores()
         {
@@ -189,6 +192,7 @@ namespace FastGeoMesh.Tests
             }
         }
 
+        /// <summary>Tests that mesh caching optimization works correctly.</summary>
         [Fact]
         public void MeshCachingOptimizationWorksCorrectly()
         {

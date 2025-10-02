@@ -1,4 +1,3 @@
-using System;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Utils;
 using FluentAssertions;
@@ -6,9 +5,12 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
-    /// <summary>Tests for GeometryHelper utility functions.</summary>
+    /// <summary>Tests for <see cref="GeometryHelper"/> utility functions.</summary>
     public sealed class GeometryHelperTests
     {
+        /// <summary>
+        /// Verifies distance from a point to a segment for points on the segment, perpendicular, and beyond endpoints.
+        /// </summary>
         [Fact]
         public void DistancePointToSegmentReturnsCorrectValues()
         {
@@ -35,6 +37,9 @@ namespace FastGeoMesh.Tests
             GeometryHelper.DistancePointToSegment(pointAfter, a, b).Should().BeApproximately(expectedAfter, 1e-9);
         }
 
+        /// <summary>
+        /// Ensures point-in-polygon detects interior, edge, corner, and outside points for a convex square.
+        /// </summary>
         [Fact]
         public void PointInPolygonDetectsInsideAndOutside()
         {
@@ -54,6 +59,9 @@ namespace FastGeoMesh.Tests
             GeometryHelper.PointInPolygon(square, 5, 11).Should().BeFalse("Point outside top");
         }
 
+        /// <summary>
+        /// Validates convexity detection for convex and concave (bow-tie) quads.
+        /// </summary>
         [Fact]
         public void IsConvexDetectsConvexQuads()
         {
@@ -74,6 +82,9 @@ namespace FastGeoMesh.Tests
             GeometryHelper.IsConvex(concaveQuad).Should().BeFalse("Bow-tie should not be convex");
         }
 
+        /// <summary>
+        /// Tests linear interpolation between two 2D points at multiple factors.
+        /// </summary>
         [Fact]
         public void LerpInterpolatesCorrectly()
         {
@@ -95,6 +106,9 @@ namespace FastGeoMesh.Tests
             quarter.Should().Be(new Vec2(2.5, 5));
         }
 
+        /// <summary>
+        /// Tests scalar interpolation for several interpolation factors including extremes.
+        /// </summary>
         [Fact]
         public void LerpScalarInterpolatesCorrectly()
         {
@@ -106,6 +120,9 @@ namespace FastGeoMesh.Tests
             GeometryHelper.LerpScalar(-10, 10, 0.75).Should().Be(5);
         }
 
+        /// <summary>
+        /// Edge-case driven point-in-polygon tests ensure boundary and outside conditions behave correctly.
+        /// </summary>
         [Theory]
         [InlineData(0, 0, true)]    // Corner
         [InlineData(5, 0, true)]    // Edge

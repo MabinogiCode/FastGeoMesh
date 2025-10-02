@@ -1,7 +1,4 @@
-using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -14,6 +11,7 @@ namespace FastGeoMesh.Tests
     /// <summary>Tests for performance optimizations and new .NET 8 features.</summary>
     public sealed class PerformanceOptimizationTests
     {
+        /// <summary>Tests that MesherOptionsBuilder creates valid options with all configurations.</summary>
         [Fact]
         public void MesherOptionsBuilderCreatesValidOptions()
         {
@@ -38,6 +36,7 @@ namespace FastGeoMesh.Tests
             options.OutputRejectedCapTriangles.Should().BeTrue();
         }
 
+        /// <summary>Tests that high quality preset configures options correctly.</summary>
         [Fact]
         public void HighQualityPresetConfiguresCorrectly()
         {
@@ -53,6 +52,7 @@ namespace FastGeoMesh.Tests
             options.OutputRejectedCapTriangles.Should().BeTrue();
         }
 
+        /// <summary>Tests that fast preset configures options correctly.</summary>
         [Fact]
         public void FastPresetConfiguresCorrectly()
         {
@@ -68,6 +68,7 @@ namespace FastGeoMesh.Tests
             options.OutputRejectedCapTriangles.Should().BeFalse();
         }
 
+        /// <summary>Tests that performance monitor tracks statistics correctly.</summary>
         [Fact]
         public void PerformanceMonitorTracksStatistics()
         {
@@ -90,6 +91,7 @@ namespace FastGeoMesh.Tests
             finalStats.PoolHitRate.Should().BeGreaterThan(0.0);
         }
 
+        /// <summary>Tests that performance monitor activity source works correctly.</summary>
         [Fact]
         public void PerformanceMonitorActivitySourceWorks()
         {
@@ -130,6 +132,7 @@ namespace FastGeoMesh.Tests
             }
         }
 
+        /// <summary>Tests that tessellation pool statistics work correctly.</summary>
         [Fact]
         public void TessPoolStatisticsWork()
         {
@@ -141,6 +144,7 @@ namespace FastGeoMesh.Tests
             stats.IsShuttingDown.Should().BeFalse();
         }
 
+        /// <summary>Tests that quad quality helper optimized scoring works correctly.</summary>
         [Fact]
         public void QuadQualityHelperOptimizedScoringWorks()
         {
@@ -166,6 +170,7 @@ namespace FastGeoMesh.Tests
             goodScore.Should().BeGreaterThan(badScore, "Good quad should score higher than bad quad");
         }
 
+        /// <summary>Tests that async meshing interface is implementable.</summary>
         [Fact]
         public async Task AsyncMeshingInterfaceIsImplementable()
         {
@@ -186,6 +191,7 @@ namespace FastGeoMesh.Tests
             mesh.Quads.Should().NotBeEmpty();
         }
 
+        /// <summary>Tests that enhanced pools reuse objects correctly.</summary>
         [Fact]
         public void EnhancedPoolsReuseObjectsCorrectly()
         {

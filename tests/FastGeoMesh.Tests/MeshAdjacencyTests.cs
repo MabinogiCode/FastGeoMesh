@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FluentAssertions;
@@ -7,8 +5,10 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>Tests for mesh adjacency functionality.</summary>
     public sealed class MeshAdjacencyTests
     {
+        /// <summary>Tests that adjacency detection correctly identifies neighbors and boundary edges.</summary>
         [Fact]
         public void AdjacencyDetectsNeighborsAndBoundaryEdges()
         {

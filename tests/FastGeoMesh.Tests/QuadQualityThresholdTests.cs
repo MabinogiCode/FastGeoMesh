@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
@@ -8,8 +7,10 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>Tests for quad quality threshold functionality in meshing.</summary>
     public sealed class QuadQualityThresholdTests
     {
+        /// <summary>Tests that minimum cap quad quality rejects poor quality quad pairs.</summary>
         [Fact]
         public void MinCapQuadQualityRejectsPoorPairs()
         {
@@ -30,6 +31,7 @@ namespace FastGeoMesh.Tests
             badStrict.Should().BeLessThanOrEqualTo(badLoose + 1);
         }
 
+        /// <summary>Tests that default quality threshold applies correctly.</summary>
         [Fact]
         public void DefaultQualityThresholdApplies()
         {

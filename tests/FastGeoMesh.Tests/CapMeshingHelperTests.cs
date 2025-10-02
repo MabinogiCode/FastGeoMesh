@@ -1,4 +1,3 @@
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Meshing.Helpers;
@@ -8,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests for cap meshing helper focusing on rectangle fast-path and generic concave handling with quality scores.
+    /// </summary>
     public sealed class CapMeshingHelperTests
     {
+        /// <summary>
+        /// Ensures rectangle caps produce balanced top/bottom counts and at least one quad.
+        /// </summary>
         [Fact]
         public void RectangleCapsMatchExpectedCounts()
         {
@@ -24,6 +29,9 @@ namespace FastGeoMesh.Tests
             top.Should().Be(bottom);
         }
 
+        /// <summary>
+        /// Validates quality score range [0,1] for generic concave cap tessellation (both top and bottom).
+        /// </summary>
         [Fact]
         public void GenericCapsProduceQualityScoresWithinRange()
         {

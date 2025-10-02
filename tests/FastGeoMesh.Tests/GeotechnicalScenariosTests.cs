@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -8,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Geotechnical scenario tests including slabs with holes and external support / brace integration.
+    /// </summary>
     public sealed class GeotechnicalScenariosTests
     {
+        /// <summary>
+        /// Ensures holes are not meshed as caps and internal vertical faces are generated around hole perimeters.
+        /// </summary>
         [Fact]
         public void SlabWithHolesDoesNotMeshHolesOnCapsAndGeneratesInnerSideFaces()
         {
@@ -30,6 +34,9 @@ namespace FastGeoMesh.Tests
             adj.NonManifoldEdges.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Ensures external support geometry endpoints are carried into the mesh as internal segment endpoints.
+        /// </summary>
         [Fact]
         public void BraceFootingOutsideIsCarriedAsInternalSegment()
         {

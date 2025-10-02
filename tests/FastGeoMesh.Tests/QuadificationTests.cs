@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -8,8 +6,10 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>Tests for quadification functionality in meshing.</summary>
     public sealed class QuadificationTests
     {
+        /// <summary>Tests that generic concave polygon with hole generates caps and manifold mesh.</summary>
         [Fact]
         public void GenericConcavePolygonWithHoleCapsGeneratedAndManifold()
         {
@@ -50,6 +50,7 @@ namespace FastGeoMesh.Tests
             adj.NonManifoldEdges.Should().BeEmpty();
         }
 
+        /// <summary>Tests that generic polygon without holes produces top and bottom caps with quads only.</summary>
         [Fact]
         public void GenericPolygonWithoutHolesProducesTopAndBottomCapsWithQuadsOnly()
         {

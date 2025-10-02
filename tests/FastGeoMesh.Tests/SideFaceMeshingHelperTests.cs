@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Meshing.Helpers;
@@ -8,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests for side face meshing ensuring vertical layering and orientation handling.
+    /// </summary>
     public sealed class SideFaceMeshingHelperTests
     {
+        /// <summary>
+        /// Verifies expected quad count based on perimeter subdivision and vertical layering.
+        /// </summary>
         [Fact]
         public void GenerateSideQuadsProducesExpectedVerticalLayers()
         {
@@ -17,13 +21,13 @@ namespace FastGeoMesh.Tests
             var zLevels = new double[] { 0, 1, 2 };
             var options = new MesherOptions { TargetEdgeLengthXY = 2.0, TargetEdgeLengthZ = 1.0 };
             var quads = SideFaceMeshingHelper.GenerateSideQuads(loop, zLevels, options, outward: true);
-            // Perimeter edges subdivision: each long edge (length 4) -> 2 segments; short edge (length 2) -> 1 segment
-            // Total horizontal segments = (4/2 + 2/2)*2 = (2 + 1)*2 = 6 vertical columns
-            // Vertical layers = zLevels.Count-1 = 2 -> expected quads = 12
             quads.Should().HaveCount(12);
             quads.All(q => q.V0.Z is 0 or 1 or 2).Should().BeTrue();
         }
 
+        /// <summary>
+        /// Ensures outward flag flips orientation (cross product sign) while preserving quad count.
+        /// </summary>
         [Fact]
         public void GenerateSideQuadsRespectsOutwardFlagOrientation()
         {
@@ -33,7 +37,6 @@ namespace FastGeoMesh.Tests
             var outward = SideFaceMeshingHelper.GenerateSideQuads(loop, z, opt, true);
             var inward = SideFaceMeshingHelper.GenerateSideQuads(loop, z, opt, false);
             outward.Should().HaveCount(inward.Count);
-            // Compare first quad orientation via cross product of bottom edge vectors
             var oq = outward.First();
             var iq = inward.First();
             double oCross = (oq.V1.X - oq.V0.X) * (oq.V2.Y - oq.V1.Y) - (oq.V1.Y - oq.V0.Y) * (oq.V2.X - oq.V1.X);

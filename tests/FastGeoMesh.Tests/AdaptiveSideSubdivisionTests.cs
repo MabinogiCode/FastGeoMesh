@@ -1,4 +1,3 @@
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -7,8 +6,16 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests for adaptive side subdivision functionality.
+    /// Verifies that internal surfaces and constraints properly affect side face generation.
+    /// </summary>
     public sealed class AdaptiveSideSubdivisionTests
     {
+        /// <summary>
+        /// Tests that internal surface elevations appear in side quad Z levels.
+        /// Verifies that large target edge lengths don't prevent subdivision when internal surfaces are present.
+        /// </summary>
         [Fact]
         public void InternalSurfaceElevationAppearsInSideQuadZLevels()
         {

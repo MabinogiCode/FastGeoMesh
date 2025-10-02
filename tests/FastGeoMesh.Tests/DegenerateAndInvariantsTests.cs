@@ -8,9 +8,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
-    /// <summary>Additional tests for degenerate scenarios & area invariants.</summary>
+    /// <summary>
+    /// Additional tests for degenerate scenarios and area invariants.
+    /// </summary>
     public sealed class DegenerateAndInvariantsTests
     {
+        /// <summary>
+        /// Validates that cap quad areas approximate original footprint area minus holes within tolerance.
+        /// </summary>
         [Fact]
         public void AreaInvariant_RectangleCapsApproximateFootprintAreaMinusHoles()
         {
@@ -21,14 +26,15 @@ namespace FastGeoMesh.Tests
             var mesh = new PrismMesher().Mesh(structure, options);
             double footprintArea = Math.Abs(Polygon2D.SignedArea(outer.Vertices)) - Math.Abs(Polygon2D.SignedArea(hole.Vertices));
             var topQuads = mesh.Quads.Where(q => Math.Abs(q.V0.Z - 2) < 1e-9 && q.QualityScore.HasValue).ToList();
-            // Approximate area by summing quad areas (shoelace)
             double SumArea() => topQuads.Sum(q => Math.Abs(Polygon2D.SignedArea(new[] { new Vec2(q.V0.X, q.V0.Y), new Vec2(q.V1.X, q.V1.Y), new Vec2(q.V2.X, q.V2.Y), new Vec2(q.V3.X, q.V3.Y) })));
             double capArea = SumArea();
             capArea.Should().BeGreaterThan(0);
-            // Loose tolerance because discretisation: within 25%
             capArea.Should().BeInRange(footprintArea * 0.75, footprintArea * 1.25);
         }
 
+        /// <summary>
+        /// Ensures very small prism height still produces side faces (no collapse).
+        /// </summary>
         [Fact]
         public void DegenerateVerySmallHeightStillProducesSideFaces()
         {
@@ -39,6 +45,9 @@ namespace FastGeoMesh.Tests
             mesh.Quads.Should().NotBeEmpty();
         }
 
+        /// <summary>
+        /// Verifies immutability: AddHole returns a new instance leaving original unchanged.
+        /// </summary>
         [Fact]
         public void ImmutableStructure_AddHoleReturnsNewInstance()
         {
@@ -51,6 +60,9 @@ namespace FastGeoMesh.Tests
             next.Holes.Should().HaveCount(1);
         }
 
+        /// <summary>
+        /// Verifies immutability: AddConstraintSegment returns new instance leaving original unchanged.
+        /// </summary>
         [Fact]
         public void ImmutableStructure_AddConstraintReturnsNewInstance()
         {

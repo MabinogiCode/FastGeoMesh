@@ -15,6 +15,7 @@ namespace FastGeoMesh.Tests
     /// </summary>
     public sealed class FunctionalRegressionTests
     {
+        /// <summary>Verifies batch additions and basic mesh collection behavior.</summary>
         [Fact]
         public void BatchOperationsWorkCorrectly()
         {
@@ -40,6 +41,7 @@ namespace FastGeoMesh.Tests
             mesh.QuadCount.Should().Be(mesh.Quads.Count);
         }
 
+        /// <summary>Checks span-based centroid and bounds helper extension methods.</summary>
         [Fact]
         public void SpanOperationsProduceCorrectResults()
         {
@@ -62,6 +64,7 @@ namespace FastGeoMesh.Tests
             bounds.max.Should().Be(new Vec2(2, 2));
         }
 
+        /// <summary>Validates object pool get/return semantics for integer list pool.</summary>
         [Fact]
         public void ObjectPoolingFunctionsCorrectly()
         {
@@ -86,6 +89,7 @@ namespace FastGeoMesh.Tests
             MeshingPools.IntListPool.Return(list3);
         }
 
+        /// <summary>Checks IndexedMesh conversion correctness and caching.</summary>
         [Fact]
         public void IndexedMeshConversionWorksCorrectly()
         {

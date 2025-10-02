@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -8,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Integration test verifying generated mesh adjacency produces no non-manifold edges.
+    /// </summary>
     public sealed class AdjacencyIntegrationTests
     {
+        /// <summary>
+        /// Builds a sample mesh and asserts adjacency analysis contains zero non-manifold edges.
+        /// </summary>
         [Fact]
         public void AdjacencyOnGeneratedMeshHasNoNonManifoldEdges()
         {

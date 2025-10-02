@@ -1,5 +1,4 @@
-using System;
-using System.IO;
+using System.IO; // Needed for file operations
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Meshing.Exporters;
@@ -8,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests validating OBJ exporter output contains expected vertex and face definitions.
+    /// </summary>
     public sealed class ObjExporterTests
     {
+        /// <summary>
+        /// Exports a simple rectangular prism to OBJ and verifies basic structural lines exist.
+        /// </summary>
         [Fact]
         public void ExportsSimpleRectPrismOBJ()
         {

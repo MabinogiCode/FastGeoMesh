@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 
 namespace FastGeoMesh.Tests

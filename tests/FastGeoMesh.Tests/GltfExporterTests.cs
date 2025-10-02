@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
@@ -8,8 +7,15 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests validating the GLTF exporter produces a valid glTF file with embedded buffer content.
+    /// </summary>
     public sealed class GltfExporterTests
     {
+        /// <summary>
+        /// Generates a small prism mesh and verifies that the exported glTF file exists
+        /// and contains expected JSON sections (asset, buffers, embedded base64 buffer).
+        /// </summary>
         [Fact]
         public void ExportsGLTFWithEmbeddedBuffer()
         {

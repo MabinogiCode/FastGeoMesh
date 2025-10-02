@@ -1,5 +1,6 @@
+#pragma warning disable IDE0005, CS1591
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;

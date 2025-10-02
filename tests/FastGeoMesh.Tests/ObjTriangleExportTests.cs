@@ -1,15 +1,16 @@
-using System;
 using System.IO;
+using FastGeoMesh.Meshing.Exporters;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
-using FastGeoMesh.Meshing.Exporters;
 using FastGeoMesh.Structures;
 using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>Tests for OBJ export functionality with triangle faces.</summary>
     public sealed class ObjTriangleExportTests
     {
+        /// <summary>Tests that OBJ contains triangle faces when cap triangles are enabled.</summary>
         [Fact]
         public void ObjContainsTriangleFacesWhenCapTrianglesEnabled()
         {
@@ -27,10 +28,10 @@ namespace FastGeoMesh.Tests
             var mesh = new PrismMesher().Mesh(structure, options);
             Assert.True(mesh.Triangles.Count > 0, "Expected triangles emitted");
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
-            string path = Path.Combine(Path.GetTempPath(), $"fgm_obj_tri_{Guid.NewGuid():N}.obj");
+            string path = Path.Combine(Path.GetTempPath(), $"fgm_obj_tri_{System.Guid.NewGuid():N}.obj");
             ObjExporter.Write(im, path);
             var lines = File.ReadAllLines(path);
-            Assert.Contains(lines, l => l.StartsWith("f ", StringComparison.Ordinal) && l.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length == 4);
+            Assert.Contains(lines, l => l.StartsWith("f ", System.StringComparison.Ordinal) && l.Split(' ', System.StringSplitOptions.RemoveEmptyEntries).Length == 4);
             File.Delete(path);
         }
     }

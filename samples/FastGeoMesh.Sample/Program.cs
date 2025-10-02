@@ -1,13 +1,19 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Meshing.Exporters;
 using FastGeoMesh.Structures;
 using FastGeoMesh.Utils;
 
+/// <summary>
+/// Sample application demonstrating FastGeoMesh library usage with various export formats.
+/// </summary>
 sealed class Program
 {
+    /// <summary>
+    /// Main entry point for the sample application.
+    /// Demonstrates mesh generation and export capabilities.
+    /// </summary>
+    /// <param name="args">Command line arguments for controlling export formats (--obj, --gltf, --svg).</param>
     static void Main(string[] args)
     {
         // Test notre correction de PointInPolygon
@@ -47,6 +53,10 @@ sealed class Program
         }
     }
 
+    /// <summary>
+    /// Tests the PointInPolygon functionality to verify the fix is working correctly.
+    /// Validates point-in-polygon calculations for various test cases.
+    /// </summary>
     static void TestPointInPolygon()
     {
         Console.WriteLine("=== Testing PointInPolygon Fix ===");

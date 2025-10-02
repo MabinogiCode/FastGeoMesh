@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
@@ -8,8 +7,10 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>Tests for segment refinement functionality in meshing.</summary>
     public sealed class SegmentRefinementTests
     {
+        /// <summary>Tests that caps are refined near internal segments.</summary>
         [Fact]
         public void CapsAreRefinedNearInternalSegments()
         {
@@ -22,12 +23,12 @@ namespace FastGeoMesh.Tests
             top.Should().NotBeEmpty();
             double Size(Quad q)
             {
-                double e0 = Math.Sqrt((q.V1.X - q.V0.X) * (q.V1.X - q.V0.X) + (q.V1.Y - q.V0.Y) * (q.V1.Y - q.V0.Y));
-                double e1 = Math.Sqrt((q.V2.X - q.V1.X) * (q.V2.X - q.V1.X) + (q.V2.Y - q.V1.Y) * (q.V2.Y - q.V1.Y));
+                double e0 = System.Math.Sqrt((q.V1.X - q.V0.X) * (q.V1.X - q.V0.X) + (q.V1.Y - q.V0.Y) * (q.V1.Y - q.V0.Y));
+                double e1 = System.Math.Sqrt((q.V2.X - q.V1.X) * (q.V2.X - q.V1.X) + (q.V2.Y - q.V1.Y) * (q.V2.Y - q.V1.Y));
                 return 0.5 * (e0 + e1);
             }
-            var near = top.Where(q => Math.Abs((q.V0.X + q.V1.X + q.V2.X + q.V3.X) / 4.0 - 10.0) <= 1.0 && Math.Abs((q.V0.Y + q.V1.Y + q.V2.Y + q.V3.Y) / 4.0 - 5.0) <= 1.0).Select(Size).ToList();
-            var far = top.Where(q => Math.Abs((q.V0.X + q.V1.X + q.V2.X + q.V3.X) / 4.0 - 10.0) > 3.0 || Math.Abs((q.V0.Y + q.V1.Y + q.V2.Y + q.V3.Y) / 4.0 - 5.0) > 3.0).Select(Size).ToList();
+            var near = top.Where(q => System.Math.Abs((q.V0.X + q.V1.X + q.V2.X + q.V3.X) / 4.0 - 10.0) <= 1.0 && System.Math.Abs((q.V0.Y + q.V1.Y + q.V2.Y + q.V3.Y) / 4.0 - 5.0) <= 1.0).Select(Size).ToList();
+            var far = top.Where(q => System.Math.Abs((q.V0.X + q.V1.X + q.V2.X + q.V3.X) / 4.0 - 10.0) > 3.0 || System.Math.Abs((q.V0.Y + q.V1.Y + q.V2.Y + q.V3.Y) / 4.0 - 5.0) > 3.0).Select(Size).ToList();
             near.Should().NotBeEmpty();
             far.Should().NotBeEmpty();
             near.Average().Should().BeLessThan(far.Average());

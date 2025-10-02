@@ -1,6 +1,4 @@
-using System.Linq;
 using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
 using FastGeoMesh.Utils;
 using FluentAssertions;
@@ -8,6 +6,9 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests for spatial helper functions determining proximity to holes and segments in prism structures.
+    /// </summary>
     public sealed class MeshStructureHelperDistanceTests
     {
         private static PrismStructureDefinition BuildStructure()
@@ -17,30 +18,38 @@ namespace FastGeoMesh.Tests
             return new PrismStructureDefinition(outer, 0, 5).AddHole(hole);
         }
 
+        /// <summary>
+        /// Validates near-hole detection with varying influence bands and points near hole boundaries.
+        /// </summary>
         [Theory]
-        [InlineData(4, 4, 0.5, true)]      // Corner exactly
-        [InlineData(5, 4, 0.1, true)]      // Edge point
-        [InlineData(5, 5, 1.2, true)]      // Inside hole interior (distance 0 < band)
-        [InlineData(3.9, 5, 0.05, false)]  // Just outside with tiny band
-        [InlineData(3.9, 5, 0.2, true)]    // Same point but larger band now reaches boundary
+        [InlineData(4, 4, 0.5, true)]
+        [InlineData(5, 4, 0.1, true)]
+        [InlineData(5, 5, 1.2, true)]
+        [InlineData(3.9, 5, 0.05, false)]
+        [InlineData(3.9, 5, 0.2, true)]
         public void IsNearAnyHoleThreshold(double x, double y, double band, bool expected)
         {
             var st = BuildStructure();
             MeshStructureHelper.IsNearAnyHole(st, x, y, band).Should().Be(expected);
         }
 
+        /// <summary>
+        /// Ensures near-segment detection works for internal geometry segments and respects proximity thresholds.
+        /// </summary>
         [Fact]
         public void IsNearAnySegmentDetectsProximity()
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(8, 0), new Vec2(8, 8), new Vec2(0, 8) });
             var st = new PrismStructureDefinition(outer, 0, 3);
-            // Add internal segment (diagonal) at two Z values to ensure geometry segments added
             st.Geometry.AddSegment(new Segment3D(new Vec3(0, 0, 0), new Vec3(8, 8, 0)));
             st.Geometry.AddSegment(new Segment3D(new Vec3(0, 8, 0), new Vec3(8, 0, 0)));
-            MeshStructureHelper.IsNearAnySegment(st, 4.1, 4.0, 0.3).Should().BeTrue(); // near first diagonal
+            MeshStructureHelper.IsNearAnySegment(st, 4.1, 4.0, 0.3).Should().BeTrue();
             MeshStructureHelper.IsNearAnySegment(st, 4.1, 4.0, 0.01).Should().BeFalse();
         }
 
+        /// <summary>
+        /// Compares indexed vs non-indexed hole containment checks across a sample grid to ensure parity.
+        /// </summary>
         [Fact]
         public void IsInsideAnyHoleIndexedMatchesNonIndexed()
         {

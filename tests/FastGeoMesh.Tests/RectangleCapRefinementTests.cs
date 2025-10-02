@@ -1,4 +1,3 @@
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -10,6 +9,9 @@ namespace FastGeoMesh.Tests
     /// <summary>Tests verifying refinement near holes / segments for rectangle fast-path caps.</summary>
     public sealed class RectangleCapRefinementTests
     {
+        /// <summary>
+        /// Verifies hole refinement increases cap quad density near hole footprint.
+        /// </summary>
         [Fact]
         public void HoleRefinementIncreasesQuadDensityAroundHole()
         {
@@ -25,12 +27,14 @@ namespace FastGeoMesh.Tests
             refinedCap.Should().BeGreaterThan(coarseCap, "Refinement near holes should add quads");
         }
 
+        /// <summary>
+        /// Verifies segment refinement increases cap quad density along internal segment.
+        /// </summary>
         [Fact]
         public void SegmentRefinementIncreasesQuadDensityAlongSegment()
         {
             var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(30, 0), new Vec2(30, 10), new Vec2(0, 10) });
             var structure = new PrismStructureDefinition(rect, 0, 1);
-            // Add internal segment across the rectangle midline
             var seg = new Segment3D(new Vec3(0, 5, 0), new Vec3(30, 5, 0));
             structure.Geometry.AddSegment(seg);
             var coarse = new MesherOptions { TargetEdgeLengthXY = 3.0, TargetEdgeLengthZ = 1, GenerateBottomCap = true, GenerateTopCap = false };
@@ -42,6 +46,9 @@ namespace FastGeoMesh.Tests
             refinedCap.Should().BeGreaterThan(coarseCap, "Refinement near segments should add quads");
         }
 
+        /// <summary>
+        /// Ensures refinement bands do not significantly alter side quad counts (only cap refinement expected).
+        /// </summary>
         [Fact]
         public void RefinementBandsDoNotAffectSideQuadsCountSignificantly()
         {
@@ -51,11 +58,9 @@ namespace FastGeoMesh.Tests
             var refinedOpt = new MesherOptions { TargetEdgeLengthXY = 2.5, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true, TargetEdgeLengthXYNearHoles = 1.25, HoleRefineBand = 2.0 };
             var baseMesh = new PrismMesher().Mesh(structure, baseOpt);
             var refinedMesh = new PrismMesher().Mesh(structure, refinedOpt);
-            // Side quads identified by differing Z among vertices
             int CountSideQuads(FastGeoMesh.Meshing.Mesh m) => m.Quads.Count(q => !(q.V0.Z == q.V1.Z && q.V1.Z == q.V2.Z && q.V2.Z == q.V3.Z));
             int sidesBase = CountSideQuads(baseMesh);
             int sidesRefined = CountSideQuads(refinedMesh);
-            // Allow small variance due to potential different Z-level subdivisions reused
             sidesRefined.Should().BeInRange((int)(sidesBase * 0.9), (int)(sidesBase * 1.1));
         }
     }

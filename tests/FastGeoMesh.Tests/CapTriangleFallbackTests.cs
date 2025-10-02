@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Meshing.Exporters;
@@ -9,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests ensuring cap triangle fallback emits triangles when quad quality filtering excludes them.
+    /// </summary>
     public sealed class CapTriangleFallbackTests
     {
+        /// <summary>
+        /// Forces high minimum quad quality so triangles are emitted for rejected cap quads and validates glTF export.
+        /// </summary>
         [Fact]
         public void EmitsTrianglesWhenOptionEnabledAndQualityHigh()
         {
