@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -8,8 +6,10 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>Tests for triangle fallback functionality when quad quality is insufficient.</summary>
     public sealed class TriangleFallbackTests
     {
+        /// <summary>Tests that high threshold without triangle output produces degenerate quads.</summary>
         [Fact]
         public void HighThresholdWithoutTriangleOutputProducesDegenerateQuads()
         {
@@ -29,18 +29,19 @@ namespace FastGeoMesh.Tests
             // S1244 fix: Use epsilon-based comparison instead of direct double comparison
             const double epsilon = 1e-9;
             var bottomQuads = mesh.Quads.Where(q =>
-                Math.Abs(q.V0.Z - 0) < epsilon && Math.Abs(q.V1.Z - 0) < epsilon &&
-                Math.Abs(q.V2.Z - 0) < epsilon && Math.Abs(q.V3.Z - 0) < epsilon).ToList();
+                System.Math.Abs(q.V0.Z - 0) < epsilon && System.Math.Abs(q.V1.Z - 0) < epsilon &&
+                System.Math.Abs(q.V2.Z - 0) < epsilon && System.Math.Abs(q.V3.Z - 0) < epsilon).ToList();
             bottomQuads.Should().NotBeEmpty();
 
             // S1244 fix: Use epsilon-based comparison for vertex equality
             bool anyDegenerate = bottomQuads.Any(q =>
-                Math.Abs(q.V2.X - q.V3.X) < epsilon &&
-                Math.Abs(q.V2.Y - q.V3.Y) < epsilon &&
-                Math.Abs(q.V2.Z - q.V3.Z) < epsilon);
+                System.Math.Abs(q.V2.X - q.V3.X) < epsilon &&
+                System.Math.Abs(q.V2.Y - q.V3.Y) < epsilon &&
+                System.Math.Abs(q.V2.Z - q.V3.Z) < epsilon);
             anyDegenerate.Should().BeTrue("Triangle fallback should produce degenerate quads when triangles disabled");
         }
 
+        /// <summary>Tests that high threshold with triangle output produces triangles.</summary>
         [Fact]
         public void HighThresholdWithTriangleOutputProducesTriangles()
         {

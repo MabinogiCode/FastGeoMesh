@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using FastGeoMesh.Geometry;
 using Microsoft.Extensions.ObjectPool;
 

@@ -1,5 +1,4 @@
-using System;
-using System.IO;
+using System.IO; // Needed for file operations
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Meshing.Exporters;
@@ -8,17 +7,34 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests validating OBJ exporter output contains expected vertex and face definitions.
+    /// </summary>
     public sealed class ObjExporterTests
     {
+        /// <summary>
+        /// Exports a simple rectangular prism to OBJ and verifies basic structural lines exist.
+        /// </summary>
         [Fact]
         public void ExportsSimpleRectPrismOBJ()
         {
-            var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 2), new Vec2(0, 2) });
+            var poly = Polygon2D.FromPoints(new[] {
+                new Vec2(0, 0),
+                new Vec2(TestGeometries.SmallRectangleWidth, 0),
+                new Vec2(TestGeometries.SmallRectangleWidth, TestGeometries.SmallRectangleHeight),
+                new Vec2(0, TestGeometries.SmallRectangleHeight)
+            });
             var st = new PrismStructureDefinition(poly, 0, 1);
-            var opt = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true };
+            var opt = new MesherOptions
+            {
+                TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY,
+                TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ,
+                GenerateBottomCap = true,
+                GenerateTopCap = true
+            };
             var mesh = new PrismMesher().Mesh(st, opt);
             var im = IndexedMesh.FromMesh(mesh);
-            string path = Path.Combine(Path.GetTempPath(), $"fgm_test_{Guid.NewGuid():N}.obj");
+            string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.obj");
             ObjExporter.Write(im, path);
             Assert.True(File.Exists(path));
             var lines = File.ReadAllLines(path);

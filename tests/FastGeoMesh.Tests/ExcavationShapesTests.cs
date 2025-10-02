@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -8,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests covering L and T shaped excavations with and without auxiliary geometry and constraints.
+    /// </summary>
     public sealed class ShapeVariationTests
     {
+        /// <summary>
+        /// Validates meshing of an L shape without additional geometry, ensuring manifold caps and side faces.
+        /// </summary>
         [Fact]
         public void LShapeWithoutExtraGeometryMeshesCapsAndSidesManifold()
         {
@@ -26,12 +30,14 @@ namespace FastGeoMesh.Tests
             _ = adj.NonManifoldEdges.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Ensures constraints and internal segments in an L shape are integrated, generating appropriate Z subdivisions.
+        /// </summary>
         [Fact]
         public void LShapeWithExtraGeometryIntegratesConstraintAndSegments()
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(8, 0), new Vec2(8, 3), new Vec2(3, 3), new Vec2(3, 8), new Vec2(0, 8) });
             var structure = new PrismStructureDefinition(outer, 0, 6);
-            // FIXED: AddConstraintSegment returns new immutable instance - must reassign
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0.5, 1.0), new Vec2(7.5, 1.0)), 2.0);
             var pA = new Vec3(0.5, 2.5, 1.0);
             var pB = new Vec3(2.5, 2.5, 3.0);
@@ -58,6 +64,9 @@ namespace FastGeoMesh.Tests
             _ = adj.NonManifoldEdges.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Validates meshing of a T shape without auxiliary geometry producing manifold caps and consistent side quads.
+        /// </summary>
         [Fact]
         public void TShapeWithoutExtraGeometryMeshesCapsAndSidesManifold()
         {
@@ -74,12 +83,14 @@ namespace FastGeoMesh.Tests
             _ = adj.NonManifoldEdges.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Ensures constraints and internal segments in a T shape are correctly propagated and meshed.
+        /// </summary>
         [Fact]
         public void TShapeWithExtraGeometryIntegratesConstraints()
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(7, 0), new Vec2(7, 2), new Vec2(5, 2), new Vec2(5, 5), new Vec2(2, 5), new Vec2(2, 2), new Vec2(0, 2) });
             var structure = new PrismStructureDefinition(outer, -4, 0);
-            // FIXED: AddConstraintSegment returns new immutable instance - must reassign
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0.5, 0.5), new Vec2(6.5, 0.5)), -2.0);
             var b1 = new Vec3(2.5, 3.5, -1.0);
             var b2 = new Vec3(4.5, 3.5, -1.0);

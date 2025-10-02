@@ -9,8 +9,10 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>Tests covering epsilon handling and cap generation behavior.</summary>
     public sealed class EpsilonAndCapsTests
     {
+        /// <summary>Verifies FromMesh behavior when epsilon is set to double.Epsilon (no merging).</summary>
         [Fact]
         public void FromMeshUsesExactKeyingWhenEpsilonIsDoubleEpsilon()
         {
@@ -29,6 +31,7 @@ namespace FastGeoMesh.Tests
             _ = imMerge.Vertices.Count.Should().Be(1);
         }
 
+        /// <summary>Ensures caps generated for axis-aligned rectangle match expected quad counts.</summary>
         [Fact]
         public void CapsAreGeneratedWithExpectedQuadCountForAxisAlignedRectangle()
         {
@@ -46,6 +49,7 @@ namespace FastGeoMesh.Tests
             _ = capCount.Should().Be(200);
         }
 
+        /// <summary>Verifies that internal segments provided in structure appear as indexed edges after conversion.</summary>
         [Fact]
         public void InternalSegmentIsCarriedToIndexedMeshAsEdge()
         {
@@ -70,6 +74,7 @@ namespace FastGeoMesh.Tests
             _ = im.Edges.Should().Contain(edge);
         }
 
+        /// <summary>Checks that constraint Z-levels influence side quads generation.</summary>
         [Fact]
         public void ConstraintZLevelIsPresentInSideQuads()
         {

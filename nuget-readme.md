@@ -85,6 +85,25 @@ var quality = MesherOptions.CreateBuilder().WithHighQualityPreset().Build();
 
 ## 🏗️ Advanced Features
 
+### Basic Geometry Creation
+```csharp
+// Rectangle from corner points
+var rect = Polygon2D.FromPoints(new[]{ 
+    new Vec2(0,0), new Vec2(10,0), new Vec2(10,5), new Vec2(0,5) 
+});
+
+// Square helper
+var square = Polygon2D.FromPoints(new[]{ 
+    new Vec2(0,0), new Vec2(5,0), new Vec2(5,5), new Vec2(0,5) 
+});
+
+// L-shaped polygon
+var lShape = Polygon2D.FromPoints(new[]{
+    new Vec2(0,0), new Vec2(6,0), new Vec2(6,3),
+    new Vec2(3,3), new Vec2(3,6), new Vec2(0,6)
+});
+```
+
 ### Complex Structures with Holes
 ```csharp
 var outer = Polygon2D.FromPoints(new[]{ 
@@ -100,22 +119,105 @@ var structure = new PrismStructureDefinition(outer, 0, 2)
 var options = MesherOptions.CreateBuilder()
     .WithHoleRefinement(0.75, 1.0)       // Refine near holes
     .Build();
+
+// Generate mesh with hole handling
+var mesh = new PrismMesher().Mesh(structure, options);
+```
+
+### Multiple Z-Level Constraints
+```csharp
+var structure = new PrismStructureDefinition(polygon, -5, 5)
+    .AddConstraintSegment(new Segment2D(new Vec2(0,0), new Vec2(10,0)), -2.5)
+    .AddConstraintSegment(new Segment2D(new Vec2(0,5), new Vec2(10,5)), 2.5)
+    .AddConstraintSegment(new Segment2D(new Vec2(5,0), new Vec2(5,5)), 0.0);
+
+// This creates horizontal divisions at specified Z levels
+var mesh = new PrismMesher().Mesh(structure, options);
 ```
 
 ### Internal Surfaces (Slabs)
 ```csharp
 // Add horizontal slab at Z = -2.5 with hole
-var slabOutline = Polygon2D.FromPoints(/*...*/);
-var slabHole = Polygon2D.FromPoints(/*...*/);
+var slabOutline = Polygon2D.FromPoints(new[]{ 
+    new Vec2(1,1), new Vec2(9,1), new Vec2(9,5), new Vec2(1,5) 
+});
+var slabHole = Polygon2D.FromPoints(new[]{ 
+    new Vec2(4,2), new Vec2(6,2), new Vec2(6,4), new Vec2(4,4) 
+});
 
 structure = structure.AddInternalSurface(slabOutline, -2.5, slabHole);
+
+// The slab creates a horizontal platform with its own hole
+var mesh = new PrismMesher().Mesh(structure, options);
+```
+
+### Quality Control and Triangle Fallback
+```csharp
+var options = MesherOptions.CreateBuilder()
+    .WithTargetEdgeLengthXY(0.5)
+    .WithMinCapQuadQuality(0.8)          // High quality threshold
+    .WithRejectedCapTriangles(true)      // Output triangles for low-quality quads
+    .Build();
+
+var mesh = new PrismMesher().Mesh(structure, options);
+
+// Check generated content
+Console.WriteLine($"Generated {mesh.Quads.Count} quads and {mesh.Triangles.Count} triangles");
 ```
 
 ### Auxiliary Geometry
 ```csharp
+// Add points and line segments for additional detail
 structure.Geometry
-    .AddPoint(new Vec3(0, 4, 2))
-    .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(20, 4, 2)));
+    .AddPoint(new Vec3(5, 2.5, 0))      // Point at center
+    .AddPoint(new Vec3(0, 4, 2))        // Elevated point
+    .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(20, 4, 2)))  // Horizontal beam
+    .AddSegment(new Segment3D(new Vec3(10, 0, -5), new Vec3(10, 5, 5))); // Vertical support
+
+// Auxiliary geometry affects meshing density around those features
+```
+
+### Export with Custom Settings
+```csharp
+var indexed = IndexedMesh.FromMesh(mesh, 1e-9);  // Custom epsilon for vertex merging
+
+// OBJ export with quads and triangles
+ObjExporter.Write(indexed, "output.obj");
+
+// glTF export (always triangulated)
+GltfExporter.Write(indexed, "output.gltf");
+
+// SVG export for 2D top view
+SvgExporter.Write(indexed, "output.svg");
+
+// Access mesh statistics
+Console.WriteLine($"Vertices: {indexed.Vertices.Count}");
+Console.WriteLine($"Edges: {indexed.Edges.Count}"); 
+Console.WriteLine($"Quads: {indexed.Quads.Count}");
+Console.WriteLine($"Triangles: {indexed.Triangles.Count}");
+```
+
+### Error Handling and Validation
+```csharp
+try 
+{
+    var mesh = new PrismMesher().Mesh(structure, options);
+    
+    // Validate mesh quality
+    var adjacency = indexed.BuildAdjacency();
+    if (adjacency.NonManifoldEdges.Count > 0)
+    {
+        Console.WriteLine($"Warning: {adjacency.NonManifoldEdges.Count} non-manifold edges found");
+    }
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine($"Invalid geometry: {ex.Message}");
+}
+catch (InvalidOperationException ex)
+{
+    Console.WriteLine($"Meshing failed: {ex.Message}");
+}
 ```
 
 **📖 Full Documentation**: https://github.com/MabinogiCode/FastGeoMesh  
@@ -201,6 +303,25 @@ var qualite = MesherOptions.CreateBuilder().WithHighQualityPreset().Build();
 
 ## 🏗️ Fonctionnalités Avancées
 
+### Création de Géométrie de Base
+```csharp
+// Rectangle à partir des points de coin
+var rect = Polygon2D.FromPoints(new[]{ 
+    new Vec2(0,0), new Vec2(10,0), new Vec2(10,5), new Vec2(0,5) 
+});
+
+// Aide-mémoire pour carré
+var square = Polygon2D.FromPoints(new[]{ 
+    new Vec2(0,0), new Vec2(5,0), new Vec2(5,5), new Vec2(0,5) 
+});
+
+// Polygone en forme de L
+var lShape = Polygon2D.FromPoints(new[]{
+    new Vec2(0,0), new Vec2(6,0), new Vec2(6,3),
+    new Vec2(3,3), new Vec2(3,6), new Vec2(0,6)
+});
+```
+
 ### Structures Complexes avec Trous
 ```csharp
 var outer = Polygon2D.FromPoints(new[]{ 
@@ -216,22 +337,105 @@ var structure = new PrismStructureDefinition(outer, 0, 2)
 var options = MesherOptions.CreateBuilder()
     .WithHoleRefinement(0.75, 1.0)       // Affiner près des trous
     .Build();
+
+// Générer le maillage avec gestion des trous
+var mesh = new PrismMesher().Mesh(structure, options);
+```
+
+### Contraintes à Plusieurs Niveaux Z
+```csharp
+var structure = new PrismStructureDefinition(polygon, -5, 5)
+    .AddConstraintSegment(new Segment2D(new Vec2(0,0), new Vec2(10,0)), -2.5)
+    .AddConstraintSegment(new Segment2D(new Vec2(0,5), new Vec2(10,5)), 2.5)
+    .AddConstraintSegment(new Segment2D(new Vec2(5,0), new Vec2(5,5)), 0.0);
+
+// Ceci crée des divisions horizontales aux niveaux Z spécifiés
+var mesh = new PrismMesher().Mesh(structure, options);
 ```
 
 ### Surfaces Internes (Dalles)
 ```csharp
 // Ajouter une dalle horizontale à Z = -2.5 avec trou
-var slabOutline = Polygon2D.FromPoints(/*...*/);
-var slabHole = Polygon2D.FromPoints(/*...*/);
+var slabOutline = Polygon2D.FromPoints(new[]{ 
+    new Vec2(1,1), new Vec2(9,1), new Vec2(9,5), new Vec2(1,5) 
+});
+var slabHole = Polygon2D.FromPoints(new[]{ 
+    new Vec2(4,2), new Vec2(6,2), new Vec2(6,4), new Vec2(4,4) 
+});
 
 structure = structure.AddInternalSurface(slabOutline, -2.5, slabHole);
+
+// La dalle crée une plateforme horizontale avec son propre trou
+var mesh = new PrismMesher().Mesh(structure, options);
+```
+
+### Contrôle de Qualité et Triangle de Secours
+```csharp
+var options = MesherOptions.CreateBuilder()
+    .WithTargetEdgeLengthXY(0.5)
+    .WithMinCapQuadQuality(0.8)          // Seuil de haute qualité
+    .WithRejectedCapTriangles(true)      // Sortir des triangles pour les quads de basse qualité
+    .Build();
+
+var mesh = new PrismMesher().Mesh(structure, options);
+
+// Vérifier le contenu généré
+Console.WriteLine($"Généré {mesh.Quads.Count} quads et {mesh.Triangles.Count} triangles");
 ```
 
 ### Géométrie Auxiliaire
 ```csharp
+// Ajouter des points et des segments de ligne pour plus de détails
 structure.Geometry
-    .AddPoint(new Vec3(0, 4, 2))
-    .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(20, 4, 2)));
+    .AddPoint(new Vec3(5, 2.5, 0))      // Point au centre
+    .AddPoint(new Vec3(0, 4, 2))        // Point en surélévation
+    .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(20, 4, 2)))  // Poutre horizontale
+    .AddSegment(new Segment3D(new Vec3(10, 0, -5), new Vec3(10, 5, 5))); // Support vertical
+
+// La géométrie auxiliaire affecte la densité de maillage autour de ces caractéristiques
+```
+
+### Exportation avec Paramètres Personnalisés
+```csharp
+var indexed = IndexedMesh.FromMesh(mesh, 1e-9);  // Epsilon personnalisé pour la fusion des sommets
+
+// Export OBJ avec quads et triangles
+ObjExporter.Write(indexed, "output.obj");
+
+// Export glTF (toujours triangulé)
+GltfExporter.Write(indexed, "output.gltf");
+
+// Export SVG pour vue 2D de dessus
+SvgExporter.Write(indexed, "output.svg");
+
+// Accéder aux statistiques du maillage
+Console.WriteLine($"Sommets: {indexed.Vertices.Count}");
+Console.WriteLine($"Arêtes: {indexed.Edges.Count}"); 
+Console.WriteLine($"Quads: {indexed.Quads.Count}");
+Console.WriteLine($"Triangles: {indexed.Triangles.Count}");
+```
+
+### Gestion des Erreurs et Validation
+```csharp
+try 
+{
+    var mesh = new PrismMesher().Mesh(structure, options);
+    
+    // Valider la qualité du maillage
+    var adjacency = indexed.BuildAdjacency();
+    if (adjacency.NonManifoldEdges.Count > 0)
+    {
+        Console.WriteLine($"Avertissement: {adjacency.NonManifoldEdges.Count} arêtes non-manifold détectées");
+    }
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine($"Géométrie invalide: {ex.Message}");
+}
+catch (InvalidOperationException ex)
+{
+    Console.WriteLine($"Échec du maillage: {ex.Message}");
+}
 ```
 
 **📖 Documentation Complète** : https://github.com/MabinogiCode/FastGeoMesh  

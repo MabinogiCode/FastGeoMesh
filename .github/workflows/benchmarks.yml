@@ -1,0 +1,52 @@
+name: Benchmarks
+
+on:
+  workflow_dispatch:
+    inputs:
+      benchmark_type:
+        description: 'Type of benchmark to run'
+        required: true
+        default: 'all'
+        type: choice
+        options: [ all, prism-meshing, geometry, object-pooling, quick-check ]
+
+permissions:
+  contents: read
+
+jobs:
+  run-benchmarks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build benchmarks
+        run: dotnet build benchmarks/FastGeoMesh.Benchmarks --configuration Release --no-restore
+
+      - name: Run benchmarks
+        run: |
+          set -e
+          TYPE="${{ github.event.inputs.benchmark_type }}"
+          if [ "$TYPE" = "quick-check" ]; then
+            dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- \
+              --filter "*QuickPerformanceTest*" --iterationCount 1 --warmupCount 0 --exporters json
+          elif [ "$TYPE" = "all" ]; then
+            dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- --exporters json
+          else
+            dotnet run --project benchmarks/FastGeoMesh.Benchmarks -c Release -- --filter "$TYPE*" --exporters json
+          fi
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmarks/FastGeoMesh.Benchmarks/BenchmarkDotNet.Artifacts/**/*

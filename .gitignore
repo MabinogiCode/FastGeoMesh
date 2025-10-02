@@ -10,3 +10,4 @@ obj/
 TestResults/
 /.vs
 /NugetAPI.txt
+/packages

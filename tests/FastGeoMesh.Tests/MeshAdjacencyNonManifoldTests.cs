@@ -1,12 +1,17 @@
-using System;
 using FastGeoMesh.Meshing;
 using FluentAssertions;
 using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests detection of non-manifold edges in manually constructed mesh scenarios.
+    /// </summary>
     public sealed class MeshAdjacencyNonManifoldTests
     {
+        /// <summary>
+        /// Builds a mesh with three quads sharing one edge to ensure non-manifold detection triggers.
+        /// </summary>
         [Fact]
         public void DetectsNonManifoldEdges()
         {

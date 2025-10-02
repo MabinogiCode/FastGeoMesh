@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using FastGeoMesh.Utils;
-
 namespace FastGeoMesh.Utils
 {
     /// <summary>Helper class for edge mapping operations in tessellation.</summary>

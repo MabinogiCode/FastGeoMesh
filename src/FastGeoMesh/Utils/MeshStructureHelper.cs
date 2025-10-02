@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;

@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using FastGeoMesh.Geometry;
 
 namespace FastGeoMesh.Utils

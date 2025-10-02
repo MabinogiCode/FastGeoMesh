@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace FastGeoMesh.Geometry
 {
     /// <summary>Simple polygon in CCW order (no self-intersections).</summary>

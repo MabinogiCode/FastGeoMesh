@@ -12,6 +12,9 @@ namespace FastGeoMesh.Tests
     /// </summary>
     public sealed class CoverageInfrastructureTests
     {
+        /// <summary>
+        /// Confirms that the test assembly is loaded and basic assembly metadata is available.
+        /// </summary>
         [Fact]
         public void CoverageCollectionIsEnabled()
         {
@@ -36,6 +39,9 @@ namespace FastGeoMesh.Tests
             Console.WriteLine($"GitHub Actions: {isCoverageBuild ?? "false"}");
         }
 
+        /// <summary>
+        /// Verifies that a reasonable coverage output directory structure can be resolved.
+        /// </summary>
         [Fact]
         public void CoverageOutputDirectoryStructureIsValid()
         {
@@ -76,6 +82,9 @@ namespace FastGeoMesh.Tests
             foundValidPath.Should().BeTrue("At least one valid coverage output path should be resolvable");
         }
 
+        /// <summary>
+        /// Ensures test results can be written to the expected location or to a temp file as fallback.
+        /// </summary>
         [Fact]
         public void TestResultsCanBeWrittenToExpectedLocation()
         {
@@ -118,6 +127,9 @@ namespace FastGeoMesh.Tests
             }
         }
 
+        /// <summary>
+        /// Validates that coverage exclusions are configured and the main assembly contains a public API surface.
+        /// </summary>
         [Fact]
         public void CoverageExclusionsAreProperlyConfigured()
         {
@@ -156,6 +168,9 @@ namespace FastGeoMesh.Tests
             Console.WriteLine($"Excluded types configured: {string.Join(", ", excludedTypes)}");
         }
 
+        /// <summary>
+        /// Checks that performance-related helper types exist and can be discovered for exclusion.
+        /// </summary>
         [Fact]
         public void PerformanceMonitoringTypesAreExcludedFromCoverage()
         {

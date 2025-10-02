@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using FastGeoMesh.Utils;
 using FluentAssertions;
 using Xunit;
@@ -8,6 +7,7 @@ namespace FastGeoMesh.Tests
     /// <summary>Tests for EdgeMappingHelper functions.</summary>
     public sealed class EdgeMappingHelperTests
     {
+        /// <summary>Tests that AddEdgeToTriangleMapping creates correct mappings.</summary>
         [Fact]
         public void AddEdgeToTriangleMappingCreatesCorrectMappings()
         {
@@ -32,6 +32,7 @@ namespace FastGeoMesh.Tests
             edge23.Should().Contain(300, "Should contain triangle 300");
         }
 
+        /// <summary>Tests that AddEdgeToTriangleMapping normalizes edge order correctly.</summary>
         [Fact]
         public void AddEdgeToTriangleMappingNormalizesEdgeOrder()
         {
@@ -51,6 +52,7 @@ namespace FastGeoMesh.Tests
             triangles.Should().Contain(100).And.Contain(200);
         }
 
+        /// <summary>Tests that AddEdgeToTriangleMapping uses object pool correctly.</summary>
         [Fact]
         public void AddEdgeToTriangleMappingUsesObjectPool()
         {
@@ -68,6 +70,7 @@ namespace FastGeoMesh.Tests
             list[0].Should().Be(500);
         }
 
+        /// <summary>Tests that AddEdgeToTriangleMapping handles self-loops correctly.</summary>
         [Fact]
         public void AddEdgeToTriangleMappingHandlesSelfLoops()
         {
@@ -82,6 +85,7 @@ namespace FastGeoMesh.Tests
             edgeToTris[(5, 5)].Should().Contain(100);
         }
 
+        /// <summary>Tests that AddEdgeToTriangleMapping works with multiple triangles on same edge.</summary>
         [Fact]
         public void AddEdgeToTriangleMappingWorksWithMultipleTriangles()
         {
@@ -99,6 +103,7 @@ namespace FastGeoMesh.Tests
             triangles.Should().Contain(new[] { 10, 20, 30 }, "Should contain all added triangles");
         }
 
+        /// <summary>Tests that AddEdgeToTriangleMapping handles large vertex indices correctly.</summary>
         [Fact]
         public void AddEdgeToTriangleMappingHandlesLargeVertexIndices()
         {

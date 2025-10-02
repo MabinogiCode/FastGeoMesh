@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -8,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests verifying quad quality scoring presence on caps and absence on side faces.
+    /// </summary>
     public sealed class QuadQualityTests
     {
+        /// <summary>
+        /// Ensures cap quads have quality scores in valid [0,1] range.
+        /// </summary>
         [Fact]
         public void CapsQuadsExposeQualityScoresBetween0And1()
         {
@@ -27,6 +31,9 @@ namespace FastGeoMesh.Tests
             }
         }
 
+        /// <summary>
+        /// Ensures side quads have no quality scores assigned (only caps should have scores).
+        /// </summary>
         [Fact]
         public void SideQuadsHaveNoQualityScores()
         {

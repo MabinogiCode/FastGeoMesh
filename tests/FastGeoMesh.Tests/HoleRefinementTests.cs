@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -8,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests
 {
+    /// <summary>
+    /// Tests for verifying cap refinement behavior near hole boundaries using configured refinement bands.
+    /// </summary>
     public sealed class HoleRefinementTests
     {
+        /// <summary>
+        /// Ensures smaller edge lengths are produced near holes while larger elsewhere (heterogeneous quad sizes).
+        /// </summary>
         [Fact]
         public void CapsAreRefinedNearHoles()
         {
