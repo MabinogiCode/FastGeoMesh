@@ -58,10 +58,10 @@ namespace FastGeoMesh.Tests
             // Assert
             indexed.VertexCount.Should().BeGreaterThan(50, "Multi-hole structure should generate significant geometry");
             indexed.QuadCount.Should().BeGreaterThan(30, "Should generate substantial side and cap quads");
-            
+
             // Should have some triangles due to complex hole topology
             var triangleCount = indexed.TriangleCount;
-            
+
             // Verify no degenerate geometry
             foreach (var quad in indexed.Quads)
             {
@@ -69,7 +69,7 @@ namespace FastGeoMesh.Tests
                 var v1 = indexed.Vertices[quad.v1];
                 var v2 = indexed.Vertices[quad.v2];
                 var v3 = indexed.Vertices[quad.v3];
-                
+
                 // All vertices should be different
                 v0.Should().NotBe(v1);
                 v0.Should().NotBe(v2);
@@ -108,10 +108,10 @@ namespace FastGeoMesh.Tests
 
             // Assert - Should not crash and should produce reasonable mesh
             action.Should().NotThrow("Tiny notch should be handled gracefully");
-            
+
             var mesh = action();
             mesh.QuadCount.Should().BeGreaterThan(5, "Should still generate geometry despite tiny notch");
-            
+
             var indexed = IndexedMesh.FromMesh(mesh);
             indexed.VertexCount.Should().BeGreaterThan(10, "Should generate vertices for tiny notch handling");
         }
@@ -150,9 +150,9 @@ namespace FastGeoMesh.Tests
             // Assert
             indexed.VertexCount.Should().BeGreaterThan(100, "High refinement should generate many vertices");
             indexed.QuadCount.Should().BeGreaterThan(80, "High refinement should generate many quads");
-            
+
             // Verify mesh quality under stress
-            var capQuads = indexed.Quads.Where(q => 
+            var capQuads = indexed.Quads.Where(q =>
             {
                 var v0 = indexed.Vertices[q.v0];
                 var v1 = indexed.Vertices[q.v1];
@@ -224,7 +224,7 @@ namespace FastGeoMesh.Tests
             }
 
             var outer = Polygon2D.FromPoints(starVertices);
-            
+
             // Small circular-ish hole in center
             var holeVertices = new Vec2[8];
             for (int i = 0; i < 8; i++)
@@ -253,12 +253,12 @@ namespace FastGeoMesh.Tests
 
             // Assert - Should handle complex non-convex shape
             action.Should().NotThrow("Star shape with hole should be processable");
-            
+
             var mesh = action();
             var indexed = IndexedMesh.FromMesh(mesh);
 
             indexed.VertexCount.Should().BeGreaterThan(20, "Star shape should generate substantial geometry");
-            
+
             // Should have both quads and triangles due to complex topology
             var totalElements = indexed.QuadCount + indexed.TriangleCount;
             totalElements.Should().BeGreaterThan(15, "Complex star shape should generate substantial elements");

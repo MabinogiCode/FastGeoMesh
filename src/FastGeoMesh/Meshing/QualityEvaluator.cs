@@ -126,16 +126,16 @@ namespace FastGeoMesh.Meshing
             }
 
             var quad = (vertices[0], vertices[1], vertices[2], vertices[3]);
-            
+
             // Calculate edge lengths
             double edge0 = (quad.Item2 - quad.Item1).Length();
             double edge1 = (quad.Item3 - quad.Item2).Length();
             double edge2 = (quad.Item4 - quad.Item3).Length();
             double edge3 = (quad.Item1 - quad.Item4).Length();
-            
+
             double minEdge = Math.Min(Math.Min(edge0, edge1), Math.Min(edge2, edge3));
             double maxEdge = Math.Max(Math.Max(edge0, edge1), Math.Max(edge2, edge3));
-            
+
             // Calculate area using shoelace formula
             double area = Math.Abs(
                 (quad.Item1.X * (quad.Item2.Y - quad.Item4.Y) +
@@ -147,7 +147,7 @@ namespace FastGeoMesh.Meshing
             // Calculate diagonal lengths
             double diag0 = (quad.Item3 - quad.Item1).Length();
             double diag1 = (quad.Item4 - quad.Item2).Length();
-            
+
             double aspectRatio = maxEdge > 0 ? minEdge / maxEdge : 0.0;
             double diagonalRatio = Math.Min(diag0, diag1) / Math.Max(diag0, diag1);
             double overallScore = QuadQualityHelper.ScoreQuad(quad);
