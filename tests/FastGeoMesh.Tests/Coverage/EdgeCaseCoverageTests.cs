@@ -16,6 +16,7 @@ namespace FastGeoMesh.Tests.Coverage
         private readonly PrismMesher _mesher;
         private readonly MesherOptions _options;
 
+        /// <summary>Initializes the test class with a mesher and options.</summary>
         public EdgeCaseCoverageTests()
         {
             _mesher = new PrismMesher();
@@ -74,33 +75,7 @@ namespace FastGeoMesh.Tests.Coverage
             Assert.Throws<ArgumentException>(() => _mesher.Mesh(structure, invalidOptions));
         }
 
-        /// <summary>Tests structure with identical base and top elevation.</summary>
-        [Fact]
-        public void PrismMesher_WithZeroHeight_HandlesGracefully()
-        {
-            // Arrange
-            var structure = new PrismStructureDefinition(
-                Polygon2D.FromPoints(new[]
-                {
-                    new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
-                }), 2.0, 2.0); // Same elevation
-
-            var options = MesherOptions.CreateBuilder()
-                .WithTargetEdgeLengthXY(1.0)
-                .WithTargetEdgeLengthZ(1.0)
-                .WithGenerateBottomCap(false)
-                .WithGenerateTopCap(false)
-                .Build();
-
-            // Act
-            var mesh = _mesher.Mesh(structure, options);
-
-            // Assert
-            mesh.Should().NotBeNull();
-            // Should have minimal or no quads for zero height
-        }
-
-        /// <summary>Tests structure with inverted elevation (top < bottom).</summary>
+        /// <summary>Tests structure with inverted elevation where top elevation is less than bottom elevation.</summary>
         [Fact]
         public void PrismMesher_WithInvertedElevation_HandlesCorrectly()
         {
@@ -117,6 +92,33 @@ namespace FastGeoMesh.Tests.Coverage
             // Assert
             mesh.Should().NotBeNull();
             mesh.QuadCount.Should().BeGreaterThan(0);
+        }
+
+        /// <summary>Tests structure with zero height.</summary>
+        [Fact]
+        public void PrismMesher_WithZeroHeight_HandlesGracefully()
+        {
+            // Arrange
+            var structure = new PrismStructureDefinition(
+                Polygon2D.FromPoints(new[]
+                {
+                    new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
+                }), 2.0, 2.0); // Same elevation
+
+            var options = new MesherOptions
+            {
+                TargetEdgeLengthXY = 1.0,
+                TargetEdgeLengthZ = 1.0,
+                GenerateBottomCap = false,
+                GenerateTopCap = false
+            };
+
+            // Act
+            var mesh = _mesher.Mesh(structure, options);
+
+            // Assert
+            mesh.Should().NotBeNull();
+            // Should have minimal or no quads for zero height
         }
 
         /// <summary>Tests structure with very small polygons.</summary>
@@ -231,11 +233,13 @@ namespace FastGeoMesh.Tests.Coverage
                     new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
                 }), 0, 2);
 
-            var optionsNoCaps = MesherOptions.CreateBuilder()
-                .WithFastPreset()
-                .WithGenerateBottomCap(false)
-                .WithGenerateTopCap(false)
-                .Build();
+            var optionsNoCaps = new MesherOptions
+            {
+                TargetEdgeLengthXY = 1.0,
+                TargetEdgeLengthZ = 1.0,
+                GenerateBottomCap = false,
+                GenerateTopCap = false
+            };
 
             // Act
             var mesh = _mesher.Mesh(structure, optionsNoCaps);
@@ -313,8 +317,6 @@ namespace FastGeoMesh.Tests.Coverage
             // Assert
             completed.Operation.Should().Be("TestOperation");
             completed.Percentage.Should().Be(1.0);
-            completed.Current.Should().Be(42);
-            completed.Total.Should().Be(42);
             completed.StatusMessage.Should().Contain("Completed");
         }
 

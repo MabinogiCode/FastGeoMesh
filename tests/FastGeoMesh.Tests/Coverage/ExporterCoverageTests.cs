@@ -209,16 +209,26 @@ namespace FastGeoMesh.Tests.Coverage
                 .WithTargetEdgeLengthZ(2.0)
                 .WithMinCapQuadQuality(0.5)
                 .WithRejectedCapTriangles(true)
-                .WithGenerateBottomCap(true)
-                .WithGenerateTopCap(false)
                 .Build();
 
             customOptions.TargetEdgeLengthXY.Should().Be(1.0);
             customOptions.TargetEdgeLengthZ.Should().Be(2.0);
             customOptions.MinCapQuadQuality.Should().Be(0.5);
             customOptions.OutputRejectedCapTriangles.Should().BeTrue();
-            customOptions.GenerateBottomCap.Should().BeTrue();
-            customOptions.GenerateTopCap.Should().BeFalse();
+            
+            // Test direct property assignment
+            var directOptions = new MesherOptions
+            {
+                TargetEdgeLengthXY = 1.5,
+                TargetEdgeLengthZ = 2.5,
+                GenerateBottomCap = true,
+                GenerateTopCap = false
+            };
+
+            directOptions.TargetEdgeLengthXY.Should().Be(1.5);
+            directOptions.TargetEdgeLengthZ.Should().Be(2.5);
+            directOptions.GenerateBottomCap.Should().BeTrue();
+            directOptions.GenerateTopCap.Should().BeFalse();
         }
 
         /// <summary>Tests Polygon2D with collinear points.</summary>

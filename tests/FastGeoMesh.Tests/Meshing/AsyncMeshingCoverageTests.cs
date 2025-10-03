@@ -18,6 +18,7 @@ namespace FastGeoMesh.Tests.Meshing
         private readonly IAsyncMesher _asyncMesher;
         private readonly MesherOptions _options;
 
+        /// <summary>Initializes the test class with mesher, async mesher, and options.</summary>
         public AsyncMeshingCoverageTests()
         {
             _mesher = new PrismMesher();
