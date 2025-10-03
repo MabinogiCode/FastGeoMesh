@@ -33,7 +33,10 @@ namespace FastGeoMesh.Tests.Coverage
             }
             finally
             {
-                if (File.Exists(tempFile)) File.Delete(tempFile);
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
             }
         }
 
@@ -56,7 +59,10 @@ namespace FastGeoMesh.Tests.Coverage
             }
             finally
             {
-                if (File.Exists(tempFile)) File.Delete(tempFile);
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
             }
         }
 
@@ -79,7 +85,10 @@ namespace FastGeoMesh.Tests.Coverage
             }
             finally
             {
-                if (File.Exists(tempFile)) File.Delete(tempFile);
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
             }
         }
 
@@ -110,9 +119,18 @@ namespace FastGeoMesh.Tests.Coverage
             }
             finally
             {
-                if (File.Exists(objFile)) File.Delete(objFile);
-                if (File.Exists(gltfFile)) File.Delete(gltfFile);
-                if (File.Exists(svgFile)) File.Delete(svgFile);
+                if (File.Exists(objFile))
+                {
+                    File.Delete(objFile);
+                }
+                if (File.Exists(gltfFile))
+                {
+                    File.Delete(gltfFile);
+                }
+                if (File.Exists(svgFile))
+                {
+                    File.Delete(svgFile);
+                }
             }
         }
 

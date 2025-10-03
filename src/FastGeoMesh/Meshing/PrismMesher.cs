@@ -1,7 +1,6 @@
 using FastGeoMesh.Meshing.Helpers;
 using FastGeoMesh.Structures;
 using FastGeoMesh.Utils;
-using System.Runtime.CompilerServices;
 
 namespace FastGeoMesh.Meshing
 {

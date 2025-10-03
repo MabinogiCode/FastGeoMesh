@@ -3,7 +3,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
+    <WarningsAsErrors>IDE0005;IDE0011;IDE0052;IDE0160</WarningsAsErrors>
     <Nullable>enable</Nullable>
     <PackageId>FastGeoMesh</PackageId>
     <Version>1.4.0</Version>

@@ -1,6 +1,3 @@
-using System.Globalization;
-using System.Text;
-
 namespace FastGeoMesh.Meshing.Exporters
 {
     /// <summary>Lightweight SVG top-view exporter (edges as lines).</summary>
