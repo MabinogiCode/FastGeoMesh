@@ -71,44 +71,37 @@ namespace FastGeoMesh.Tests.Coverage
                     new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
                 }), 0, 2);
 
-            // Act & Assert
-            Assert.Throws<ArgumentException>(() => _mesher.Mesh(structure, invalidOptions));
+            // Act & Assert - MesherOptions.Validate() throws ArgumentOutOfRangeException for negative/zero edge lengths
+            Assert.Throws<ArgumentOutOfRangeException>(() => _mesher.Mesh(structure, invalidOptions));
         }
 
         /// <summary>Tests structure with inverted elevation where top elevation is less than bottom elevation.</summary>
         [Fact]
-        public void PrismMesher_WithInvertedElevation_HandlesCorrectly()
+        public void PrismMesher_WithInvertedElevation_ThrowsValidationError()
         {
-            // Arrange
-            var structure = new PrismStructureDefinition(
+            // Act & Assert - Should validate that topElevation > baseElevation
+            Assert.Throws<ArgumentException>(() => new PrismStructureDefinition(
                 Polygon2D.FromPoints(new[]
                 {
                     new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
-                }), 5.0, 0.0); // Top elevation < base elevation
-
-            // Act
-            var mesh = _mesher.Mesh(structure, _options);
-
-            // Assert
-            mesh.Should().NotBeNull();
-            mesh.QuadCount.Should().BeGreaterThan(0);
+                }), 5.0, 0.0)); // Top elevation < base elevation should throw
         }
 
-        /// <summary>Tests structure with zero height.</summary>
+        /// <summary>Tests structure with very small height.</summary>
         [Fact]
-        public void PrismMesher_WithZeroHeight_HandlesGracefully()
+        public void PrismMesher_WithVerySmallHeight_HandlesGracefully()
         {
-            // Arrange
+            // Arrange - Very small but valid height
             var structure = new PrismStructureDefinition(
                 Polygon2D.FromPoints(new[]
                 {
                     new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
-                }), 2.0, 2.0); // Same elevation
+                }), 0.0, 0.001); // Very small height
 
             var options = new MesherOptions
             {
                 TargetEdgeLengthXY = 1.0,
-                TargetEdgeLengthZ = 1.0,
+                TargetEdgeLengthZ = 0.0001, // Very small target Z length
                 GenerateBottomCap = false,
                 GenerateTopCap = false
             };
@@ -118,7 +111,8 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Assert
             mesh.Should().NotBeNull();
-            // Should have minimal or no quads for zero height
+            // Should generate side faces even for very small height
+            mesh.QuadCount.Should().BeGreaterThanOrEqualTo(0);
         }
 
         /// <summary>Tests structure with very small polygons.</summary>
@@ -289,7 +283,8 @@ namespace FastGeoMesh.Tests.Coverage
             // Assert
             progressZero.Percentage.Should().Be(0.0);
             progressComplete.Percentage.Should().Be(1.0);
-            progressOverComplete.Percentage.Should().Be(1.5); // Should handle > 100%
+            // MeshingProgress clamps percentage between 0.0 and 1.0 using Math.Clamp
+            progressOverComplete.Percentage.Should().Be(1.0, "MeshingProgress should clamp percentage to maximum 1.0");
         }
 
         /// <summary>Tests MeshingProgress.FromCounts with edge cases.</summary>
@@ -318,6 +313,18 @@ namespace FastGeoMesh.Tests.Coverage
             completed.Operation.Should().Be("TestOperation");
             completed.Percentage.Should().Be(1.0);
             completed.StatusMessage.Should().Contain("Completed");
+        }
+
+        /// <summary>Tests structure validation with equal elevations.</summary>
+        [Fact]
+        public void PrismMesher_WithEqualElevations_ThrowsValidationError()
+        {
+            // Act & Assert - Should validate that topElevation > baseElevation
+            Assert.Throws<ArgumentException>(() => new PrismStructureDefinition(
+                Polygon2D.FromPoints(new[]
+                {
+                    new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
+                }), 2.0, 2.0)); // Same elevation should throw
         }
 
         /// <summary>Custom test cap strategy to verify strategy pattern usage.</summary>

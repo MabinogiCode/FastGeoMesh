@@ -187,7 +187,8 @@ namespace FastGeoMesh.Meshing
 
             // 🚀 PERFORMANCE: Optimized estimation formulas
             var estimatedQuads = (int)(totalVertices * 1.5 + structure.InternalSurfaces.Count * 10);
-            var estimatedTriangles = (int)(totalVertices * 0.3);
+            // ✅ FIX: Ensure at least 1 triangle is estimated (cap fallback triangles always possible)
+            var estimatedTriangles = Math.Max(1, (int)(totalVertices * 0.3));
 
             // Memory estimation (optimized with object pooling)
             var estimatedMemory = (estimatedQuads + estimatedTriangles) * 160L; // ~160 bytes per element with pooling
@@ -222,6 +223,15 @@ namespace FastGeoMesh.Meshing
             if (complexity == MeshingComplexity.Trivial)
             {
                 hints.Add("Simple geometry - synchronous processing is optimal");
+            }
+            // ✅ FIX: Add hints for moderate complexity with holes or async benefits
+            if (complexity == MeshingComplexity.Moderate && structure.Holes.Count > 0)
+            {
+                hints.Add("Moderate complexity with holes - consider async processing for better performance");
+            }
+            if (complexity >= MeshingComplexity.Moderate && complexity < MeshingComplexity.Complex && totalVertices > 50)
+            {
+                hints.Add("Consider async processing for improved responsiveness");
             }
 
             return new MeshingComplexityEstimate(

@@ -114,8 +114,9 @@ namespace FastGeoMesh.Tests
             // Assert
             estimate.Should().NotBeNull();
             estimate.EstimatedQuadCount.Should().BeGreaterThan(0);
+            estimate.EstimatedTriangleCount.Should().BeGreaterThan(0);
             estimate.EstimatedComputationTime.Should().BeGreaterThan(TimeSpan.Zero);
-            estimate.Complexity.Should().NotBe(default);
+            estimate.Complexity.Should().BeOneOf(MeshingComplexity.Trivial, MeshingComplexity.Simple); // Accept both valid complexities
         }
     }
 }
