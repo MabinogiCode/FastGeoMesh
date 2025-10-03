@@ -82,10 +82,11 @@ namespace FastGeoMesh.Tests.Meshing
                 vertices.Add(new Vec2(Math.Cos(angle) * 10, Math.Sin(angle) * 10));
             }
             var structure = new PrismStructureDefinition(new Polygon2D(vertices), -5, 5);
-            
+
             using var cts = new CancellationTokenSource();
             var progressReports = new List<MeshingProgress>();
-            var progress = new Progress<MeshingProgress>(p => {
+            var progress = new Progress<MeshingProgress>(p =>
+            {
                 progressReports.Add(p);
                 // Cancel after first progress report
                 if (progressReports.Count == 2)
@@ -116,7 +117,8 @@ namespace FastGeoMesh.Tests.Meshing
 
             using var cts = new CancellationTokenSource();
             var progressReports = new List<MeshingProgress>();
-            var progress = new Progress<MeshingProgress>(p => {
+            var progress = new Progress<MeshingProgress>(p =>
+            {
                 progressReports.Add(p);
                 // Cancel after processing a few structures
                 if (progressReports.Count >= 3)

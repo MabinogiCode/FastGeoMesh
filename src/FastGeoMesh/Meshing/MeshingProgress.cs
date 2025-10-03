@@ -1,5 +1,3 @@
-using FastGeoMesh.Structures;
-
 namespace FastGeoMesh.Meshing
 {
     /// <summary>
@@ -47,9 +45,9 @@ namespace FastGeoMesh.Meshing
         /// <param name="estimatedTimeRemaining">Estimated time remaining.</param>
         /// <param name="statusMessage">Additional status information.</param>
         public MeshingProgress(
-            string operation, 
-            double percentage, 
-            int processedElements, 
+            string operation,
+            double percentage,
+            int processedElements,
             int totalElements,
             TimeSpan? estimatedTimeRemaining = null,
             string? statusMessage = null)
@@ -92,19 +90,19 @@ namespace FastGeoMesh.Meshing
         /// </summary>
         public override string ToString()
         {
-            var percentage = (Percentage * 100).ToString("F1");
+            var percentage = (Percentage * 100).ToString("F1", CultureInfo.InvariantCulture);
             var baseMessage = $"{Operation}: {percentage}% ({ProcessedElements}/{TotalElements})";
-            
+
             if (EstimatedTimeRemaining.HasValue)
             {
                 baseMessage += $" - ETA: {EstimatedTimeRemaining:mm\\:ss}";
             }
-            
+
             if (!string.IsNullOrEmpty(StatusMessage))
             {
                 baseMessage += $" - {StatusMessage}";
             }
-            
+
             return baseMessage;
         }
     }

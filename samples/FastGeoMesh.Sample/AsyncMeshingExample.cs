@@ -88,7 +88,7 @@ namespace FastGeoMesh.Sample
                 
                 // L-shaped structure
                 new PrismStructureDefinition(
-                    Polygon2D.FromPoints(new[] 
+                    Polygon2D.FromPoints(new[]
                     {
                         new Vec2(0, 0), new Vec2(6, 0), new Vec2(6, 3),
                         new Vec2(3, 3), new Vec2(3, 6), new Vec2(0, 6)
@@ -124,15 +124,15 @@ namespace FastGeoMesh.Sample
             {
                 // Process all structures in parallel with progress reporting
                 var meshes = await asyncMesher.MeshBatchAsync(
-                    structures, 
-                    options, 
+                    structures,
+                    options,
                     maxDegreeOfParallelism: 4, // Limit to 4 parallel operations
                     progress: batchProgress);
 
                 batchStopwatch.Stop();
 
                 Console.WriteLine($"Batch processing completed in {batchStopwatch.ElapsedMilliseconds}ms");
-                
+
                 for (int i = 0; i < meshes.Count; i++)
                 {
                     var mesh = meshes[i];
@@ -169,9 +169,9 @@ namespace FastGeoMesh.Sample
                 ("Simple Rectangle", new PrismStructureDefinition(
                     Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5) }),
                     0, 2)),
-                
+
                 ("Complex Polygon", CreateComplexPolygonStructure()),
-                
+
                 ("Multi-Hole Structure", CreateMultiHoleStructure())
             };
 
@@ -185,18 +185,18 @@ namespace FastGeoMesh.Sample
             foreach (var (name, structure) in structures)
             {
                 Console.WriteLine($"\nAnalyzing '{name}':");
-                
+
                 try
                 {
                     // Get complexity estimate
                     var estimate = await asyncMesher.EstimateComplexityAsync(structure, options);
-                    
+
                     Console.WriteLine($"  Complexity: {estimate.Complexity}");
                     Console.WriteLine($"  Estimated elements: {estimate.EstimatedQuadCount + estimate.EstimatedTriangleCount}");
                     Console.WriteLine($"  Estimated memory: {estimate.EstimatedPeakMemoryBytes / 1024.0 / 1024.0:F2} MB");
                     Console.WriteLine($"  Estimated time: {estimate.EstimatedComputationTime.TotalMilliseconds:F1} ms");
                     Console.WriteLine($"  Recommended parallelism: {estimate.RecommendedParallelism}");
-                    
+
                     if (estimate.PerformanceHints.Count > 0)
                     {
                         Console.WriteLine("  Performance hints:");
@@ -233,7 +233,7 @@ namespace FastGeoMesh.Sample
 
             // Create a very complex structure that will take some time to mesh
             var complexStructure = CreateVeryComplexStructure();
-            
+
             var options = MesherOptions.CreateBuilder()
                 .WithHighQualityPreset()
                 .WithTargetEdgeLengthXY(0.1) // Very fine mesh for slower processing
@@ -243,12 +243,12 @@ namespace FastGeoMesh.Sample
             var asyncMesher = (IAsyncMesher)mesher;
 
             using var cts = new CancellationTokenSource();
-            
+
             // Set up progress reporting
             var progress = new Progress<MeshingProgress>(p =>
             {
                 Console.WriteLine($"Progress: {p}");
-                
+
                 // Cancel after reporting some progress (simulating user cancellation)
                 if (p.Percentage > 0.1 && !cts.Token.IsCancellationRequested) // Cancel after 10% progress
                 {
@@ -286,7 +286,7 @@ namespace FastGeoMesh.Sample
                 double radius = 10 + 3 * Math.Sin(5 * angle); // Flower-like shape
                 vertices.Add(new Vec2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
             }
-            
+
             var polygon = new Polygon2D(vertices);
             return new PrismStructureDefinition(polygon, -2, 8);
         }
@@ -330,7 +330,7 @@ namespace FastGeoMesh.Sample
                 double radius = 15 + 5 * Math.Sin(8 * angle) + 2 * Math.Cos(13 * angle);
                 vertices.Add(new Vec2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
             }
-            
+
             var polygon = new Polygon2D(vertices);
             var structure = new PrismStructureDefinition(polygon, -5, 15);
 
@@ -340,7 +340,7 @@ namespace FastGeoMesh.Sample
                 double angle = 2 * Math.PI * i / 10;
                 double x = 8 * Math.Cos(angle);
                 double y = 8 * Math.Sin(angle);
-                
+
                 var hole = Polygon2D.FromPoints(new[]
                 {
                     new Vec2(x - 0.8, y - 0.8), new Vec2(x + 0.8, y - 0.8),

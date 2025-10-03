@@ -1,9 +1,9 @@
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Meshing.Exporters;
+using FastGeoMesh.Sample;
 using FastGeoMesh.Structures;
 using FastGeoMesh.Utils;
-using FastGeoMesh.Sample;
 
 /// <summary>
 /// Sample application demonstrating FastGeoMesh library usage with various export formats.
@@ -24,21 +24,21 @@ sealed class Program
         if (args.Length > 0)
         {
             var firstArg = args[0].ToLowerInvariant();
-            
+
             switch (firstArg)
             {
                 case "--async":
                     Console.WriteLine("Running NEW Async Meshing Demonstrations:\n");
                     await RunAsyncDemonstrations();
                     return;
-                
+
                 case "--performance":
                     Console.WriteLine("Running PERFORMANCE Optimization Demonstrations:\n");
                     await PerformanceOptimizationExample.DemonstratePerformanceMonitoring();
                     await PerformanceOptimizationExample.DemonstrateOptimizedBatchProcessing();
                     await PerformanceOptimizationExample.DemonstrateAsyncOptimizations();
                     return;
-                
+
                 case "--benchmarks":
                     Console.WriteLine("Running COMPREHENSIVE Performance Benchmarks:\n");
                     await PerformanceBenchmarks.RunBenchmarkSuite();

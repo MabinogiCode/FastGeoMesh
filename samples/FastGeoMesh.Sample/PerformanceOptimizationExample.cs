@@ -40,7 +40,7 @@ namespace FastGeoMesh.Sample
 
                 // Get baseline stats
                 var statsBefore = await asyncMesher.GetLivePerformanceStatsAsync();
-                
+
                 // Estimate complexity
                 var estimate = await asyncMesher.EstimateComplexityAsync(structure, options);
                 Console.WriteLine($"  Estimated: {estimate.EstimatedComputationTime.TotalMicroseconds:F0}μs, " +
@@ -54,12 +54,12 @@ namespace FastGeoMesh.Sample
 
                 // Get updated stats
                 var statsAfter = await asyncMesher.GetLivePerformanceStatsAsync();
-                
+
                 Console.WriteLine($"  Actual: {stopwatch.Elapsed.TotalMicroseconds:F0}μs, " +
                                 $"{mesh.QuadCount + mesh.TriangleCount} elements");
                 Console.WriteLine($"  Pool efficiency: {statsAfter.PoolHitRate:P1} " +
                                 $"(operations: +{statsAfter.MeshingOperations - statsBefore.MeshingOperations})");
-                
+
                 // Show accuracy
                 var accuracy = estimate.EstimatedComputationTime.TotalMicroseconds / stopwatch.Elapsed.TotalMicroseconds;
                 Console.WriteLine($"  Prediction accuracy: {accuracy:P1}");
@@ -109,11 +109,11 @@ namespace FastGeoMesh.Sample
 
                 // Test different parallelism settings
                 var parallelismLevels = new[] { 1, 2, 4, -1 }; // -1 = unlimited
-                
+
                 foreach (var parallelism in parallelismLevels)
                 {
                     var parallelismName = parallelism == -1 ? "unlimited" : parallelism.ToString();
-                    
+
                     var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                     var meshes = await asyncMesher.MeshBatchAsync(structures, options, parallelism);
                     stopwatch.Stop();
@@ -164,13 +164,13 @@ namespace FastGeoMesh.Sample
                 Console.WriteLine($"  Sync:  {syncStopwatch.Elapsed.TotalMicroseconds:F0}μs");
                 Console.WriteLine($"  Async: {asyncStopwatch.Elapsed.TotalMicroseconds:F0}μs");
 
-                var overhead = (asyncStopwatch.Elapsed.TotalMicroseconds - syncStopwatch.Elapsed.TotalMicroseconds) 
+                var overhead = (asyncStopwatch.Elapsed.TotalMicroseconds - syncStopwatch.Elapsed.TotalMicroseconds)
                               / syncStopwatch.Elapsed.TotalMicroseconds * 100;
-                
+
                 Console.WriteLine($"  Async overhead: {overhead:+0.0;-0.0;0}%");
 
                 // Verify results are identical
-                var resultsMatch = syncMesh.QuadCount == asyncMesh.QuadCount && 
+                var resultsMatch = syncMesh.QuadCount == asyncMesh.QuadCount &&
                                  syncMesh.TriangleCount == asyncMesh.TriangleCount;
                 Console.WriteLine($"  Results match: {(resultsMatch ? "✅" : "❌")}");
             }
@@ -202,16 +202,16 @@ namespace FastGeoMesh.Sample
                 new Vec2(0, 0), new Vec2(15, 0), new Vec2(15, 8),
                 new Vec2(8, 8), new Vec2(8, 15), new Vec2(0, 15)
             });
-            
+
             var structure = new PrismStructureDefinition(polygon, -2, 8);
-            
+
             // Add a hole
             var hole = Polygon2D.FromPoints(new[]
             {
                 new Vec2(3, 3), new Vec2(6, 3), new Vec2(6, 6), new Vec2(3, 6)
             });
             structure = structure.AddHole(hole);
-            
+
             return structure;
         }
 
@@ -225,10 +225,10 @@ namespace FastGeoMesh.Sample
                 double radius = 10 + 3 * Math.Sin(4 * angle); // Star-like shape
                 vertices.Add(new Vec2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
             }
-            
+
             var polygon = new Polygon2D(vertices);
             var structure = new PrismStructureDefinition(polygon, -5, 10);
-            
+
             // Add multiple holes
             for (int i = 0; i < 3; i++)
             {
@@ -241,7 +241,7 @@ namespace FastGeoMesh.Sample
                 });
                 structure = structure.AddHole(hole);
             }
-            
+
             return structure;
         }
     }

@@ -1,10 +1,10 @@
-using Xunit;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Structures;
-using FastGeoMesh.Meshing.Exporters;
-using FluentAssertions;
 using System.IO;
+using FastGeoMesh.Geometry;
+using FastGeoMesh.Meshing;
+using FastGeoMesh.Meshing.Exporters;
+using FastGeoMesh.Structures;
+using FluentAssertions;
+using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
 {
@@ -27,7 +27,7 @@ namespace FastGeoMesh.Tests.Coverage
             {
                 // Act & Assert - Should not throw
                 ObjExporter.Write(indexed, tempFile);
-                
+
                 // Verify file was created (even if empty)
                 File.Exists(tempFile).Should().BeTrue();
             }
@@ -53,7 +53,7 @@ namespace FastGeoMesh.Tests.Coverage
             {
                 // Act & Assert - Should not throw
                 GltfExporter.Write(indexed, tempFile);
-                
+
                 // Verify file was created
                 File.Exists(tempFile).Should().BeTrue();
             }
@@ -79,7 +79,7 @@ namespace FastGeoMesh.Tests.Coverage
             {
                 // Act & Assert - Should not throw
                 SvgExporter.Write(indexed, tempFile);
-                
+
                 // Verify file was created
                 File.Exists(tempFile).Should().BeTrue();
             }
@@ -233,7 +233,7 @@ namespace FastGeoMesh.Tests.Coverage
             customOptions.TargetEdgeLengthZ.Should().Be(2.0);
             customOptions.MinCapQuadQuality.Should().Be(0.5);
             customOptions.OutputRejectedCapTriangles.Should().BeTrue();
-            
+
             // Test direct property assignment
             var directOptions = new MesherOptions
             {
@@ -285,7 +285,7 @@ namespace FastGeoMesh.Tests.Coverage
             (v2a + v2b).Should().Be(new Vec2(4, 6));
             (v2b - v2a).Should().Be(new Vec2(2, 2));
             (v2a * 2).Should().Be(new Vec2(2, 4));
-            
+
             // Vec3 operations
             (v3a + v3b).Should().Be(new Vec3(5, 7, 9));
             (v3b - v3a).Should().Be(new Vec3(3, 3, 3));

@@ -12,7 +12,7 @@ namespace FastGeoMesh.Meshing
         /// <summary>
         /// Generate mesh asynchronously with progress reporting and cancellation support.
         /// </summary>
-        /// <param name="structure">The prismatic structure to mesh.</param>
+        /// <param name="structureDefinition">The prismatic structure to mesh.</param>
         /// <param name="options">Meshing options and parameters.</param>
         /// <param name="progress">Progress reporter for operation updates.</param>
         /// <param name="cancellationToken">Token to cancel the operation.</param>
@@ -21,9 +21,9 @@ namespace FastGeoMesh.Meshing
         /// <exception cref="ArgumentNullException">Thrown when structure or options are null.</exception>
         /// <exception cref="InvalidOperationException">Thrown when meshing fails due to invalid geometry.</exception>
         ValueTask<Mesh> MeshWithProgressAsync(
-            PrismStructureDefinition structure, 
-            MesherOptions options, 
-            IProgress<MeshingProgress>? progress, 
+            PrismStructureDefinition structureDefinition,
+            MesherOptions options,
+            IProgress<MeshingProgress>? progress,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -49,10 +49,10 @@ namespace FastGeoMesh.Meshing
         /// Estimates the computational complexity and memory requirements for a meshing operation.
         /// Useful for progress estimation and resource planning.
         /// </summary>
-        /// <param name="structure">The structure to analyze.</param>
+        /// <param name="structureDefinition">The structure to analyze.</param>
         /// <param name="options">Meshing options that would be used.</param>
         /// <returns>ValueTask that resolves to complexity estimation.</returns>
-        ValueTask<MeshingComplexityEstimate> EstimateComplexityAsync(PrismStructureDefinition structure, MesherOptions options);
+        ValueTask<MeshingComplexityEstimate> EstimateComplexityAsync(PrismStructureDefinition structureDefinition, MesherOptions options);
 
         /// <summary>
         /// Gets real-time performance statistics for monitoring and optimization.

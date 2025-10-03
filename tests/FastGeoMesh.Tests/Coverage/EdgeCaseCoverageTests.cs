@@ -1,9 +1,9 @@
-using Xunit;
-using FastGeoMesh.Meshing;
 using FastGeoMesh.Geometry;
+using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
 using FastGeoMesh.Utils;
 using FluentAssertions;
+using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
 {
@@ -30,7 +30,7 @@ namespace FastGeoMesh.Tests.Coverage
             // Arrange
             var customStrategy = new CustomTestCapStrategy();
             var mesher = new PrismMesher(customStrategy);
-            
+
             var structure = new PrismStructureDefinition(
                 Polygon2D.FromPoints(new[]
                 {

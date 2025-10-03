@@ -1,9 +1,9 @@
-using Xunit;
-using FastGeoMesh.Utils;
-using FastGeoMesh.Meshing;
 using FastGeoMesh.Geometry;
+using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
+using FastGeoMesh.Utils;
 using FluentAssertions;
+using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
 {
@@ -95,7 +95,7 @@ namespace FastGeoMesh.Tests.Coverage
         {
             // Arrange & Act
             var activity = PerformanceMonitor.StartMeshingActivity("TestOperation", new { Test = true });
-            
+
             // Should not throw
             activity.Dispose();
             activity.Dispose(); // Multiple dispose calls should be safe
@@ -232,7 +232,7 @@ namespace FastGeoMesh.Tests.Coverage
             // Act & Assert - Should not throw with nested activities
             using var outerActivity = PerformanceMonitor.StartMeshingActivity("OuterOperation", new { Level = 1 });
             using var innerActivity = PerformanceMonitor.StartMeshingActivity("InnerOperation", new { Level = 2 });
-            
+
             outerActivity.Should().NotBeNull();
             innerActivity.Should().NotBeNull();
         }

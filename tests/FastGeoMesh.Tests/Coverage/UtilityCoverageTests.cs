@@ -1,6 +1,6 @@
-using Xunit;
 using FastGeoMesh.Utils;
 using FluentAssertions;
+using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
 {
@@ -153,7 +153,7 @@ namespace FastGeoMesh.Tests.Coverage
             Func<int, string> nullFunction = null!;
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => 
+            await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 valueTask.ContinueWith(nullFunction).AsTask());
         }
 

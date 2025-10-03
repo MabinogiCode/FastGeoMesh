@@ -19,56 +19,56 @@ namespace FastGeoMesh.Meshing
         }
 
         /// <summary>Generate a mesh from the given prism structure definition and meshing options (thread-safe – no shared state).</summary>
-        public Mesh Mesh(PrismStructureDefinition structure, MesherOptions options)
+        public Mesh Mesh(PrismStructureDefinition input, MesherOptions options)
         {
-            ArgumentNullException.ThrowIfNull(structure);
+            ArgumentNullException.ThrowIfNull(input);
             ArgumentNullException.ThrowIfNull(options);
             options.Validate();
 
-            return CreateMeshInternal(structure, options);
+            return CreateMeshInternal(input, options);
         }
 
         /// <summary>Generate a mesh asynchronously from the given prism structure definition and meshing options.</summary>
-        public ValueTask<Mesh> MeshAsync(PrismStructureDefinition structure, MesherOptions options, CancellationToken cancellationToken = default)
+        public ValueTask<Mesh> MeshAsync(PrismStructureDefinition input, MesherOptions options, CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(structure);
+            ArgumentNullException.ThrowIfNull(input);
             ArgumentNullException.ThrowIfNull(options);
             options.Validate();
 
             cancellationToken.ThrowIfCancellationRequested();
 
             // 🚀 PERFORMANCE: For simple structures, return synchronously to avoid Task overhead
-            var complexity = EstimateComplexity(structure);
+            var complexity = EstimateComplexity(input);
             if (complexity == MeshingComplexity.Trivial && !cancellationToken.CanBeCanceled)
             {
-                return new ValueTask<Mesh>(CreateMeshInternal(structure, options));
+                return new ValueTask<Mesh>(CreateMeshInternal(input, options));
             }
 
             // For CPU-bound operations in library code, use Task.Run to offload to thread pool
             // Return ValueTask wrapping the Task for better performance when caching results
-            return new ValueTask<Mesh>(Task.Run(() => CreateMeshInternal(structure, options), cancellationToken));
+            return new ValueTask<Mesh>(Task.Run(() => CreateMeshInternal(input, options), cancellationToken));
         }
 
         // IAsyncMesher implementation
         /// <summary>Generate mesh asynchronously with progress reporting and cancellation support.</summary>
-        /// <param name="structure">The prismatic structure to mesh.</param>
+        /// <param name="structureDefinition">The prismatic structure to mesh.</param>
         /// <param name="options">Meshing options and parameters.</param>
         /// <param name="progress">Progress reporter for operation updates.</param>
         /// <param name="cancellationToken">Token to cancel the operation.</param>
         /// <returns>ValueTask that resolves to the generated mesh.</returns>
         public ValueTask<Mesh> MeshWithProgressAsync(
-            PrismStructureDefinition structure, 
-            MesherOptions options, 
-            IProgress<MeshingProgress>? progress, 
+            PrismStructureDefinition structureDefinition,
+            MesherOptions options,
+            IProgress<MeshingProgress>? progress,
             CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(structure);
+            ArgumentNullException.ThrowIfNull(structureDefinition);
             ArgumentNullException.ThrowIfNull(options);
             options.Validate();
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return new ValueTask<Mesh>(Task.Run(() => CreateMeshInternalWithProgress(structure, options, progress, cancellationToken), cancellationToken));
+            return new ValueTask<Mesh>(Task.Run(() => CreateMeshInternalWithProgress(structureDefinition, options, progress, cancellationToken), cancellationToken));
         }
 
         /// <summary>Generate multiple meshes in parallel with load balancing.</summary>
@@ -87,10 +87,12 @@ namespace FastGeoMesh.Meshing
         {
             ArgumentNullException.ThrowIfNull(structures);
             ArgumentNullException.ThrowIfNull(options);
-            
+
             var structureList = structures.ToList();
             if (structureList.Count == 0)
+            {
                 throw new ArgumentException("Structures collection cannot be empty.", nameof(structures));
+            }
 
             options.Validate();
             cancellationToken.ThrowIfCancellationRequested();
@@ -126,9 +128,9 @@ namespace FastGeoMesh.Meshing
                     Parallel.For(0, structureList.Count, parallelOptions, index =>
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-                        
+
                         results[index] = CreateMeshInternal(structureList[index], options);
-                        
+
                         var completed = Interlocked.Increment(ref completedCount);
                         progress?.Report(MeshingProgress.FromCounts("Batch Processing", completed, structureList.Count));
                     });
@@ -139,17 +141,17 @@ namespace FastGeoMesh.Meshing
         }
 
         /// <summary>Estimates the computational complexity and memory requirements for a meshing operation.</summary>
-        /// <param name="structure">The structure to analyze.</param>
+        /// <param name="structureDefinition">The structure to analyze.</param>
         /// <param name="options">Meshing options that would be used.</param>
         /// <returns>ValueTask that resolves to complexity estimation.</returns>
-        public ValueTask<MeshingComplexityEstimate> EstimateComplexityAsync(PrismStructureDefinition structure, MesherOptions options)
+        public ValueTask<MeshingComplexityEstimate> EstimateComplexityAsync(PrismStructureDefinition structureDefinition, MesherOptions options)
         {
-            ArgumentNullException.ThrowIfNull(structure);
+            ArgumentNullException.ThrowIfNull(structureDefinition);
             ArgumentNullException.ThrowIfNull(options);
 
             // 🚀 PERFORMANCE: Complexity estimation is fast, do it synchronously
-            var estimate = EstimateComplexity(structure);
-            return new ValueTask<MeshingComplexityEstimate>(CreateDetailedEstimate(structure, estimate));
+            var estimate = EstimateComplexity(structureDefinition);
+            return new ValueTask<MeshingComplexityEstimate>(CreateDetailedEstimate(structureDefinition, estimate));
         }
 
         /// <summary>Gets real-time performance statistics for this mesher instance.</summary>
@@ -162,8 +164,7 @@ namespace FastGeoMesh.Meshing
         }
 
         /// <summary>Fast synchronous complexity estimation for internal use.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MeshingComplexity EstimateComplexity(PrismStructureDefinition structure)
+        private static MeshingComplexity EstimateComplexity(PrismStructureDefinition structure)
         {
             var totalVertices = structure.Footprint.Count + structure.Holes.Sum(h => h.Count);
             return totalVertices switch
@@ -177,18 +178,17 @@ namespace FastGeoMesh.Meshing
         }
 
         /// <summary>Creates detailed estimate with timing and memory predictions.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MeshingComplexityEstimate CreateDetailedEstimate(PrismStructureDefinition structure, MeshingComplexity complexity)
+        private static MeshingComplexityEstimate CreateDetailedEstimate(PrismStructureDefinition structure, MeshingComplexity complexity)
         {
             // Estimate based on structure complexity
             var footprintVertices = structure.Footprint.Count;
             var holeVertices = structure.Holes.Sum(h => h.Count);
             var totalVertices = footprintVertices + holeVertices;
-            
+
             // 🚀 PERFORMANCE: Optimized estimation formulas
             var estimatedQuads = (int)(totalVertices * 1.5 + structure.InternalSurfaces.Count * 10);
             var estimatedTriangles = (int)(totalVertices * 0.3);
-            
+
             // Memory estimation (optimized with object pooling)
             var estimatedMemory = (estimatedQuads + estimatedTriangles) * 160L; // ~160 bytes per element with pooling
 
@@ -203,7 +203,7 @@ namespace FastGeoMesh.Meshing
                 _ => TimeSpan.FromMicroseconds(800)
             };
 
-            var recommendedParallelism = complexity >= MeshingComplexity.Complex ? 
+            var recommendedParallelism = complexity >= MeshingComplexity.Complex ?
                 Math.Min(Environment.ProcessorCount, 4) : 1;
 
             var hints = new List<string>();
@@ -237,7 +237,8 @@ namespace FastGeoMesh.Meshing
         private Mesh CreateMeshInternal(PrismStructureDefinition structure, MesherOptions options)
         {
             // 🚀 PERFORMANCE: Track metrics and use Activity for monitoring
-            using var activity = PerformanceMonitor.StartMeshingActivity("SyncMeshing", new {
+            using var activity = PerformanceMonitor.StartMeshingActivity("SyncMeshing", new
+            {
                 VertexCount = structure.Footprint.Count + structure.Holes.Sum(h => h.Count),
                 HoleCount = structure.Holes.Count,
                 ConstraintCount = structure.ConstraintSegments.Count
@@ -287,13 +288,14 @@ namespace FastGeoMesh.Meshing
         }
 
         private Mesh CreateMeshInternalWithProgress(
-            PrismStructureDefinition structure, 
-            MesherOptions options, 
-            IProgress<MeshingProgress>? progress, 
+            PrismStructureDefinition structure,
+            MesherOptions options,
+            IProgress<MeshingProgress>? progress,
             CancellationToken cancellationToken)
         {
             // 🚀 PERFORMANCE: Use activity tracking and metrics
-            using var activity = PerformanceMonitor.StartMeshingActivity("AsyncMeshingWithProgress", new {
+            using var activity = PerformanceMonitor.StartMeshingActivity("AsyncMeshingWithProgress", new
+            {
                 VertexCount = structure.Footprint.Count + structure.Holes.Sum(h => h.Count),
                 HoleCount = structure.Holes.Count,
                 EstimatedComplexity = EstimateComplexity(structure).ToString()
@@ -318,20 +320,20 @@ namespace FastGeoMesh.Meshing
             // 🔧 FIX: More frequent cancellation checks and proper handling
             var sideQuadCount = 0;
             var totalExpectedQuads = EstimateQuadCount(structure, options);
-            
+
             foreach (var q in SideFaceMeshingHelper.GenerateSideQuads(structure.Footprint.Vertices, zLevels, options, outward: true))
             {
                 // ⚠️ CRITICAL: Always check cancellation before adding quads
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 mesh.AddQuad(q);
                 sideQuadCount++;
-                
+
                 // Report progress for side faces
                 if (sideQuadCount % 10 == 0) // Every 10 quads
                 {
                     var sideProgress = Math.Min(0.5, (double)sideQuadCount / totalExpectedQuads * 0.5);
-                    progress?.Report(new MeshingProgress("Side Faces", 0.1 + sideProgress, sideQuadCount, totalExpectedQuads, 
+                    progress?.Report(new MeshingProgress("Side Faces", 0.1 + sideProgress, sideQuadCount, totalExpectedQuads,
                         statusMessage: $"Generated {sideQuadCount} side quads"));
                 }
             }
@@ -342,14 +344,14 @@ namespace FastGeoMesh.Meshing
                 {
                     // ⚠️ CRITICAL: Check cancellation for hole processing too
                     cancellationToken.ThrowIfCancellationRequested();
-                    
+
                     mesh.AddQuad(q);
                     sideQuadCount++;
-                    
+
                     if (sideQuadCount % 10 == 0)
                     {
                         var sideProgress = Math.Min(0.5, (double)sideQuadCount / totalExpectedQuads * 0.5);
-                        progress?.Report(new MeshingProgress("Side Faces", 0.1 + sideProgress, sideQuadCount, totalExpectedQuads, 
+                        progress?.Report(new MeshingProgress("Side Faces", 0.1 + sideProgress, sideQuadCount, totalExpectedQuads,
                             statusMessage: $"Generated {sideQuadCount} quads (including holes)"));
                     }
                 }
@@ -362,7 +364,7 @@ namespace FastGeoMesh.Meshing
                 cancellationToken.ThrowIfCancellationRequested();
 
                 _capStrategy.GenerateCaps(mesh, structure, options, z0, z1);
-                
+
                 // ⚠️ CRITICAL: Check cancellation after caps generation
                 cancellationToken.ThrowIfCancellationRequested();
             }
@@ -370,7 +372,7 @@ namespace FastGeoMesh.Meshing
             // Auxiliary geometry
             progress?.Report(new MeshingProgress("Auxiliary", 0.9, 0, 1, statusMessage: "Adding auxiliary geometry"));
             cancellationToken.ThrowIfCancellationRequested();
-            
+
             foreach (var p in structure.Geometry.Points)
             {
                 mesh.AddPoint(p);
@@ -389,19 +391,18 @@ namespace FastGeoMesh.Meshing
             // Final progress report
             cancellationToken.ThrowIfCancellationRequested();
             progress?.Report(MeshingProgress.Completed("Meshing", mesh.QuadCount + mesh.TriangleCount));
-            
+
             return mesh;
         }
 
         /// <summary>Estimates the number of quads for progress reporting.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int EstimateQuadCount(PrismStructureDefinition structure, MesherOptions options)
         {
             var perimeterLength = structure.Footprint.Count * 4.0; // Rough perimeter
             var height = structure.TopElevation - structure.BaseElevation;
             var zSegments = Math.Max(1, (int)(height / options.TargetEdgeLengthZ));
             var xySegments = Math.Max(1, (int)(perimeterLength / options.TargetEdgeLengthXY));
-            
+
             // Side quads + estimated cap quads
             return xySegments * zSegments + structure.Footprint.Count * 2;
         }

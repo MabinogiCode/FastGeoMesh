@@ -1,10 +1,10 @@
-using Xunit;
-using FastGeoMesh.Meshing;
+using System.Diagnostics;
 using FastGeoMesh.Geometry;
+using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
 using FastGeoMesh.Utils;
 using FluentAssertions;
-using System.Diagnostics;
+using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
@@ -67,7 +67,7 @@ namespace FastGeoMesh.Tests.Meshing
                 new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 20), new Vec2(0, 20)
             });
             var structure = new PrismStructureDefinition(outer, 0, 5);
-            
+
             for (int i = 0; i < 6; i++)
             {
                 var x = 3 + (i % 3) * 6;
@@ -83,7 +83,7 @@ namespace FastGeoMesh.Tests.Meshing
             var estimate = await _asyncMesher.EstimateComplexityAsync(structure, _options);
 
             // Assert
-            estimate.PerformanceHints.Should().Contain(hint => 
+            estimate.PerformanceHints.Should().Contain(hint =>
                 hint.Contains("Large number of holes detected"));
         }
 
@@ -104,7 +104,7 @@ namespace FastGeoMesh.Tests.Meshing
             var estimate = await _asyncMesher.EstimateComplexityAsync(structure, _options);
 
             // Assert
-            estimate.PerformanceHints.Should().Contain(hint => 
+            estimate.PerformanceHints.Should().Contain(hint =>
                 hint.Contains("Large geometry detected"));
         }
 
@@ -123,7 +123,7 @@ namespace FastGeoMesh.Tests.Meshing
             var estimate = await _asyncMesher.EstimateComplexityAsync(structure, _options);
 
             // Assert
-            estimate.PerformanceHints.Should().Contain(hint => 
+            estimate.PerformanceHints.Should().Contain(hint =>
                 hint.Contains("Simple geometry - synchronous processing is optimal"));
         }
 
@@ -145,7 +145,7 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Assert
             estimate.RecommendedParallelism.Should().BeGreaterThan(1);
-            estimate.PerformanceHints.Should().Contain(hint => 
+            estimate.PerformanceHints.Should().Contain(hint =>
                 hint.Contains("Consider using parallel batch processing"));
         }
 
@@ -276,7 +276,7 @@ namespace FastGeoMesh.Tests.Meshing
             // Assert
             mesh.QuadCount.Should().BeGreaterThan(0);
             progressReports.Should().NotBeEmpty();
-            
+
             // Should have different operation phases
             var operations = progressReports.Select(p => p.Operation).Distinct().ToList();
             operations.Should().Contain("Initializing");
@@ -343,7 +343,7 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Assert
             var statsAfter = await _asyncMesher.GetLivePerformanceStatsAsync();
-            
+
             (statsAfter.MeshingOperations - statsBefore.MeshingOperations).Should().BeGreaterThan(0);
             (statsAfter.QuadsGenerated - statsBefore.QuadsGenerated).Should().Be(mesh.QuadCount);
             (statsAfter.TrianglesGenerated - statsBefore.TrianglesGenerated).Should().Be(mesh.TriangleCount);
@@ -368,10 +368,10 @@ namespace FastGeoMesh.Tests.Meshing
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(
                 () => _asyncMesher.MeshAsync(null!, _options).AsTask());
-            
+
             await Assert.ThrowsAsync<ArgumentNullException>(
                 () => _asyncMesher.EstimateComplexityAsync(null!, _options).AsTask());
-            
+
             await Assert.ThrowsAsync<ArgumentNullException>(
                 () => _asyncMesher.MeshBatchAsync(null!, _options).AsTask());
         }

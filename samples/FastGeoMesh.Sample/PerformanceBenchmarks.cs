@@ -1,7 +1,7 @@
+using System.Diagnostics;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
-using System.Diagnostics;
 
 namespace FastGeoMesh.Sample
 {
@@ -112,7 +112,7 @@ namespace FastGeoMesh.Sample
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build();
 
             var batchSizes = new[] { 4, 8, 16, 32 };
-            
+
             foreach (var batchSize in batchSizes)
             {
                 Console.WriteLine($"\nBatch size: {batchSize}");
@@ -324,7 +324,7 @@ namespace FastGeoMesh.Sample
             // Benchmark with progress
             var progressReports = new List<MeshingProgress>();
             var progress = new Progress<MeshingProgress>(p => progressReports.Add(p));
-            
+
             var withProgressStopwatch = Stopwatch.StartNew();
             for (int i = 0; i < iterations; i++)
             {
@@ -349,20 +349,20 @@ namespace FastGeoMesh.Sample
         private static PrismStructureDefinition CreateTrivialStructure()
         {
             return new PrismStructureDefinition(
-                Polygon2D.FromPoints(new[] 
-                { 
-                    new Vec2(0, 0), new Vec2(2, 0), new Vec2(2, 2), new Vec2(0, 2) 
-                }), 
+                Polygon2D.FromPoints(new[]
+                {
+                    new Vec2(0, 0), new Vec2(2, 0), new Vec2(2, 2), new Vec2(0, 2)
+                }),
                 0, 1);
         }
 
         private static PrismStructureDefinition CreateSimpleStructure()
         {
             return new PrismStructureDefinition(
-                Polygon2D.FromPoints(new[] 
-                { 
-                    new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) 
-                }), 
+                Polygon2D.FromPoints(new[]
+                {
+                    new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5)
+                }),
                 0, 3);
         }
 
@@ -373,7 +373,7 @@ namespace FastGeoMesh.Sample
                 new Vec2(0, 0), new Vec2(15, 0), new Vec2(15, 8),
                 new Vec2(8, 8), new Vec2(8, 15), new Vec2(0, 15)
             });
-            
+
             return new PrismStructureDefinition(lShape, -2, 8)
                 .AddHole(Polygon2D.FromPoints(new[]
                 {
@@ -390,9 +390,9 @@ namespace FastGeoMesh.Sample
                 double radius = 10 + 3 * Math.Sin(4 * angle);
                 vertices.Add(new Vec2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
             }
-            
+
             var structure = new PrismStructureDefinition(new Polygon2D(vertices), -5, 10);
-            
+
             for (int i = 0; i < 2; i++)
             {
                 double x = 4 * Math.Cos(2 * Math.PI * i / 2);
@@ -404,7 +404,7 @@ namespace FastGeoMesh.Sample
                 });
                 structure = structure.AddHole(hole);
             }
-            
+
             return structure;
         }
     }
