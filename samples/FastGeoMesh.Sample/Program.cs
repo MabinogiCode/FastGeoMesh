@@ -3,28 +3,95 @@ using FastGeoMesh.Meshing;
 using FastGeoMesh.Meshing.Exporters;
 using FastGeoMesh.Structures;
 using FastGeoMesh.Utils;
+using FastGeoMesh.Sample;
 
 /// <summary>
 /// Sample application demonstrating FastGeoMesh library usage with various export formats.
 /// </summary>
 sealed class Program
 {
-    // Sample configuration constants
-    private const double SampleLength = 20.0;
-    private const double SampleWidth = 5.0;
-    private const double SampleBottomZ = -10.0;
-    private const double SampleTopZ = 10.0;
-    private const double SampleConstraintZ = 2.5;
-    private const double SampleTargetEdgeLengthXY = 0.5;
-    private const double SampleTargetEdgeLengthZ = 1.0;
-    private const string SampleMeshPrefix = "sample_mesh";
-
     /// <summary>
     /// Main entry point for the sample application.
-    /// Demonstrates mesh generation and export capabilities.
+    /// Demonstrates mesh generation and export capabilities including new async features.
     /// </summary>
-    /// <param name="args">Command line arguments for controlling export formats (--obj, --gltf, --svg).</param>
-    static void Main(string[] args)
+    /// <param name="args">Command line arguments for controlling export formats and demos.</param>
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("FastGeoMesh v1.4.0-preview Sample Application");
+        Console.WriteLine("============================================\n");
+
+        // Check for specific demo flags first
+        if (args.Length > 0)
+        {
+            var firstArg = args[0].ToLowerInvariant();
+            
+            switch (firstArg)
+            {
+                case "--async":
+                    Console.WriteLine("Running NEW Async Meshing Demonstrations:\n");
+                    await RunAsyncDemonstrations();
+                    return;
+                
+                case "--performance":
+                    Console.WriteLine("Running PERFORMANCE Optimization Demonstrations:\n");
+                    await PerformanceOptimizationExample.DemonstratePerformanceMonitoring();
+                    await PerformanceOptimizationExample.DemonstrateOptimizedBatchProcessing();
+                    await PerformanceOptimizationExample.DemonstrateAsyncOptimizations();
+                    return;
+                
+                case "--benchmarks":
+                    Console.WriteLine("Running COMPREHENSIVE Performance Benchmarks:\n");
+                    await PerformanceBenchmarks.RunBenchmarkSuite();
+                    return;
+            }
+        }
+
+        // Default to legacy mode if no specific flag or --legacy
+        Console.WriteLine("Running LEGACY Synchronous Demonstrations:\n");
+        RunLegacyDemonstrations(args);
+
+        Console.WriteLine("Sample application completed successfully!");
+        Console.WriteLine("\nTry running with different flags:");
+        Console.WriteLine("  --async        Run async meshing demonstrations");
+        Console.WriteLine("  --legacy       Run legacy synchronous demonstrations");
+        Console.WriteLine("  --obj          Export only OBJ format (legacy mode)");
+        Console.WriteLine("  --gltf         Export only glTF format (legacy mode)");
+        Console.WriteLine("  --svg          Export only SVG format (legacy mode)");
+        Console.WriteLine("  --performance  Run performance optimization demonstrations");
+        Console.WriteLine("  --benchmarks   Run comprehensive performance benchmarks");
+        Console.WriteLine();
+    }
+
+    /// <summary>
+    /// Demonstrates the new asynchronous meshing capabilities of v1.4.0.
+    /// </summary>
+    private static async Task RunAsyncDemonstrations()
+    {
+        try
+        {
+            // Basic async meshing
+            await AsyncMeshingExample.DemonstrateBasicAsyncMeshing();
+
+            // Batch processing
+            await AsyncMeshingExample.DemonstrateBatchProcessing();
+
+            // Complexity estimation
+            await AsyncMeshingExample.DemonstrateComplexityEstimation();
+
+            // Cancellation demo
+            await AsyncMeshingExample.DemonstrateCancellation();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in async demonstrations: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        }
+    }
+
+    /// <summary>
+    /// Runs the original synchronous demonstrations for compatibility.
+    /// </summary>
+    private static void RunLegacyDemonstrations(string[] args)
     {
         // Test our PointInPolygon fix
         TestPointInPolygon();
@@ -35,83 +102,71 @@ sealed class Program
         bool exportAll = !exportObj && !exportGltf && !exportSvg;
 
         var poly = Polygon2D.FromPoints(new[] {
-            new Vec2(0, 0),
-            new Vec2(SampleLength, 0),
-            new Vec2(SampleLength, SampleWidth),
-            new Vec2(0, SampleWidth)
+            new Vec2(0, 0), new Vec2(20.0, 0), new Vec2(20.0, 5.0), new Vec2(0, 5.0)
         });
-        var structure = new PrismStructureDefinition(poly, SampleBottomZ, SampleTopZ);
-        structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(SampleLength, 0)), SampleConstraintZ);
+        var structure = new PrismStructureDefinition(poly, -10.0, 10.0);
+        structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(20.0, 0)), 2.5);
         structure.Geometry
             .AddPoint(new Vec3(0, 4, 2))
-            .AddPoint(new Vec3(SampleLength, 4, 4))
-            .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(SampleLength, 4, 2)));
+            .AddPoint(new Vec3(20.0, 4, 4))
+            .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(20.0, 4, 2)));
         var options = new MesherOptions
         {
-            TargetEdgeLengthXY = SampleTargetEdgeLengthXY,
-            TargetEdgeLengthZ = SampleTargetEdgeLengthZ
+            TargetEdgeLengthXY = 0.5,
+            TargetEdgeLengthZ = 1.0
         };
         var mesh = new PrismMesher().Mesh(structure, options);
         var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
-        Console.WriteLine($"Indexed: V={indexed.Vertices.Count}, E={indexed.Edges.Count}, Q={indexed.Quads.Count}");
+        Console.WriteLine($"Legacy Demo - Indexed: V={indexed.Vertices.Count}, E={indexed.Edges.Count}, Q={indexed.Quads.Count}");
 
         if (exportAll || exportObj)
         {
-            ObjExporter.Write(indexed, SampleMeshPrefix + ".obj");
+            ObjExporter.Write(indexed, "sample_mesh.obj");
+            Console.WriteLine("Exported sample_mesh.obj");
         }
         if (exportAll || exportGltf)
         {
-            GltfExporter.Write(indexed, SampleMeshPrefix + ".gltf");
+            GltfExporter.Write(indexed, "sample_mesh.gltf");
+            Console.WriteLine("Exported sample_mesh.gltf");
         }
         if (exportAll || exportSvg)
         {
-            SvgExporter.Write(indexed, SampleMeshPrefix + ".svg");
+            SvgExporter.Write(indexed, "sample_mesh.svg");
+            Console.WriteLine("Exported sample_mesh.svg");
         }
+
+        Console.WriteLine();
     }
 
     /// <summary>
     /// Tests the PointInPolygon functionality to verify the fix is working correctly.
-    /// Validates point-in-polygon calculations for various test cases.
     /// </summary>
     static void TestPointInPolygon()
     {
         Console.WriteLine("=== Testing PointInPolygon Fix ===");
 
-        // Test square dimensions
-        const double squareSize = 10.0;
-        const double centerPoint = 5.0;
-        const double edgePoint = 0.0;
-        const double outsidePoint = -1.0;
-        const double farOutsidePoint = 11.0;
-
-        // Test square
         var square = new Vec2[]
         {
-            new(0, 0), new(squareSize, 0), new(squareSize, squareSize), new(0, squareSize)
+            new(0, 0), new(10.0, 0), new(10.0, 10.0), new(0, 10.0)
         };
 
         // Test center point (5,5) - should be TRUE
-        bool centerInside = GeometryHelper.PointInPolygon(square, centerPoint, centerPoint);
-        Console.WriteLine($"Point ({centerPoint},{centerPoint}) inside square: {centerInside} {(centerInside ? "✅" : "❌")}");
+        bool centerInside = GeometryHelper.PointInPolygon(square, 5.0, 5.0);
+        Console.WriteLine($"Point (5,5) inside square: {centerInside} {(centerInside ? "✅" : "❌")}");
 
         // Test points on edges - should be TRUE
-        bool cornerInside = GeometryHelper.PointInPolygon(square, edgePoint, edgePoint);
-        Console.WriteLine($"Point ({edgePoint},{edgePoint}) on corner: {cornerInside} {(cornerInside ? "✅" : "❌")}");
+        bool cornerInside = GeometryHelper.PointInPolygon(square, 0.0, 0.0);
+        Console.WriteLine($"Point (0,0) on corner: {cornerInside} {(cornerInside ? "✅" : "❌")}");
 
-        bool edgeInside = GeometryHelper.PointInPolygon(square, centerPoint, edgePoint);
-        Console.WriteLine($"Point ({centerPoint},{edgePoint}) on edge: {edgeInside} {(edgeInside ? "✅" : "❌")}");
+        bool edgeInside = GeometryHelper.PointInPolygon(square, 5.0, 0.0);
+        Console.WriteLine($"Point (5,0) on edge: {edgeInside} {(edgeInside ? "✅" : "❌")}");
 
         // Test points outside - should be FALSE
-        bool outsideLeft = GeometryHelper.PointInPolygon(square, outsidePoint, centerPoint);
-        Console.WriteLine($"Point ({outsidePoint},{centerPoint}) outside left: {outsideLeft} {(!outsideLeft ? "✅" : "❌")}");
+        bool outsideLeft = GeometryHelper.PointInPolygon(square, -1.0, 5.0);
+        Console.WriteLine($"Point (-1,5) outside left: {outsideLeft} {(!outsideLeft ? "✅" : "❌")}");
 
-        bool outsideRight = GeometryHelper.PointInPolygon(square, farOutsidePoint, centerPoint);
-        Console.WriteLine($"Point ({farOutsidePoint},{centerPoint}) outside right: {outsideRight} {(!outsideRight ? "✅" : "❌")}");
-
-        // Test SpatialPolygonIndex as well
-        var spatialIndex = new SpatialPolygonIndex(square);
-        bool spatialCenterInside = spatialIndex.IsInside(centerPoint, centerPoint);
-        Console.WriteLine($"SpatialIndex ({centerPoint},{centerPoint}): {spatialCenterInside} {(spatialCenterInside ? "✅" : "❌")}");
+        bool outsideRight = GeometryHelper.PointInPolygon(square, 11.0, 5.0);
+        Console.WriteLine($"Point (11,5) outside right: {outsideRight} {(!outsideRight ? "✅" : "❌")}");
 
         Console.WriteLine("=== Point-in-Polygon Test Complete ===\n");
     }
