@@ -1,5 +1,3 @@
-using System.Collections.ObjectModel;
-using System.Globalization;
 using FastGeoMesh.Geometry;
 
 namespace FastGeoMesh.Meshing

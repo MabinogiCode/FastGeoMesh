@@ -1,5 +1,3 @@
-using System.Collections.ObjectModel;
-
 namespace FastGeoMesh.Meshing
 {
     /// <summary>Adjacency data for a quad mesh: per-edge neighbors, boundary edges and non-manifold edges.</summary>

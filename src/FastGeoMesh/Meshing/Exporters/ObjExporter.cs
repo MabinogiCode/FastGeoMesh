@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace FastGeoMesh.Meshing.Exporters
 {
     /// <summary>Wavefront OBJ exporter (quads + triangles, geometry only).</summary>
