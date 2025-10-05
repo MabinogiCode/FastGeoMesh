@@ -10,15 +10,15 @@
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
-        "requested": "[8.0.0, )",
-        "resolved": "8.0.0",
-        "contentHash": "DxiTgkCl3CGq1rYmBX2wjY7XGbxiBdL4J+/AJIAFLKy5z70NxhnVRnPghnicXZ8oF6JKVXlW3xwznRbI3ioEKg=="
+        "requested": "[9.0.0, )",
+        "resolved": "9.0.0",
+        "contentHash": "JajbvkrBgtdRghavIjcJuNHMOja4lqBmEezbhZyqWPYh2cpLhT5mPpfC7NQVDO4IehWQum9t/nwF4v+qQGtYWg=="
       },
       "Microsoft.Extensions.ObjectPool": {
         "type": "Direct",
-        "requested": "[8.0.11, )",
-        "resolved": "8.0.11",
-        "contentHash": "6ApKcHNJigXBfZa6XlDQ8feJpq7SG1ogZXg6M4FiNzgd6irs3LUAzo0Pfn4F2ZI9liGnH1XIBR/OtSbZmJAV5w=="
+        "requested": "[9.0.9, )",
+        "resolved": "9.0.9",
+        "contentHash": "jYZSlGBpPzqWr3mc7cf/YNTY45ys7FIaziQtHAK3sWtd5v4ehpowBmrL2aOSizfM7Q326PDw2P100ILpdEbhzg=="
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
@@ -39,6 +39,25 @@
         "type": "Transitive",
         "resolved": "8.0.0",
         "contentHash": "dk9JPxTCIevS75HyEQ0E4OVAFhB2N+V9ShCXf8Q6FkUQZDkgLI12y679Nym1YqsiSysuQskT7Z+6nUf3yab6Vw=="
+      },
+      "fastgeomesh.application": {
+        "type": "Project",
+        "dependencies": {
+          "FastGeoMesh.Domain": "[1.0.0, )",
+          "FastGeoMesh.Infrastructure": "[1.0.0, )",
+          "LibTessDotNet": "[1.1.15, )"
+        }
+      },
+      "fastgeomesh.domain": {
+        "type": "Project"
+      },
+      "fastgeomesh.infrastructure": {
+        "type": "Project",
+        "dependencies": {
+          "FastGeoMesh.Domain": "[1.0.0, )",
+          "LibTessDotNet": "[1.1.15, )",
+          "Microsoft.Extensions.ObjectPool": "[9.0.9, )"
+        }
       }
     }
   }

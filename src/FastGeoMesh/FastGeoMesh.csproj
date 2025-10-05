@@ -31,14 +31,19 @@
 
   <ItemGroup>
     <PackageReference Include="LibTessDotNet" Version="1.1.15" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="9.0.9" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     <!-- Keep analyzer version compatible with .NET 8 targets -->
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\nuget-readme.md" Pack="true" PackagePath="/" />
     <None Include="mabinogi-icon.png" Pack="true" PackagePath="/" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FastGeoMesh.Domain\FastGeoMesh.Domain.csproj" />
+    <ProjectReference Include="..\FastGeoMesh.Application\FastGeoMesh.Application.csproj" />
+    <ProjectReference Include="..\FastGeoMesh.Infrastructure\FastGeoMesh.Infrastructure.csproj" />
   </ItemGroup>
   <PropertyGroup>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>

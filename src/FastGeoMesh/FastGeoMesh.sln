@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastGeoMesh.Domain", "..\FastGeoMesh.Domain\FastGeoMesh.Domain.csproj", "{DED88EFC-2411-40F4-A212-280A06E4A011}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastGeoMesh.Application", "..\FastGeoMesh.Application\FastGeoMesh.Application.csproj", "{FB8251B1-18F9-4B38-9B9D-59C31CEFBF4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastGeoMesh.Infrastructure", "..\FastGeoMesh.Infrastructure\FastGeoMesh.Infrastructure.csproj", "{373FF484-052D-43BB-AD71-F9ADD09A5C31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastGeoMesh", "FastGeoMesh.csproj", "{05CE534D-A23D-4B3D-9773-516E5649C5FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DED88EFC-2411-40F4-A212-280A06E4A011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DED88EFC-2411-40F4-A212-280A06E4A011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DED88EFC-2411-40F4-A212-280A06E4A011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DED88EFC-2411-40F4-A212-280A06E4A011}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB8251B1-18F9-4B38-9B9D-59C31CEFBF4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB8251B1-18F9-4B38-9B9D-59C31CEFBF4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB8251B1-18F9-4B38-9B9D-59C31CEFBF4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB8251B1-18F9-4B38-9B9D-59C31CEFBF4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{373FF484-052D-43BB-AD71-F9ADD09A5C31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{373FF484-052D-43BB-AD71-F9ADD09A5C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{373FF484-052D-43BB-AD71-F9ADD09A5C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{373FF484-052D-43BB-AD71-F9ADD09A5C31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05CE534D-A23D-4B3D-9773-516E5649C5FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05CE534D-A23D-4B3D-9773-516E5649C5FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05CE534D-A23D-4B3D-9773-516E5649C5FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05CE534D-A23D-4B3D-9773-516E5649C5FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,3 +1,4 @@
+using FastGeoMesh.Core;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
@@ -19,9 +20,19 @@ namespace FastGeoMesh.Tests
         {
             var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) });
             var structure = new PrismStructureDefinition(poly, -10, 10);
-            var options = new MesherOptions { TargetEdgeLengthXY = 10.0, TargetEdgeLengthZ = 20.0, GenerateBottomCap = false, GenerateTopCap = false };
+            var options = new MesherOptions
+            {
+                TargetEdgeLengthXY = EdgeLength.From(10.0),
+                TargetEdgeLengthZ = EdgeLength.From(20.0),
+                GenerateBottomCap = false,
+                GenerateTopCap = false
+            };
             var mesher = new PrismMesher();
-            var mesh = mesher.Mesh(structure, options);
+            var result = mesher.Mesh(structure, options);
+
+            result.IsSuccess.Should().BeTrue();
+            var mesh = result.Value;
+
             mesh.Quads.Should().NotBeEmpty();
             foreach (var q in mesh.Quads)
             {

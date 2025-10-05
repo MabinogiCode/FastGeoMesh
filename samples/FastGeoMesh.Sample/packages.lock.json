@@ -9,14 +9,36 @@
       },
       "Microsoft.Extensions.ObjectPool": {
         "type": "Transitive",
-        "resolved": "8.0.11",
-        "contentHash": "6ApKcHNJigXBfZa6XlDQ8feJpq7SG1ogZXg6M4FiNzgd6irs3LUAzo0Pfn4F2ZI9liGnH1XIBR/OtSbZmJAV5w=="
+        "resolved": "9.0.9",
+        "contentHash": "jYZSlGBpPzqWr3mc7cf/YNTY45ys7FIaziQtHAK3sWtd5v4ehpowBmrL2aOSizfM7Q326PDw2P100ILpdEbhzg=="
       },
       "fastgeomesh": {
         "type": "Project",
         "dependencies": {
+          "FastGeoMesh.Application": "[1.0.0, )",
+          "FastGeoMesh.Domain": "[1.0.0, )",
+          "FastGeoMesh.Infrastructure": "[1.0.0, )",
           "LibTessDotNet": "[1.1.15, )",
-          "Microsoft.Extensions.ObjectPool": "[8.0.11, )"
+          "Microsoft.Extensions.ObjectPool": "[9.0.9, )"
+        }
+      },
+      "fastgeomesh.application": {
+        "type": "Project",
+        "dependencies": {
+          "FastGeoMesh.Domain": "[1.0.0, )",
+          "FastGeoMesh.Infrastructure": "[1.0.0, )",
+          "LibTessDotNet": "[1.1.15, )"
+        }
+      },
+      "fastgeomesh.domain": {
+        "type": "Project"
+      },
+      "fastgeomesh.infrastructure": {
+        "type": "Project",
+        "dependencies": {
+          "FastGeoMesh.Domain": "[1.0.0, )",
+          "LibTessDotNet": "[1.1.15, )",
+          "Microsoft.Extensions.ObjectPool": "[9.0.9, )"
         }
       }
     }

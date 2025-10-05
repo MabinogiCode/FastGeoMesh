@@ -19,7 +19,7 @@ namespace FastGeoMesh.Tests
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(1, 1), new Vec2(0, 1) });
             var structure = new PrismStructureDefinition(polygon, 0, 10);
-            var options = new MesherOptions { TargetEdgeLengthZ = 2.0 };
+            var options = new MesherOptions { TargetEdgeLengthZ = EdgeLength.From(2.0) };
 
             // Act
             var levels = MeshStructureHelper.BuildZLevels(0, 10, options, structure);
@@ -41,7 +41,7 @@ namespace FastGeoMesh.Tests
             // FIXED: AddConstraintSegment returns new immutable instance - must reassign
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(1, 0)), 3.5);
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0, 1), new Vec2(1, 1)), 7.2);
-            var options = new MesherOptions { TargetEdgeLengthZ = 5.0 };
+            var options = new MesherOptions { TargetEdgeLengthZ = EdgeLength.From(5.0) };
 
             // Act
             var levels = MeshStructureHelper.BuildZLevels(0, 10, options, structure);
@@ -59,7 +59,7 @@ namespace FastGeoMesh.Tests
             var structure = new PrismStructureDefinition(polygon, 0, 10);
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 2.5));
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 8.1));
-            var options = new MesherOptions { TargetEdgeLengthZ = 5.0 };
+            var options = new MesherOptions { TargetEdgeLengthZ = EdgeLength.From(5.0) };
 
             // Act
             var levels = MeshStructureHelper.BuildZLevels(0, 10, options, structure);
@@ -143,7 +143,7 @@ namespace FastGeoMesh.Tests
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 18));  // Above range
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 10));  // Inside range
 
-            var options = new MesherOptions { TargetEdgeLengthZ = 5.0, Epsilon = 0.1 };
+            var options = new MesherOptions { TargetEdgeLengthZ = EdgeLength.From(5.0), Epsilon = Tolerance.From(1e-6) };
 
             // Act
             var levels = MeshStructureHelper.BuildZLevels(5, 15, options, structure);
