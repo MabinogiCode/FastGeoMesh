@@ -37,7 +37,7 @@ namespace FastGeoMesh.Utils
 
             // Slow path: create a proper Task continuation for incomplete or faulted tasks
             return new ValueTask<TResult>(valueTask.AsTask().ContinueWith(
-                task => 
+                task =>
                 {
                     // The task.Result access will throw if the task faulted or was canceled
                     // This ensures proper exception propagation

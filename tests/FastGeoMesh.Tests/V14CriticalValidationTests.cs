@@ -21,10 +21,10 @@ namespace FastGeoMesh.Tests
                 new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
-            
+
             // Add auxiliary geometry to ensure Points collection is populated
             structure.Geometry.AddPoint(new Vec3(5, 2.5, 1));
-            
+
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build();
             var mesher = new PrismMesher();
 
@@ -47,10 +47,10 @@ namespace FastGeoMesh.Tests
                 new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
-            
+
             // Add auxiliary geometry to ensure Points collection is populated
             structure.Geometry.AddPoint(new Vec3(5, 2.5, 1));
-            
+
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build();
             var mesher = new PrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;

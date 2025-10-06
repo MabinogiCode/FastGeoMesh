@@ -2,8 +2,8 @@ using System.Diagnostics;
 using FastGeoMesh.Geometry;
 using FastGeoMesh.Meshing;
 using FastGeoMesh.Structures;
-using FastGeoMesh.Utils;
 using FastGeoMesh.Tests.Helpers;
+using FastGeoMesh.Utils;
 using FluentAssertions;
 using Xunit;
 
