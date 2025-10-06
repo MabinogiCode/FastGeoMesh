@@ -84,6 +84,12 @@ namespace FastGeoMesh.Meshing.Exporters
 
         private static (double minX, double minY, double minZ, double maxX, double maxY, double maxZ) CalculateBounds(IndexedMesh mesh)
         {
+            // Handle empty mesh case to avoid infinity values
+            if (mesh.Vertices.Count == 0)
+            {
+                return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+            }
+
             double minX = double.PositiveInfinity, minY = double.PositiveInfinity, minZ = double.PositiveInfinity;
             double maxX = double.NegativeInfinity, maxY = double.NegativeInfinity, maxZ = double.NegativeInfinity;
 

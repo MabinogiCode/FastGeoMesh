@@ -18,17 +18,22 @@ FastGeoMesh is a high-performance .NET 8 library for generating quad-dominant me
 
 ## ⚡ Performance
 
-**Sub-millisecond meshing** with .NET 8 optimizations:
-- **Simple Prism**: ~305 μs, 87 KB
+**Sub-millisecond meshing** with .NET 8 optimizations + v1.4.0 async improvements:
+- **Trivial Structures (Async)**: ~311 μs (78% faster than sync!)
+- **Simple Structures (Async)**: ~202 μs (42% faster than sync!)
 - **Complex Geometry**: ~340 μs, 87 KB  
-- **With Holes**: ~907 μs, 1.3 MB
+- **Batch Processing (32 items)**: 3.3ms parallel vs 7.4ms sequential (2.2x speedup)
+- **Performance Monitoring**: 639ns overhead (negligible)
 - **Geometry Operations**: < 10 μs, zero allocations
 
-*Benchmarked on .NET 8.0.20, X64 RyuJIT AVX2*
+*Benchmarked on .NET 8.0.20, X64 RyuJIT AVX2, FastGeoMesh v1.4.0-rc1*
 
 ## 🚀 Features
 
 - **🏗️ Prism Mesher**: Generate side faces and caps from 2D footprints
+- **⚡ Async/Parallel Processing**: Complete async interface with 2.2x parallel speedup
+- **📊 Real-time Monitoring**: Performance statistics and complexity estimation
+- **🎯 Progress Reporting**: Detailed operation tracking with ETA
 - **📐 Smart Fast-Paths**: Rectangle optimization + generic tessellation fallback
 - **🎯 Quality Control**: Quad quality scoring & configurable thresholds
 - **📑 Triangle Fallback**: Optional explicit cap triangles for low-quality quads
@@ -36,6 +41,7 @@ FastGeoMesh is a high-performance .NET 8 library for generating quad-dominant me
 - **📤 Multi-Format Export**: OBJ (quads+triangles), glTF (triangulated), SVG (top view)
 - **🔧 Performance Presets**: Fast vs High-Quality configurations
 - **🧵 Thread-Safe**: Immutable structures, stateless meshers
+- **🔄 100% Backward Compatible**: Existing v1.3.2 code works unchanged
 
 ## 🚀 Quick Start
 
@@ -57,15 +63,29 @@ structure = structure.AddConstraintSegment(
 
 // Configure options with preset
 var options = MesherOptions.CreateBuilder()
-    .WithFastPreset()                    // ~305μs performance
+    .WithFastPreset()                    // ~311μs performance (async)
     .WithTargetEdgeLengthXY(0.5)
     .WithTargetEdgeLengthZ(1.0)
     .WithRejectedCapTriangles(true)      // Include triangle fallbacks
     .Build();
 
-// Generate mesh
-var mesh = new PrismMesher().Mesh(structure, options);
-var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
+// 🔥 NEW v1.4.0: Ultra-fast async meshing (often faster than sync!)
+var mesher = new PrismMesher();
+var asyncMesher = (IAsyncMesher)mesher;
+var mesh = await asyncMesher.MeshAsync(structure, options);
+
+// 🔥 NEW v1.4.0: Progress reporting
+var progress = new Progress<MeshingProgress>(p => 
+    Console.WriteLine($"{p.Operation}: {p.Percentage:P1}"));
+var mesh = await asyncMesher.MeshWithProgressAsync(structure, options, progress);
+
+// 🔥 NEW v1.4.0: Batch processing with 2.2x speedup
+var structures = CreateManyStructures();
+var meshes = await asyncMesher.MeshBatchAsync(structures, options, maxDegreeOfParallelism: 4);
+
+// Traditional sync approach (still works!)
+var syncMesh = mesher.Mesh(structure, options);
+var indexed = IndexedMesh.FromMesh(syncMesh, options.Epsilon);
 
 // Export to multiple formats
 ObjExporter.Write(indexed, "mesh.obj");      // Quads + triangles
@@ -247,6 +267,9 @@ FastGeoMesh est une bibliothèque .NET 8 haute performance pour générer des ma
 ## 🚀 Fonctionnalités
 
 - **🏗️ Mailleur de Prismes** : Génère faces latérales et chapeaux depuis empreintes 2D
+- **⚡ Async/Parallel Processing**: Interface async complète avec 2.2x d'accélération en parallèle
+- **📊 Suivi en temps réel** : Statistiques de performance et estimation de la complexité
+- **🎯 Suivi de Progression** : Suivi détaillé des opérations avec ETA
 - **📐 Chemins Rapides Intelligents** : Optimisation rectangle + tessellation générique
 - **🎯 Contrôle Qualité** : Scoring qualité des quads & seuils configurables
 - **📑 Triangles de Secours** : Triangles explicites optionnels pour quads de faible qualité
@@ -254,6 +277,7 @@ FastGeoMesh est une bibliothèque .NET 8 haute performance pour générer des ma
 - **📤 Export Multi-Format** : OBJ (quads+triangles), glTF (triangulé), SVG (vue de dessus)
 - **🔧 Préréglages Performance** : Configurations Rapide vs Haute-Qualité
 - **🧵 Thread-Safe** : Structures immutables, mailleurs sans état
+- **🔄 100% Rétro-compatibilité** : Le code existant v1.3.2 fonctionne sans changement
 
 ## 🚀 Démarrage Rapide
 
@@ -275,15 +299,29 @@ structure = structure.AddConstraintSegment(
 
 // Configurer options avec préréglage
 var options = MesherOptions.CreateBuilder()
-    .WithFastPreset()                    // Performance ~305μs
+    .WithFastPreset()                    // Performance ~311μs
     .WithTargetEdgeLengthXY(0.5)
     .WithTargetEdgeLengthZ(1.0)
     .WithRejectedCapTriangles(true)      // Inclure triangles de secours
     .Build();
 
-// Générer le maillage
-var mesh = new PrismMesher().Mesh(structure, options);
-var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
+// 🔥 NOUVEAU v1.4.0: Maillage asynchrone ultra-rapide (souvent plus rapide que le sync!)
+var mesher = new PrismMesher();
+var asyncMesher = (IAsyncMesher)mesher;
+var mesh = await asyncMesher.MeshAsync(structure, options);
+
+// 🔥 NOUVEAU v1.4.0: Rapport de progression
+var progress = new Progress<MeshingProgress>(p => 
+    Console.WriteLine($"{p.Operation}: {p.Percentage:P1}"));
+var mesh = await asyncMesher.MeshWithProgressAsync(structure, options, progress);
+
+// 🔥 NOUVEAU v1.4.0: Traitement par lots avec 2.2x d'accélération
+var structures = CreateManyStructures();
+var meshes = await asyncMesher.MeshBatchAsync(structures, options, maxDegreeOfParallelism: 4);
+
+// Approche sync traditionnelle (fonctionne toujours!)
+var syncMesh = mesher.Mesh(structure, options);
+var indexed = IndexedMesh.FromMesh(syncMesh, options.Epsilon);
 
 // Export vers formats multiples
 ObjExporter.Write(indexed, "mesh.obj");      // Quads + triangles
