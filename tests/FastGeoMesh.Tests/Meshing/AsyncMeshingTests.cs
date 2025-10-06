@@ -26,7 +26,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public async Task MeshAsync_SimpleStructure_ProducesSameResultAsSync()
+        public async Task MeshAsyncSimpleStructureProducesSameResultAsSync()
         {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
@@ -44,7 +44,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public async Task MeshAsync_WithCancellation_ThrowsOperationCanceledException()
+        public async Task MeshAsyncWithCancellationThrowsOperationCanceledException()
         {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
@@ -58,7 +58,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public async Task MeshAsyncWithCancellationThrowsOperationCanceledException()
+        public async Task MeshAsyncWithCancellationThrowsOperationCanceledExceptionAlternate()
         {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
@@ -138,7 +138,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public async Task MeshAsync_WithProgress_ReportsProgress()
+        public async Task MeshAsyncWithProgressReportsProgress()
         {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
@@ -158,7 +158,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public async Task MeshBatchAsync_MultipleStructures_ProcessesAllStructures()
+        public async Task MeshBatchAsyncMultipleStructuresProcessesAllStructures()
         {
             // Arrange
             var structures = new[]
@@ -194,7 +194,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public async Task MeshBatchAsync_WithParallelism_LimitsParallelism()
+        public async Task MeshBatchAsyncWithParallelismLimitsParallelism()
         {
             // Arrange
             var structures = Enumerable.Range(0, 10).Select(i =>
@@ -219,7 +219,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public async Task EstimateComplexityAsync_SimpleStructure_ReturnsReasonableEstimate()
+        public async Task EstimateComplexityAsyncSimpleStructureReturnsReasonableEstimate()
         {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
@@ -239,7 +239,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public async Task EstimateComplexityAsync_ComplexStructure_ReturnsHigherComplexity()
+        public async Task EstimateComplexityAsyncComplexStructureReturnsHigherComplexity()
         {
             // Arrange - Create a complex structure with many vertices and holes
             var vertices = new List<Vec2>();
@@ -266,7 +266,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public void MeshingProgress_FromCounts_CalculatesPercentageCorrectly()
+        public void MeshingProgressFromCountsCalculatesPercentageCorrectly()
         {
             // Act
             var progress = MeshingProgress.FromCounts("Test Operation", 25, 100, "Processing");
@@ -280,7 +280,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public void MeshingProgress_Completed_ReturnsCompletedProgress()
+        public void MeshingProgressCompletedReturnsCompletedProgress()
         {
             // Act
             var progress = MeshingProgress.Completed("Test Operation", 150);
@@ -294,7 +294,7 @@ namespace FastGeoMesh.Tests.Meshing
         }
 
         [Fact]
-        public void MeshingProgress_ToString_ReturnsFormattedString()
+        public void MeshingProgressToStringReturnsFormattedString()
         {
             // Arrange
             var progress = new MeshingProgress(
@@ -322,7 +322,7 @@ namespace FastGeoMesh.Tests.Meshing
         [InlineData(MeshingComplexity.Moderate)]
         [InlineData(MeshingComplexity.Complex)]
         [InlineData(MeshingComplexity.Extreme)]
-        public void MeshingComplexityEstimate_ToString_ReturnsFormattedString(MeshingComplexity complexity)
+        public void MeshingComplexityEstimateToStringReturnsFormattedString(MeshingComplexity complexity)
         {
             // Arrange
             var estimate = new MeshingComplexityEstimate(

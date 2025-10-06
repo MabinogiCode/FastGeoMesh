@@ -19,15 +19,30 @@ namespace FastGeoMesh.Utils
             Func<TSource, TResult> continuationFunction,
             TaskContinuationOptions continuationOptions = TaskContinuationOptions.None)
         {
+            ArgumentNullException.ThrowIfNull(continuationFunction);
+
             if (valueTask.IsCompletedSuccessfully)
             {
-                // Fast path: if already completed, apply transformation immediately
-                return new ValueTask<TResult>(continuationFunction(valueTask.Result));
+                // Fast path: if already completed successfully, apply transformation immediately
+                try
+                {
+                    return new ValueTask<TResult>(continuationFunction(valueTask.Result));
+                }
+                catch
+                {
+                    // If transformation fails, let it propagate
+                    throw;
+                }
             }
 
-            // Slow path: create a proper Task continuation
+            // Slow path: create a proper Task continuation for incomplete or faulted tasks
             return new ValueTask<TResult>(valueTask.AsTask().ContinueWith(
-                task => continuationFunction(task.Result),
+                task => 
+                {
+                    // The task.Result access will throw if the task faulted or was canceled
+                    // This ensures proper exception propagation
+                    return continuationFunction(task.Result);
+                },
                 continuationOptions));
         }
     }

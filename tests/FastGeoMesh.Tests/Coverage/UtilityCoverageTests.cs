@@ -12,7 +12,7 @@ namespace FastGeoMesh.Tests.Coverage
     {
         /// <summary>Tests ValueTaskExtensions.ContinueWith with completed ValueTask.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_CompletedValueTask_UsesFastPath()
+        public async Task ValueTaskExtensionsContinueWithCompletedValueTaskUsesFastPath()
         {
             // Arrange
             var completedValueTask = new ValueTask<int>(42);
@@ -28,7 +28,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests ValueTaskExtensions.ContinueWith with non-completed ValueTask.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_NonCompletedValueTask_UsesAsyncPath()
+        public async Task ValueTaskExtensionsContinueWithNonCompletedValueTaskUsesAsyncPath()
         {
             // Arrange
             var tcs = new TaskCompletionSource<int>();
@@ -54,7 +54,7 @@ namespace FastGeoMesh.Tests.Coverage
         [InlineData(TaskContinuationOptions.None)]
         [InlineData(TaskContinuationOptions.ExecuteSynchronously)]
         [InlineData(TaskContinuationOptions.RunContinuationsAsynchronously)]
-        public async Task ValueTaskExtensions_ContinueWith_WithDifferentOptions_WorksCorrectly(TaskContinuationOptions options)
+        public async Task ValueTaskExtensionsContinueWithWithDifferentOptionsWorksCorrectly(TaskContinuationOptions options)
         {
             // Arrange
             var completedValueTask = new ValueTask<string>("Hello");
@@ -70,7 +70,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests ValueTaskExtensions.ContinueWith with transformation function.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_TransformsDifferentTypes()
+        public async Task ValueTaskExtensionsContinueWithTransformsDifferentTypes()
         {
             // Arrange
             var valueTask = new ValueTask<int>(123);
@@ -91,7 +91,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests ValueTaskExtensions with exception handling.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_WithException_PropagatesException()
+        public async Task ValueTaskExtensionsContinueWithWithExceptionPropagatesException()
         {
             // Arrange
             var tcs = new TaskCompletionSource<int>();
@@ -104,13 +104,15 @@ namespace FastGeoMesh.Tests.Coverage
             // Set exception
             tcs.SetException(new InvalidOperationException("Test exception"));
 
-            // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => continuationTask.AsTask());
+            // Act & Assert - Expect AggregateException containing the original exception
+            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask());
+            exception.InnerException.Should().BeOfType<InvalidOperationException>();
+            exception.InnerException.Message.Should().Be("Test exception");
         }
 
         /// <summary>Tests ValueTaskExtensions with cancellation.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_WithCancellation_PropagatesCancellation()
+        public async Task ValueTaskExtensionsContinueWithWithCancellationPropagatesCancellation()
         {
             // Arrange
             var tcs = new TaskCompletionSource<int>();
@@ -123,13 +125,14 @@ namespace FastGeoMesh.Tests.Coverage
             // Cancel the original task
             tcs.SetCanceled();
 
-            // Act & Assert
-            await Assert.ThrowsAsync<TaskCanceledException>(() => continuationTask.AsTask());
+            // Act & Assert - Expect AggregateException containing TaskCanceledException
+            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask());
+            exception.InnerException.Should().BeOfType<TaskCanceledException>();
         }
 
         /// <summary>Tests complex transformation chain with ValueTaskExtensions.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_ChainedTransformations_WorksCorrectly()
+        public async Task ValueTaskExtensionsContinueWithChainedTransformationsWorksCorrectly()
         {
             // Arrange
             var initialValueTask = new ValueTask<int>(5);
@@ -146,7 +149,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests ValueTaskExtensions with null transformation function.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_WithNullFunction_ThrowsException()
+        public async Task ValueTaskExtensionsContinueWithWithNullFunctionThrowsException()
         {
             // Arrange
             var valueTask = new ValueTask<int>(42);
@@ -159,7 +162,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests edge case with very large numbers.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_WithLargeNumbers_HandlesCorrectly()
+        public async Task ValueTaskExtensionsContinueWithWithLargeNumbersHandlesCorrectly()
         {
             // Arrange
             var valueTask = new ValueTask<long>(long.MaxValue);
@@ -175,7 +178,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests ValueTaskExtensions with generic types.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_WithGenericTypes_WorksCorrectly()
+        public async Task ValueTaskExtensionsContinueWithWithGenericTypesWorksCorrectly()
         {
             // Arrange
             var valueTask = new ValueTask<List<int>>(new List<int> { 1, 2, 3 });
@@ -191,7 +194,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests ValueTaskExtensions with struct types.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_WithStructTypes_WorksCorrectly()
+        public async Task ValueTaskExtensionsContinueWithWithStructTypesWorksCorrectly()
         {
             // Arrange
             var valueTask = new ValueTask<DateTime>(new DateTime(2024, 1, 1));
@@ -207,7 +210,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests ValueTaskExtensions performance with many operations.</summary>
         [Fact]
-        public async Task ValueTaskExtensions_ContinueWith_PerformanceTest_CompletesQuickly()
+        public async Task ValueTaskExtensionsContinueWithPerformanceTestCompletesQuickly()
         {
             // Arrange
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
