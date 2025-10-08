@@ -1,5 +1,4 @@
-using System;
-using FastGeoMesh.Geometry;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Utils;
 using FluentAssertions;
 using LibTessDotNet;

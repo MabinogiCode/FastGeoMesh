@@ -1,9 +1,4 @@
-using System;
-using System.IO;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
-using FluentAssertions;
+using FastGeoMesh.Domain;
 using Xunit;
 
 namespace FastGeoMesh.Tests
@@ -28,7 +23,7 @@ namespace FastGeoMesh.Tests
         {
             string path = Res(folder);
             Assert.True(File.Exists(path), $"Missing legacy file {path}");
-            var legacy = IndexedMesh.ReadCustomTxt(path);
+            var legacy = IndexedMeshFileHelper.ReadCustomTxt(path);
             Assert.NotEmpty(legacy.Vertices);
             Assert.NotEmpty(legacy.Edges);
             Assert.NotEmpty(legacy.Quads);
@@ -40,10 +35,10 @@ namespace FastGeoMesh.Tests
             }
             foreach (var q in legacy.Quads)
             {
-                Assert.InRange(q.v0, 0, legacy.Vertices.Count - 1);
-                Assert.InRange(q.v1, 0, legacy.Vertices.Count - 1);
-                Assert.InRange(q.v2, 0, legacy.Vertices.Count - 1);
-                Assert.InRange(q.v3, 0, legacy.Vertices.Count - 1);
+                Assert.InRange(q.Item1, 0, legacy.Vertices.Count - 1);
+                Assert.InRange(q.Item2, 0, legacy.Vertices.Count - 1);
+                Assert.InRange(q.Item3, 0, legacy.Vertices.Count - 1);
+                Assert.InRange(q.Item4, 0, legacy.Vertices.Count - 1);
             }
             double minZ = double.MaxValue, maxZ = double.MinValue;
             foreach (var v in legacy.Vertices)

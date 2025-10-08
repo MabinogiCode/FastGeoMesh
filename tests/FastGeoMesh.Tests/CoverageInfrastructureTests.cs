@@ -112,12 +112,12 @@ namespace FastGeoMesh.Tests
                 // Cleanup
                 File.Delete(testFile);
 
-                Console.WriteLine($"? Coverage infrastructure validated at: {fullPath}");
+                Console.WriteLine($"✓ Coverage infrastructure validated at: {fullPath}");
             }
             catch (Exception ex)
             {
                 // This is not a hard failure - coverage might be collected differently in CI
-                Console.WriteLine($"?? Coverage directory test failed: {ex.Message}");
+                Console.WriteLine($"⚠ Coverage directory test failed: {ex.Message}");
 
                 // Instead, just verify we can write to some location
                 var tempFile = Path.GetTempFileName();
@@ -147,21 +147,50 @@ namespace FastGeoMesh.Tests
                 "GlobalUsings"
             };
 
-            // Act - Get all types from the main assembly
-            var mainAssembly = Assembly.LoadFrom(Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "FastGeoMesh.dll"));
+            // ✅ Avec l'architecture Clean, nous avons plusieurs assemblies
+            var assemblyNames = new[]
+            {
+                "FastGeoMesh.Domain.dll",
+                "FastGeoMesh.Application.dll",
+                "FastGeoMesh.Infrastructure.dll",
+                "FastGeoMesh.dll" // Assembly principal (si elle existe)
+            };
 
-            var allTypes = mainAssembly.GetTypes();
+            int totalPublicTypes = 0;
+            int assembliesLoaded = 0;
 
-            // Assert - Verify we have types to test (not all excluded)
-            allTypes.Length.Should().BeGreaterThan(0, "Main assembly should contain types");
+            // Act - Essayer de charger chaque assembly
+            foreach (var assemblyName in assemblyNames)
+            {
+                try
+                {
+                    var assembly = Assembly.LoadFrom(Path.Combine(
+                        AppDomain.CurrentDomain.BaseDirectory,
+                        assemblyName));
 
-            // Verify that we have both included and potentially excluded types
-            var publicTypes = Array.FindAll(allTypes, t => t.IsPublic);
-            publicTypes.Length.Should().BeGreaterThan(5, "Should have substantial public API surface for coverage");
+                    var allTypes = assembly.GetTypes();
+                    var publicTypes = Array.FindAll(allTypes, t => t.IsPublic);
 
-            Console.WriteLine($"? Found {allTypes.Length} total types, {publicTypes.Length} public types for coverage analysis");
+                    totalPublicTypes += publicTypes.Length;
+                    assembliesLoaded++;
+
+                    Console.WriteLine($"✓ {assemblyName}: {allTypes.Length} total types, {publicTypes.Length} public types");
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine($"⚠ {assemblyName} not found (optional in Clean Architecture)");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"⚠ Failed to load {assemblyName}: {ex.Message}");
+                }
+            }
+
+            // Assert - Nous devons avoir au moins une assembly avec des types publics
+            assembliesLoaded.Should().BeGreaterThan(0, "Should load at least one main assembly");
+            totalPublicTypes.Should().BeGreaterThan(5, "Should have substantial public API surface across assemblies");
+
+            Console.WriteLine($"✓ Coverage analysis: {assembliesLoaded} assemblies loaded, {totalPublicTypes} total public types");
 
             // Use variables to avoid IDE0059
             Console.WriteLine($"Excluded namespaces configured: {string.Join(", ", excludedNamespaces)}");
@@ -184,13 +213,13 @@ namespace FastGeoMesh.Tests
             if (performanceMonitorType != null)
             {
                 performanceMonitorType.IsClass.Should().BeTrue("PerformanceMonitor should be a static class");
-                Console.WriteLine("? PerformanceMonitor type found - should be excluded from coverage");
+                Console.WriteLine("✓ PerformanceMonitor type found - should be excluded from coverage");
             }
 
             if (tessPoolType != null)
             {
                 tessPoolType.IsClass.Should().BeTrue("TessPool should be a static class");
-                Console.WriteLine("? TessPool type found - configured for exclusion in runsettings");
+                Console.WriteLine("✓ TessPool type found - configured for exclusion in runsettings");
             }
 
             // This test primarily validates that the infrastructure types exist

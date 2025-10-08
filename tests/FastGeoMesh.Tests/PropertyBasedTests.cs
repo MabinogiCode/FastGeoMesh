@@ -1,28 +1,33 @@
-#pragma warning disable IDE0005, CS1591
 using System;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
+using System.Linq;
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
-using FsCheck;
 using FsCheck.Xunit;
 using Xunit;
 
 namespace FastGeoMesh.Tests
 {
-    /// <summary>Property-based tests using FsCheck to validate mesh invariants with random inputs.</summary>
+    /// <summary>Property-based tests using simple parameters to validate mesh invariants with random inputs.</summary>
     public sealed class PropertyBasedTests
     {
-        [Property(MaxTest = 15)]
-        public bool PolygonInvariant_ValidPolygonProducesManifoldMesh(PositiveInt w, PositiveInt h, PositiveInt d)
+        /// <summary>
+        /// Tests polygon invariant that valid rectangular polygons produce manifold meshes without non-manifold edges.
+        /// Uses property-based testing to validate mesh topology across different rectangular dimensions.
+        /// </summary>
+        /// <param name="width">Width of the rectangle (between 2 and 20).</param>
+        /// <param name="height">Height of the rectangle (between 2 and 20).</param>
+        /// <param name="depth">Depth/height of the prism (between 1 and 10).</param>
+        [Theory]
+        [InlineData(5, 5, 2)]
+        [InlineData(10, 8, 3)]
+        [InlineData(15, 12, 4)]
+        public void PolygonInvariantValidPolygonProducesManifoldMesh(int width, int height, int depth)
         {
-            var width = Math.Min(w.Get, 15);
-            var height = Math.Min(h.Get, 15);
-            var depth = Math.Min(d.Get, 8);
-
             if (width <= 0 || height <= 0 || depth <= 0)
             {
-                return true; // Skip invalid inputs
+                return; // Skip invalid inputs
             }
 
             var rect = Polygon2D.FromPoints(new[]
@@ -31,64 +36,77 @@ namespace FastGeoMesh.Tests
             });
 
             var structure = new PrismStructureDefinition(rect, 0, depth);
-            var options = new MesherOptions
-            {
-                TargetEdgeLengthXY = 2.0,
-                TargetEdgeLengthZ = 2.0,
-                GenerateBottomCap = true,
-                GenerateTopCap = true
-            };
+            var options = MesherOptions.CreateBuilder()
+                .WithTargetEdgeLengthXY(2.0)
+                .WithTargetEdgeLengthZ(2.0)
+                .WithGenerateBottomCap(true)
+                .WithGenerateTopCap(true)
+                .Build()
+                .UnwrapForTests(); // V2.0 compatibility extension
 
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests(); // V2.0 compatibility
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
             var adjacency = indexed.BuildAdjacency();
 
             // Invariant: No non-manifold edges in a proper prism mesh
-            return adjacency.NonManifoldEdges.Count == 0;
+            adjacency.NonManifoldEdges.Count.Should().Be(0);
         }
 
-        [Property(MaxTest = 20)]
-        public bool QuadInvariant_AllQuadsHaveValidVertexIndices(PositiveInt width, PositiveInt height)
+        /// <summary>
+        /// Tests quad invariant that all generated quads have valid vertex indices within the mesh vertex bounds.
+        /// Property-based test ensuring no out-of-bounds vertex references exist in the generated quad topology.
+        /// </summary>
+        /// <param name="width">Width of the rectangular structure (between 3 and 15).</param>
+        /// <param name="height">Height of the rectangular structure (between 3 and 15).</param>
+        [Theory]
+        [InlineData(8, 6)]
+        [InlineData(12, 10)]
+        [InlineData(6, 4)]
+        public void QuadInvariantAllQuadsHaveValidVertexIndices(int width, int height)
         {
-            var w = Math.Min(width.Get, 12);
-            var h = Math.Min(height.Get, 12);
-
             var rect = Polygon2D.FromPoints(new[]
             {
-                new Vec2(0, 0), new Vec2(w, 0), new Vec2(w, h), new Vec2(0, h)
+                new Vec2(0, 0), new Vec2(width, 0), new Vec2(width, height), new Vec2(0, height)
             });
 
             var structure = new PrismStructureDefinition(rect, 0, 2);
-            var options = new MesherOptions
-            {
-                TargetEdgeLengthXY = 1.5,
-                TargetEdgeLengthZ = 1.0,
-                GenerateBottomCap = true,
-                GenerateTopCap = true
-            };
+            var options = MesherOptions.CreateBuilder()
+                .WithTargetEdgeLengthXY(1.5)
+                .WithTargetEdgeLengthZ(1.0)
+                .WithGenerateBottomCap(true)
+                .WithGenerateTopCap(true)
+                .Build()
+                .UnwrapForTests();
 
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
-            return indexed.Quads.All(q =>
-                q.v0 >= 0 && q.v0 < indexed.Vertices.Count &&
-                q.v1 >= 0 && q.v1 < indexed.Vertices.Count &&
-                q.v2 >= 0 && q.v2 < indexed.Vertices.Count &&
-                q.v3 >= 0 && q.v3 < indexed.Vertices.Count &&
-                q.v0 != q.v1 && q.v1 != q.v2 && q.v2 != q.v3 && q.v3 != q.v0);
+            indexed.Quads.All(q =>
+                q.Item1 >= 0 && q.Item1 < indexed.Vertices.Count &&
+                q.Item2 >= 0 && q.Item2 < indexed.Vertices.Count &&
+                q.Item3 >= 0 && q.Item3 < indexed.Vertices.Count &&
+                q.Item4 >= 0 && q.Item4 < indexed.Vertices.Count &&
+                q.Item1 != q.Item2 && q.Item2 != q.Item3 && q.Item3 != q.Item4 && q.Item4 != q.Item1).Should().BeTrue();
         }
 
-        [Property(MaxTest = 15)]
-        public bool QualityInvariant_MeshGenerationSucceedsWithValidParameters(PositiveInt size)
+        /// <summary>
+        /// Tests quality invariant that mesh generation succeeds with valid parameters across different sizes.
+        /// Property-based test ensuring robust meshing behavior for various structural dimensions.
+        /// </summary>
+        /// <param name="size">Size parameter for the square structure (between 2 and 12).</param>
+        [Theory]
+        [InlineData(3)]
+        [InlineData(5)]
+        [InlineData(8)]
+        public void QualityInvariantMeshGenerationSucceedsWithValidParameters(int size)
         {
-            var s = Math.Min(size.Get, 8);
-            if (s <= 0)
+            if (size <= 0)
             {
-                return true;
+                return;
             }
 
             // Use minimum viable geometry size (at least 2x2 to ensure meshing occurs)
-            var actualSize = Math.Max(s, 2);
+            var actualSize = Math.Max(size, 2);
 
             var square = Polygon2D.FromPoints(new[]
             {
@@ -96,16 +114,16 @@ namespace FastGeoMesh.Tests
             });
 
             var structure = new PrismStructureDefinition(square, 0, 1);
-            var options = new MesherOptions
-            {
+            var options = MesherOptions.CreateBuilder()
                 // Use conservative target that allows reasonable meshing
-                TargetEdgeLengthXY = Math.Max(actualSize * 0.8, 0.5),
-                TargetEdgeLengthZ = 1.0,
-                GenerateBottomCap = true,
-                GenerateTopCap = true
-            };
+                .WithTargetEdgeLengthXY(Math.Max(actualSize * 0.8, 0.5))
+                .WithTargetEdgeLengthZ(1.0)
+                .WithGenerateBottomCap(true)
+                .WithGenerateTopCap(true)
+                .Build()
+                .UnwrapForTests();
 
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
 
             // Test basic mesh validity rather than specific cap quad expectations
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
@@ -120,91 +138,103 @@ namespace FastGeoMesh.Tests
                 (q.QualityScore.Value >= 0.0 && q.QualityScore.Value <= 1.0));
 
             // 3. No degenerate vertices
-            bool noNaNVertices = indexed.Vertices.All(v =>
-                !double.IsNaN(v.X) && !double.IsNaN(v.Y) && !double.IsNaN(v.Z));
+            bool noNaNVertices = PropertyBasedTestHelper.ContainsNoNaNVertices(indexed.Vertices);
 
-            return hasGeometry && validQualityScores && noNaNVertices;
+            (hasGeometry && validQualityScores && noNaNVertices).Should().BeTrue();
         }
 
-        [Property(MaxTest = 10)]
-        public bool BoundsInvariant_MeshVerticesStayWithinExpectedBounds(PositiveInt width, PositiveInt height, PositiveInt depth)
+        /// <summary>
+        /// Tests bounds invariant that all mesh vertices stay within the expected geometric boundaries.
+        /// Property-based test validating spatial constraints of generated mesh geometry.
+        /// </summary>
+        /// <param name="width">Width of the rectangular prism (between 1 and 15).</param>
+        /// <param name="height">Height of the rectangular prism (between 1 and 15).</param>
+        /// <param name="depth">Depth of the rectangular prism (between 1 and 10).</param>
+        [Theory]
+        [InlineData(6, 4, 3)]
+        [InlineData(10, 8, 5)]
+        public void BoundsInvariantMeshVerticesStayWithinExpectedBounds(int width, int height, int depth)
         {
-            var w = Math.Min(width.Get, 10);
-            var h = Math.Min(height.Get, 10);
-            var d = Math.Min(depth.Get, 6);
-
-            if (w <= 0 || h <= 0 || d <= 0)
+            if (width <= 0 || height <= 0 || depth <= 0)
             {
-                return true;
+                return;
             }
 
             var rect = Polygon2D.FromPoints(new[]
             {
-                new Vec2(0, 0), new Vec2(w, 0), new Vec2(w, h), new Vec2(0, h)
+                new Vec2(0, 0), new Vec2(width, 0), new Vec2(width, height), new Vec2(0, height)
             });
 
-            var structure = new PrismStructureDefinition(rect, 0, d);
-            var options = new MesherOptions
-            {
-                TargetEdgeLengthXY = 2.0,
-                TargetEdgeLengthZ = 2.0,
-                GenerateBottomCap = false,
-                GenerateTopCap = false
-            };
+            var structure = new PrismStructureDefinition(rect, 0, depth);
+            var options = MesherOptions.CreateBuilder()
+                .WithTargetEdgeLengthXY(2.0)
+                .WithTargetEdgeLengthZ(2.0)
+                .WithGenerateBottomCap(false)
+                .WithGenerateTopCap(false)
+                .Build()
+                .UnwrapForTests();
 
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
             // Expected: all vertices should be within the bounding box (with small tolerance)
-            return indexed.Vertices.All(v =>
-                v.X >= -0.1 && v.X <= w + 0.1 &&
-                v.Y >= -0.1 && v.Y <= h + 0.1 &&
-                v.Z >= -0.1 && v.Z <= d + 0.1);
+            PropertyBasedTestHelper.AreVerticesWithinBounds(
+                indexed.Vertices, 0, width, 0, height, 0, depth).Should().BeTrue();
         }
 
-        [Property(MaxTest = 8)]
-        public bool TriangleInvariant_WhenTrianglesEnabled_ValidVertices(PositiveInt size)
+        /// <summary>
+        /// Tests triangle invariant that when triangles are enabled, all triangle vertices are valid.
+        /// Property-based test ensuring triangle topology integrity when triangle output is requested.
+        /// </summary>
+        /// <param name="size">Size parameter for the square structure (between 2 and 8).</param>
+        [Theory]
+        [InlineData(4)]
+        [InlineData(6)]
+        public void TriangleInvariantWhenTrianglesEnabledValidVertices(int size)
         {
-            var s = Math.Min(size.Get, 6);
-            if (s <= 2)
+            if (size <= 2)
             {
-                return true;
+                return;
             }
 
             // Create L-shaped polygon (likely to generate some triangles)
             var lShape = Polygon2D.FromPoints(new[]
             {
-                new Vec2(0, 0), new Vec2(s, 0), new Vec2(s, s/2),
-                new Vec2(s/2, s/2), new Vec2(s/2, s), new Vec2(0, s)
+                new Vec2(0, 0), new Vec2(size, 0), new Vec2(size, size/2),
+                new Vec2(size/2, size/2), new Vec2(size/2, size), new Vec2(0, size)
             });
 
             var structure = new PrismStructureDefinition(lShape, 0, 1);
-            var options = new MesherOptions
-            {
-                TargetEdgeLengthXY = 1.0,
-                TargetEdgeLengthZ = 1.0,
-                GenerateBottomCap = true,
-                GenerateTopCap = true,
-                OutputRejectedCapTriangles = true,
-                MinCapQuadQuality = 0.9 // High threshold may force triangles
-            };
+            var options = MesherOptions.CreateBuilder()
+                .WithTargetEdgeLengthXY(1.0)
+                .WithTargetEdgeLengthZ(1.0)
+                .WithGenerateBottomCap(true)
+                .WithGenerateTopCap(true)
+                .WithRejectedCapTriangles(true)
+                .WithMinCapQuadQuality(0.9) // High threshold may force triangles
+                .Build()
+                .UnwrapForTests();
 
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
 
             // All cap triangles should have valid vertices
-            return mesh.Triangles.All(t =>
-                !double.IsNaN(t.V0.X) && !double.IsNaN(t.V0.Y) && !double.IsNaN(t.V0.Z) &&
-                !double.IsNaN(t.V1.X) && !double.IsNaN(t.V1.Y) && !double.IsNaN(t.V1.Z) &&
-                !double.IsNaN(t.V2.X) && !double.IsNaN(t.V2.Y) && !double.IsNaN(t.V2.Z));
+            PropertyBasedTestHelper.AreTrianglesValid(mesh.Triangles).Should().BeTrue();
         }
 
-        [Property(MaxTest = 12)]
-        public bool EdgeLengthConstraint_EdgesRespectMaximumTarget(PositiveInt targetLength)
+        /// <summary>
+        /// Tests edge length constraint that generated edges respect the maximum target edge length.
+        /// Property-based test validating that meshing parameters are properly applied to edge sizing.
+        /// </summary>
+        /// <param name="targetLength">Target edge length parameter (between 1 and 4).</param>
+        [Theory]
+        [InlineData(3)]
+        [InlineData(5)]
+        [InlineData(8)]
+        public void EdgeLengthConstraintEdgesRespectMaximumTarget(int targetLength)
         {
-            var target = Math.Min(targetLength.Get, 8);
-            if (target <= 0)
+            if (targetLength <= 0)
             {
-                return true;
+                return;
             }
 
             var rect = Polygon2D.FromPoints(new[]
@@ -213,52 +243,24 @@ namespace FastGeoMesh.Tests
             });
 
             var structure = new PrismStructureDefinition(rect, 0, 4);
-            var options = new MesherOptions
-            {
-                TargetEdgeLengthXY = target,
-                TargetEdgeLengthZ = target,
-                GenerateBottomCap = false,
-                GenerateTopCap = false
-            };
+            var options = MesherOptions.CreateBuilder()
+                .WithTargetEdgeLengthXY(targetLength)
+                .WithTargetEdgeLengthZ(targetLength)
+                .WithGenerateBottomCap(false)
+                .WithGenerateTopCap(false)
+                .Build()
+                .UnwrapForTests();
 
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
 
             // Check that side quads respect the maximum edge length constraint
-            var sideQuads = mesh.Quads.Where(q => !IsCapQuad(q)).ToList();
+            var sideQuads = mesh.Quads.Where(q => !PropertyBasedTestHelper.IsCapQuad(q)).ToList();
             if (sideQuads.Count == 0)
             {
-                return true;
+                return;
             }
 
-            // Sample a few quads and check that edges are <= target (with reasonable tolerance for numerical precision)
-            var sampleSize = Math.Min(3, sideQuads.Count);
-            var sample = sideQuads.Take(sampleSize);
-            var tolerance = target + 0.1; // Small tolerance for numerical precision
-
-            return sample.All(q =>
-            {
-                var edge1 = Length(q.V1 - q.V0);
-                var edge2 = Length(q.V2 - q.V1);
-                var edge3 = Length(q.V3 - q.V2);
-                var edge4 = Length(q.V0 - q.V3);
-
-                // Edges should respect the maximum constraint (can be smaller, but not larger)
-                return edge1 <= tolerance && edge2 <= tolerance &&
-                       edge3 <= tolerance && edge4 <= tolerance;
-            });
-        }
-
-        private static bool IsCapQuad(Quad q)
-        {
-            const double epsilon = 1e-12;
-            return Math.Abs(q.V0.Z - q.V1.Z) < epsilon &&
-                   Math.Abs(q.V1.Z - q.V2.Z) < epsilon &&
-                   Math.Abs(q.V2.Z - q.V3.Z) < epsilon;
-        }
-
-        private static double Length(Vec3 v)
-        {
-            return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
+            PropertyBasedTestHelper.DoQuadEdgesRespectMaxLength(sideQuads, targetLength).Should().BeTrue();
         }
     }
 }

@@ -1,5 +1,4 @@
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
+using FastGeoMesh.Domain;
 
 namespace FastGeoMesh.Tests
 {
@@ -39,7 +38,7 @@ namespace FastGeoMesh.Tests
         /// <returns>An IndexedMesh containing the added vertices and quads.</returns>
         public IndexedMesh Build()
         {
-            var mesh = new Mesh();
+            using var mesh = new Mesh();
             var verts = _verts.ToArray();
 
             foreach (var q in _quads)
@@ -48,7 +47,7 @@ namespace FastGeoMesh.Tests
                 mesh.AddQuad(quad);
             }
 
-            return IndexedMesh.FromMesh(mesh);
+            return IndexedMesh.FromMesh(mesh.ToImmutableMesh());
         }
     }
 }

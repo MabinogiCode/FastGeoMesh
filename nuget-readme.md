@@ -1,4 +1,4 @@
-# FastGeoMesh
+# FastGeoMesh v2.0
 
 **🇬🇧 English** | [🇫🇷 Français](#français)
 
@@ -12,469 +12,275 @@
 [![NuGet](https://img.shields.io/nuget/v/FastGeoMesh.svg)](https://www.nuget.org/packages/FastGeoMesh/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Fast quad meshing for prismatic volumes from 2D footprints and Z elevations.**
+**Fast, safe, quad-dominant meshing for prismatic volumes from 2D footprints and Z elevations.**
 
-FastGeoMesh is a high-performance .NET 8 library for generating quad-dominant meshes from 2.5D prismatic structures. Perfect for CAD, GIS, and real-time applications requiring sub-millisecond meshing performance.
+FastGeoMesh v2.0 is a high-performance .NET 8 library for generating quad-dominant meshes from 2.5D prismatic structures. Built with **Clean Architecture** principles, it offers excellent separation of concerns, testability, and maintainability.
 
 ## ⚡ Performance
 
-**Sub-millisecond meshing** with .NET 8 optimizations + v1.4.0 async improvements:
+**Sub-millisecond meshing** with .NET 8 optimizations and async improvements:
 - **Trivial Structures (Async)**: ~311 μs (78% faster than sync!)
 - **Simple Structures (Async)**: ~202 μs (42% faster than sync!)
-- **Complex Geometry**: ~340 μs, 87 KB  
+- **Complex Geometry**: ~340 μs, 87 KB
 - **Batch Processing (32 items)**: 3.3ms parallel vs 7.4ms sequential (2.2x speedup)
 - **Performance Monitoring**: 639ns overhead (negligible)
 - **Geometry Operations**: < 10 μs, zero allocations
 
-*Benchmarked on .NET 8.0.20, X64 RyuJIT AVX2, FastGeoMesh v1.4.0-rc1*
+*Benchmarked on .NET 8, X64 RyuJIT AVX2.*
+
+## 🏗️ Clean Architecture
+
+FastGeoMesh v2.0 is built with Clean Architecture principles:
+
+- **🔵 Domain Layer** (`FastGeoMesh.Domain`): Core entities, value objects, and domain logic
+- **🟡 Application Layer** (`FastGeoMesh.Application`): Use cases and meshing algorithms 
+- **🟢 Infrastructure Layer** (`FastGeoMesh.Infrastructure`): External concerns (file I/O, performance optimization)
 
 ## 🚀 Features
 
-- **🏗️ Prism Mesher**: Generate side faces and caps from 2D footprints
-- **⚡ Async/Parallel Processing**: Complete async interface with 2.2x parallel speedup
-- **📊 Real-time Monitoring**: Performance statistics and complexity estimation
-- **🎯 Progress Reporting**: Detailed operation tracking with ETA
-- **📐 Smart Fast-Paths**: Rectangle optimization + generic tessellation fallback
-- **🎯 Quality Control**: Quad quality scoring & configurable thresholds
-- **📑 Triangle Fallback**: Optional explicit cap triangles for low-quality quads
-- **⚙️ Constraint System**: Z-level segments & integrated auxiliary geometry
-- **📤 Multi-Format Export**: OBJ (quads+triangles), glTF (triangulated), SVG (top view)
-- **🔧 Performance Presets**: Fast vs High-Quality configurations
-- **🧵 Thread-Safe**: Immutable structures, stateless meshers
-- **🔄 100% Backward Compatible**: Existing v1.3.2 code works unchanged
+- **🏗️ Prism Mesher**: Generate side faces and caps from 2D footprints.
+- **✨ Robust Error Handling**: Uses a `Result` pattern to eliminate exceptions in the standard workflow.
+- **⚡ Async/Parallel Processing**: Complete async interface with 2.2x parallel speedup.
+- **📊 Real-time Monitoring**: Performance statistics and complexity estimation.
+- **🎯 Progress Reporting**: Detailed operation tracking with ETA.
+- **📐 Smart Fast-Paths**: Rectangle optimization + generic tessellation fallback.
+- **🎯 Quality Control**: Quad quality scoring & configurable thresholds.
+- **📑 Triangle Fallback**: Optional explicit cap triangles for low-quality quads.
+- **⚙️ Constraint System**: Z-level segments & integrated auxiliary geometry.
+- **📤 Multi-Format Export**: OBJ (quads+triangles), glTF (triangulated), SVG (top view), Legacy format.
+- **🔧 Performance Presets**: Fast vs High-Quality configurations.
+- **🧵 Thread-Safe**: Immutable structures and stateless meshers.
 
 ## 🚀 Quick Start
 
 ```csharp
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
-using FastGeoMesh.Meshing.Exporters;
+using FastGeoMesh.Domain;
+using FastGeoMesh.Application;
+using FastGeoMesh.Infrastructure.Exporters;
 
-// Define geometry
-var poly = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(20,0), new Vec2(20,5), new Vec2(0,5) 
+// 1. Define geometry
+var polygon = Polygon2D.FromPoints(new[]
+{
+    new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 5), new Vec2(0, 5)
 });
-var structure = new PrismStructureDefinition(poly, -10, 10);
+var structure = new PrismStructureDefinition(polygon, -10, 10);
 
-// Add constraint at Z = 2.5
-structure = structure.AddConstraintSegment(
-    new Segment2D(new Vec2(0,0), new Vec2(20,0)), 2.5);
-
-// Configure options with preset
-var options = MesherOptions.CreateBuilder()
-    .WithFastPreset()                    // ~311μs performance (async)
+// 2. Configure options safely
+var optionsResult = MesherOptions.CreateBuilder()
+    .WithFastPreset()
     .WithTargetEdgeLengthXY(0.5)
     .WithTargetEdgeLengthZ(1.0)
-    .WithRejectedCapTriangles(true)      // Include triangle fallbacks
+    .WithRejectedCapTriangles(true)
     .Build();
 
-// 🔥 NEW v1.4.0: Ultra-fast async meshing (often faster than sync!)
+if (optionsResult.IsFailure)
+{
+    Console.WriteLine($"Configuration error: {optionsResult.Error.Description}");
+    return;
+}
+var options = optionsResult.Value;
+
+// 3. Generate the mesh safely
 var mesher = new PrismMesher();
+var meshResult = mesher.Mesh(structure, options);
+
+if (meshResult.IsFailure)
+{
+    Console.WriteLine($"Meshing failed: {meshResult.Error.Description}");
+    return;
+}
+var mesh = meshResult.Value;
+
+// 4. (Optional) Use the async API for better performance
 var asyncMesher = (IAsyncMesher)mesher;
-var mesh = await asyncMesher.MeshAsync(structure, options);
+var asyncMeshResult = await asyncMesher.MeshAsync(structure, options);
+if (asyncMeshResult.IsSuccess)
+{
+    var asyncMesh = asyncMeshResult.Value;
+}
 
-// 🔥 NEW v1.4.0: Progress reporting
-var progress = new Progress<MeshingProgress>(p => 
-    Console.WriteLine($"{p.Operation}: {p.Percentage:P1}"));
-var mesh = await asyncMesher.MeshWithProgressAsync(structure, options, progress);
+// 5. Convert to indexed mesh and export to your preferred format
+var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
-// 🔥 NEW v1.4.0: Batch processing with 2.2x speedup
-var structures = CreateManyStructures();
-var meshes = await asyncMesher.MeshBatchAsync(structures, options, maxDegreeOfParallelism: 4);
+// Choose your export format:
+ObjExporter.Write(indexed, "mesh.obj");           // Wavefront OBJ
+GltfExporter.Write(indexed, "mesh.gltf");         // glTF 2.0
+SvgExporter.Write(indexed, "mesh.svg");           // SVG top view
+LegacyExporter.Write(indexed, "mesh.txt");        // Legacy format
+LegacyExporter.WriteWithLegacyName(indexed, "./output/"); // Creates 0_maill.txt
 
-// Traditional sync approach (still works!)
-var syncMesh = mesher.Mesh(structure, options);
-var indexed = IndexedMesh.FromMesh(syncMesh, options.Epsilon);
+// Or use the new flexible TXT exporter with builder pattern:
+indexed.ExportTxt()
+    .WithPoints("p", CountPlacement.Top, indexBased: true)
+    .WithEdges("e", CountPlacement.None, indexBased: false)
+    .WithQuads("q", CountPlacement.Bottom, indexBased: true)
+    .ToFile("custom_mesh.txt");
 
-// Export to multiple formats
-ObjExporter.Write(indexed, "mesh.obj");      // Quads + triangles
-GltfExporter.Write(indexed, "mesh.gltf");    // Triangulated
-SvgExporter.Write(indexed, "mesh.svg");      // Top view
+// Pre-configured formats:
+TxtExporter.WriteObjLike(indexed, "objlike.txt");   // OBJ-style format
 ```
 
-## 🎚️ Performance Presets
+## 💥 Breaking Changes in v2.0
 
+FastGeoMesh v2.0 introduces **Clean Architecture** which requires some namespace changes:
+
+**OLD (v1.x):**
 ```csharp
-// Fast: ~305μs, 87KB - Real-time applications
-var fast = MesherOptions.CreateBuilder().WithFastPreset().Build();
-
-// High-Quality: ~1.3ms, 17MB - CAD precision  
-var quality = MesherOptions.CreateBuilder().WithHighQualityPreset().Build();
+using FastGeoMesh.Meshing;
+using FastGeoMesh.Structures;
+using FastGeoMesh.Geometry;
 ```
+
+**NEW (v2.0):**
+```csharp
+using FastGeoMesh.Domain;           // Core types
+using FastGeoMesh.Application;      // Meshing logic
+using FastGeoMesh.Infrastructure;   // External services
+```
+
+**API Changes:**
+- `MesherOptions.CreateBuilder().Build()` returns a `Result<MesherOptions>`.
+- `PrismMesher.Mesh()` and its async variants return a `Result<ImmutableMesh>`.
+- Direct access to Clean Architecture layers (no more wrapper classes).
 
 ## 🏗️ Advanced Features
 
-### Basic Geometry Creation
+### Error Handling with Result Pattern
+
 ```csharp
-// Rectangle from corner points
-var rect = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(10,0), new Vec2(10,5), new Vec2(0,5) 
-});
+var optionsResult = MesherOptions.CreateBuilder()
+    .WithTargetEdgeLengthXY(-1.0) // Invalid value
+    .Build();
 
-// Square helper
-var square = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(5,0), new Vec2(5,5), new Vec2(0,5) 
-});
-
-// L-shaped polygon
-var lShape = Polygon2D.FromPoints(new[]{
-    new Vec2(0,0), new Vec2(6,0), new Vec2(6,3),
-    new Vec2(3,3), new Vec2(3,6), new Vec2(0,6)
-});
+if (optionsResult.IsFailure)
+{
+    Console.WriteLine($"Configuration error: {optionsResult.Error.Description}");
+    return;
+}
 ```
 
 ### Complex Structures with Holes
+
 ```csharp
-var outer = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(10,0), new Vec2(10,6), new Vec2(0,6) 
-});
-var hole = Polygon2D.FromPoints(new[]{ 
-    new Vec2(2,2), new Vec2(4,2), new Vec2(4,4), new Vec2(2,4) 
-});
+var outer = Polygon2D.FromPoints(new[] { new Vec2(0,0), new Vec2(10,0), new Vec2(10,6), new Vec2(0,6) });
+var hole = Polygon2D.FromPoints(new[] { new Vec2(2,2), new Vec2(4,2), new Vec2(4,4), new Vec2(2,4) });
+var structure = new PrismStructureDefinition(outer, 0, 2).AddHole(hole);
 
-var structure = new PrismStructureDefinition(outer, 0, 2)
-    .AddHole(hole);
-
-var options = MesherOptions.CreateBuilder()
-    .WithHoleRefinement(0.75, 1.0)       // Refine near holes
+var optionsResult = MesherOptions.CreateBuilder()
+    .WithHoleRefinement(0.75, 1.0)
     .Build();
 
-// Generate mesh with hole handling
-var mesh = new PrismMesher().Mesh(structure, options);
-```
-
-### Multiple Z-Level Constraints
-```csharp
-var structure = new PrismStructureDefinition(polygon, -5, 5)
-    .AddConstraintSegment(new Segment2D(new Vec2(0,0), new Vec2(10,0)), -2.5)
-    .AddConstraintSegment(new Segment2D(new Vec2(0,5), new Vec2(10,5)), 2.5)
-    .AddConstraintSegment(new Segment2D(new Vec2(5,0), new Vec2(5,5)), 0.0);
-
-// This creates horizontal divisions at specified Z levels
-var mesh = new PrismMesher().Mesh(structure, options);
-```
-
-### Internal Surfaces (Slabs)
-```csharp
-// Add horizontal slab at Z = -2.5 with hole
-var slabOutline = Polygon2D.FromPoints(new[]{ 
-    new Vec2(1,1), new Vec2(9,1), new Vec2(9,5), new Vec2(1,5) 
-});
-var slabHole = Polygon2D.FromPoints(new[]{ 
-    new Vec2(4,2), new Vec2(6,2), new Vec2(6,4), new Vec2(4,4) 
-});
-
-structure = structure.AddInternalSurface(slabOutline, -2.5, slabHole);
-
-// The slab creates a horizontal platform with its own hole
-var mesh = new PrismMesher().Mesh(structure, options);
-```
-
-### Quality Control and Triangle Fallback
-```csharp
-var options = MesherOptions.CreateBuilder()
-    .WithTargetEdgeLengthXY(0.5)
-    .WithMinCapQuadQuality(0.8)          // High quality threshold
-    .WithRejectedCapTriangles(true)      // Output triangles for low-quality quads
-    .Build();
-
-var mesh = new PrismMesher().Mesh(structure, options);
-
-// Check generated content
-Console.WriteLine($"Generated {mesh.Quads.Count} quads and {mesh.Triangles.Count} triangles");
-```
-
-### Auxiliary Geometry
-```csharp
-// Add points and line segments for additional detail
-structure.Geometry
-    .AddPoint(new Vec3(5, 2.5, 0))      // Point at center
-    .AddPoint(new Vec3(0, 4, 2))        // Elevated point
-    .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(20, 4, 2)))  // Horizontal beam
-    .AddSegment(new Segment3D(new Vec3(10, 0, -5), new Vec3(10, 5, 5))); // Vertical support
-
-// Auxiliary geometry affects meshing density around those features
-```
-
-### Export with Custom Settings
-```csharp
-var indexed = IndexedMesh.FromMesh(mesh, 1e-9);  // Custom epsilon for vertex merging
-
-// OBJ export with quads and triangles
-ObjExporter.Write(indexed, "output.obj");
-
-// glTF export (always triangulated)
-GltfExporter.Write(indexed, "output.gltf");
-
-// SVG export for 2D top view
-SvgExporter.Write(indexed, "output.svg");
-
-// Access mesh statistics
-Console.WriteLine($"Vertices: {indexed.Vertices.Count}");
-Console.WriteLine($"Edges: {indexed.Edges.Count}"); 
-Console.WriteLine($"Quads: {indexed.Quads.Count}");
-Console.WriteLine($"Triangles: {indexed.Triangles.Count}");
-```
-
-### Error Handling and Validation
-```csharp
-try 
+if (optionsResult.IsSuccess)
 {
-    var mesh = new PrismMesher().Mesh(structure, options);
-    
-    // Validate mesh quality
-    var adjacency = indexed.BuildAdjacency();
-    if (adjacency.NonManifoldEdges.Count > 0)
+    var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
+    // Handle result...
+}
+```
+
+### L-Shaped Structures
+
+```csharp
+// Create L-shaped footprint
+var lshape = Polygon2D.FromPoints(new[]
+{
+    new Vec2(0, 0), new Vec2(6, 0), new Vec2(6, 3),
+    new Vec2(3, 3), new Vec2(3, 6), new Vec2(0, 6)
+});
+var structure = new PrismStructureDefinition(lshape, 0, 4);
+
+var optionsResult = MesherOptions.CreateBuilder()
+    .WithHighQualityPreset()
+    .WithTargetEdgeLengthXY(0.8)
+    .Build();
+
+if (optionsResult.IsSuccess)
+{
+    var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
+    if (meshResult.IsSuccess)
     {
-        Console.WriteLine($"Warning: {adjacency.NonManifoldEdges.Count} non-manifold edges found");
+        var indexed = IndexedMesh.FromMesh(meshResult.Value);
+        ObjExporter.Write(indexed, "lshape.obj");
     }
 }
-catch (ArgumentException ex)
-{
-    Console.WriteLine($"Invalid geometry: {ex.Message}");
-}
-catch (InvalidOperationException ex)
-{
-    Console.WriteLine($"Meshing failed: {ex.Message}");
-}
 ```
 
-**📖 Full Documentation**: https://github.com/MabinogiCode/FastGeoMesh  
-**📋 API Reference**: https://github.com/MabinogiCode/FastGeoMesh/blob/main/docs/api-reference.md  
-**⚡ Performance Guide**: https://github.com/MabinogiCode/FastGeoMesh/blob/main/docs/performance-guide.md
-
-**License**: MIT
-
----
-
-## Français
-
-**Maillage rapide de quads pour volumes prismatiques à partir d'empreintes 2D et d'élévations Z.**
-
-FastGeoMesh est une bibliothèque .NET 8 haute performance pour générer des maillages à dominante quadrilatérale à partir de structures prismatiques 2.5D. Parfaite pour les applications CAO, SIG et temps réel nécessitant des performances de maillage inférieures à la milliseconde.
-
-## ⚡ Performance
-
-**Maillage sous-milliseconde** avec optimisations .NET 8 :
-- **Prisme Simple** : ~305 μs, 87 Ko
-- **Géométrie Complexe** : ~340 μs, 87 Ko  
-- **Avec Trous** : ~907 μs, 1,3 Mo
-- **Opérations Géométriques** : < 10 μs, zéro allocation
-
-*Testé sur .NET 8.0.20, X64 RyuJIT AVX2*
-
-## 🚀 Fonctionnalités
-
-- **🏗️ Mailleur de Prismes** : Génère faces latérales et chapeaux depuis empreintes 2D
-- **⚡ Async/Parallel Processing**: Interface async complète avec 2.2x d'accélération en parallèle
-- **📊 Suivi en temps réel** : Statistiques de performance et estimation de la complexité
-- **🎯 Suivi de Progression** : Suivi détaillé des opérations avec ETA
-- **📐 Chemins Rapides Intelligents** : Optimisation rectangle + tessellation générique
-- **🎯 Contrôle Qualité** : Scoring qualité des quads & seuils configurables
-- **📑 Triangles de Secours** : Triangles explicites optionnels pour quads de faible qualité
-- **⚙️ Système de Contraintes** : Segments de niveau Z & géométrie auxiliaire intégrée
-- **📤 Export Multi-Format** : OBJ (quads+triangles), glTF (triangulé), SVG (vue de dessus)
-- **🔧 Préréglages Performance** : Configurations Rapide vs Haute-Qualité
-- **🧵 Thread-Safe** : Structures immutables, mailleurs sans état
-- **🔄 100% Rétro-compatibilité** : Le code existant v1.3.2 fonctionne sans changement
-
-## 🚀 Démarrage Rapide
+### T-Shaped Structures
 
 ```csharp
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
-using FastGeoMesh.Meshing.Exporters;
-
-// Définir la géométrie
-var poly = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(20,0), new Vec2(20,5), new Vec2(0,5) 
+// Create T-shaped footprint  
+var tshape = Polygon2D.FromPoints(new[]
+{
+    new Vec2(0, 2), new Vec2(8, 2), new Vec2(8, 4),
+    new Vec2(5, 4), new Vec2(5, 6), new Vec2(3, 6),
+    new Vec2(3, 4), new Vec2(0, 4)
 });
-var structure = new PrismStructureDefinition(poly, -10, 10);
+var structure = new PrismStructureDefinition(tshape, -2, 3);
 
-// Ajouter contrainte à Z = 2.5
+// Add constraint segments for structural analysis
 structure = structure.AddConstraintSegment(
-    new Segment2D(new Vec2(0,0), new Vec2(20,0)), 2.5);
+    new Segment2D(new Vec2(0, 3), new Vec2(8, 3)), 0.5);
 
-// Configurer options avec préréglage
-var options = MesherOptions.CreateBuilder()
-    .WithFastPreset()                    // Performance ~311μs
-    .WithTargetEdgeLengthXY(0.5)
+var optionsResult = MesherOptions.CreateBuilder()
+    .WithTargetEdgeLengthXY(0.6)
     .WithTargetEdgeLengthZ(1.0)
-    .WithRejectedCapTriangles(true)      // Inclure triangles de secours
+    .WithSegmentRefinement(0.3, 0.5)
     .Build();
 
-// 🔥 NOUVEAU v1.4.0: Maillage asynchrone ultra-rapide (souvent plus rapide que le sync!)
-var mesher = new PrismMesher();
-var asyncMesher = (IAsyncMesher)mesher;
-var mesh = await asyncMesher.MeshAsync(structure, options);
-
-// 🔥 NOUVEAU v1.4.0: Rapport de progression
-var progress = new Progress<MeshingProgress>(p => 
-    Console.WriteLine($"{p.Operation}: {p.Percentage:P1}"));
-var mesh = await asyncMesher.MeshWithProgressAsync(structure, options, progress);
-
-// 🔥 NOUVEAU v1.4.0: Traitement par lots avec 2.2x d'accélération
-var structures = CreateManyStructures();
-var meshes = await asyncMesher.MeshBatchAsync(structures, options, maxDegreeOfParallelism: 4);
-
-// Approche sync traditionnelle (fonctionne toujours!)
-var syncMesh = mesher.Mesh(structure, options);
-var indexed = IndexedMesh.FromMesh(syncMesh, options.Epsilon);
-
-// Export vers formats multiples
-ObjExporter.Write(indexed, "mesh.obj");      // Quads + triangles
-GltfExporter.Write(indexed, "mesh.gltf");    // Triangulé
-SvgExporter.Write(indexed, "mesh.svg");      // Vue de dessus
-```
-
-## 🎚️ Préréglages Performance
-
-```csharp
-// Rapide : ~305μs, 87Ko - Applications temps réel
-var rapide = MesherOptions.CreateBuilder().WithFastPreset().Build();
-
-// Haute-Qualité : ~1,3ms, 17Mo - Précision CAO  
-var qualite = MesherOptions.CreateBuilder().WithHighQualityPreset().Build();
-```
-
-## 🏗️ Fonctionnalités Avancées
-
-### Création de Géométrie de Base
-```csharp
-// Rectangle à partir des points de coin
-var rect = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(10,0), new Vec2(10,5), new Vec2(0,5) 
-});
-
-// Aide-mémoire pour carré
-var square = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(5,0), new Vec2(5,5), new Vec2(0,5) 
-});
-
-// Polygone en forme de L
-var lShape = Polygon2D.FromPoints(new[]{
-    new Vec2(0,0), new Vec2(6,0), new Vec2(6,3),
-    new Vec2(3,3), new Vec2(3,6), new Vec2(0,6)
-});
-```
-
-### Structures Complexes avec Trous
-```csharp
-var outer = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(10,0), new Vec2(10,6), new Vec2(0,6) 
-});
-var hole = Polygon2D.FromPoints(new[]{ 
-    new Vec2(2,2), new Vec2(4,2), new Vec2(4,4), new Vec2(2,4) 
-});
-
-var structure = new PrismStructureDefinition(outer, 0, 2)
-    .AddHole(hole);
-
-var options = MesherOptions.CreateBuilder()
-    .WithHoleRefinement(0.75, 1.0)       // Affiner près des trous
-    .Build();
-
-// Générer le maillage avec gestion des trous
-var mesh = new PrismMesher().Mesh(structure, options);
-```
-
-### Contraintes à Plusieurs Niveaux Z
-```csharp
-var structure = new PrismStructureDefinition(polygon, -5, 5)
-    .AddConstraintSegment(new Segment2D(new Vec2(0,0), new Vec2(10,0)), -2.5)
-    .AddConstraintSegment(new Segment2D(new Vec2(0,5), new Vec2(10,5)), 2.5)
-    .AddConstraintSegment(new Segment2D(new Vec2(5,0), new Vec2(5,5)), 0.0);
-
-// Ceci crée des divisions horizontales aux niveaux Z spécifiés
-var mesh = new PrismMesher().Mesh(structure, options);
-```
-
-### Surfaces Internes (Dalles)
-```csharp
-// Ajouter une dalle horizontale à Z = -2.5 avec trou
-var slabOutline = Polygon2D.FromPoints(new[]{ 
-    new Vec2(1,1), new Vec2(9,1), new Vec2(9,5), new Vec2(1,5) 
-});
-var slabHole = Polygon2D.FromPoints(new[]{ 
-    new Vec2(4,2), new Vec2(6,2), new Vec2(6,4), new Vec2(4,4) 
-});
-
-structure = structure.AddInternalSurface(slabOutline, -2.5, slabHole);
-
-// La dalle crée une plateforme horizontale avec son propre trou
-var mesh = new PrismMesher().Mesh(structure, options);
-```
-
-### Contrôle de Qualité et Triangle de Secours
-```csharp
-var options = MesherOptions.CreateBuilder()
-    .WithTargetEdgeLengthXY(0.5)
-    .WithMinCapQuadQuality(0.8)          // Seuil de haute qualité
-    .WithRejectedCapTriangles(true)      // Sortir des triangles pour les quads de basse qualité
-    .Build();
-
-var mesh = new PrismMesher().Mesh(structure, options);
-
-// Vérifier le contenu généré
-Console.WriteLine($"Généré {mesh.Quads.Count} quads et {mesh.Triangles.Count} triangles");
-```
-
-### Géométrie Auxiliaire
-```csharp
-// Ajouter des points et des segments de ligne pour plus de détails
-structure.Geometry
-    .AddPoint(new Vec3(5, 2.5, 0))      // Point au centre
-    .AddPoint(new Vec3(0, 4, 2))        // Point en surélévation
-    .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(20, 4, 2)))  // Poutre horizontale
-    .AddSegment(new Segment3D(new Vec3(10, 0, -5), new Vec3(10, 5, 5))); // Support vertical
-
-// La géométrie auxiliaire affecte la densité de maillage autour de ces caractéristiques
-```
-
-### Exportation avec Paramètres Personnalisés
-```csharp
-var indexed = IndexedMesh.FromMesh(mesh, 1e-9);  // Epsilon personnalisé pour la fusion des sommets
-
-// Export OBJ avec quads et triangles
-ObjExporter.Write(indexed, "output.obj");
-
-// Export glTF (toujours triangulé)
-GltfExporter.Write(indexed, "output.gltf");
-
-// Export SVG pour vue 2D de dessus
-SvgExporter.Write(indexed, "output.svg");
-
-// Accéder aux statistiques du maillage
-Console.WriteLine($"Sommets: {indexed.Vertices.Count}");
-Console.WriteLine($"Arêtes: {indexed.Edges.Count}"); 
-Console.WriteLine($"Quads: {indexed.Quads.Count}");
-Console.WriteLine($"Triangles: {indexed.Triangles.Count}");
-```
-
-### Gestion des Erreurs et Validation
-```csharp
-try 
+if (optionsResult.IsSuccess)
 {
-    var mesh = new PrismMesher().Mesh(structure, options);
-    
-    // Valider la qualité du maillage
-    var adjacency = indexed.BuildAdjacency();
-    if (adjacency.NonManifoldEdges.Count > 0)
+    var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
+    if (meshResult.IsSuccess)
     {
-        Console.WriteLine($"Avertissement: {adjacency.NonManifoldEdges.Count} arêtes non-manifold détectées");
+        var indexed = IndexedMesh.FromMesh(meshResult.Value);
+        GltfExporter.Write(indexed, "tshape.gltf");
     }
 }
-catch (ArgumentException ex)
-{
-    Console.WriteLine($"Géométrie invalide: {ex.Message}");
-}
-catch (InvalidOperationException ex)
-{
-    Console.WriteLine($"Échec du maillage: {ex.Message}");
-}
 ```
+
+### Flexible TXT Export
+
+The new TXT exporter provides complete control over output format:
+
+```csharp
+// Custom format with builder pattern
+indexed.ExportTxt()
+    .WithPoints("vertex", CountPlacement.Top, indexBased: true)      // "8\nvertex 1 0.0 0.0 0.0\n..."
+    .WithEdges("edge", CountPlacement.None, indexBased: false)       // "edge 0 1\nedge 1 2\n..."
+    .WithQuads("quad", CountPlacement.Bottom, indexBased: true)      // "quad 1 0 1 2 3\n...\n4"
+    .ToFile("mesh.txt");
+
+// Count placement options:
+// - CountPlacement.Top: Count at beginning of section
+// - CountPlacement.Bottom: Count at end of section  
+// - CountPlacement.None: No count written
+```
+
+### Architecture & Code Quality Guidelines
+
+FastGeoMesh follows strict architectural principles:
+
+- **🏗️ Clean Architecture**: Clear separation between Domain, Application, and Infrastructure layers
+- **🔒 Immutable Structures**: Thread-safe by design with immutable data structures
+- **⚡ Performance-First**: Optimized for .NET 8 with aggressive inlining and SIMD operations
+- **📋 Result Pattern**: No exceptions in normal flow - predictable error handling
+- **🧪 High Test Coverage**: Comprehensive test suite with 194+ passing tests
+- **📝 XML Documentation**: Complete API documentation for all public members
+- **🎯 SOLID Principles**: Single responsibility, dependency injection, interface segregation
+
+#### Code Quality Standards:
+- All public APIs have XML documentation
+- Immutable data structures prevent side effects  
+- Result<T> pattern for error handling
+- Aggressive performance optimizations
+- Clean separation of concerns
+- Thread-safe operations throughout
+
+#### Performance Optimizations:
+- `[MethodImpl(MethodImplOptions.AggressiveInlining)]` for hot paths
+- Struct-based vectors (Vec2, Vec3) to avoid allocations
+- SIMD batch operations for geometric calculations
+- Object pooling for temporary collections
+- Span<T> and ReadOnlySpan<T> for zero-copy operations
 
 **📖 Documentation Complète** : https://github.com/MabinogiCode/FastGeoMesh  
 **📋 Référence API** : https://github.com/MabinogiCode/FastGeoMesh/blob/main/docs/api-reference-fr.md  

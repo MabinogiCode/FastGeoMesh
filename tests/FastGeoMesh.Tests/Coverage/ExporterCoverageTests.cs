@@ -1,8 +1,7 @@
-using System.IO;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
+using FastGeoMesh.Domain;
+using FastGeoMesh.Infrastructure.Exporters;
 using FastGeoMesh.Meshing.Exporters;
-using FastGeoMesh.Structures;
+
 using FluentAssertions;
 using Xunit;
 
@@ -16,10 +15,10 @@ namespace FastGeoMesh.Tests.Coverage
     {
         /// <summary>Tests ObjExporter with empty mesh.</summary>
         [Fact]
-        public void ObjExporter_WithEmptyMesh_HandlesGracefully()
+        public void ObjExporterWithEmptyMeshHandlesGracefully()
         {
             // Arrange
-            var emptyMesh = new Mesh();
+            var emptyMesh = new ImmutableMesh();
             var indexed = IndexedMesh.FromMesh(emptyMesh);
             var tempFile = Path.GetTempFileName();
 
@@ -42,10 +41,10 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests GltfExporter with empty mesh.</summary>
         [Fact]
-        public void GltfExporter_WithEmptyMesh_HandlesGracefully()
+        public void GltfExporterWithEmptyMeshHandlesGracefully()
         {
             // Arrange
-            var emptyMesh = new Mesh();
+            var emptyMesh = new ImmutableMesh();
             var indexed = IndexedMesh.FromMesh(emptyMesh);
             var tempFile = Path.GetTempFileName();
 
@@ -68,10 +67,10 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests SvgExporter with empty mesh.</summary>
         [Fact]
-        public void SvgExporter_WithEmptyMesh_HandlesGracefully()
+        public void SvgExporterWithEmptyMeshHandlesGracefully()
         {
             // Arrange
-            var emptyMesh = new Mesh();
+            var emptyMesh = new ImmutableMesh();
             var indexed = IndexedMesh.FromMesh(emptyMesh);
             var tempFile = Path.GetTempFileName();
 
@@ -94,12 +93,12 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests exporters with mesh containing only points.</summary>
         [Fact]
-        public void Exporters_WithPointsOnlyMesh_HandleGracefully()
+        public void ExportersWithPointsOnlyMeshHandleGracefully()
         {
             // Arrange
-            var mesh = new Mesh();
-            mesh.AddPoint(new Vec3(1, 2, 3));
-            mesh.AddPoint(new Vec3(4, 5, 6));
+            var mesh = new ImmutableMesh();
+            mesh = mesh.AddPoint(new Vec3(1, 2, 3)); // Fix: capture returned mesh
+            mesh = mesh.AddPoint(new Vec3(4, 5, 6)); // Fix: capture returned mesh
             var indexed = IndexedMesh.FromMesh(mesh);
 
             // Act & Assert - All should handle points-only mesh
@@ -136,14 +135,14 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests IndexedMesh with extreme epsilon values.</summary>
         [Fact]
-        public void IndexedMesh_WithExtremeEpsilon_HandlesCorrectly()
+        public void IndexedMeshWithExtremeEpsilonHandlesCorrectly()
         {
             // Arrange
-            var mesh = new Mesh();
-            mesh.AddQuad(new Quad(
+            var mesh = new ImmutableMesh();
+            mesh = mesh.AddQuad(new Quad( // Fix: capture returned mesh
                 new Vec3(0, 0, 0), new Vec3(1, 0, 0),
                 new Vec3(1, 1, 0), new Vec3(0, 1, 0)));
-            mesh.AddQuad(new Quad(
+            mesh = mesh.AddQuad(new Quad( // Fix: capture returned mesh
                 new Vec3(0.000001, 0.000001, 0), new Vec3(1.000001, 0.000001, 0),
                 new Vec3(1.000001, 1.000001, 0), new Vec3(0.000001, 1.000001, 0)));
 
@@ -157,14 +156,14 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests IndexedMesh with tiny epsilon.</summary>
         [Fact]
-        public void IndexedMesh_WithTinyEpsilon_PreservesVertices()
+        public void IndexedMeshWithTinyEpsilonPreservesVertices()
         {
             // Arrange
-            var mesh = new Mesh();
-            mesh.AddQuad(new Quad(
+            var mesh = new ImmutableMesh();
+            mesh = mesh.AddQuad(new Quad( // Fix: capture returned mesh
                 new Vec3(0, 0, 0), new Vec3(1, 0, 0),
                 new Vec3(1, 1, 0), new Vec3(0, 1, 0)));
-            mesh.AddQuad(new Quad(
+            mesh = mesh.AddQuad(new Quad( // Fix: capture returned mesh
                 new Vec3(0.0001, 0.0001, 0), new Vec3(1.0001, 0.0001, 0),
                 new Vec3(1.0001, 1.0001, 0), new Vec3(0.0001, 1.0001, 0)));
 
@@ -178,14 +177,14 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests Mesh.AddInternalSegment functionality.</summary>
         [Fact]
-        public void Mesh_AddInternalSegment_AddsCorrectly()
+        public void MeshAddInternalSegmentAddsCorrectly()
         {
             // Arrange
-            var mesh = new Mesh();
+            var mesh = new ImmutableMesh();
             var segment = new Segment3D(new Vec3(0, 0, 0), new Vec3(10, 10, 10));
 
             // Act
-            mesh.AddInternalSegment(segment);
+            mesh = mesh.AddInternalSegment(segment);
 
             // Assert
             mesh.InternalSegments.Should().HaveCount(1);
@@ -194,18 +193,18 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests Mesh quad and triangle count properties.</summary>
         [Fact]
-        public void Mesh_CountProperties_ReflectActualCounts()
+        public void MeshCountPropertiesReflectActualCounts()
         {
             // Arrange
-            var mesh = new Mesh();
+            var mesh = new ImmutableMesh();
 
             // Act & Assert - Initially empty
             mesh.QuadCount.Should().Be(0);
             mesh.TriangleCount.Should().Be(0);
 
             // Add quads and triangles
-            mesh.AddQuad(new Quad(new Vec3(0, 0, 0), new Vec3(1, 0, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 0)));
-            mesh.AddTriangle(new Triangle(new Vec3(2, 0, 0), new Vec3(3, 0, 0), new Vec3(2.5, 1, 0)));
+            mesh = mesh.AddQuad(new Quad(new Vec3(0, 0, 0), new Vec3(1, 0, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 0)));
+            mesh = mesh.AddTriangle(new Triangle(new Vec3(2, 0, 0), new Vec3(3, 0, 0), new Vec3(2.5, 1, 0)));
 
             mesh.QuadCount.Should().Be(1);
             mesh.TriangleCount.Should().Be(1);
@@ -213,13 +212,13 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests MesherOptions builder validation paths.</summary>
         [Fact]
-        public void MesherOptionsBuilder_ValidationPaths_WorkCorrectly()
+        public void MesherOptionsBuilderValidationPathsWorkCorrectly()
         {
             // Act & Assert - Various builder configurations should work
-            var fastPreset = MesherOptions.CreateBuilder().WithFastPreset().Build();
+            var fastPreset = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
             fastPreset.Should().NotBeNull();
 
-            var highQualityPreset = MesherOptions.CreateBuilder().WithHighQualityPreset().Build();
+            var highQualityPreset = MesherOptions.CreateBuilder().WithHighQualityPreset().Build().UnwrapForTests();
             highQualityPreset.Should().NotBeNull();
 
             var customOptions = MesherOptions.CreateBuilder()
@@ -227,31 +226,31 @@ namespace FastGeoMesh.Tests.Coverage
                 .WithTargetEdgeLengthZ(2.0)
                 .WithMinCapQuadQuality(0.5)
                 .WithRejectedCapTriangles(true)
-                .Build();
+                .Build().UnwrapForTests();
 
-            customOptions.TargetEdgeLengthXY.Should().Be(1.0);
-            customOptions.TargetEdgeLengthZ.Should().Be(2.0);
+            customOptions.TargetEdgeLengthXY.Value.Should().Be(1.0); // Fix: use .Value to access EdgeLength value
+            customOptions.TargetEdgeLengthZ.Value.Should().Be(2.0);  // Fix: use .Value to access EdgeLength value
             customOptions.MinCapQuadQuality.Should().Be(0.5);
             customOptions.OutputRejectedCapTriangles.Should().BeTrue();
 
             // Test direct property assignment
             var directOptions = new MesherOptions
             {
-                TargetEdgeLengthXY = 1.5,
-                TargetEdgeLengthZ = 2.5,
+                TargetEdgeLengthXY = EdgeLength.From(1.5),
+                TargetEdgeLengthZ = EdgeLength.From(2.5),
                 GenerateBottomCap = true,
                 GenerateTopCap = false
             };
 
-            directOptions.TargetEdgeLengthXY.Should().Be(1.5);
-            directOptions.TargetEdgeLengthZ.Should().Be(2.5);
+            directOptions.TargetEdgeLengthXY.Value.Should().Be(1.5); // Fix: use .Value to access EdgeLength value
+            directOptions.TargetEdgeLengthZ.Value.Should().Be(2.5);  // Fix: use .Value to access EdgeLength value
             directOptions.GenerateBottomCap.Should().BeTrue();
             directOptions.GenerateTopCap.Should().BeFalse();
         }
 
         /// <summary>Tests Polygon2D with collinear points.</summary>
         [Fact]
-        public void Polygon2D_WithCollinearPoints_HandlesCorrectly()
+        public void Polygon2DWithCollinearPointsHandlesCorrectly()
         {
             // Arrange - Points that are collinear
             var points = new[]
@@ -273,7 +272,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests Vec2 and Vec3 math operations.</summary>
         [Fact]
-        public void VectorTypes_MathOperations_WorkCorrectly()
+        public void VectorTypesMathOperationsWorkCorrectly()
         {
             // Arrange
             var v2a = new Vec2(1, 2);
@@ -294,7 +293,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests PrismStructureDefinition method chaining.</summary>
         [Fact]
-        public void PrismStructureDefinition_MethodChaining_WorksCorrectly()
+        public void PrismStructureDefinitionMethodChainingWorksCorrectly()
         {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[]

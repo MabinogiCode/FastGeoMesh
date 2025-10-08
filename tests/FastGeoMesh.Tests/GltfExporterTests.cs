@@ -1,8 +1,7 @@
 using System.IO;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Meshing.Exporters;
-using FastGeoMesh.Structures;
 using Xunit;
 
 namespace FastGeoMesh.Tests
@@ -31,7 +30,7 @@ namespace FastGeoMesh.Tests
                 TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY,
                 TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ
             };
-            var mesh = new PrismMesher().Mesh(st, opt);
+            var mesh = new PrismMesher().Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
 
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.gltf");

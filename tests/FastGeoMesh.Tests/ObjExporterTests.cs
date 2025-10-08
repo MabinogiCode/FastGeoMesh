@@ -1,8 +1,6 @@
-using System.IO; // Needed for file operations
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Meshing.Exporters;
-using FastGeoMesh.Structures;
+using FastGeoMesh.Application; // Needed for file operations
+using FastGeoMesh.Domain;
+using FastGeoMesh.Infrastructure.Exporters;
 using Xunit;
 
 namespace FastGeoMesh.Tests
@@ -32,7 +30,7 @@ namespace FastGeoMesh.Tests
                 GenerateBottomCap = true,
                 GenerateTopCap = true
             };
-            var mesh = new PrismMesher().Mesh(st, opt);
+            var mesh = new PrismMesher().Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.obj");
             ObjExporter.Write(im, path);

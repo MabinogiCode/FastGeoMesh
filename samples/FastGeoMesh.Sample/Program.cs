@@ -1,173 +1,242 @@
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Meshing.Exporters;
-using FastGeoMesh.Sample;
-using FastGeoMesh.Structures;
-using FastGeoMesh.Utils;
+using FastGeoMesh.Application;
+using FastGeoMesh.Infrastructure.Exporters;
 
-/// <summary>
-/// Sample application demonstrating FastGeoMesh library usage with various export formats.
-/// </summary>
-sealed class Program
+namespace FastGeoMesh.Sample
 {
-    /// <summary>
-    /// Main entry point for the sample application.
-    /// Demonstrates mesh generation and export capabilities including new async features.
-    /// </summary>
-    /// <param name="args">Command line arguments for controlling export formats and demos.</param>
-    static async Task Main(string[] args)
+    class Program
     {
-        Console.WriteLine("FastGeoMesh v1.4.0-preview Sample Application");
-        Console.WriteLine("============================================\n");
-
-        // Check for specific demo flags first
-        if (args.Length > 0)
+        static void Main(string[] args)
         {
-            var firstArg = args[0].ToLowerInvariant();
+            Console.WriteLine("🚀 FastGeoMesh v2.0 - Clean Architecture Sample");
+            Console.WriteLine("===========================================");
 
-            switch (firstArg)
+            try
             {
-                case "--async":
-                    Console.WriteLine("Running NEW Async Meshing Demonstrations:\n");
-                    await RunAsyncDemonstrations();
-                    return;
+                SimpleRectangleExample();
+                ComplexPolygonExample();
+                HoleExample();
+                AsyncExample().Wait();
 
-                case "--performance":
-                    Console.WriteLine("Running PERFORMANCE Optimization Demonstrations:\n");
-                    await PerformanceOptimizationExample.DemonstratePerformanceMonitoring();
-                    await PerformanceOptimizationExample.DemonstrateOptimizedBatchProcessing();
-                    await PerformanceOptimizationExample.DemonstrateAsyncOptimizations();
-                    return;
+                Console.WriteLine("\n✅ All examples completed successfully!");
+                Console.WriteLine("📂 Output files: simple_rectangle.obj, l_shape.obj, polygon_with_hole.obj, async_mesh.obj");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error: {ex.Message}");
+                Console.WriteLine($"🔍 Stack: {ex.StackTrace}");
+            }
 
-                case "--benchmarks":
-                    Console.WriteLine("Running COMPREHENSIVE Performance Benchmarks:\n");
-                    await PerformanceBenchmarks.RunBenchmarkSuite();
-                    return;
+            Console.WriteLine("\nPress any key to exit...");
+            Console.ReadKey();
+        }
+
+        static void SimpleRectangleExample()
+        {
+            Console.WriteLine("\n🔵 Domain Layer - Simple Rectangle");
+            Console.WriteLine("----------------------------------");
+
+            // 1. Domain: Create geometry using domain entities
+            var polygon = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5)
+            });
+            var structure = new PrismStructureDefinition(polygon, -2, 3);
+
+            // 2. Domain: Configure meshing options with builder pattern
+            var optionsResult = MesherOptions.CreateBuilder()
+                .WithFastPreset()
+                .WithTargetEdgeLengthXY(1.0)
+                .WithTargetEdgeLengthZ(1.0)
+                .Build();
+
+            if (optionsResult.IsFailure)
+            {
+                Console.WriteLine($"❌ Options validation failed: {optionsResult.Error.Description}");
+                return;
+            }
+
+            // 3. Application: Generate mesh with clean error handling
+            var mesher = new PrismMesher();
+            var meshResult = mesher.Mesh(structure, optionsResult.Value);
+
+            if (meshResult.IsFailure)
+            {
+                Console.WriteLine($"❌ Meshing failed: {meshResult.Error.Description}");
+                return;
+            }
+
+            var mesh = meshResult.Value;
+            Console.WriteLine($"✅ Generated mesh: {mesh.QuadCount} quads, {mesh.TriangleCount} triangles");
+
+            // 4. Infrastructure: Export using infrastructure services
+            var indexed = IndexedMesh.FromMesh(mesh);
+            ObjExporter.Write(indexed, "simple_rectangle.obj");
+            Console.WriteLine("📄 Exported to simple_rectangle.obj");
+        }
+
+        static void ComplexPolygonExample()
+        {
+            Console.WriteLine("\n🟡 Application Layer - Complex L-Shape");
+            Console.WriteLine("--------------------------------------");
+
+            // Create L-shaped polygon with domain types
+            var polygon = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(0, 0), new Vec2(6, 0), new Vec2(6, 3),
+                new Vec2(3, 3), new Vec2(3, 6), new Vec2(0, 6)
+            });
+            var structure = new PrismStructureDefinition(polygon, 0, 4);
+
+            // Use high quality preset for better results
+            var optionsResult = MesherOptions.CreateBuilder()
+                .WithHighQualityPreset()
+                .WithTargetEdgeLengthXY(0.5)
+                .WithTargetEdgeLengthZ(0.8)
+                .Build();
+
+            if (optionsResult.IsFailure)
+            {
+                Console.WriteLine($"❌ Options validation failed: {optionsResult.Error.Description}");
+                return;
+            }
+
+            // Application layer handles complex meshing
+            var mesher = new PrismMesher();
+            var meshResult = mesher.Mesh(structure, optionsResult.Value);
+
+            if (meshResult.IsSuccess)
+            {
+                var mesh = meshResult.Value;
+                Console.WriteLine($"✅ L-shaped mesh: {mesh.QuadCount} quads, {mesh.TriangleCount} triangles");
+
+                var indexed = IndexedMesh.FromMesh(mesh);
+                ObjExporter.Write(indexed, "l_shape.obj");
+                Console.WriteLine("📄 Exported L-shape to l_shape.obj");
+            }
+            else
+            {
+                Console.WriteLine($"❌ Failed to generate L-shaped mesh: {meshResult.Error.Description}");
             }
         }
 
-        // Default to legacy mode if no specific flag or --legacy
-        Console.WriteLine("Running LEGACY Synchronous Demonstrations:\n");
-        RunLegacyDemonstrations(args);
-
-        Console.WriteLine("Sample application completed successfully!");
-        Console.WriteLine("\nTry running with different flags:");
-        Console.WriteLine("  --async        Run async meshing demonstrations");
-        Console.WriteLine("  --legacy       Run legacy synchronous demonstrations");
-        Console.WriteLine("  --obj          Export only OBJ format (legacy mode)");
-        Console.WriteLine("  --gltf         Export only glTF format (legacy mode)");
-        Console.WriteLine("  --svg          Export only SVG format (legacy mode)");
-        Console.WriteLine("  --performance  Run performance optimization demonstrations");
-        Console.WriteLine("  --benchmarks   Run comprehensive performance benchmarks");
-        Console.WriteLine();
-    }
-
-    /// <summary>
-    /// Demonstrates the new asynchronous meshing capabilities of v1.4.0.
-    /// </summary>
-    private static async Task RunAsyncDemonstrations()
-    {
-        try
+        static void HoleExample()
         {
-            // Basic async meshing
-            await AsyncMeshingExample.DemonstrateBasicAsyncMeshing();
+            Console.WriteLine("\n🟢 Infrastructure Layer - Polygon with Hole");
+            Console.WriteLine("-------------------------------------------");
 
-            // Batch processing
-            await AsyncMeshingExample.DemonstrateBatchProcessing();
+            // Create outer polygon and hole using domain primitives
+            var outerPolygon = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(0, 0), new Vec2(8, 0), new Vec2(8, 6), new Vec2(0, 6)
+            });
 
-            // Complexity estimation
-            await AsyncMeshingExample.DemonstrateComplexityEstimation();
+            var holePolygon = Polygon2D.FromPoints(new[]
+            {
+                new Vec2(2, 2), new Vec2(6, 2), new Vec2(6, 4), new Vec2(2, 4)
+            });
 
-            // Cancellation demo
-            await AsyncMeshingExample.DemonstrateCancellation();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error in async demonstrations: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
-        }
-    }
+            // Domain: Build complex structure with hole
+            var structure = new PrismStructureDefinition(outerPolygon, -1, 2)
+                .AddHole(holePolygon);
 
-    /// <summary>
-    /// Runs the original synchronous demonstrations for compatibility.
-    /// </summary>
-    private static void RunLegacyDemonstrations(string[] args)
-    {
-        // Test our PointInPolygon fix
-        TestPointInPolygon();
+            // Configure hole refinement for better quality near holes
+            var optionsResult = MesherOptions.CreateBuilder()
+                .WithFastPreset()
+                .WithTargetEdgeLengthXY(0.4)
+                .WithHoleRefinement(0.2, 1.0) // Finer mesh near holes
+                .Build();
 
-        bool exportObj = args.Contains("--obj", StringComparer.OrdinalIgnoreCase);
-        bool exportGltf = args.Contains("--gltf", StringComparer.OrdinalIgnoreCase);
-        bool exportSvg = args.Contains("--svg", StringComparer.OrdinalIgnoreCase);
-        bool exportAll = !exportObj && !exportGltf && !exportSvg;
+            if (optionsResult.IsFailure)
+            {
+                Console.WriteLine($"❌ Options validation failed: {optionsResult.Error.Description}");
+                return;
+            }
 
-        var poly = Polygon2D.FromPoints(new[] {
-            new Vec2(0, 0), new Vec2(20.0, 0), new Vec2(20.0, 5.0), new Vec2(0, 5.0)
-        });
-        var structure = new PrismStructureDefinition(poly, -10.0, 10.0);
-        structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(20.0, 0)), 2.5);
-        structure.Geometry
-            .AddPoint(new Vec3(0, 4, 2))
-            .AddPoint(new Vec3(20.0, 4, 4))
-            .AddSegment(new Segment3D(new Vec3(0, 4, 2), new Vec3(20.0, 4, 2)));
-        var options = new MesherOptions
-        {
-            TargetEdgeLengthXY = 0.5,
-            TargetEdgeLengthZ = 1.0
-        };
-        var mesh = new PrismMesher().Mesh(structure, options);
-        var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
-        Console.WriteLine($"Legacy Demo - Indexed: V={indexed.Vertices.Count}, E={indexed.Edges.Count}, Q={indexed.Quads.Count}");
+            var mesher = new PrismMesher();
+            var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
-        if (exportAll || exportObj)
-        {
-            ObjExporter.Write(indexed, "sample_mesh.obj");
-            Console.WriteLine("Exported sample_mesh.obj");
-        }
-        if (exportAll || exportGltf)
-        {
-            GltfExporter.Write(indexed, "sample_mesh.gltf");
-            Console.WriteLine("Exported sample_mesh.gltf");
-        }
-        if (exportAll || exportSvg)
-        {
-            SvgExporter.Write(indexed, "sample_mesh.svg");
-            Console.WriteLine("Exported sample_mesh.svg");
+            if (meshResult.IsSuccess)
+            {
+                var mesh = meshResult.Value;
+                Console.WriteLine($"✅ Polygon with hole: {mesh.QuadCount} quads, {mesh.TriangleCount} triangles");
+
+                // Infrastructure: High-performance export
+                var indexed = IndexedMesh.FromMesh(mesh);
+                ObjExporter.Write(indexed, "polygon_with_hole.obj");
+                Console.WriteLine("📄 Exported polygon with hole to polygon_with_hole.obj");
+            }
+            else
+            {
+                Console.WriteLine($"❌ Failed to generate mesh with hole: {meshResult.Error.Description}");
+            }
         }
 
-        Console.WriteLine();
-    }
-
-    /// <summary>
-    /// Tests the PointInPolygon functionality to verify the fix is working correctly.
-    /// </summary>
-    static void TestPointInPolygon()
-    {
-        Console.WriteLine("=== Testing PointInPolygon Fix ===");
-
-        var square = new Vec2[]
+        static async Task AsyncExample()
         {
-            new(0, 0), new(10.0, 0), new(10.0, 10.0), new(0, 10.0)
-        };
+            Console.WriteLine("\n⚡ Async Performance - Batch Processing");
+            Console.WriteLine("--------------------------------------");
 
-        // Test center point (5,5) - should be TRUE
-        bool centerInside = GeometryHelper.PointInPolygon(square, 5.0, 5.0);
-        Console.WriteLine($"Point (5,5) inside square: {centerInside} {(centerInside ? "✅" : "❌")}");
+            // Create multiple structures for batch processing
+            var structures = new[]
+            {
+                new PrismStructureDefinition(
+                    Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(2, 0), new Vec2(2, 2), new Vec2(0, 2) }),
+                    0, 1),
+                new PrismStructureDefinition(
+                    Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(3, 0), new Vec2(3, 3), new Vec2(0, 3) }),
+                    0, 1),
+                new PrismStructureDefinition(
+                    Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 4), new Vec2(0, 4) }),
+                    0, 1)
+            };
 
-        // Test points on edges - should be TRUE
-        bool cornerInside = GeometryHelper.PointInPolygon(square, 0.0, 0.0);
-        Console.WriteLine($"Point (0,0) on corner: {cornerInside} {(cornerInside ? "✅" : "❌")}");
+            var optionsResult = MesherOptions.CreateBuilder()
+                .WithFastPreset()
+                .WithTargetEdgeLengthXY(0.5)
+                .Build();
 
-        bool edgeInside = GeometryHelper.PointInPolygon(square, 5.0, 0.0);
-        Console.WriteLine($"Point (5,0) on edge: {edgeInside} {(edgeInside ? "✅" : "❌")}");
+            if (optionsResult.IsFailure)
+            {
+                Console.WriteLine($"❌ Options validation failed: {optionsResult.Error.Description}");
+                return;
+            }
 
-        // Test points outside - should be FALSE
-        bool outsideLeft = GeometryHelper.PointInPolygon(square, -1.0, 5.0);
-        Console.WriteLine($"Point (-1,5) outside left: {outsideLeft} {(!outsideLeft ? "✅" : "❌")}");
+            var mesher = new PrismMesher();
+            var asyncMesher = (IAsyncMesher)mesher;
 
-        bool outsideRight = GeometryHelper.PointInPolygon(square, 11.0, 5.0);
-        Console.WriteLine($"Point (11,5) outside right: {outsideRight} {(!outsideRight ? "✅" : "❌")}");
+            // Demonstrate async batch processing with progress
+            var progress = new Progress<MeshingProgress>(p =>
+                Console.WriteLine($"  📊 {p.Operation}: {p.Percentage:P1}"));
 
-        Console.WriteLine("=== Point-in-Polygon Test Complete ===\n");
+            Console.WriteLine("🔄 Processing 3 structures in parallel...");
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            var batchResult = await asyncMesher.MeshBatchAsync(
+                structures,
+                optionsResult.Value,
+                maxDegreeOfParallelism: 4,
+                progress: progress);
+
+            stopwatch.Stop();
+
+            if (batchResult.IsSuccess)
+            {
+                var meshes = batchResult.Value;
+                Console.WriteLine($"✅ Batch processing completed in {stopwatch.ElapsedMilliseconds}ms");
+                Console.WriteLine($"📈 Generated {meshes.Count} meshes with total {meshes.Sum(m => m.QuadCount)} quads");
+
+                // Export the first mesh as example
+                if (meshes.Count > 0)
+                {
+                    var indexed = IndexedMesh.FromMesh(meshes[0]);
+                    ObjExporter.Write(indexed, "async_mesh.obj");
+                    Console.WriteLine("📄 Exported async result to async_mesh.obj");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"❌ Batch processing failed: {batchResult.Error.Description}");
+            }
+        }
     }
 }

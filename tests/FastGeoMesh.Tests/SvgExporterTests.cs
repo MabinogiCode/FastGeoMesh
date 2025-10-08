@@ -1,10 +1,6 @@
-using System;
-using System.IO;
-using System.Linq;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Meshing.Exporters;
-using FastGeoMesh.Structures;
 using FluentAssertions;
 using Xunit;
 
@@ -19,8 +15,11 @@ namespace FastGeoMesh.Tests
         {
             var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 2), new Vec2(0, 2) });
             var st = new PrismStructureDefinition(poly, 0, 1);
-            var opt = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true };
-            var mesh = new PrismMesher().Mesh(st, opt);
+            var opt = MesherOptions.CreateBuilder()
+                .WithTargetEdgeLengthXY(1.0)
+                .WithTargetEdgeLengthZ(0.5)
+                .Build().UnwrapForTests();
+            var mesh = new PrismMesher().Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
             string path = Path.Combine(Path.GetTempPath(), $"fgm_test_{Guid.NewGuid():N}.svg");
             SvgExporter.Write(im, path);
@@ -39,8 +38,12 @@ namespace FastGeoMesh.Tests
             var hole = Polygon2D.FromPoints(new[] { new Vec2(2, 2), new Vec2(4, 2), new Vec2(4, 4), new Vec2(2, 4) });
             var st = new PrismStructureDefinition(outer, 0, 2).AddHole(hole);
             _ = st.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(10, 0)), 1.0);
-            var opt = new MesherOptions { TargetEdgeLengthXY = 1.5, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true, HoleRefineBand = 1.0, TargetEdgeLengthXYNearHoles = 0.75 };
-            var mesh = new PrismMesher().Mesh(st, opt);
+            var opt = MesherOptions.CreateBuilder()
+                .WithTargetEdgeLengthXY(1.5)
+                .WithTargetEdgeLengthZ(1.0)
+                .WithHoleRefinement(1.0, 0.75)
+                .Build().UnwrapForTests();
+            var mesh = new PrismMesher().Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
             string path = Path.Combine(Path.GetTempPath(), $"fgm_test_hole_{Guid.NewGuid():N}.svg");
             SvgExporter.Write(im, path);
@@ -55,8 +58,8 @@ namespace FastGeoMesh.Tests
         [Fact]
         public void SvgExporterWorksWithoutEdgesProducesEmptyLinesIfNoEdges()
         {
-            var mesh = new Mesh();
-            mesh.AddPoint(new Vec3(0, 0, 0));
+            var mesh = ImmutableMesh.Empty;
+            mesh = mesh.AddPoint(new Vec3(0, 0, 0));
             var im = IndexedMesh.FromMesh(mesh);
             string path = Path.Combine(Path.GetTempPath(), $"fgm_test_empty_{Guid.NewGuid():N}.svg");
             SvgExporter.Write(im, path);

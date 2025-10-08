@@ -1,6 +1,5 @@
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
@@ -47,13 +46,13 @@ namespace FastGeoMesh.Tests
                 .AddInternalSurface(slabOutline, -2.5, slabHole);
             var options = new MesherOptions
             {
-                TargetEdgeLengthXY = 0.5,
-                TargetEdgeLengthZ = 0.5,
+                TargetEdgeLengthXY = EdgeLength.From(0.5),
+                TargetEdgeLengthZ = EdgeLength.From(0.5),
                 GenerateBottomCap = true,
                 GenerateTopCap = true,
                 MinCapQuadQuality = 0.1
             };
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             mesh.Quads.Should().NotBeEmpty();
             var bottomQuads = mesh.Quads.Where(q => IsQuadAtZ(q, -5)).ToList();
             bottomQuads.Should().NotBeEmpty();
@@ -99,13 +98,13 @@ namespace FastGeoMesh.Tests
                 .AddInternalSurface(slab, -1.5);
             var options = new MesherOptions
             {
-                TargetEdgeLengthXY = 1.0,
-                TargetEdgeLengthZ = 1.0,
+                TargetEdgeLengthXY = EdgeLength.From(1.0),
+                TargetEdgeLengthZ = EdgeLength.From(1.0),
                 GenerateBottomCap = true,
                 GenerateTopCap = true,
-                MinCapQuadQuality = 0.0
+                MinCapQuadQuality = 0.0  // Fix: double instead of EdgeLength
             };
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var sideQuads = mesh.Quads.Where(q => !IsCapQuad(q)).ToList();
             sideQuads.Should().NotBeEmpty();
             var distinctZLevelsInSides = sideQuads
@@ -160,13 +159,13 @@ namespace FastGeoMesh.Tests
                 .AddInternalSurface(lowerSlab, -3, lowerHole);
             var options = new MesherOptions
             {
-                TargetEdgeLengthXY = 0.8,
-                TargetEdgeLengthZ = 0.5,
+                TargetEdgeLengthXY = EdgeLength.From(0.8),
+                TargetEdgeLengthZ = EdgeLength.From(0.5),
                 GenerateBottomCap = true,
                 GenerateTopCap = true,
-                MinCapQuadQuality = 0.1
+                MinCapQuadQuality = 0.1  // Fix: double instead of EdgeLength
             };
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var upperSlabQuads = mesh.Quads.Where(q => IsQuadAtZ(q, -1)).ToList();
             var lowerSlabQuads = mesh.Quads.Where(q => IsQuadAtZ(q, -3)).ToList();
             upperSlabQuads.Should().NotBeEmpty();

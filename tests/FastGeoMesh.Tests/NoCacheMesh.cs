@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
-using FastGeoMesh.Meshing;
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
+
 
 namespace FastGeoMesh.Tests
 {

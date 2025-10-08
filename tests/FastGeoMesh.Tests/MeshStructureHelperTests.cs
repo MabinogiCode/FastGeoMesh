@@ -1,9 +1,4 @@
-#pragma warning disable IDE0005, CS1591
-using System;
-using System.Linq;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Utils;
 using FluentAssertions;
 using Xunit;
@@ -13,13 +8,17 @@ namespace FastGeoMesh.Tests
     /// <summary>Tests for MeshStructureHelper functions.</summary>
     public sealed class MeshStructureHelperTests
     {
+        /// <summary>
+        /// Tests that BuildZLevels creates the correct number of Z levels based on target edge length.
+        /// Validates vertical discretization logic for prism structures.
+        /// </summary>
         [Fact]
         public void BuildZLevelsCreatesCorrectNumberOfLevels()
         {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(1, 1), new Vec2(0, 1) });
             var structure = new PrismStructureDefinition(polygon, 0, 10);
-            var options = new MesherOptions { TargetEdgeLengthZ = 2.0 };
+            var options = new MesherOptions { TargetEdgeLengthZ = EdgeLength.From(2.0) };
 
             // Act
             var levels = MeshStructureHelper.BuildZLevels(0, 10, options, structure);
@@ -32,6 +31,10 @@ namespace FastGeoMesh.Tests
             levels.Should().BeInAscendingOrder("Levels should be sorted");
         }
 
+        /// <summary>
+        /// Tests that BuildZLevels properly includes constraint segment levels in the Z discretization.
+        /// Validates integration of constraint geometry into vertical level generation.
+        /// </summary>
         [Fact]
         public void BuildZLevelsIncludesConstraintSegmentLevels()
         {
@@ -41,7 +44,7 @@ namespace FastGeoMesh.Tests
             // FIXED: AddConstraintSegment returns new immutable instance - must reassign
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(1, 0)), 3.5);
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0, 1), new Vec2(1, 1)), 7.2);
-            var options = new MesherOptions { TargetEdgeLengthZ = 5.0 };
+            var options = new MesherOptions { TargetEdgeLengthZ = EdgeLength.From(5.0) };
 
             // Act
             var levels = MeshStructureHelper.BuildZLevels(0, 10, options, structure);
@@ -51,6 +54,10 @@ namespace FastGeoMesh.Tests
             levels.Should().Contain(7.2, "Should include second constraint level");
         }
 
+        /// <summary>
+        /// Tests that BuildZLevels properly includes geometry points in the Z discretization.
+        /// Validates integration of auxiliary geometry points into vertical level generation.
+        /// </summary>
         [Fact]
         public void BuildZLevelsIncludesGeometryPoints()
         {
@@ -59,7 +66,7 @@ namespace FastGeoMesh.Tests
             var structure = new PrismStructureDefinition(polygon, 0, 10);
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 2.5));
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 8.1));
-            var options = new MesherOptions { TargetEdgeLengthZ = 5.0 };
+            var options = new MesherOptions { TargetEdgeLengthZ = EdgeLength.From(5.0) };
 
             // Act
             var levels = MeshStructureHelper.BuildZLevels(0, 10, options, structure);
@@ -69,6 +76,10 @@ namespace FastGeoMesh.Tests
             levels.Should().Contain(8.1, "Should include second geometry point Z level");
         }
 
+        /// <summary>
+        /// Tests that IsNearAnyHole correctly detects proximity to hole boundaries.
+        /// Validates spatial proximity detection for mesh refinement near hole edges.
+        /// </summary>
         [Fact]
         public void IsNearAnyHoleDetectsProximityCorrectly()
         {
@@ -83,6 +94,10 @@ namespace FastGeoMesh.Tests
             MeshStructureHelper.IsNearAnyHole(structure, 1, 1, 0.5).Should().BeFalse("Point far from hole");
         }
 
+        /// <summary>
+        /// Tests that IsNearAnySegment correctly detects proximity to internal geometry segments.
+        /// Validates spatial proximity detection for mesh refinement near constraint segments.
+        /// </summary>
         [Fact]
         public void IsNearAnySegmentDetectsProximityCorrectly()
         {
@@ -97,6 +112,10 @@ namespace FastGeoMesh.Tests
             MeshStructureHelper.IsNearAnySegment(structure, 5, 8, 1.0).Should().BeFalse("Point far from segment");
         }
 
+        /// <summary>
+        /// Tests that IsInsideAnyHole with spatial indices works correctly for optimized hole containment queries.
+        /// Validates performance-optimized spatial indexing for hole containment testing.
+        /// </summary>
         [Fact]
         public void IsInsideAnyHoleWithSpatialIndicesWorks()
         {
@@ -117,6 +136,10 @@ namespace FastGeoMesh.Tests
             MeshStructureHelper.IsInsideAnyHole(holeIndices, 5, 5).Should().BeFalse("Point between holes");
         }
 
+        /// <summary>
+        /// Tests that IsInsideAnyHole with structure works correctly for basic hole containment queries.
+        /// Validates basic hole containment testing without spatial optimization.
+        /// </summary>
         [Fact]
         public void IsInsideAnyHoleWithStructureWorks()
         {
@@ -131,6 +154,10 @@ namespace FastGeoMesh.Tests
             MeshStructureHelper.IsInsideAnyHole(structure, 4, 4).Should().BeTrue("Point on hole corner");
         }
 
+        /// <summary>
+        /// Tests that BuildZLevels correctly excludes points outside the specified Z range.
+        /// Validates filtering logic to ensure only relevant Z levels are included in mesh generation.
+        /// </summary>
         [Fact]
         public void BuildZLevelsExcludesPointsOutsideRange()
         {
@@ -143,7 +170,7 @@ namespace FastGeoMesh.Tests
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 18));  // Above range
             structure.Geometry.AddPoint(new Vec3(0.5, 0.5, 10));  // Inside range
 
-            var options = new MesherOptions { TargetEdgeLengthZ = 5.0, Epsilon = 0.1 };
+            var options = new MesherOptions { TargetEdgeLengthZ = EdgeLength.From(5.0), Epsilon = Tolerance.From(1e-6) };
 
             // Act
             var levels = MeshStructureHelper.BuildZLevels(5, 15, options, structure);
