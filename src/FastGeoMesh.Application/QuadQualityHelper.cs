@@ -4,7 +4,7 @@ using System.Runtime.Intrinsics.X86;
 using FastGeoMesh.Domain;
 using LibTessDotNet;
 
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Application
 {
     /// <summary>Helper class for quad quality scoring and tessellation operations with SIMD optimizations.</summary>
     public static class QuadQualityHelper
@@ -167,13 +167,13 @@ namespace FastGeoMesh.Utils
             var vd = new Vec2(vertices[unique1].Position.X, vertices[unique1].Position.Y);
 
             var quad = (va, vc, vb, vd);
-            if (GeometryHelper.IsConvex(quad))
+            if (Utils.GeometryHelper.IsConvex(quad))
             {
                 return quad;
             }
 
             quad = (va, vd, vb, vc);
-            return GeometryHelper.IsConvex(quad) ? quad : null;
+            return Utils.GeometryHelper.IsConvex(quad) ? quad : null;
         }
 
         /// <summary>Calculate orthogonality measure between two vectors (0-1, 1 is perpendicular).</summary>

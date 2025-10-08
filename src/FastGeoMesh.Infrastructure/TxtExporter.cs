@@ -1,7 +1,7 @@
 using System.Globalization;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Infrastructure.Exporters
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Position for count placement in the file.</summary>
     public enum CountPlacement

@@ -1,4 +1,4 @@
-namespace FastGeoMesh.Meshing
+namespace FastGeoMesh.Domain
 {
     /// <summary>
     /// Provides utility methods for evaluating mesh quality metrics.

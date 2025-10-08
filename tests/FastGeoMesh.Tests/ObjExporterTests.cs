@@ -1,6 +1,6 @@
 using FastGeoMesh.Application; // Needed for file operations
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure.Exporters;
+using FastGeoMesh.Infrastructure;
 using Xunit;
 
 namespace FastGeoMesh.Tests

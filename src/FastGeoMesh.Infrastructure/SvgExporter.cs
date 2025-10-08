@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Meshing.Exporters
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Lightweight SVG top-view exporter (edges as lines).</summary>
     public static class SvgExporter

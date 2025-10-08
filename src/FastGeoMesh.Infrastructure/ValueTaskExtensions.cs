@@ -1,4 +1,4 @@
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>
     /// Performance-optimized extensions for ValueTask to improve async operations.

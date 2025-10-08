@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>
     /// Performance monitoring utilities for FastGeoMesh operations.

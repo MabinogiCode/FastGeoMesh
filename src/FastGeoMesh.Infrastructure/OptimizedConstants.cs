@@ -1,7 +1,7 @@
 using System.Collections.Frozen;
 using System.Runtime.CompilerServices;
 
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>
     /// Optimized constants and lookup tables using .NET 8 frozen collections.

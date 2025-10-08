@@ -1,6 +1,5 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Meshing.Helpers;
-using FastGeoMesh.Utils;
+using FastGeoMesh.Infrastructure;
 
 namespace FastGeoMesh.Application
 {

@@ -1,6 +1,6 @@
 using FastGeoMesh.Application;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Meshing.Exporters;
+using FastGeoMesh.Infrastructure;
 using Xunit;
 
 namespace FastGeoMesh.Tests

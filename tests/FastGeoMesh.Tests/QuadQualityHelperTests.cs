@@ -1,12 +1,13 @@
+using FastGeoMesh.Application;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Utils;
 using FluentAssertions;
 using LibTessDotNet;
 using Xunit;
+using GeometryHelper = FastGeoMesh.Utils.GeometryHelper;
 
 namespace FastGeoMesh.Tests
 {
-    /// <summary>Tests for <see cref="QuadQualityHelper"/> scoring and tessellation functions.</summary>
+    /// <summary>Tests for <see cref="Application.QuadQualityHelper"/> scoring and tessellation functions.</summary>
     public sealed class QuadQualityHelperTests
     {
         /// <summary>

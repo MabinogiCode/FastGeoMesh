@@ -4,7 +4,3 @@
 
 global using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Geometry { /* legacy namespace placeholder */ }
-namespace FastGeoMesh.Structures { /* legacy namespace placeholder */ }
-namespace FastGeoMesh.Core { /* legacy namespace placeholder */ }
-

@@ -1,6 +1,6 @@
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Infrastructure
+namespace FastGeoMesh.Application
 {
     /// <summary>Helper for cap meshing (optimized grid path + generic tessellation + quad pairing).</summary>
     internal static class CapMeshingHelper

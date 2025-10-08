@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using LibTessDotNet;
 
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>High-performance pool for LibTessDotNet.Tess instances with enhanced resource management.</summary>
     public static class TessPool

@@ -4,7 +4,6 @@ using FastGeoMesh.Application;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
-using FsCheck.Xunit;
 using Xunit;
 
 namespace FastGeoMesh.Tests

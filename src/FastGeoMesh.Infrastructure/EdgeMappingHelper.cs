@@ -1,4 +1,4 @@
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Helper class for edge mapping operations in tessellation.</summary>
     public static class EdgeMappingHelper

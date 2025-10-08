@@ -1,6 +1,8 @@
 using System.Runtime.InteropServices;
 using FastGeoMesh.Domain;
-namespace FastGeoMesh.Utils
+using FastGeoMesh.Infrastructure;
+
+namespace FastGeoMesh.Application
 {
     /// <summary>Helper class for mesh structure operations and Z-level calculations.</summary>
     public static class MeshStructureHelper
@@ -120,7 +122,7 @@ namespace FastGeoMesh.Utils
                 {
                     var a = vertices[j];
                     var b = vertices[i];
-                    double d = GeometryHelper.DistancePointToSegment(new Vec2(x, y), a, b);
+                    double d = Utils.GeometryHelper.DistancePointToSegment(new Vec2(x, y), a, b);
                     if (d <= band)
                     {
                         return true;
@@ -139,7 +141,7 @@ namespace FastGeoMesh.Utils
             {
                 var a = new Vec2(s.Start.X, s.Start.Y);
                 var b = new Vec2(s.End.X, s.End.Y);
-                if (GeometryHelper.DistancePointToSegment(p, a, b) <= band)
+                if (Utils.GeometryHelper.DistancePointToSegment(p, a, b) <= band)
                 {
                     return true;
                 }
@@ -174,7 +176,7 @@ namespace FastGeoMesh.Utils
                         ? array.AsSpan()
                         : h.Vertices.ToArray().AsSpan();
 
-                if (GeometryHelper.PointInPolygon(span, x, y))
+                if (Utils.GeometryHelper.PointInPolygon(span, x, y))
                 {
                     return true;
                 }

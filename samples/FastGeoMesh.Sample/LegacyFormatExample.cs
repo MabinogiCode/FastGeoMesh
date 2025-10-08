@@ -1,5 +1,5 @@
 using FastGeoMesh.Application;
-using FastGeoMesh.Infrastructure.Exporters;
+using FastGeoMesh.Infrastructure;
 
 namespace FastGeoMesh.Sample
 {

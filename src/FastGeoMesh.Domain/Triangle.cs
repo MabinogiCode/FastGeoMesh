@@ -1,7 +1,7 @@
 namespace FastGeoMesh.Domain
 {
     /// <summary>Triangle primitive (CCW order, typically cap fallback output).</summary>
-    public readonly struct Triangle : System.IEquatable<Triangle>
+    public readonly struct Triangle : IEquatable<Triangle>
     {
         /// <summary>First vertex.</summary>
         public Vec3 V0 { get; init; }

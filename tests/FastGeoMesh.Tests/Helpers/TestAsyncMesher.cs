@@ -2,7 +2,7 @@ using FastGeoMesh.Application;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
 
-namespace FastGeoMesh.Tests
+namespace FastGeoMesh.Tests.Helpers
 {
     /// <summary>Test implementation of async mesher interface for performance optimization tests.</summary>
     internal sealed class TestAsyncMesher : IAsyncMesher

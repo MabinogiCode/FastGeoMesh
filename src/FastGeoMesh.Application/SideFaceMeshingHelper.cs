@@ -1,6 +1,6 @@
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Meshing.Helpers
+namespace FastGeoMesh.Application
 {
     /// <summary>Helper methods for generating prism side face quads.</summary>
     internal static class SideFaceMeshingHelper
@@ -44,7 +44,7 @@ namespace FastGeoMesh.Meshing.Helpers
                         // For a vertical quad, the 4 vertices in CCW order as seen from outside:
                         // bottom-left → bottom-right → top-right → top-left
                         var v0 = new Vec3(a0.X, a0.Y, za0);  // bottom-start
-                        var v1 = new Vec3(a1.X, a1.Y, za0);  // bottom-end  
+                        var v1 = new Vec3(a1.X, a1.Y, za0);  // bottom-end
                         var v2 = new Vec3(a1.X, a1.Y, za1);  // top-end
                         var v3 = new Vec3(a0.X, a0.Y, za1);  // top-start
 

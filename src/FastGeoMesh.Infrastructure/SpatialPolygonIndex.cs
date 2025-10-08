@@ -1,6 +1,7 @@
 using FastGeoMesh.Domain;
+using FastGeoMesh.Utils;
 
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Spatial acceleration structure for fast point-in-polygon queries.</summary>
     public sealed class SpatialPolygonIndex

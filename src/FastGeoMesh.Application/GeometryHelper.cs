@@ -1,6 +1,6 @@
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Meshing.Helpers
+namespace FastGeoMesh.Application
 {
     /// <summary>Helper methods for geometric operations.</summary>
     internal static class GeometryHelper

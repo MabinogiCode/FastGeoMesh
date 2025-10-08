@@ -1,7 +1,5 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure.Exporters;
-using FastGeoMesh.Meshing.Exporters;
-
+using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 

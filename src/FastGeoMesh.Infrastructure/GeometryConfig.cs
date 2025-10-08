@@ -1,4 +1,4 @@
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Configuration for geometric calculations.</summary>
     public static class GeometryConfig

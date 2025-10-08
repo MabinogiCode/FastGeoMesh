@@ -1,4 +1,4 @@
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Math helper utilities.</summary>
     public static class MathUtil

@@ -1,7 +1,7 @@
 using FastGeoMesh.Domain;
 using Microsoft.Extensions.ObjectPool;
 
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Specialized pools for commonly used collection types in meshing with performance optimizations.</summary>
     public static class MeshingPools

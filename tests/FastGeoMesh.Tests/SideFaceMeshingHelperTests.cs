@@ -1,5 +1,5 @@
+using FastGeoMesh.Application;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Meshing.Helpers;
 using FluentAssertions;
 using Xunit;
 

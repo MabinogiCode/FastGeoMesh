@@ -1,4 +1,4 @@
-namespace FastGeoMesh.Meshing
+namespace FastGeoMesh.Domain
 {
     /// <summary>
     /// Provides metrics and scoring algorithms for quadrilateral quality assessment.

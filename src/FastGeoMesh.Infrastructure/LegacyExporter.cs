@@ -1,7 +1,7 @@
 using System.Globalization;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Infrastructure.Exporters
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>
     /// Legacy format exporter for FastGeoMesh.

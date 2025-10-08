@@ -1,7 +1,7 @@
 using System.Globalization;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Infrastructure.Exporters
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Wavefront OBJ exporter (quads + triangles, geometry only).</summary>
     public static class ObjExporter

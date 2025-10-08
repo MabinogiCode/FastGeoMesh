@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>
     /// Advanced span-based extensions for high-performance geometric operations.

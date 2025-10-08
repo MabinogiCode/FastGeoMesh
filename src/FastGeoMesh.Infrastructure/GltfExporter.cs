@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Meshing.Exporters
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>glTF 2.0 exporter (.gltf JSON with embedded base64 buffer). Quads are triangulated; standalone triangles are exported directly.</summary>
     public static class GltfExporter

@@ -1,4 +1,4 @@
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Represents the classification result of a spatial grid cell for polygon queries.</summary>
     internal enum CellResult : byte

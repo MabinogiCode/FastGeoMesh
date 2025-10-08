@@ -1,10 +1,10 @@
 using System.Runtime.CompilerServices;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>
-    /// Factory for creating ImmutableMesh instances. 
+    /// Factory for creating ImmutableMesh instances.
     /// Note: Since ImmutableMesh is immutable, traditional object pooling is not applicable.
     /// This factory provides a consistent API for mesh creation.
     /// </summary>
