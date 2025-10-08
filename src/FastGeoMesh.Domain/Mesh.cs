@@ -175,17 +175,17 @@ namespace FastGeoMesh.Domain
         public ImmutableMesh ToImmutableMesh()
         {
             var immutable = new ImmutableMesh();
-            
+
             foreach (var quad in _quads)
             {
                 immutable = immutable.AddQuad(quad);
             }
-            
+
             foreach (var triangle in _triangles)
             {
                 immutable = immutable.AddTriangle(triangle);
             }
-            
+
             foreach (var point in _points)
             {
                 immutable = immutable.AddPoint(point);
@@ -195,7 +195,7 @@ namespace FastGeoMesh.Domain
             {
                 immutable = immutable.AddInternalSegment(segment);
             }
-            
+
             return immutable;
         }
 

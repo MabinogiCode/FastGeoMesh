@@ -28,7 +28,7 @@ namespace FastGeoMesh.Application
             var validationResult = options.Validate();
             if (validationResult.IsFailure)
             {
-                return Result<ImmutableMesh>.Failure(new Error("Meshing.ValidationError", 
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.ValidationError",
                     $"Invalid meshing options: {validationResult.Error.Description}"));
             }
 
@@ -47,7 +47,7 @@ namespace FastGeoMesh.Application
             }
             catch (Exception ex)
             {
-                return Result<ImmutableMesh>.Failure(new Error("Meshing.UnexpectedError", 
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.UnexpectedError",
                     $"Unexpected error during meshing: {ex.Message}"));
             }
         }
@@ -62,7 +62,7 @@ namespace FastGeoMesh.Application
             var validationResult = options.Validate();
             if (validationResult.IsFailure)
             {
-                return Result<ImmutableMesh>.Failure(new Error("Meshing.ValidationError", 
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.ValidationError",
                     $"Invalid meshing options: {validationResult.Error.Description}"));
             }
 
@@ -90,7 +90,7 @@ namespace FastGeoMesh.Application
             }
             catch (Exception ex)
             {
-                return Result<ImmutableMesh>.Failure(new Error("Meshing.UnexpectedError", 
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.UnexpectedError",
                     $"Unexpected error during async meshing: {ex.Message}"));
             }
         }
@@ -109,7 +109,7 @@ namespace FastGeoMesh.Application
             var validationResult = options.Validate();
             if (validationResult.IsFailure)
             {
-                return Result<ImmutableMesh>.Failure(new Error("Meshing.ValidationError", 
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.ValidationError",
                     $"Invalid meshing options: {validationResult.Error.Description}"));
             }
 
@@ -126,7 +126,7 @@ namespace FastGeoMesh.Application
             }
             catch (Exception ex)
             {
-                return Result<ImmutableMesh>.Failure(new Error("Meshing.UnexpectedError", 
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.UnexpectedError",
                     $"Unexpected error during meshing with progress: {ex.Message}"));
             }
         }
@@ -145,14 +145,14 @@ namespace FastGeoMesh.Application
             var structureList = structures.ToList();
             if (structureList.Count == 0)
             {
-                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.EmptyBatch", 
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.EmptyBatch",
                     "Structures collection cannot be empty"));
             }
 
             var validationResult = options.Validate();
             if (validationResult.IsFailure)
             {
-                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.ValidationError", 
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.ValidationError",
                     $"Invalid meshing options: {validationResult.Error.Description}"));
             }
 
@@ -200,12 +200,12 @@ namespace FastGeoMesh.Application
             }
             catch (OperationCanceledException)
             {
-                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.Cancelled", 
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.Cancelled",
                     "Batch meshing operation was cancelled"));
             }
             catch (Exception ex)
             {
-                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.UnexpectedError", 
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.UnexpectedError",
                     $"Unexpected error during batch meshing: {ex.Message}"));
             }
         }
@@ -266,12 +266,35 @@ namespace FastGeoMesh.Application
             };
             var recommendedParallelism = complexity >= MeshingComplexity.Complex ? Math.Min(Environment.ProcessorCount, 4) : 1;
             var hints = new List<string>();
-            if (complexity >= MeshingComplexity.Complex) hints.Add("Consider using parallel batch processing for multiple structures");
-            if (structure.Holes.Count > 5) hints.Add("Large number of holes detected - consider hole refinement options");
-            if (totalVertices > 500) hints.Add("Large geometry detected - async processing recommended");
-            if (complexity == MeshingComplexity.Trivial) hints.Add("Simple geometry - synchronous processing is optimal");
-            if (complexity == MeshingComplexity.Moderate && structure.Holes.Count > 0) hints.Add("Moderate complexity with holes - consider async processing for better performance");
-            if (complexity >= MeshingComplexity.Moderate && complexity < MeshingComplexity.Complex && totalVertices > 50) hints.Add("Consider async processing for improved responsiveness");
+            if (complexity >= MeshingComplexity.Complex)
+            {
+                hints.Add("Consider using parallel batch processing for multiple structures");
+            }
+
+            if (structure.Holes.Count > 5)
+            {
+                hints.Add("Large number of holes detected - consider hole refinement options");
+            }
+
+            if (totalVertices > 500)
+            {
+                hints.Add("Large geometry detected - async processing recommended");
+            }
+
+            if (complexity == MeshingComplexity.Trivial)
+            {
+                hints.Add("Simple geometry - synchronous processing is optimal");
+            }
+
+            if (complexity == MeshingComplexity.Moderate && structure.Holes.Count > 0)
+            {
+                hints.Add("Moderate complexity with holes - consider async processing for better performance");
+            }
+
+            if (complexity >= MeshingComplexity.Moderate && complexity < MeshingComplexity.Complex && totalVertices > 50)
+            {
+                hints.Add("Consider async processing for improved responsiveness");
+            }
 
             return new MeshingComplexityEstimate(estimatedQuads, estimatedTriangles, estimatedMemory, estimatedTime, recommendedParallelism, complexity, hints);
         }

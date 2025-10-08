@@ -11,7 +11,10 @@ namespace FastGeoMesh.Tests
         public static MesherOptions UnwrapForTests(this Result<MesherOptions> result)
         {
             if (result.IsFailure)
+            {
                 throw new InvalidOperationException($"Options validation failed: {result.Error.Description}");
+            }
+
             return result.Value;
         }
 
@@ -19,7 +22,10 @@ namespace FastGeoMesh.Tests
         public static ImmutableMesh UnwrapForTests(this Result<ImmutableMesh> result)
         {
             if (result.IsFailure)
+            {
                 throw new InvalidOperationException($"Meshing failed: {result.Error.Description}");
+            }
+
             return result.Value;
         }
 
@@ -44,7 +50,10 @@ namespace FastGeoMesh.Tests
         {
             var r = await result;
             if (r.IsFailure)
+            {
                 throw new InvalidOperationException($"Async batch meshing failed: {r.Error.Description}");
+            }
+
             return r.Value;
         }
     }

@@ -14,7 +14,7 @@ namespace FastGeoMesh.Sample
         public static void DemonstrateMemoryEfficiency()
         {
             Console.WriteLine("🧠 Memory Efficiency with Clean Architecture");
-            
+
             // Domain layer provides immutable, efficient data structures
             var polygon = Polygon2D.FromPoints(new[]
             {
@@ -32,7 +32,7 @@ namespace FastGeoMesh.Sample
             {
                 var mesher = new PrismMesher();
                 var meshResult = mesher.Mesh(structure, optionsResult.Value);
-                
+
                 if (meshResult.IsSuccess)
                 {
                     var mesh = meshResult.Value;
@@ -47,10 +47,10 @@ namespace FastGeoMesh.Sample
         public static async Task DemonstrateAsyncPerformance()
         {
             Console.WriteLine("⚡ Async Performance with Clean Architecture");
-            
+
             var structures = CreateTestStructures();
             var optionsResult = MesherOptions.CreateBuilder().WithFastPreset().Build();
-            
+
             if (optionsResult.IsSuccess)
             {
                 var mesher = new PrismMesher();

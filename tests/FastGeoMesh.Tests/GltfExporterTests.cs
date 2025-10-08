@@ -1,6 +1,6 @@
 using System.IO;
-using FastGeoMesh.Domain;
 using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Meshing.Exporters;
 using Xunit;
 

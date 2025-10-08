@@ -196,7 +196,7 @@ namespace FastGeoMesh.Tests
             // ✅ Pour les formes complexes, chercher des éléments de caps (quads ou triangles)
             var capQuads = mesh.Quads.Where(q => q.QualityScore.HasValue).ToList();
             var capTriangles = mesh.Triangles.Where(t => t.V0.Z == t.V1.Z && t.V1.Z == t.V2.Z).ToList();
-            
+
             // Si on a des quads de caps, vérifier leur qualité
             if (capQuads.Count > 0)
             {
@@ -246,21 +246,21 @@ namespace FastGeoMesh.Tests
             quads2.Should().NotBeNull("Quads collection should be accessible on second access");
             triangles1.Should().NotBeNull("Triangles collection should be accessible");
             triangles2.Should().NotBeNull("Triangles collection should beAccessible on second access");
-            
+
             // ✅ Test that collections are consistent
             quads1.Count.Should().Be(quads2.Count, "Multiple accesses should return consistent data");
             triangles1.Count.Should().Be(triangles2.Count, "Multiple accesses should return consistent data");
 
             // ✅ Test caching behavior - if implemented, references should be identical
             bool cachingImplemented = ReferenceEquals(quads1, quads2) && ReferenceEquals(triangles1, triangles2);
-            
+
             // After modification, test if the mesh can be extended (immutable pattern)
             var newQuads = new List<Quad> { new Quad(new Vec3(0, 0, 0), new Vec3(1, 0, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 0)) };
             var modifiedMesh = mesh.AddQuads(newQuads);
-            
+
             // Verify that the modification creates a new mesh (immutable)
             modifiedMesh.Quads.Count.Should().BeGreaterThan(mesh.Quads.Count, "Immutable modification should create new mesh with more quads");
-            
+
             // Original mesh should be unchanged (immutable)
             mesh.Quads.Count.Should().Be(quads1.Count, "Original mesh should remain unchanged");
         }

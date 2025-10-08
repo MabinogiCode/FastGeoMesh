@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
-using FastGeoMesh.Domain;
 using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 
 
 namespace FastGeoMesh.Tests

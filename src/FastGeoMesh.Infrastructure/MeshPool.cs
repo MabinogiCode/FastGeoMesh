@@ -18,7 +18,7 @@ namespace FastGeoMesh.Utils
         /// <summary>Return operation is a no-op since ImmutableMesh is immutable.</summary>
         /// <param name="mesh">Mesh instance (ignored since immutable).</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Return(ImmutableMesh mesh) 
+        public static void Return(ImmutableMesh mesh)
         {
             // No-op: Immutable objects don't need to be pooled
         }

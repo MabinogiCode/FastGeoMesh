@@ -40,10 +40,10 @@ namespace FastGeoMesh.Tests
             var resultMesh = CapMeshingHelper.GenerateCaps(mesh, structure, opt, -1, 0);
             var capQuads = resultMesh.Quads.Where(q => q.V0.Z == -1 || q.V0.Z == 0).ToList();
             var capTriangles = resultMesh.Triangles.Where(t => t.V0.Z == -1 || t.V0.Z == 0).ToList();
-            
+
             // Should have some geometry (either quads or triangles)
             (capQuads.Count + capTriangles.Count).Should().BeGreaterThan(0);
-            
+
             // For any quads that do have quality scores, they should be in range
             foreach (var q in capQuads.Where(q => q.QualityScore.HasValue))
             {

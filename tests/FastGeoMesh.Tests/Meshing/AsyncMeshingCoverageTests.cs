@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using FastGeoMesh.Domain;
 using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 

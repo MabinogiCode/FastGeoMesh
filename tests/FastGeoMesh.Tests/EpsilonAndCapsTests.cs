@@ -16,7 +16,7 @@ namespace FastGeoMesh.Tests
             // Two very close points should NOT merge with epsilon = double.Epsilon
             var p0 = new Vec3(0, 0, 0);
             var p1 = new Vec3(1e-10, 0, 0); // distinct but very close
-            
+
             // Correctly chain the immutable AddPoint methods
             var mesh = new ImmutableMesh()
                 .AddPoint(p0)

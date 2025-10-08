@@ -14,7 +14,7 @@ namespace FastGeoMesh.Sample
         public static void DemonstrateFlexibleTxtExport()
         {
             Console.WriteLine("🎯 Flexible TXT Export System Demo");
-            
+
             // Create L-shaped structure for demonstration
             var lshape = Polygon2D.FromPoints(new[]
             {
@@ -34,7 +34,7 @@ namespace FastGeoMesh.Sample
                 if (meshResult.IsSuccess)
                 {
                     var indexed = IndexedMesh.FromMesh(meshResult.Value);
-                    
+
                     // Example 1: Custom scientific format
                     Console.WriteLine("📄 Custom scientific format:");
                     indexed.ExportTxt()
@@ -43,7 +43,7 @@ namespace FastGeoMesh.Sample
                         .WithQuads("face", CountPlacement.Bottom, indexBased: true)
                         .ToFile("scientific_mesh.txt");
                     Console.WriteLine("   ✅ Created scientific_mesh.txt");
-                    
+
                     // Example 2: Minimal format (no indices, no counts)
                     Console.WriteLine("📄 Minimal format:");
                     indexed.ExportTxt()
@@ -51,7 +51,7 @@ namespace FastGeoMesh.Sample
                         .WithQuads("f", CountPlacement.None, indexBased: false)
                         .ToFile("minimal_mesh.txt");
                     Console.WriteLine("   ✅ Created minimal_mesh.txt");
-                    
+
                     // Example 3: Debug format with all counts at bottom
                     Console.WriteLine("📄 Debug format:");
                     indexed.ExportTxt()
@@ -61,12 +61,12 @@ namespace FastGeoMesh.Sample
                         .WithTriangles("tr", CountPlacement.Bottom, indexBased: true)
                         .ToFile("debug_mesh.txt");
                     Console.WriteLine("   ✅ Created debug_mesh.txt");
-                    
+
                     // Example 4: Use predefined formats
                     Console.WriteLine("📄 Predefined formats:");
                     TxtExporter.WriteObjLike(indexed, "objlike_mesh.txt");
                     Console.WriteLine("   ✅ Created objlike_mesh.txt");
-                    
+
                     Console.WriteLine($"📊 Mesh statistics: {indexed.VertexCount} vertices, {indexed.QuadCount} quads, {indexed.EdgeCount} edges");
                 }
             }
@@ -78,19 +78,19 @@ namespace FastGeoMesh.Sample
         public static void DemonstrateFormatConversion()
         {
             Console.WriteLine("\n🔄 Format Conversion Demo");
-            
+
             try
             {
                 // Read Legacy format (the only text format that exists for reading)
                 var mesh = IndexedMeshFileHelper.ReadCustomTxt("mesh.txt");
                 Console.WriteLine($"📖 Read Legacy format: {mesh.VertexCount} vertices");
-                
+
                 // Convert to different TXT format
                 mesh.ExportTxt()
                     .WithPoints("P", CountPlacement.Top, false)
                     .WithQuads("Q", CountPlacement.Top, false)
                     .ToFile("converted_mesh.txt");
-                    
+
                 Console.WriteLine("✅ Converted to custom format: converted_mesh.txt");
             }
             catch (FileNotFoundException)

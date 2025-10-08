@@ -1,5 +1,5 @@
-using FastGeoMesh.Domain;
 using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
@@ -166,7 +166,7 @@ namespace FastGeoMesh.Tests
             // Assert
             meshResult.IsSuccess.Should().BeTrue();
             meshResult.Value.QuadCount.Should().BeGreaterThan(10); // Should have reasonable number of quads
-            
+
             var indexed = IndexedMesh.FromMesh(meshResult.Value);
             indexed.VertexCount.Should().BeGreaterThan(16); // More vertices due to hole refinement
         }

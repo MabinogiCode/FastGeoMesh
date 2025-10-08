@@ -182,7 +182,7 @@ namespace FastGeoMesh.Domain
             {
                 // Reset validation state to force fresh validation
                 _options.ResetValidation();
-                
+
                 // Validate the options
                 var validationResult = _options.Validate();
                 if (validationResult.IsFailure)

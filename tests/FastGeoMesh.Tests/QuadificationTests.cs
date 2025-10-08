@@ -41,7 +41,7 @@ namespace FastGeoMesh.Tests
             int topQuads = mesh.Quads.Count(q => q.V0.Z == 1 && q.V1.Z == 1 && q.V2.Z == 1 && q.V3.Z == 1);
             int topTriangles = mesh.Triangles.Count(t => t.V0.Z == 1 && t.V1.Z == 1 && t.V2.Z == 1);
             int topElements = topQuads + topTriangles;
-            
+
             int bottomQuads = mesh.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);
             int bottomTriangles = mesh.Triangles.Count(t => t.V0.Z == 0 && t.V1.Z == 0 && t.V2.Z == 0);
             int bottomElements = bottomQuads + bottomTriangles;
@@ -71,7 +71,7 @@ namespace FastGeoMesh.Tests
             int topQuads = mesh.Quads.Count(q => q.V0.Z == -1 && q.V1.Z == -1 && q.V2.Z == -1 && q.V3.Z == -1);
             int topTriangles = mesh.Triangles.Count(t => t.V0.Z == -1 && t.V1.Z == -1 && t.V2.Z == -1);
             int topElements = topQuads + topTriangles;
-            
+
             int bottomQuads = mesh.Quads.Count(q => q.V0.Z == -2 && q.V1.Z == -2 && q.V2.Z == -2 && q.V3.Z == -2);
             int bottomTriangles = mesh.Triangles.Count(t => t.V0.Z == -2 && t.V1.Z == -2 && t.V2.Z == -2);
             int bottomElements = bottomQuads + bottomTriangles;

@@ -33,7 +33,7 @@ namespace FastGeoMesh.Tests
             var bottomTriangles = mesh.Triangles.Where(t =>
                 System.Math.Abs(t.V0.Z - 0) < epsilon && System.Math.Abs(t.V1.Z - 0) < epsilon &&
                 System.Math.Abs(t.V2.Z - 0) < epsilon).ToList();
-            
+
             // For complex shapes, system may generate triangles instead of quads
             var totalBottomElements = bottomQuads.Count + bottomTriangles.Count;
             totalBottomElements.Should().BeGreaterThan(0, "Should have bottom cap elements (quads or triangles)");

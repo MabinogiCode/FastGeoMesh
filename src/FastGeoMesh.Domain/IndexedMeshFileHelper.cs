@@ -35,7 +35,7 @@ namespace FastGeoMesh.Domain
             {
                 // Read vertex count
                 int vertexCount = int.Parse(lines[lineIndex++], CultureInfo.InvariantCulture);
-                
+
                 // Read vertices
                 for (int i = 0; i < vertexCount; i++)
                 {
@@ -52,7 +52,7 @@ namespace FastGeoMesh.Domain
 
                 // Read edge count
                 int edgeCount = int.Parse(lines[lineIndex++], CultureInfo.InvariantCulture);
-                
+
                 // Read edges
                 for (int i = 0; i < edgeCount; i++)
                 {
@@ -69,7 +69,7 @@ namespace FastGeoMesh.Domain
 
                 // Read quad count
                 int quadCount = int.Parse(lines[lineIndex++], CultureInfo.InvariantCulture);
-                
+
                 // Read quads
                 for (int i = 0; i < quadCount; i++)
                 {
@@ -120,11 +120,15 @@ namespace FastGeoMesh.Domain
             {
                 string trimmed = line.Trim();
                 if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith('#'))
+                {
                     continue;
+                }
 
                 string[] parts = trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 0)
+                {
                     continue;
+                }
 
                 try
                 {

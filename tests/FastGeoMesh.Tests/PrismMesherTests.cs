@@ -1,5 +1,5 @@
-using FastGeoMesh.Domain;
 using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
@@ -29,7 +29,7 @@ namespace FastGeoMesh.Tests
             var mesh = result.Value;
 
             mesh.Quads.Should().NotBeEmpty();
-            
+
             foreach (var q in mesh.Quads)
             {
                 var ax = q.V1.X - q.V0.X;

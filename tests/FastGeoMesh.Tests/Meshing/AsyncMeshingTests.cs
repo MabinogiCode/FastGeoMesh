@@ -62,13 +62,13 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act & Assert
             await cts.CancelAsync();
-            
+
             // ✅ For fast operations, cancellation token might not be checked
             // Accept both scenarios: exception thrown or operation completes normally
             try
             {
                 var result = await _mesher.MeshAsync(structure, _options, cts.Token);
-                
+
                 // If no exception is thrown, verify token is cancelled and result is valid
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled");
                 result.Should().NotBeNull("Valid result or cancellation exception are both acceptable");
@@ -94,13 +94,13 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act & Assert
             await cts.CancelAsync();
-            
+
             // ✅ For fast operations, cancellation token might not be checked
             // Accept both scenarios: exception thrown or operation completes normally
             try
             {
                 var result = await _mesher.MeshAsync(structure, _options, cts.Token);
-                
+
                 // If no exception is thrown, verify token is cancelled and result is valid
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled");
                 result.Should().NotBeNull("Valid result or cancellation exception are both acceptable");
@@ -142,13 +142,13 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act & Assert
             var asyncMesher = (IAsyncMesher)_mesher;
-            
+
             // ✅ For fast operations, cancellation might not be processed in time
             // Accept both scenarios: exception thrown or operation completes normally
             try
             {
                 var result = await asyncMesher.MeshWithProgressAsync(structure, _options, progress, cts.Token);
-                
+
                 // If operation completes without exception, it's acceptable for fast operations
                 result.Should().NotBeNull("Operation completed before cancellation could be processed");
             }
@@ -190,13 +190,13 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act & Assert
             var asyncMesher = (IAsyncMesher)_mesher;
-            
+
             // ✅ For fast batch operations, cancellation might not be processed in time
             // Accept both scenarios: exception thrown or batch completes normally
             try
             {
                 var result = await asyncMesher.MeshBatchAsync(structures, _options, progress: progress, cancellationToken: cts.Token);
-                
+
                 // If batch completes without exception, it's acceptable for fast operations
                 result.Should().NotBeNull("Batch completed before cancellation could be processed");
                 if (result.IsSuccess) // Fix: check IsSuccess before accessing Value

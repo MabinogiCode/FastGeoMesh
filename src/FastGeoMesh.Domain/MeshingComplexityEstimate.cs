@@ -9,27 +9,27 @@ namespace FastGeoMesh.Domain
         /// Very simple structures that can use optimized fast paths.
         /// </summary>
         Trivial,
-        
+
         /// <summary>
         /// Simple structures with moderate complexity.
         /// </summary>
         Simple,
-        
+
         /// <summary>
         /// Moderately complex structures requiring standard algorithms.
         /// </summary>
         Moderate,
-        
+
         /// <summary>
         /// Complex structures requiring advanced algorithms.
         /// </summary>
         Complex,
-        
+
         /// <summary>
         /// Very complex structures requiring extensive computation.
         /// </summary>
         VeryComplex,
-        
+
         /// <summary>
         /// Extremely complex structures requiring specialized algorithms and maximum optimization.
         /// </summary>
@@ -45,37 +45,37 @@ namespace FastGeoMesh.Domain
         /// Gets the estimated number of quadrilaterals that will be generated.
         /// </summary>
         public int EstimatedQuadCount { get; }
-        
+
         /// <summary>
         /// Gets the estimated number of triangles that will be generated.
         /// </summary>
         public int EstimatedTriangleCount { get; }
-        
+
         /// <summary>
         /// Gets the estimated peak memory usage in bytes during meshing.
         /// </summary>
         public long EstimatedPeakMemoryBytes { get; }
-        
+
         /// <summary>
         /// Gets the estimated computation time for the meshing operation.
         /// </summary>
         public TimeSpan EstimatedComputationTime { get; }
-        
+
         /// <summary>
         /// Gets the recommended degree of parallelism for optimal performance.
         /// </summary>
         public int RecommendedParallelism { get; }
-        
+
         /// <summary>
         /// Gets the overall complexity classification of the meshing operation.
         /// </summary>
         public MeshingComplexity Complexity { get; }
-        
+
         /// <summary>
         /// Gets a collection of performance optimization hints and recommendations.
         /// </summary>
         public IReadOnlyList<string> PerformanceHints { get; }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MeshingComplexityEstimate"/> struct.
         /// </summary>
@@ -103,7 +103,7 @@ namespace FastGeoMesh.Domain
             Complexity = complexity;
             PerformanceHints = performanceHints ?? Array.Empty<string>();
         }
-        
+
         /// <summary>
         /// Returns a string representation of the complexity estimate.
         /// </summary>

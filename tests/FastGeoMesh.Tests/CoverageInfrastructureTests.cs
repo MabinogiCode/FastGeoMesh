@@ -151,7 +151,7 @@ namespace FastGeoMesh.Tests
             var assemblyNames = new[]
             {
                 "FastGeoMesh.Domain.dll",
-                "FastGeoMesh.Application.dll", 
+                "FastGeoMesh.Application.dll",
                 "FastGeoMesh.Infrastructure.dll",
                 "FastGeoMesh.dll" // Assembly principal (si elle existe)
             };
@@ -170,10 +170,10 @@ namespace FastGeoMesh.Tests
 
                     var allTypes = assembly.GetTypes();
                     var publicTypes = Array.FindAll(allTypes, t => t.IsPublic);
-                    
+
                     totalPublicTypes += publicTypes.Length;
                     assembliesLoaded++;
-                    
+
                     Console.WriteLine($"✓ {assemblyName}: {allTypes.Length} total types, {publicTypes.Length} public types");
                 }
                 catch (FileNotFoundException)
@@ -191,7 +191,7 @@ namespace FastGeoMesh.Tests
             totalPublicTypes.Should().BeGreaterThan(5, "Should have substantial public API surface across assemblies");
 
             Console.WriteLine($"✓ Coverage analysis: {assembliesLoaded} assemblies loaded, {totalPublicTypes} total public types");
-            
+
             // Use variables to avoid IDE0059
             Console.WriteLine($"Excluded namespaces configured: {string.Join(", ", excludedNamespaces)}");
             Console.WriteLine($"Excluded types configured: {string.Join(", ", excludedTypes)}");

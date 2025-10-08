@@ -34,7 +34,7 @@ namespace FastGeoMesh.Tests
             };
             var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
-            
+
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.txt");
 
             // Act - Use the flexible builder pattern
@@ -92,7 +92,7 @@ namespace FastGeoMesh.Tests
             };
             var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
-            
+
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}_objlike.txt");
 
             // Act
@@ -101,14 +101,14 @@ namespace FastGeoMesh.Tests
             // Assert
             File.Exists(path).Should().BeTrue();
             var lines = File.ReadAllLines(path);
-            
+
             // OBJ-like format: no counts, prefixed lines
             bool hasVertexLine = lines.Any(l => l.StartsWith("v ") && l.Split(' ').Length == 4);
             hasVertexLine.Should().BeTrue();
-            
+
             bool hasEdgeLine = lines.Any(l => l.StartsWith("l ") && l.Split(' ').Length == 3);
             hasEdgeLine.Should().BeTrue();
-            
+
             bool hasFaceLine = lines.Any(l => l.StartsWith("f ") && l.Split(' ').Length >= 4);
             hasFaceLine.Should().BeTrue();
 
@@ -143,7 +143,7 @@ namespace FastGeoMesh.Tests
             };
             var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
-            
+
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}_bottom.txt");
 
             // Act - Only export points with count at bottom
@@ -154,7 +154,7 @@ namespace FastGeoMesh.Tests
             // Assert
             File.Exists(path).Should().BeTrue();
             var lines = File.ReadAllLines(path);
-            
+
             // Last line should be the count
             int.TryParse(lines[^1], out int count).Should().BeTrue();
             count.Should().BeGreaterThan(0);

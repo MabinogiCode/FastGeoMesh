@@ -93,8 +93,8 @@ namespace FastGeoMesh.Infrastructure
             var quadsToAdd = new List<Quad>();
 
             // ADAPTIVE REFINEMENT IMPLEMENTATION
-            double width = max.X - min.X;
-            double height = max.Y - min.Y;
+            _ = max.X - min.X;
+            _ = max.Y - min.Y;
             double baseTargetLength = options.TargetEdgeLengthXY.Value;
 
             // Create adaptive grid that accounts for refinement
@@ -236,7 +236,7 @@ namespace FastGeoMesh.Infrastructure
         }
 
         /// <summary>Refines grid near a feature (hole).</summary>
-        private static void RefineGridNearFeature(List<double> xDivisions, List<double> yDivisions, IReadOnlyList<Vec2> featureVertices, 
+        private static void RefineGridNearFeature(List<double> xDivisions, List<double> yDivisions, IReadOnlyList<Vec2> featureVertices,
             double targetLength, double band, Vec2 min, Vec2 max)
         {
             // Calculate bounding box of the feature

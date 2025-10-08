@@ -16,7 +16,7 @@ namespace FastGeoMesh.Sample
                 ComplexPolygonExample();
                 HoleExample();
                 AsyncExample().Wait();
-                
+
                 Console.WriteLine("\n✅ All examples completed successfully!");
                 Console.WriteLine("📂 Output files: simple_rectangle.obj, l_shape.obj, polygon_with_hole.obj, async_mesh.obj");
             }
@@ -212,8 +212,8 @@ namespace FastGeoMesh.Sample
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             var batchResult = await asyncMesher.MeshBatchAsync(
-                structures, 
-                optionsResult.Value, 
+                structures,
+                optionsResult.Value,
                 maxDegreeOfParallelism: 4,
                 progress: progress);
 

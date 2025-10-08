@@ -21,16 +21,16 @@ namespace FastGeoMesh.Tests
             var structure = new PrismStructureDefinition(outer, 0, 1).AddHole(hole);
             var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.75), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = true, GenerateTopCap = true };
             var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
-            
+
             // ✅ Identifier les cap quads (tous les Z identiques)
             var capQuads = mesh.Quads.Where(q => Math.Abs(q.V0.Z - q.V1.Z) < 1e-12 && Math.Abs(q.V1.Z - q.V2.Z) < 1e-12).ToList();
-            
+
             // ✅ Pour les formes complexes, il peut y avoir des triangles au lieu de quads
             var capTriangles = mesh.Triangles.Where(t => Math.Abs(t.V0.Z - t.V1.Z) < 1e-12 && Math.Abs(t.V1.Z - t.V2.Z) < 1e-12).ToList();
             var totalCapElements = capQuads.Count + capTriangles.Count;
-            
+
             totalCapElements.Should().BeGreaterThan(0, "Should have cap elements (quads or triangles)");
-            
+
             // ✅ Si on a des quads de caps, vérifier leur qualité
             if (capQuads.Count > 0)
             {

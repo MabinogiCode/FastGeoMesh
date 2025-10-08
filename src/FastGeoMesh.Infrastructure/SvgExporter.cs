@@ -1,6 +1,6 @@
-using FastGeoMesh.Domain;
 using System.Globalization;
 using System.Text;
+using FastGeoMesh.Domain;
 
 namespace FastGeoMesh.Meshing.Exporters
 {

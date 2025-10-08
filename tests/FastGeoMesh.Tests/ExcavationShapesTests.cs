@@ -1,5 +1,5 @@
-using FastGeoMesh.Domain;
 using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
@@ -26,16 +26,16 @@ namespace FastGeoMesh.Tests
             var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             var adj = im.BuildAdjacency();
-            
+
             // ✅ Pour les formes complexes, le système génère des triangles, pas des quads
             int topQuads = mesh.Quads.Count(q => q.V0.Z == 4 && q.V1.Z == 4 && q.V2.Z == 4 && q.V3.Z == 4);
             int topTriangles = mesh.Triangles.Count(t => t.V0.Z == 4 && t.V1.Z == 4 && t.V2.Z == 4);
             int topElements = topQuads + topTriangles; // Total éléments de surface supérieure
-            
+
             int botQuads = mesh.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);
             int botTriangles = mesh.Triangles.Count(t => t.V0.Z == 0 && t.V1.Z == 0 && t.V2.Z == 0);
             int botElements = botQuads + botTriangles; // Total éléments de surface inférieure
-            
+
             _ = topElements.Should().BeGreaterThan(0, "Should have top cap elements (quads or triangles)");
             _ = botElements.Should().BeGreaterThan(0, "Should have bottom cap elements (quads or triangles)");
             _ = adj.NonManifoldEdges.Should().BeEmpty();
@@ -72,16 +72,16 @@ namespace FastGeoMesh.Tests
             _ = mesh.InternalSegments.Should().HaveCount(3);
             var zset = mesh.Quads.SelectMany(q => new[] { q.V0.Z, q.V1.Z, q.V2.Z, q.V3.Z }).ToHashSet();
             _ = zset.Should().Contain(2.0).And.Contain(1.0).And.Contain(3.0).And.Contain(1.5).And.Contain(2.5);
-            
+
             // ✅ Pour les formes complexes, le système génère des triangles pour les caps
             int topQuads = mesh.Quads.Count(q => q.V0.Z == 6 && q.V1.Z == 6 && q.V2.Z == 6 && q.V3.Z == 6);
             int topTriangles = mesh.Triangles.Count(t => t.V0.Z == 6 && t.V1.Z == 6 && t.V2.Z == 6);
             int topElements = topQuads + topTriangles;
-            
+
             int botQuads = mesh.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);
             int botTriangles = mesh.Triangles.Count(t => t.V0.Z == 0 && t.V1.Z == 0 && t.V2.Z == 0);
             int botElements = botQuads + botTriangles;
-            
+
             _ = topElements.Should().BeGreaterThan(0, "Should have top cap elements");
             _ = botElements.Should().BeGreaterThan(0, "Should have bottom cap elements");
             _ = adj.NonManifoldEdges.Should().BeEmpty();
@@ -103,16 +103,16 @@ namespace FastGeoMesh.Tests
             var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             var adj = im.BuildAdjacency();
-            
+
             // ✅ Pour les formes complexes T, accepter triangles et quads
             int topQuads = mesh.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);
             int topTriangles = mesh.Triangles.Count(t => t.V0.Z == 0 && t.V1.Z == 0 && t.V2.Z == 0);
             int topElements = topQuads + topTriangles;
-            
+
             int botQuads = mesh.Quads.Count(q => q.V0.Z == -3 && q.V1.Z == -3 && q.V2.Z == -3 && q.V3.Z == -3);
             int botTriangles = mesh.Triangles.Count(t => t.V0.Z == -3 && t.V1.Z == -3 && t.V2.Z == -3);
             int botElements = botQuads + botTriangles;
-            
+
             _ = topElements.Should().BeGreaterThan(0, "Should have top cap elements");
             _ = botElements.Should().BeGreaterThan(0, "Should have bottom cap elements");
             _ = adj.NonManifoldEdges.Should().BeEmpty();
@@ -150,16 +150,16 @@ namespace FastGeoMesh.Tests
             _ = mesh.InternalSegments.Should().HaveCount(3);
             var zset = mesh.Quads.SelectMany(q => new[] { q.V0.Z, q.V1.Z, q.V2.Z, q.V3.Z }).ToHashSet();
             _ = zset.Should().Contain(-2.0).And.Contain(-1.5).And.Contain(-1.0).And.Contain(-0.5).And.Contain(-3.0);
-            
+
             // ✅ Pour les formes complexes T, accepter triangles et quads
             int topQuads = mesh.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);
             int topTriangles = mesh.Triangles.Count(t => t.V0.Z == 0 && t.V1.Z == 0 && t.V2.Z == 0);
             int topElements = topQuads + topTriangles;
-            
+
             int botQuads = mesh.Quads.Count(q => q.V0.Z == -4 && q.V1.Z == -4 && q.V2.Z == -4 && q.V3.Z == -4);
             int botTriangles = mesh.Triangles.Count(t => t.V0.Z == -4 && t.V1.Z == -4 && t.V2.Z == -4);
             int botElements = botQuads + botTriangles;
-            
+
             _ = topElements.Should().BeGreaterThan(0, "Should have top cap elements");
             _ = botElements.Should().BeGreaterThan(0, "Should have bottom cap elements");
             _ = adj.NonManifoldEdges.Should().BeEmpty();

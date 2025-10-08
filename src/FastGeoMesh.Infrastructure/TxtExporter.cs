@@ -1,5 +1,5 @@
-using FastGeoMesh.Domain;
 using System.Globalization;
+using FastGeoMesh.Domain;
 
 namespace FastGeoMesh.Infrastructure.Exporters
 {
@@ -19,10 +19,10 @@ namespace FastGeoMesh.Infrastructure.Exporters
     {
         /// <summary>Prefix to add before each element line.</summary>
         public string Prefix { get; }
-        
+
         /// <summary>Where to place the element count (top, bottom, or none).</summary>
         public CountPlacement CountPlacement { get; }
-        
+
         /// <summary>Whether to include element index in the output.</summary>
         public bool IndexBased { get; }
 

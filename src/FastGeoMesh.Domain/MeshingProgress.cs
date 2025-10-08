@@ -11,32 +11,32 @@ namespace FastGeoMesh.Domain
         /// Gets the name of the current operation being performed.
         /// </summary>
         public string Operation { get; }
-        
+
         /// <summary>
         /// Gets the completion percentage as a value between 0.0 and 1.0.
         /// </summary>
         public double Percentage { get; }
-        
+
         /// <summary>
         /// Gets the number of elements that have been processed.
         /// </summary>
         public int ProcessedElements { get; }
-        
+
         /// <summary>
         /// Gets the total number of elements to be processed.
         /// </summary>
         public int TotalElements { get; }
-        
+
         /// <summary>
         /// Gets the estimated time remaining for the operation, if available.
         /// </summary>
         public TimeSpan? EstimatedTimeRemaining { get; }
-        
+
         /// <summary>
         /// Gets an optional status message providing additional context.
         /// </summary>
         public string? StatusMessage { get; }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MeshingProgress"/> struct.
         /// </summary>
@@ -61,7 +61,7 @@ namespace FastGeoMesh.Domain
             EstimatedTimeRemaining = estimatedTimeRemaining;
             StatusMessage = statusMessage;
         }
-        
+
         /// <summary>
         /// Creates a new <see cref="MeshingProgress"/> from element counts.
         /// </summary>
@@ -75,7 +75,7 @@ namespace FastGeoMesh.Domain
             double percentage = total > 0 ? (double)processed / total : 0.0;
             return new MeshingProgress(operation, percentage, processed, total, statusMessage: statusMessage);
         }
-        
+
         /// <summary>
         /// Creates a new <see cref="MeshingProgress"/> representing a completed operation.
         /// </summary>
@@ -86,7 +86,7 @@ namespace FastGeoMesh.Domain
         {
             return new MeshingProgress(operation, 1.0, totalElements, totalElements, TimeSpan.Zero, "Completed");
         }
-        
+
         /// <summary>
         /// Returns a string representation of the meshing progress.
         /// </summary>

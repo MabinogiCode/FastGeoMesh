@@ -86,10 +86,10 @@ namespace FastGeoMesh.Tests
             try
             {
                 var result = await asyncMesher.MeshAsync(structure, options, cts.Token);
-                
+
                 // Si aucune exception n'est levée, vérifier que le token est bien cancelled
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled");
-                
+
                 // C'est acceptable si l'opération se termine avant que l'annulation soit détectée
                 result.Should().NotBeNull("Valid result or cancellation exception are both acceptable");
             }
