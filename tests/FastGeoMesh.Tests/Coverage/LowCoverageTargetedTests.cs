@@ -1,7 +1,6 @@
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Infrastructure.Services;
-using FastGeoMesh.Utils;
 using FluentAssertions;
 using Xunit;
 
@@ -169,16 +168,16 @@ namespace FastGeoMesh.Tests.Coverage
             var start2D = new Vec2(0, 0);
             var end2D = new Vec2(10, 20);
 
-            var lerp2D_0 = FastGeoMesh.Utils.GeometryHelper.Lerp(start2D, end2D, 0.0);
-            var lerp2D_1 = FastGeoMesh.Utils.GeometryHelper.Lerp(start2D, end2D, 1.0);
-            var lerp2D_half = FastGeoMesh.Utils.GeometryHelper.Lerp(start2D, end2D, 0.5);
+            var lerp2D_0 = GeometryHelper.Lerp(start2D, end2D, 0.0);
+            var lerp2D_1 = GeometryHelper.Lerp(start2D, end2D, 1.0);
+            var lerp2D_half = GeometryHelper.Lerp(start2D, end2D, 0.5);
 
             lerp2D_0.Should().Be(start2D);
             lerp2D_1.Should().Be(end2D);
             lerp2D_half.Should().Be(new Vec2(5, 10));
 
             // Test scalar interpolation
-            var lerpScalar = FastGeoMesh.Utils.GeometryHelper.LerpScalar(0, 100, 0.25);
+            var lerpScalar = GeometryHelper.LerpScalar(0, 100, 0.25);
             lerpScalar.Should().Be(25);
 
             // Test point in polygon with simple square
@@ -189,12 +188,12 @@ namespace FastGeoMesh.Tests.Coverage
             };
 
             // Points clearly inside
-            FastGeoMesh.Utils.GeometryHelper.PointInPolygon(square, new Vec2(2, 2)).Should().BeTrue();
-            FastGeoMesh.Utils.GeometryHelper.PointInPolygon(square, 1, 1).Should().BeTrue();
+            GeometryHelper.PointInPolygon(square, new Vec2(2, 2)).Should().BeTrue();
+            GeometryHelper.PointInPolygon(square, 1, 1).Should().BeTrue();
 
             // Points clearly outside
-            FastGeoMesh.Utils.GeometryHelper.PointInPolygon(square, new Vec2(-1, 2)).Should().BeFalse();
-            FastGeoMesh.Utils.GeometryHelper.PointInPolygon(square, 5, 2).Should().BeFalse();
+            GeometryHelper.PointInPolygon(square, new Vec2(-1, 2)).Should().BeFalse();
+            GeometryHelper.PointInPolygon(square, 5, 2).Should().BeFalse();
 
             // Test convexity checking
             var convexQuad = (
@@ -203,16 +202,16 @@ namespace FastGeoMesh.Tests.Coverage
                 c: new Vec2(2, 2),
                 d: new Vec2(0, 2)
             );
-            FastGeoMesh.Utils.GeometryHelper.IsConvex(convexQuad).Should().BeTrue();
+            GeometryHelper.IsConvex(convexQuad).Should().BeTrue();
 
             // Test distance calculation - use a point that's definitely off the segment
             var point1 = new Vec2(0, 0);
             var point2 = new Vec2(3, 4);
-            var distance = FastGeoMesh.Utils.GeometryHelper.DistancePointToSegment(new Vec2(0, 2), point1, point2);
+            var distance = GeometryHelper.DistancePointToSegment(new Vec2(0, 2), point1, point2);
             distance.Should().BeGreaterThan(0);
 
             // Test polygon area calculation
-            var area = FastGeoMesh.Utils.GeometryHelper.PolygonArea(square);
+            var area = GeometryHelper.PolygonArea(square);
             area.Should().Be(16); // 4x4 square
         }
 
@@ -237,7 +236,7 @@ namespace FastGeoMesh.Tests.Coverage
             var results = new bool[testPoints.Length];
 
             // Test batch operation
-            FastGeoMesh.Utils.GeometryHelper.BatchPointInPolygon(triangle, testPoints, results);
+            GeometryHelper.BatchPointInPolygon(triangle, testPoints, results);
 
             results[0].Should().BeTrue();  // inside
             results[1].Should().BeTrue();  // inside
@@ -248,7 +247,7 @@ namespace FastGeoMesh.Tests.Coverage
             // Test argument validation
             var wrongSizeResults = new bool[testPoints.Length - 1];
             Assert.Throws<ArgumentException>(() =>
-                FastGeoMesh.Utils.GeometryHelper.BatchPointInPolygon(triangle, testPoints, wrongSizeResults));
+                GeometryHelper.BatchPointInPolygon(triangle, testPoints, wrongSizeResults));
         }
 
         /// <summary>Tests GeometryConfig settings.</summary>
@@ -279,7 +278,7 @@ namespace FastGeoMesh.Tests.Coverage
                 };
 
                 // This should still work with the new tolerance
-                var result = FastGeoMesh.Utils.GeometryHelper.PointInPolygon(square, 0.5, 0.5, GeometryConfig.DefaultTolerance);
+                var result = GeometryHelper.PointInPolygon(square, 0.5, 0.5, GeometryConfig.DefaultTolerance);
                 result.Should().BeTrue();
             }
             finally

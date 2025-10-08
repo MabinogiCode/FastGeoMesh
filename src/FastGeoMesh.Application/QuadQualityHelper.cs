@@ -167,13 +167,13 @@ namespace FastGeoMesh.Application
             var vd = new Vec2(vertices[unique1].Position.X, vertices[unique1].Position.Y);
 
             var quad = (va, vc, vb, vd);
-            if (Utils.GeometryHelper.IsConvex(quad))
+            if (Infrastructure.GeometryHelper.IsConvex(quad))
             {
                 return quad;
             }
 
             quad = (va, vd, vb, vc);
-            return Utils.GeometryHelper.IsConvex(quad) ? quad : null;
+            return Infrastructure.GeometryHelper.IsConvex(quad) ? quad : null;
         }
 
         /// <summary>Calculate orthogonality measure between two vectors (0-1, 1 is perpendicular).</summary>

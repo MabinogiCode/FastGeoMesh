@@ -1,7 +1,6 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure;
 
-namespace FastGeoMesh.Utils
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Helper class for geometric calculations and polygon operations.</summary>
     public static class GeometryHelper

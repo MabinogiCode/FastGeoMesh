@@ -3,7 +3,7 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using LibTessDotNet;
 using Xunit;
-using GeometryHelper = FastGeoMesh.Utils.GeometryHelper;
+using GeometryHelper = FastGeoMesh.Infrastructure.GeometryHelper;
 
 namespace FastGeoMesh.Tests
 {

@@ -122,7 +122,7 @@ namespace FastGeoMesh.Application
                 {
                     var a = vertices[j];
                     var b = vertices[i];
-                    double d = Utils.GeometryHelper.DistancePointToSegment(new Vec2(x, y), a, b);
+                    double d = Infrastructure.GeometryHelper.DistancePointToSegment(new Vec2(x, y), a, b);
                     if (d <= band)
                     {
                         return true;
@@ -141,7 +141,7 @@ namespace FastGeoMesh.Application
             {
                 var a = new Vec2(s.Start.X, s.Start.Y);
                 var b = new Vec2(s.End.X, s.End.Y);
-                if (Utils.GeometryHelper.DistancePointToSegment(p, a, b) <= band)
+                if (Infrastructure.GeometryHelper.DistancePointToSegment(p, a, b) <= band)
                 {
                     return true;
                 }
@@ -176,7 +176,7 @@ namespace FastGeoMesh.Application
                         ? array.AsSpan()
                         : h.Vertices.ToArray().AsSpan();
 
-                if (Utils.GeometryHelper.PointInPolygon(span, x, y))
+                if (Infrastructure.GeometryHelper.PointInPolygon(span, x, y))
                 {
                     return true;
                 }

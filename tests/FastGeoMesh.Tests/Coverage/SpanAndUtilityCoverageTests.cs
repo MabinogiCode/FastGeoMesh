@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
-using FastGeoMesh.Utils;
 using FluentAssertions;
 using Xunit;
 
