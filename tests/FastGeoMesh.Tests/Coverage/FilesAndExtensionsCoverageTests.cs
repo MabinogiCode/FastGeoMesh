@@ -371,7 +371,7 @@ e 0 1
             {
                 File.WriteAllText(tempFile2, "1\n"); // Claims 1 vertex but provides none
 
-                Assert.Throws<IndexOutOfRangeException>(() => IndexedMeshFileHelper.ReadCustomTxt(tempFile2));
+                Assert.Throws<InvalidDataException>(() => IndexedMeshFileHelper.ReadCustomTxt(tempFile2));
             }
             finally
             {

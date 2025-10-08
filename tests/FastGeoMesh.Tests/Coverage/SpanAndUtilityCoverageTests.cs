@@ -393,11 +393,11 @@ namespace FastGeoMesh.Tests.Coverage
         [Fact]
         public void SpanExtensionsIntegrationWorksCorrectly()
         {
-            // Create a complex polygon
+            // Create a simple convex polygon (rectangle) to ensure centroid is inside
             var polygon = new Vec2[]
             {
-                new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 2),
-                new Vec2(2, 2), new Vec2(2, 4), new Vec2(0, 4)
+                new Vec2(0, 0), new Vec2(4, 0),
+                new Vec2(4, 3), new Vec2(0, 3)
             };
             ReadOnlySpan<Vec2> polygonSpan = polygon;
 
@@ -419,7 +419,7 @@ namespace FastGeoMesh.Tests.Coverage
                 centroid, // Should be inside
                 new Vec2(min.X - 1, min.Y - 1), // Should be outside
                 new Vec2(max.X + 1, max.Y + 1), // Should be outside
-                new Vec2((min.X + max.X) / 2, (min.Y + max.Y) / 2) // Should be inside
+                new Vec2((min.X + max.X) / 2, (min.Y + max.Y) / 2) // Should be inside (center of rectangle)
             };
             ReadOnlySpan<Vec2> testPointsSpan = testPoints;
 
@@ -429,7 +429,7 @@ namespace FastGeoMesh.Tests.Coverage
             results[0].Should().BeTrue();  // centroid
             results[1].Should().BeFalse(); // outside min
             results[2].Should().BeFalse(); // outside max
-            // results[3] depends on polygon shape - no assertion needed
+            results[3].Should().BeTrue();  // center of rectangle should be inside
         }
 
         /// <summary>Tests edge cases and performance characteristics.</summary>

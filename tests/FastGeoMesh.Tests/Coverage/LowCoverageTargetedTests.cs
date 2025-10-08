@@ -204,10 +204,10 @@ namespace FastGeoMesh.Tests.Coverage
             );
             FastGeoMesh.Utils.GeometryHelper.IsConvex(convexQuad).Should().BeTrue();
 
-            // Test distance calculation
+            // Test distance calculation - use a point that's definitely off the segment
             var point1 = new Vec2(0, 0);
             var point2 = new Vec2(3, 4);
-            var distance = FastGeoMesh.Utils.GeometryHelper.DistancePointToSegment(new Vec2(1.5, 2), point1, point2);
+            var distance = FastGeoMesh.Utils.GeometryHelper.DistancePointToSegment(new Vec2(0, 2), point1, point2);
             distance.Should().BeGreaterThan(0);
 
             // Test polygon area calculation
