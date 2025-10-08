@@ -1,9 +1,6 @@
-using FastGeoMesh.Core;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FluentAssertions;
-using System.Linq;
 using Xunit;
 
 namespace FastGeoMesh.Tests
@@ -32,10 +29,7 @@ namespace FastGeoMesh.Tests
                 GenerateTopCap = false
             };
             // With large TargetEdgeLengthZ we'd normally get a single vertical segment, but internal surface forces subdivision.
-            var result = new PrismMesher().Mesh(structure, opt);
-
-            result.IsSuccess.Should().BeTrue();
-            var mesh = result.Value;
+            var mesh = new PrismMesher().Mesh(structure, opt).UnwrapForTests();
 
             // Extract distinct Z values from side quads
             var zset = mesh.Quads

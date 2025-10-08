@@ -31,10 +31,10 @@ namespace FastGeoMesh.Domain
             for (int qi = 0; qi < im.Quads.Count; qi++)
             {
                 var q = im.Quads[qi];
-                Add(q.v0, q.v1, qi, 0);
-                Add(q.v1, q.v2, qi, 1);
-                Add(q.v2, q.v3, qi, 2);
-                Add(q.v3, q.v0, qi, 3);
+                Add(q.Item1, q.Item2, qi, 0);
+                Add(q.Item2, q.Item3, qi, 1);
+                Add(q.Item3, q.Item4, qi, 2);
+                Add(q.Item4, q.Item1, qi, 3);
             }
             foreach (var kvp in edgeIncidence)
             {

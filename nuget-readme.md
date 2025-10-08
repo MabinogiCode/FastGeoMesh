@@ -1,4 +1,4 @@
-# FastGeoMesh
+# FastGeoMesh v2.0
 
 **🇬🇧 English** | [🇫🇷 Français](#français)
 
@@ -14,7 +14,7 @@
 
 **Fast, safe, quad-dominant meshing for prismatic volumes from 2D footprints and Z elevations.**
 
-FastGeoMesh is a high-performance .NET 8 library for generating quad-dominant meshes from 2.5D prismatic structures. Perfect for CAD, GIS, and real-time applications requiring sub-millisecond meshing performance and robust error handling.
+FastGeoMesh v2.0 is a high-performance .NET 8 library for generating quad-dominant meshes from 2.5D prismatic structures. Built with **Clean Architecture** principles, it offers excellent separation of concerns, testability, and maintainability.
 
 ## ⚡ Performance
 
@@ -28,6 +28,14 @@ FastGeoMesh is a high-performance .NET 8 library for generating quad-dominant me
 
 *Benchmarked on .NET 8, X64 RyuJIT AVX2.*
 
+## 🏗️ Clean Architecture
+
+FastGeoMesh v2.0 is built with Clean Architecture principles:
+
+- **🔵 Domain Layer** (`FastGeoMesh.Domain`): Core entities, value objects, and domain logic
+- **🟡 Application Layer** (`FastGeoMesh.Application`): Use cases and meshing algorithms 
+- **🟢 Infrastructure Layer** (`FastGeoMesh.Infrastructure`): External concerns (file I/O, performance optimization)
+
 ## 🚀 Features
 
 - **🏗️ Prism Mesher**: Generate side faces and caps from 2D footprints.
@@ -39,24 +47,23 @@ FastGeoMesh is a high-performance .NET 8 library for generating quad-dominant me
 - **🎯 Quality Control**: Quad quality scoring & configurable thresholds.
 - **📑 Triangle Fallback**: Optional explicit cap triangles for low-quality quads.
 - **⚙️ Constraint System**: Z-level segments & integrated auxiliary geometry.
-- **📤 Multi-Format Export**: OBJ (quads+triangles), glTF (triangulated), SVG (top view).
+- **📤 Multi-Format Export**: OBJ (quads+triangles), glTF (triangulated), SVG (top view), Legacy format.
 - **🔧 Performance Presets**: Fast vs High-Quality configurations.
 - **🧵 Thread-Safe**: Immutable structures and stateless meshers.
 
 ## 🚀 Quick Start
 
 ```csharp
-using FastGeoMesh.Core;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
-using FastGeoMesh.Meshing.Exporters;
+using FastGeoMesh.Domain;
+using FastGeoMesh.Application;
+using FastGeoMesh.Infrastructure.Exporters;
 
 // 1. Define geometry
-var poly = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(20,0), new Vec2(20,5), new Vec2(0,5) 
+var polygon = Polygon2D.FromPoints(new[]
+{
+    new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 5), new Vec2(0, 5)
 });
-var structure = new PrismStructureDefinition(poly, -10, 10);
+var structure = new PrismStructureDefinition(polygon, -10, 10);
 
 // 2. Configure options safely
 var optionsResult = MesherOptions.CreateBuilder()
@@ -89,47 +96,67 @@ var asyncMesher = (IAsyncMesher)mesher;
 var asyncMeshResult = await asyncMesher.MeshAsync(structure, options);
 if (asyncMeshResult.IsSuccess)
 {
-    // Use asyncMeshResult.Value
+    var asyncMesh = asyncMeshResult.Value;
 }
 
-// 5. Convert to indexed mesh and export
+// 5. Convert to indexed mesh and export to your preferred format
 var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
-ObjExporter.Write(indexed, "mesh.obj");
-GltfExporter.Write(indexed, "mesh.gltf");
-SvgExporter.Write(indexed, "mesh.svg");
+
+// Choose your export format:
+ObjExporter.Write(indexed, "mesh.obj");           // Wavefront OBJ
+GltfExporter.Write(indexed, "mesh.gltf");         // glTF 2.0
+SvgExporter.Write(indexed, "mesh.svg");           // SVG top view
+LegacyExporter.Write(indexed, "mesh.txt");        // Legacy format
+LegacyExporter.WriteWithLegacyName(indexed, "./output/"); // Creates 0_maill.txt
+
+// Or use the new flexible TXT exporter with builder pattern:
+indexed.ExportTxt()
+    .WithPoints("p", CountPlacement.Top, indexBased: true)
+    .WithEdges("e", CountPlacement.None, indexBased: false)
+    .WithQuads("q", CountPlacement.Bottom, indexBased: true)
+    .ToFile("custom_mesh.txt");
+
+// Pre-configured formats:
+TxtExporter.WriteObjLike(indexed, "objlike.txt");   // OBJ-style format
 ```
 
 ## 💥 Breaking Changes in v2.0
 
-The introduction of the `Result` pattern is a breaking change designed to improve API safety and eliminate exceptions for validation errors.
+FastGeoMesh v2.0 introduces **Clean Architecture** which requires some namespace changes:
 
-- `MesherOptions.CreateBuilder().Build()` now returns a `Result<MesherOptions>`.
-- `PrismMesher.Mesh()` and its async variants now return a `Result<Mesh>`.
+**OLD (v1.x):**
+```csharp
+using FastGeoMesh.Meshing;
+using FastGeoMesh.Structures;
+using FastGeoMesh.Geometry;
+```
 
-You must now check the `IsSuccess` property of the result before accessing the `Value`.
+**NEW (v2.0):**
+```csharp
+using FastGeoMesh.Domain;           // Core types
+using FastGeoMesh.Application;      // Meshing logic
+using FastGeoMesh.Infrastructure;   // External services
+```
+
+**API Changes:**
+- `MesherOptions.CreateBuilder().Build()` returns a `Result<MesherOptions>`.
+- `PrismMesher.Mesh()` and its async variants return a `Result<ImmutableMesh>`.
+- Direct access to Clean Architecture layers (no more wrapper classes).
 
 ## 🏗️ Advanced Features
 
-### Error Handling and Validation
-
-With the new `Result` pattern, you can handle configuration and meshing errors without `try-catch` blocks.
+### Error Handling with Result Pattern
 
 ```csharp
-// Example of an invalid configuration
 var optionsResult = MesherOptions.CreateBuilder()
-    .WithTargetEdgeLengthXY(-1.0) // This is invalid
+    .WithTargetEdgeLengthXY(-1.0) // Invalid value
     .Build();
 
 if (optionsResult.IsFailure)
 {
-    // Catches the error without throwing an exception
     Console.WriteLine($"Configuration error: {optionsResult.Error.Description}");
-    // Output: Configuration error: Edge length must be between 1E-06 and 1000000.
     return;
 }
-
-// The rest of your code won't execute if the configuration is invalid
-var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
 ```
 
 ### Complex Structures with Holes
@@ -140,141 +167,120 @@ var hole = Polygon2D.FromPoints(new[] { new Vec2(2,2), new Vec2(4,2), new Vec2(4
 var structure = new PrismStructureDefinition(outer, 0, 2).AddHole(hole);
 
 var optionsResult = MesherOptions.CreateBuilder()
-    .WithHoleRefinement(0.75, 1.0) // Refine near holes
+    .WithHoleRefinement(0.75, 1.0)
     .Build();
 
 if (optionsResult.IsSuccess)
 {
     var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
-    // ...
+    // Handle result...
 }
 ```
 
-**📖 Full Documentation**: https://github.com/MabinogiCode/FastGeoMesh  
-**📋 API Reference**: https://github.com/MabinogiCode/FastGeoMesh/blob/main/docs/api-reference.md  
-**⚡ Performance Guide**: https://github.com/MabinogiCode/FastGeoMesh/blob/main/docs/performance-guide.md
-
-**License**: MIT
-
----
-
-## Français
-
-**Maillage rapide, sûr et à dominante quadrilatérale pour volumes prismatiques à partir d'empreintes 2D et d'élévations Z.**
-
-FastGeoMesh est une bibliothèque .NET 8 haute performance pour générer des maillages à dominante quadrilatérale à partir de structures prismatiques 2.5D. Parfaite pour les applications CAO, SIG et temps réel nécessitant des performances de maillage inférieures à la milliseconde et une gestion d'erreurs robuste.
-
-## ⚡ Performance
-
-**Maillage sous-milliseconde** avec optimisations .NET 8 et améliorations asynchrones :
-- **Structures Triviales (Async)** : ~311 μs (78% plus rapide que sync !)
-- **Structures Simples (Async)** : ~202 μs (42% plus rapide que sync !)
-- **Géométrie Complexe** : ~340 μs, 87 Ko
-- **Traitement par Lots (32 items)** : 3.3ms en parallèle vs 7.4ms en séquentiel (2.2x plus rapide)
-
-*Testé sur .NET 8, X64 RyuJIT AVX2.*
-
-## 🚀 Fonctionnalités
-
-- **🏗️ Mailleur de Prismes** : Génère faces latérales et chapeaux depuis des empreintes 2D.
-- **✨ Gestion d'Erreurs Robuste** : Utilise un pattern `Result` pour éliminer les exceptions du flux de travail standard.
-- **⚡ Traitement Asynchrone/Parallèle** : Interface asynchrone complète avec une accélération de 2.2x en parallèle.
-- **📊 Suivi en Temps Réel** : Statistiques de performance et estimation de la complexité.
-- **🎯 Suivi de Progression** : Suivi détaillé des opérations avec ETA.
-- **📐 Chemins Rapides Intelligents** : Optimisation pour les rectangles + fallback par tessellation générique.
-- **🎯 Contrôle Qualité** : Scoring de la qualité des quads & seuils configurables.
-- **📤 Export Multi-Format** : OBJ (quads+triangles), glTF (triangulé), SVG (vue de dessus).
-- **🔧 Préréglages de Performance** : Configurations Rapide vs Haute-Qualité.
-- **🧵 Thread-Safe** : Structures immutables et mailleurs sans état.
-
-## 🚀 Démarrage Rapide
+### L-Shaped Structures
 
 ```csharp
-using FastGeoMesh.Core;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
-using FastGeoMesh.Meshing.Exporters;
-
-// 1. Définir la géométrie
-var poly = Polygon2D.FromPoints(new[]{ 
-    new Vec2(0,0), new Vec2(20,0), new Vec2(20,5), new Vec2(0,5) 
+// Create L-shaped footprint
+var lshape = Polygon2D.FromPoints(new[]
+{
+    new Vec2(0, 0), new Vec2(6, 0), new Vec2(6, 3),
+    new Vec2(3, 3), new Vec2(3, 6), new Vec2(0, 6)
 });
-var structure = new PrismStructureDefinition(poly, -10, 10);
+var structure = new PrismStructureDefinition(lshape, 0, 4);
 
-// 2. Configurer les options de manière sûre
 var optionsResult = MesherOptions.CreateBuilder()
-    .WithFastPreset()
-    .WithTargetEdgeLengthXY(0.5)
-    .WithTargetEdgeLengthZ(1.0)
-    .WithRejectedCapTriangles(true)
+    .WithHighQualityPreset()
+    .WithTargetEdgeLengthXY(0.8)
     .Build();
 
-if (optionsResult.IsFailure)
+if (optionsResult.IsSuccess)
 {
-    Console.WriteLine($"Erreur de configuration: {optionsResult.Error.Description}");
-    return;
+    var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
+    if (meshResult.IsSuccess)
+    {
+        var indexed = IndexedMesh.FromMesh(meshResult.Value);
+        ObjExporter.Write(indexed, "lshape.obj");
+    }
 }
-var options = optionsResult.Value;
-
-// 3. Générer le maillage de manière sûre
-var mesher = new PrismMesher();
-var meshResult = mesher.Mesh(structure, options);
-
-if (meshResult.IsFailure)
-{
-    Console.WriteLine($"Échec du maillage: {meshResult.Error.Description}");
-    return;
-}
-var mesh = meshResult.Value;
-
-// 4. (Optionnel) Utiliser l'API asynchrone pour de meilleures performances
-var asyncMesher = (IAsyncMesher)mesher;
-var asyncMeshResult = await asyncMesher.MeshAsync(structure, options);
-if (asyncMeshResult.IsSuccess)
-{
-    // Utiliser asyncMeshResult.Value
-}
-
-// 5. Convertir en maillage indexé et exporter
-var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
-ObjExporter.Write(indexed, "mesh.obj");
-GltfExporter.Write(indexed, "mesh.gltf");
-SvgExporter.Write(indexed, "mesh.svg");
 ```
 
-## 💥 Changements Cassants (Breaking Changes) dans la v2.0
-
-L'introduction du pattern `Result` est un changement cassant visant à améliorer la sécurité de l'API et à éliminer les exceptions pour les erreurs de validation.
-
-- `MesherOptions.CreateBuilder().Build()` retourne maintenant un `Result<MesherOptions>`.
-- `PrismMesher.Mesh()` et ses variantes asynchrones retournent maintenant un `Result<Mesh>`.
-
-Vous devez maintenant vérifier la propriété `IsSuccess` du résultat avant d'accéder à la `Value`.
-
-## 🏗️ Fonctionnalités Avancées
-
-### Gestion des Erreurs et Validation
-
-Avec le nouveau pattern `Result`, vous pouvez gérer les erreurs de configuration et de maillage sans blocs `try-catch`.
+### T-Shaped Structures
 
 ```csharp
-// Exemple de configuration invalide
+// Create T-shaped footprint  
+var tshape = Polygon2D.FromPoints(new[]
+{
+    new Vec2(0, 2), new Vec2(8, 2), new Vec2(8, 4),
+    new Vec2(5, 4), new Vec2(5, 6), new Vec2(3, 6),
+    new Vec2(3, 4), new Vec2(0, 4)
+});
+var structure = new PrismStructureDefinition(tshape, -2, 3);
+
+// Add constraint segments for structural analysis
+structure = structure.AddConstraintSegment(
+    new Segment2D(new Vec2(0, 3), new Vec2(8, 3)), 0.5);
+
 var optionsResult = MesherOptions.CreateBuilder()
-    .WithTargetEdgeLengthXY(-1.0) // Valeur invalide
+    .WithTargetEdgeLengthXY(0.6)
+    .WithTargetEdgeLengthZ(1.0)
+    .WithSegmentRefinement(0.3, 0.5)
     .Build();
 
-if (optionsResult.IsFailure)
+if (optionsResult.IsSuccess)
 {
-    // L'erreur est interceptée sans lever d'exception
-    Console.WriteLine($"Erreur de configuration: {optionsResult.Error.Description}");
-    // Sortie: Erreur de configuration: Edge length must be between 1E-06 and 1000000.
-    return;
+    var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
+    if (meshResult.IsSuccess)
+    {
+        var indexed = IndexedMesh.FromMesh(meshResult.Value);
+        GltfExporter.Write(indexed, "tshape.gltf");
+    }
 }
-
-// Le reste de votre code ne s'exécutera pas si la configuration est invalide
-var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
 ```
+
+### Flexible TXT Export
+
+The new TXT exporter provides complete control over output format:
+
+```csharp
+// Custom format with builder pattern
+indexed.ExportTxt()
+    .WithPoints("vertex", CountPlacement.Top, indexBased: true)      // "8\nvertex 1 0.0 0.0 0.0\n..."
+    .WithEdges("edge", CountPlacement.None, indexBased: false)       // "edge 0 1\nedge 1 2\n..."
+    .WithQuads("quad", CountPlacement.Bottom, indexBased: true)      // "quad 1 0 1 2 3\n...\n4"
+    .ToFile("mesh.txt");
+
+// Count placement options:
+// - CountPlacement.Top: Count at beginning of section
+// - CountPlacement.Bottom: Count at end of section  
+// - CountPlacement.None: No count written
+```
+
+### Architecture & Code Quality Guidelines
+
+FastGeoMesh follows strict architectural principles:
+
+- **🏗️ Clean Architecture**: Clear separation between Domain, Application, and Infrastructure layers
+- **🔒 Immutable Structures**: Thread-safe by design with immutable data structures
+- **⚡ Performance-First**: Optimized for .NET 8 with aggressive inlining and SIMD operations
+- **📋 Result Pattern**: No exceptions in normal flow - predictable error handling
+- **🧪 High Test Coverage**: Comprehensive test suite with 194+ passing tests
+- **📝 XML Documentation**: Complete API documentation for all public members
+- **🎯 SOLID Principles**: Single responsibility, dependency injection, interface segregation
+
+#### Code Quality Standards:
+- All public APIs have XML documentation
+- Immutable data structures prevent side effects  
+- Result<T> pattern for error handling
+- Aggressive performance optimizations
+- Clean separation of concerns
+- Thread-safe operations throughout
+
+#### Performance Optimizations:
+- `[MethodImpl(MethodImplOptions.AggressiveInlining)]` for hot paths
+- Struct-based vectors (Vec2, Vec3) to avoid allocations
+- SIMD batch operations for geometric calculations
+- Object pooling for temporary collections
+- Span<T> and ReadOnlySpan<T> for zero-copy operations
 
 **📖 Documentation Complète** : https://github.com/MabinogiCode/FastGeoMesh  
 **📋 Référence API** : https://github.com/MabinogiCode/FastGeoMesh/blob/main/docs/api-reference-fr.md  

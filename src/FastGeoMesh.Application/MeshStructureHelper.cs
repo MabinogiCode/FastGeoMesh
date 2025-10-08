@@ -1,9 +1,5 @@
-using FastGeoMesh.Domain;
-using FastGeoMesh.Meshing;
-using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
+using FastGeoMesh.Domain;
 namespace FastGeoMesh.Utils
 {
     /// <summary>Helper class for mesh structure operations and Z-level calculations.</summary>
@@ -26,13 +22,22 @@ namespace FastGeoMesh.Utils
         /// <summary>Adds uniformly spaced Z-levels based on the target edge length.</summary>
         private static void AddUniformLevels(List<double> levels, double z0, double z1, double targetEdgeLengthZ)
         {
-            if (targetEdgeLengthZ <= 0) return;
+            if (targetEdgeLengthZ <= 0)
+            {
+                return;
+            }
 
             double range = z1 - z0;
-            if (range <= 0) return;
+            if (range <= 0)
+            {
+                return;
+            }
 
             int vDiv = Math.Max(1, (int)Math.Ceiling(range / targetEdgeLengthZ));
-            if (vDiv <= 1) return;
+            if (vDiv <= 1)
+            {
+                return;
+            }
 
             for (int i = 1; i < vDiv; i++)
             {
@@ -64,8 +69,8 @@ namespace FastGeoMesh.Utils
             }
             foreach (var s in structure.Geometry.Segments)
             {
-                AddIfInRange(s.A.Z);
-                AddIfInRange(s.B.Z);
+                AddIfInRange(s.Start.Z);
+                AddIfInRange(s.End.Z);
             }
             foreach (var plate in structure.InternalSurfaces)
             {
@@ -74,7 +79,7 @@ namespace FastGeoMesh.Utils
         }
 
         /// <summary>Sorts the list of levels and removes duplicates using a tolerance.</summary>
-        private static IReadOnlyList<double> SortAndMakeUnique(List<double> levels, double epsilon)
+        private static List<double> SortAndMakeUnique(List<double> levels, double epsilon)
         {
             if (levels.Count < 2)
             {
@@ -132,8 +137,8 @@ namespace FastGeoMesh.Utils
             var p = new Vec2(x, y);
             foreach (var s in structure.Geometry.Segments)
             {
-                var a = new Vec2(s.A.X, s.A.Y);
-                var b = new Vec2(s.B.X, s.B.Y);
+                var a = new Vec2(s.Start.X, s.Start.Y);
+                var b = new Vec2(s.End.X, s.End.Y);
                 if (GeometryHelper.DistancePointToSegment(p, a, b) <= band)
                 {
                     return true;

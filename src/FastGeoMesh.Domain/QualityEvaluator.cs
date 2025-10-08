@@ -1,5 +1,10 @@
 namespace FastGeoMesh.Meshing
 {
-    public static class QualityEvaluator { }
-    public static class QuadQualityMetrics { }
+    /// <summary>
+    /// Provides utility methods for evaluating mesh quality metrics.
+    /// </summary>
+    public static class QualityEvaluator 
+    {
+        // TODO: Implement quality evaluation methods
+    }
 }

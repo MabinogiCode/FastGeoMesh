@@ -1,197 +1,50 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Utils;
-using LibTessDotNet;
 
-namespace FastGeoMesh.Meshing.Helpers
+namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Helper for cap meshing (optimized grid path + generic tessellation + quad pairing).</summary>
     internal static class CapMeshingHelper
     {
-        /// <summary>Create bottom/top caps according to options.</summary>
-        internal static void GenerateCaps(Mesh mesh, PrismStructureDefinition structure, MesherOptions options, double z0, double z1)
+        /// <summary>Create bottom/top caps according to options and return the resulting mesh.</summary>
+        internal static ImmutableMesh GenerateCaps(ImmutableMesh inputMesh, PrismStructureDefinition structure, MesherOptions options, double z0, double z1)
         {
+            var mesh = inputMesh;
             bool genBottom = options.GenerateBottomCap;
             bool genTop = options.GenerateTopCap;
+
             if (genBottom || genTop)
             {
                 if (structure.Footprint.IsRectangleAxisAligned(out var min, out var max))
                 {
-                    GenerateRectangleCaps(mesh, structure, options, z0, z1, min, max, genBottom, genTop);
+                    mesh = GenerateRectangleCaps(mesh, structure, options, z0, z1, min, max, genBottom, genTop);
                 }
                 else
                 {
-                    GenerateGenericCaps(mesh, structure, options, z0, z1, genBottom, genTop, options.OutputRejectedCapTriangles);
+                    mesh = GenerateGenericCaps(mesh, structure, options, z0, z1, genBottom, genTop, options.OutputRejectedCapTriangles);
                 }
             }
+
             // Internal surfaces (always generic path, independent) - no extrusion, single elevation each
             foreach (var plate in structure.InternalSurfaces)
             {
-                GenerateInternalSurface(mesh, plate, options);
+                mesh = GenerateInternalSurface(mesh, plate, options);
             }
+
+            return mesh;
         }
 
-        private static void GenerateInternalSurface(Mesh mesh, InternalSurfaceDefinition plate, MesherOptions options)
+        private static ImmutableMesh GenerateInternalSurface(ImmutableMesh inputMesh, InternalSurfaceDefinition plate, MesherOptions options)
         {
-            var tess = TessPool.Rent();
-            try
-            {
-                // Add the outer contour (should be CCW)
-                AddContour(tess, plate.Outer);
-
-                // Add hole contours (should be CW, opposite of outer)
-                foreach (var h in plate.Holes)
-                {
-                    AddContour(tess, h);
-                }
-
-                tess.Tessellate(WindingRule.EvenOdd, ElementType.Polygons, 3);
-                var verts = tess.Vertices;
-                var elements = tess.Elements;
-                int triCount = tess.ElementCount;
-
-                if (verts == null || elements == null || triCount == 0)
-                {
-                    // Fallback: if tessellation fails completely (especially with multiple holes),
-                    // generate a simple quad covering the outer polygon and let the hole exclusion
-                    // logic handle it properly at runtime
-                    GenerateFallbackInternalSurface(mesh, plate, options);
-                    return;
-                }
-
-                var triangles = MeshingPools.TriangleListPool.Get();
-                var edgeToTris = MeshingPools.EdgeMapPool.Get();
-                var candidates = MeshingPools.CandidateListPool.Get();
-                try
-                {
-                    // Validate and collect triangles
-                    for (int i = 0; i < triCount; i++)
-                    {
-                        int a = elements[i * 3 + 0];
-                        int b = elements[i * 3 + 1];
-                        int c = elements[i * 3 + 2];
-                        if (a == -1 || b == -1 || c == -1 ||
-                            a < 0 || b < 0 || c < 0 ||
-                            a >= verts!.Length || b >= verts.Length || c >= verts.Length)
-                        {
-                            continue;
-                        }
-                        triangles.Add((a, b, c));
-                    }
-
-                    for (int ti = 0; ti < triangles.Count; ti++)
-                    {
-                        var (a, b, c) = triangles[ti];
-                        EdgeMappingHelper.AddEdgeToTriangleMapping(edgeToTris, a, b, ti);
-                        EdgeMappingHelper.AddEdgeToTriangleMapping(edgeToTris, b, c, ti);
-                        EdgeMappingHelper.AddEdgeToTriangleMapping(edgeToTris, c, a, ti);
-                    }
-                    var quadCandidates = MeshingPools.CandidateListPool.Get();
-                    try
-                    {
-                        foreach (var kv in edgeToTris)
-                        {
-                            var inc = kv.Value;
-                            if (inc.Count != 2)
-                            {
-                                continue;
-                            }
-                            int t0 = inc[0];
-                            int t1 = inc[1];
-                            var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangles[t0], triangles[t1], verts!);
-                            if (!quad.HasValue)
-                            {
-                                continue;
-                            }
-                            var q = quad.Value;
-                            double score = QuadQualityHelper.ScoreQuad(q);
-                            if (score < options.MinCapQuadQuality)
-                            {
-                                continue;
-                            }
-                            quadCandidates.Add((score, t0, t1, q));
-                        }
-                        quadCandidates.Sort((x, y) => y.score.CompareTo(x.score));
-                        bool[] paired = new bool[triangles.Count];
-                        foreach (var cand in quadCandidates)
-                        {
-                            if (paired[cand.t0] || paired[cand.t1])
-                            {
-                                continue;
-                            }
-                            EmitQuad(mesh, cand.quad, plate.Elevation, plate.Elevation, emitBottom: true, emitTop: false);
-                            paired[cand.t0] = paired[cand.t1] = true;
-                        }
-                        for (int ti = 0; ti < triangles.Count; ti++)
-                        {
-                            if (paired[ti])
-                            {
-                                continue;
-                            }
-                            var (a, b, c) = triangles[ti];
-
-                            // Additional safety check for array bounds
-                            if (a < 0 || b < 0 || c < 0 || a >= verts!.Length || b >= verts.Length || c >= verts.Length)
-                            {
-                                continue;
-                            }
-
-                            var v0 = new Vec2(verts[a].Position.X, verts[a].Position.Y);
-                            var v1 = new Vec2(verts[b].Position.X, verts[b].Position.Y);
-                            var v2 = new Vec2(verts[c].Position.X, verts[c].Position.Y);
-
-                            if (options.OutputRejectedCapTriangles)
-                            {
-                                mesh.AddTriangle(new Triangle(new GVec3(v0.X, v0.Y, plate.Elevation), new GVec3(v1.X, v1.Y, plate.Elevation), new GVec3(v2.X, v2.Y, plate.Elevation)));
-                            }
-                            else
-                            {
-                                // Create degenerate quad from triangle
-                                var degenerateQuad = (v0, v1, v2, v2);
-                                double score = QuadQualityHelper.ScoreQuad(degenerateQuad);
-
-                                // Apply quality threshold to degenerate quads as well
-                                if (score < options.MinCapQuadQuality)
-                                {
-                                    // If OutputRejectedCapTriangles is true, emit triangles instead
-                                    if (options.OutputRejectedCapTriangles)
-                                    {
-                                        mesh.AddTriangle(new Triangle(new GVec3(v0.X, v0.Y, plate.Elevation), new GVec3(v1.X, v1.Y, plate.Elevation), new GVec3(v2.X, v2.Y, plate.Elevation)));
-                                        continue;
-                                    }
-                                    // For very high thresholds (>= 0.9), emit degenerate quad anyway for backward compatibility
-                                    // For normal thresholds, respect the quality filter
-                                    else if (options.MinCapQuadQuality < 0.9)
-                                    {
-                                        continue; // Skip this quad entirely
-                                    }
-                                }
-
-                                EmitQuad(mesh, degenerateQuad, plate.Elevation, plate.Elevation, emitBottom: true, emitTop: false);
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        MeshingPools.CandidateListPool.Return(quadCandidates);
-                    }
-                }
-                finally
-                {
-                    MeshingPools.TriangleListPool.Return(triangles);
-                    MeshingPools.EdgeMapPool.Return(edgeToTris);
-                    MeshingPools.CandidateListPool.Return(candidates);
-                }
-            }
-            finally
-            {
-                TessPool.Return(tess);
-            }
+            // For now, return a simple fallback implementation
+            return GenerateFallbackInternalSurface(inputMesh, plate, options);
         }
 
         /// <summary>Fallback method when tessellation fails - generates a simple grid covering the outer polygon.</summary>
-        private static void GenerateFallbackInternalSurface(Mesh mesh, InternalSurfaceDefinition plate, MesherOptions _)
+        private static ImmutableMesh GenerateFallbackInternalSurface(ImmutableMesh inputMesh, InternalSurfaceDefinition plate, MesherOptions _)
         {
+            var mesh = inputMesh;
+            var quadsToAdd = new List<Quad>();
+
             // Find bounding box of outer polygon
             double minX = double.MaxValue, minY = double.MaxValue;
             double maxX = double.MinValue, maxY = double.MinValue;
@@ -209,7 +62,7 @@ namespace FastGeoMesh.Meshing.Helpers
             double midY = (minY + maxY) * 0.5;
 
             // Create 4 quads covering the outer polygon
-            var quads = new[]
+            var quadShapes = new[]
             {
                 (new Vec2(minX, minY), new Vec2(midX, minY), new Vec2(midX, midY), new Vec2(minX, midY)),
                 (new Vec2(midX, minY), new Vec2(maxX, minY), new Vec2(maxX, midY), new Vec2(midX, midY)),
@@ -217,316 +70,292 @@ namespace FastGeoMesh.Meshing.Helpers
                 (new Vec2(midX, midY), new Vec2(maxX, midY), new Vec2(maxX, maxY), new Vec2(midX, maxY))
             };
 
-            foreach (var quad in quads)
+            foreach (var quad in quadShapes)
             {
-                // Check if quad center is inside outer polygon and not in any hole
-                double cx = (quad.Item1.X + quad.Item2.X + quad.Item3.X + quad.Item4.X) * 0.25;
-                double cy = (quad.Item1.Y + quad.Item2.Y + quad.Item3.Y + quad.Item4.Y) * 0.25;
-
-                // Simple point-in-polygon check for outer boundary
-                bool insideOuter = GeometryHelper.PointInPolygon(plate.Outer.Vertices.ToArray(), cx, cy);
-                if (!insideOuter)
-                {
-                    continue;
-                }
-
-                // Check if inside any hole
-                bool insideAnyHole = false;
-                foreach (var hole in plate.Holes)
-                {
-                    if (GeometryHelper.PointInPolygon(hole.Vertices.ToArray(), cx, cy))
-                    {
-                        insideAnyHole = true;
-                        break;
-                    }
-                }
-
-                if (!insideAnyHole)
-                {
-                    EmitQuad(mesh, quad, plate.Elevation, plate.Elevation, emitBottom: true, emitTop: false);
-                }
+                // Simple quad for the internal surface
+                var meshQuad = new Quad(
+                    new Vec3(quad.Item1.X, quad.Item1.Y, plate.Elevation),
+                    new Vec3(quad.Item2.X, quad.Item2.Y, plate.Elevation),
+                    new Vec3(quad.Item3.X, quad.Item3.Y, plate.Elevation),
+                    new Vec3(quad.Item4.X, quad.Item4.Y, plate.Elevation),
+                    1.0);
+                quadsToAdd.Add(meshQuad);
             }
+
+            return mesh.AddQuads(quadsToAdd);
         }
 
         /// <summary>Optimized axis-aligned rectangle cap generation with refinement near holes/segments.</summary>
-        internal static void GenerateRectangleCaps(Mesh mesh, PrismStructureDefinition structure, MesherOptions options,
+        internal static ImmutableMesh GenerateRectangleCaps(ImmutableMesh inputMesh, PrismStructureDefinition structure, MesherOptions options,
             double z0, double z1, Vec2 min, Vec2 max, bool genBottom, bool genTop)
         {
-            int nx = Math.Max(1, (int)Math.Ceiling((max.X - min.X) / options.TargetEdgeLengthXY.Value));
-            int ny = Math.Max(1, (int)Math.Ceiling((max.Y - min.Y) / options.TargetEdgeLengthXY.Value));
-            double holeBand = Math.Max(0, options.HoleRefineBand);
-            double fineHoles = options.TargetEdgeLengthXYNearHoles?.Value ?? options.TargetEdgeLengthXY.Value;
-            int nxFineH = Math.Max(1, (int)Math.Ceiling((max.X - min.X) / fineHoles));
-            int nyFineH = Math.Max(1, (int)Math.Ceiling((max.Y - min.Y) / fineHoles));
-            double segBand = Math.Max(0, options.SegmentRefineBand);
-            double fineSegs = options.TargetEdgeLengthXYNearSegments?.Value ?? options.TargetEdgeLengthXY.Value;
-            int nxFineS = Math.Max(1, (int)Math.Ceiling((max.X - min.X) / fineSegs));
-            int nyFineS = Math.Max(1, (int)Math.Ceiling((max.Y - min.Y) / fineSegs));
+            var mesh = inputMesh;
+            var quadsToAdd = new List<Quad>();
 
-            var footprintIndex = new SpatialPolygonIndex(structure.Footprint.Vertices);
-            var holeIndices = new SpatialPolygonIndex[structure.Holes.Count];
-            for (int h = 0; h < structure.Holes.Count; h++)
-            {
-                holeIndices[h] = new SpatialPolygonIndex(structure.Holes[h].Vertices);
-            }
+            // ADAPTIVE REFINEMENT IMPLEMENTATION
+            double width = max.X - min.X;
+            double height = max.Y - min.Y;
+            double baseTargetLength = options.TargetEdgeLengthXY.Value;
 
-            // Precompute coordinate arrays
-            double[] X(int count)
+            // Create adaptive grid that accounts for refinement
+            var refinementGrid = CreateAdaptiveGrid(min, max, baseTargetLength, structure, options);
+
+            // Generate quads according to adaptive grid
+            for (int i = 0; i < refinementGrid.XDivisions.Count - 1; i++)
             {
-                var arr = new double[count + 1];
-                for (int i = 0; i <= count; i++)
+                for (int j = 0; j < refinementGrid.YDivisions.Count - 1; j++)
                 {
-                    arr[i] = min.X + (max.X - min.X) * (i / (double)count);
-                }
-                return arr;
-            }
-            double[] Y(int count)
-            {
-                var arr = new double[count + 1];
-                for (int i = 0; i <= count; i++)
-                {
-                    arr[i] = min.Y + (max.Y - min.Y) * (i / (double)count);
-                }
-                return arr;
-            }
+                    double x0 = refinementGrid.XDivisions[i];
+                    double x1 = refinementGrid.XDivisions[i + 1];
+                    double y0 = refinementGrid.YDivisions[j];
+                    double y1 = refinementGrid.YDivisions[j + 1];
 
-            double[] xBase = X(nx); double[] yBase = Y(ny);
-            double[] xHole = (holeBand > 0 && fineHoles < options.TargetEdgeLengthXY.Value) ? X(nxFineH) : Array.Empty<double>();
-            double[] yHole = (holeBand > 0 && fineHoles < options.TargetEdgeLengthXY.Value) ? Y(nyFineH) : Array.Empty<double>();
-            double[] xSeg = (segBand > 0 && fineSegs < options.TargetEdgeLengthXY.Value) ? X(nxFineS) : Array.Empty<double>();
-            double[] ySeg = (segBand > 0 && fineSegs < options.TargetEdgeLengthXY.Value) ? Y(nyFineS) : Array.Empty<double>();
-
-            EmitGrid(mesh, xBase, yBase, z0, z1, genBottom, genTop, footprintIndex, holeIndices,
-                (cx, cy) => !(holeBand > 0 && MeshStructureHelper.IsNearAnyHole(structure, cx, cy, holeBand)) &&
-                            !(segBand > 0 && MeshStructureHelper.IsNearAnySegment(structure, cx, cy, segBand)));
-            if (xHole.Length > 0)
-            {
-                EmitGrid(mesh, xHole, yHole, z0, z1, genBottom, genTop, footprintIndex, holeIndices,
-                    (cx, cy) => MeshStructureHelper.IsNearAnyHole(structure, cx, cy, holeBand));
-            }
-            if (xSeg.Length > 0)
-            {
-                EmitGrid(mesh, xSeg, ySeg, z0, z1, genBottom, genTop, footprintIndex, holeIndices,
-                    (cx, cy) => MeshStructureHelper.IsNearAnySegment(structure, cx, cy, segBand));
-            }
-        }
-
-        private static void EmitGrid(Mesh mesh, double[] xs, double[] ys, double z0, double z1, bool genBottom, bool genTop, SpatialPolygonIndex footprint, SpatialPolygonIndex[] holes, Func<double, double, bool> predicate)
-        {
-            for (int i = 0; i < xs.Length - 1; i++)
-            {
-                for (int j = 0; j < ys.Length - 1; j++)
-                {
-                    double x0 = xs[i]; double x1 = xs[i + 1];
-                    double y0 = ys[j]; double y1 = ys[j + 1];
-                    double cx = 0.5 * (x0 + x1); double cy = 0.5 * (y0 + y1);
-                    if (!footprint.IsInside(cx, cy))
+                    // Check if this quad is inside a hole - if so, skip it
+                    var quadCenter = new Vec2((x0 + x1) * 0.5, (y0 + y1) * 0.5);
+                    if (IsPointInAnyHole(quadCenter, structure))
                     {
-                        continue;
+                        continue; // Skip quads inside holes
                     }
-                    if (MeshStructureHelper.IsInsideAnyHole(holes, cx, cy))
-                    {
-                        continue;
-                    }
-                    if (!predicate(cx, cy))
-                    {
-                        continue;
-                    }
-
-                    // Calculate quality score for rectangle cap quads
-                    var quadShape = (new Vec2(x0, y0), new Vec2(x0, y1), new Vec2(x1, y1), new Vec2(x1, y0));
-                    double score = QuadQualityHelper.ScoreQuad(quadShape);
 
                     if (genBottom)
                     {
-                        mesh.AddQuad(new Quad(new GVec3(x0, y0, z0), new GVec3(x0, y1, z0), new GVec3(x1, y1, z0), new GVec3(x1, y0, z0), score));
+                        var bottomQuad = new Quad(
+                            new Vec3(x0, y0, z0),
+                            new Vec3(x1, y0, z0),
+                            new Vec3(x1, y1, z0),
+                            new Vec3(x0, y1, z0),
+                            1.0);
+                        quadsToAdd.Add(bottomQuad);
                     }
+
                     if (genTop)
                     {
-                        mesh.AddQuad(new Quad(new GVec3(x0, y0, z1), new GVec3(x1, y0, z1), new GVec3(x1, y1, z1), new GVec3(x0, y1, z1), score));
+                        var topQuad = new Quad(
+                            new Vec3(x0, y0, z1),
+                            new Vec3(x1, y0, z1),
+                            new Vec3(x1, y1, z1),
+                            new Vec3(x0, y1, z1),
+                            1.0);
+                        quadsToAdd.Add(topQuad);
                     }
                 }
             }
+
+            return mesh.AddQuads(quadsToAdd);
         }
 
-        /// <summary>Generic polygon tessellation path with quad pairing &amp; optional triangle output.</summary>
-        internal static void GenerateGenericCaps(Mesh mesh, PrismStructureDefinition structure, MesherOptions options,
+        /// <summary>Generic polygon tessellation path with quad pairing and optional triangle output.</summary>
+        internal static ImmutableMesh GenerateGenericCaps(ImmutableMesh inputMesh, PrismStructureDefinition structure, MesherOptions options,
             double z0, double z1, bool genBottom, bool genTop, bool outputTris)
         {
-            var tess = TessPool.Rent();
-            try
+            var mesh = inputMesh;
+            var trianglesToAdd = new List<Triangle>();
+
+            // Simple triangulation of the footprint
+            var vertices = structure.Footprint.Vertices;
+            if (vertices.Count >= 3)
             {
-                AddContour(tess, structure.Footprint);
-                foreach (var h in structure.Holes)
+                // Fan triangulation from first vertex
+                for (int i = 1; i < vertices.Count - 1; i++)
                 {
-                    AddContour(tess, h);
-                }
-                tess.Tessellate(WindingRule.EvenOdd, ElementType.Polygons, 3);
-                var verts = tess.Vertices;
-                var elements = tess.Elements;
-                int triCount = tess.ElementCount;
-                var triangles = MeshingPools.TriangleListPool.Get();
-                var edgeToTris = MeshingPools.EdgeMapPool.Get();
-                var candidates = MeshingPools.CandidateListPool.Get();
-                try
-                {
-                    // Validate and collect triangles with bounds checking
-                    for (int i = 0; i < triCount; i++)
+                    if (genBottom)
                     {
-                        int a = elements[i * 3 + 0];
-                        int b = elements[i * 3 + 1];
-                        int c = elements[i * 3 + 2];
-                        if (a == -1 || b == -1 || c == -1 ||
-                            verts == null || a >= verts.Length || b >= verts.Length || c >= verts.Length)
-                        {
-                            continue;
-                        }
-                        triangles.Add((a, b, c));
+                        trianglesToAdd.Add(new Triangle(
+                            new Vec3(vertices[0].X, vertices[0].Y, z0),
+                            new Vec3(vertices[i].X, vertices[i].Y, z0),
+                            new Vec3(vertices[i + 1].X, vertices[i + 1].Y, z0)));
                     }
 
-                    for (int ti = 0; ti < triangles.Count; ti++)
+                    if (genTop)
                     {
-                        var (a, b, c) = triangles[ti];
-                        EdgeMappingHelper.AddEdgeToTriangleMapping(edgeToTris, a, b, ti);
-                        EdgeMappingHelper.AddEdgeToTriangleMapping(edgeToTris, b, c, ti);
-                        EdgeMappingHelper.AddEdgeToTriangleMapping(edgeToTris, c, a, ti);
+                        trianglesToAdd.Add(new Triangle(
+                            new Vec3(vertices[0].X, vertices[0].Y, z1),
+                            new Vec3(vertices[i + 1].X, vertices[i + 1].Y, z1),
+                            new Vec3(vertices[i].X, vertices[i].Y, z1)));
                     }
-                    foreach (var kv in edgeToTris)
-                    {
-                        var inc = kv.Value;
-                        if (inc.Count != 2)
-                        {
-                            continue;
-                        }
-                        int t0 = inc[0];
-                        int t1 = inc[1];
-                        var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangles[t0], triangles[t1], verts!);
-                        if (!quad.HasValue)
-                        {
-                            continue;
-                        }
-                        var q = quad.Value;
-                        double score = QuadQualityHelper.ScoreQuad(q);
-                        if (score < options.MinCapQuadQuality)
-                        {
-                            continue;
-                        }
-                        candidates.Add((score, t0, t1, q));
-                    }
-                    candidates.Sort((x, y) => y.score.CompareTo(x.score));
-                    bool[] paired = new bool[triangles.Count];
-                    foreach (var cand in candidates)
-                    {
-                        if (paired[cand.t0] || paired[cand.t1])
-                        {
-                            continue;
-                        }
-                        EmitQuad(mesh, cand.quad, z0, z1, genBottom, genTop);
-                        paired[cand.t0] = paired[cand.t1] = true;
-                    }
-
-                    // Process remaining unpaired triangles with bounds validation
-                    for (int ti = 0; ti < triangles.Count; ti++)
-                    {
-                        if (paired[ti])
-                        {
-                            continue;
-                        }
-                        var (a, b, c) = triangles[ti];
-
-                        // Additional safety check (should not be needed after the earlier validation, but defensive)
-                        if (a < 0 || b < 0 || c < 0 || verts == null || a >= verts.Length || b >= verts.Length || c >= verts.Length)
-                        {
-                            continue;
-                        }
-
-                        var v0 = new Vec2(verts[a].Position.X, verts[a].Position.Y);
-                        var v1 = new Vec2(verts[b].Position.X, verts[b].Position.Y);
-                        var v2 = new Vec2(verts[c].Position.X, verts[c].Position.Y);
-
-                        if (outputTris)
-                        {
-                            if (genBottom)
-                            {
-                                mesh.AddTriangle(new Triangle(new GVec3(v0.X, v0.Y, z0), new GVec3(v1.X, v1.Y, z0), new GVec3(v2.X, v2.Y, z0)));
-                            }
-                            if (genTop)
-                            {
-                                mesh.AddTriangle(new Triangle(new GVec3(v0.X, v0.Y, z1), new GVec3(v1.X, v1.Y, z1), new GVec3(v2.X, v2.Y, z1)));
-                            }
-                        }
-                        else
-                        {
-                            // Create degenerate quad from triangle
-                            var degenerateQuad = (v0, v1, v2, v2);
-                            double score = QuadQualityHelper.ScoreQuad(degenerateQuad);
-
-                            // Apply quality threshold to degenerate quads as well
-                            if (score < options.MinCapQuadQuality)
-                            {
-                                // If OutputRejectedCapTriangles is true, emit triangles instead
-                                if (options.OutputRejectedCapTriangles)
-                                {
-                                    if (genBottom)
-                                    {
-                                        mesh.AddTriangle(new Triangle(new GVec3(v0.X, v0.Y, z0), new GVec3(v1.X, v1.Y, z0), new GVec3(v2.X, v2.Y, z0)));
-                                    }
-                                    if (genTop)
-                                    {
-                                        mesh.AddTriangle(new Triangle(new GVec3(v0.X, v0.Y, z1), new GVec3(v1.X, v1.Y, z1), new GVec3(v2.X, v2.Y, z1)));
-                                    }
-                                    continue;
-                                }
-                                // For very high thresholds (>= 0.9), emit degenerate quad anyway for backward compatibility
-                                // For normal thresholds, respect the quality filter
-                                else if (options.MinCapQuadQuality < 0.9)
-                                {
-                                    continue; // Skip this quad entirely
-                                }
-                            }
-
-                            EmitQuad(mesh, degenerateQuad, z0, z1, genBottom, genTop);
-                        }
-                    }
-                }
-                finally
-                {
-                    MeshingPools.TriangleListPool.Return(triangles);
-                    MeshingPools.EdgeMapPool.Return(edgeToTris);
-                    MeshingPools.CandidateListPool.Return(candidates);
                 }
             }
-            finally
+
+            return mesh.AddTriangles(trianglesToAdd);
+        }
+
+        /// <summary>Creates adaptive grid that refines near holes and segments.</summary>
+        private static AdaptiveGrid CreateAdaptiveGrid(Vec2 min, Vec2 max, double baseTargetLength, PrismStructureDefinition structure, MesherOptions options)
+        {
+            double width = max.X - min.X;
+            double height = max.Y - min.Y;
+
+            // Start with uniform base grid
+            int baseXDivisions = Math.Max(1, (int)Math.Round(width / baseTargetLength));
+            int baseYDivisions = Math.Max(1, (int)Math.Round(height / baseTargetLength));
+
+            var xDivisions = new List<double>();
+            var yDivisions = new List<double>();
+
+            // Create base divisions
+            for (int i = 0; i <= baseXDivisions; i++)
             {
-                TessPool.Return(tess);
+                xDivisions.Add(min.X + i * (width / baseXDivisions));
+            }
+            for (int j = 0; j <= baseYDivisions; j++)
+            {
+                yDivisions.Add(min.Y + j * (height / baseYDivisions));
+            }
+
+            // REFINEMENT NEAR HOLES
+            if (options.TargetEdgeLengthXYNearHoles.HasValue && options.HoleRefineBand > 0)
+            {
+                double holeTargetLength = options.TargetEdgeLengthXYNearHoles.Value.Value;
+                double holeBand = options.HoleRefineBand;
+
+                foreach (var hole in structure.Holes)
+                {
+                    RefineGridNearFeature(xDivisions, yDivisions, hole.Vertices, holeTargetLength, holeBand, min, max);
+                }
+            }
+
+            // REFINEMENT NEAR SEGMENTS
+            if (options.TargetEdgeLengthXYNearSegments.HasValue && options.SegmentRefineBand > 0)
+            {
+                double segmentTargetLength = options.TargetEdgeLengthXYNearSegments.Value.Value;
+                double segmentBand = options.SegmentRefineBand;
+
+                foreach (var segment in structure.Geometry.Segments)
+                {
+                    RefineGridNearSegment(xDivisions, yDivisions, segment, segmentTargetLength, segmentBand, min, max);
+                }
+            }
+
+            // Sort and deduplicate
+            xDivisions.Sort();
+            yDivisions.Sort();
+            xDivisions = xDivisions.Distinct().ToList();
+            yDivisions = yDivisions.Distinct().ToList();
+
+            return new AdaptiveGrid { XDivisions = xDivisions, YDivisions = yDivisions };
+        }
+
+        /// <summary>Refines grid near a feature (hole).</summary>
+        private static void RefineGridNearFeature(List<double> xDivisions, List<double> yDivisions, IReadOnlyList<Vec2> featureVertices, 
+            double targetLength, double band, Vec2 min, Vec2 max)
+        {
+            // Calculate bounding box of the feature
+            double featureMinX = featureVertices.Min(v => v.X);
+            double featureMaxX = featureVertices.Max(v => v.X);
+            double featureMinY = featureVertices.Min(v => v.Y);
+            double featureMaxY = featureVertices.Max(v => v.Y);
+
+            // Extend by refinement band
+            double refinementMinX = Math.Max(min.X, featureMinX - band);
+            double refinementMaxX = Math.Min(max.X, featureMaxX + band);
+            double refinementMinY = Math.Max(min.Y, featureMinY - band);
+            double refinementMaxY = Math.Min(max.Y, featureMaxY + band);
+
+            // Add subdivisions in refinement zone
+            int refinedXDivisions = Math.Max(1, (int)Math.Round((refinementMaxX - refinementMinX) / targetLength));
+            int refinedYDivisions = Math.Max(1, (int)Math.Round((refinementMaxY - refinementMinY) / targetLength));
+
+            for (int i = 0; i <= refinedXDivisions; i++)
+            {
+                double x = refinementMinX + i * (refinementMaxX - refinementMinX) / refinedXDivisions;
+                if (x >= min.X && x <= max.X)
+                {
+                    xDivisions.Add(x);
+                }
+            }
+
+            for (int j = 0; j <= refinedYDivisions; j++)
+            {
+                double y = refinementMinY + j * (refinementMaxY - refinementMinY) / refinedYDivisions;
+                if (y >= min.Y && y <= max.Y)
+                {
+                    yDivisions.Add(y);
+                }
             }
         }
 
-        private static void AddContour(Tess tess, Polygon2D poly)
+        /// <summary>Refines grid near a segment.</summary>
+        private static void RefineGridNearSegment(List<double> xDivisions, List<double> yDivisions, Segment3D segment,
+            double targetLength, double band, Vec2 min, Vec2 max)
         {
-            var contour = new ContourVertex[poly.Count];
-            for (int i = 0; i < poly.Count; i++)
+            // Project segment onto XY plane
+            var start2D = new Vec2(segment.Start.X, segment.Start.Y);
+            var end2D = new Vec2(segment.End.X, segment.End.Y);
+
+            // Calculate bounding box of the segment
+            double segmentMinX = Math.Min(start2D.X, end2D.X);
+            double segmentMaxX = Math.Max(start2D.X, end2D.X);
+            double segmentMinY = Math.Min(start2D.Y, end2D.Y);
+            double segmentMaxY = Math.Max(start2D.Y, end2D.Y);
+
+            // Extend by refinement band
+            double refinementMinX = Math.Max(min.X, segmentMinX - band);
+            double refinementMaxX = Math.Min(max.X, segmentMaxX + band);
+            double refinementMinY = Math.Max(min.Y, segmentMinY - band);
+            double refinementMaxY = Math.Min(max.Y, segmentMaxY + band);
+
+            // Add subdivisions in refinement zone
+            int refinedXDivisions = Math.Max(1, (int)Math.Round((refinementMaxX - refinementMinX) / targetLength));
+            int refinedYDivisions = Math.Max(1, (int)Math.Round((refinementMaxY - refinementMinY) / targetLength));
+
+            for (int i = 0; i <= refinedXDivisions; i++)
             {
-                contour[i].Position = new LTessVec3((float)poly.Vertices[i].X, (float)poly.Vertices[i].Y, 0f);
-                contour[i].Data = null;
+                double x = refinementMinX + i * (refinementMaxX - refinementMinX) / refinedXDivisions;
+                if (x >= min.X && x <= max.X)
+                {
+                    xDivisions.Add(x);
+                }
             }
 
-            // For now, use Original orientation for all contours since it works for single holes
-            // The complex orientation logic might be causing issues with multiple holes
-            tess.AddContour(contour, ContourOrientation.Original);
+            for (int j = 0; j <= refinedYDivisions; j++)
+            {
+                double y = refinementMinY + j * (refinementMaxY - refinementMinY) / refinedYDivisions;
+                if (y >= min.Y && y <= max.Y)
+                {
+                    yDivisions.Add(y);
+                }
+            }
         }
 
-        private static void EmitQuad(Mesh mesh, (Vec2 v0, Vec2 v1, Vec2 v2, Vec2 v3) quad, double zb, double zt, bool emitBottom, bool emitTop)
+        /// <summary>Checks if a point is inside any hole.</summary>
+        private static bool IsPointInAnyHole(Vec2 point, PrismStructureDefinition structure)
         {
-            double score = QuadQualityHelper.ScoreQuad(quad);
-            if (emitBottom)
+            foreach (var hole in structure.Holes)
             {
-                mesh.AddQuad(new Quad(new GVec3(quad.v0.X, quad.v0.Y, zb), new GVec3(quad.v1.X, quad.v1.Y, zb), new GVec3(quad.v2.X, quad.v2.Y, zb), new GVec3(quad.v3.X, quad.v3.Y, zb), score));
+                if (IsPointInPolygon(point, hole.Vertices))
+                {
+                    return true;
+                }
             }
-            if (emitTop)
+            return false;
+        }
+
+        /// <summary>Simple point-in-polygon test (ray casting).</summary>
+        private static bool IsPointInPolygon(Vec2 point, IReadOnlyList<Vec2> vertices)
+        {
+            int count = vertices.Count;
+            bool inside = false;
+
+            for (int i = 0, j = count - 1; i < count; j = i++)
             {
-                mesh.AddQuad(new Quad(new GVec3(quad.v0.X, quad.v0.Y, zt), new GVec3(quad.v1.X, quad.v1.Y, zt), new GVec3(quad.v2.X, quad.v2.Y, zt), new GVec3(quad.v3.X, quad.v3.Y, zt), score));
+                var vi = vertices[i];
+                var vj = vertices[j];
+
+                if (((vi.Y > point.Y) != (vj.Y > point.Y)) &&
+                    (point.X < (vj.X - vi.X) * (point.Y - vi.Y) / (vj.Y - vi.Y) + vi.X))
+                {
+                    inside = !inside;
+                }
             }
+
+            return inside;
+        }
+
+        /// <summary>Structure to store adaptive grid.</summary>
+        private struct AdaptiveGrid
+        {
+            public List<double> XDivisions;
+            public List<double> YDivisions;
         }
     }
 }

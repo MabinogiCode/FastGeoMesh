@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
@@ -17,13 +14,13 @@ namespace FastGeoMesh.Tests
         /// Validates that cap quad areas approximate original footprint area minus holes within tolerance.
         /// </summary>
         [Fact]
-        public void AreaInvariant_RectangleCapsApproximateFootprintAreaMinusHoles()
+        public void AreaInvariantRectangleCapsApproximateFootprintAreaMinusHoles()
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 6), new Vec2(0, 6) });
             var hole = Polygon2D.FromPoints(new[] { new Vec2(2, 2), new Vec2(4, 2), new Vec2(4, 4), new Vec2(2, 4) });
             var structure = new PrismStructureDefinition(outer, 0, 2).AddHole(hole);
-            var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 1.0, GenerateBottomCap = true, GenerateTopCap = true };
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(1.0), TargetEdgeLengthZ = EdgeLength.From(1.0), GenerateBottomCap = true, GenerateTopCap = true };
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             double footprintArea = Math.Abs(Polygon2D.SignedArea(outer.Vertices)) - Math.Abs(Polygon2D.SignedArea(hole.Vertices));
             var topQuads = mesh.Quads.Where(q => Math.Abs(q.V0.Z - 2) < 1e-9 && q.QualityScore.HasValue).ToList();
             double SumArea() => topQuads.Sum(q => Math.Abs(Polygon2D.SignedArea(new[] { new Vec2(q.V0.X, q.V0.Y), new Vec2(q.V1.X, q.V1.Y), new Vec2(q.V2.X, q.V2.Y), new Vec2(q.V3.X, q.V3.Y) })));
@@ -40,8 +37,8 @@ namespace FastGeoMesh.Tests
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(3, 0), new Vec2(3, 3), new Vec2(0, 3) });
             var structure = new PrismStructureDefinition(outer, 0, 0.0001);
-            var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 1.0, GenerateBottomCap = false, GenerateTopCap = false };
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(1.0), TargetEdgeLengthZ = EdgeLength.From(1.0), GenerateBottomCap = false, GenerateTopCap = false };
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             mesh.Quads.Should().NotBeEmpty();
         }
 
@@ -49,7 +46,7 @@ namespace FastGeoMesh.Tests
         /// Verifies immutability: AddHole returns a new instance leaving original unchanged.
         /// </summary>
         [Fact]
-        public void ImmutableStructure_AddHoleReturnsNewInstance()
+        public void ImmutableStructureAddHoleReturnsNewInstance()
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5) });
             var baseStruct = new PrismStructureDefinition(outer, 0, 5);
@@ -64,7 +61,7 @@ namespace FastGeoMesh.Tests
         /// Verifies immutability: AddConstraintSegment returns new instance leaving original unchanged.
         /// </summary>
         [Fact]
-        public void ImmutableStructure_AddConstraintReturnsNewInstance()
+        public void ImmutableStructureAddConstraintReturnsNewInstance()
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5) });
             var baseStruct = new PrismStructureDefinition(outer, 0, 5);

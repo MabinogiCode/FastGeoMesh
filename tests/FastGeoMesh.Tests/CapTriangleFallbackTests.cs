@@ -1,7 +1,6 @@
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Meshing.Exporters;
-using FastGeoMesh.Structures;
 using Xunit;
 
 namespace FastGeoMesh.Tests
@@ -24,14 +23,14 @@ namespace FastGeoMesh.Tests
             var structure = new PrismStructureDefinition(outer, 0, 1);
             var options = new MesherOptions
             {
-                TargetEdgeLengthXY = 0.75,
-                TargetEdgeLengthZ = 0.5,
+                TargetEdgeLengthXY = EdgeLength.From(0.75),
+                TargetEdgeLengthZ = EdgeLength.From(0.5),
                 GenerateBottomCap = true,
                 GenerateTopCap = true,
                 MinCapQuadQuality = 0.95, // deliberately strict
                 OutputRejectedCapTriangles = true
             };
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var mesh = new PrismMesher().Mesh(structure, options).Value;
             // Expect some quads and some triangles
             Assert.True(mesh.Triangles.Count > 0, "Expected rejected cap triangles to be emitted");
 

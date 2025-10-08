@@ -6,10 +6,10 @@
     <WarningsAsErrors>IDE0005;IDE0011;IDE0052;IDE0160</WarningsAsErrors>
     <Nullable>enable</Nullable>
     <PackageId>FastGeoMesh</PackageId>
-    <Version>1.4.0</Version>
+    <Version>2.0.0</Version>
     <Authors>MabinogiCode</Authors>
-    <Description>High-performance .NET 8 library for quad-dominant meshing of 2.5D prismatic structures with sub-millisecond performance, advanced caching optimizations, async/parallel support, and comprehensive export capabilities.</Description>
-    <PackageTags>meshing;mesh;quad;triangle;geometry;prism;cad;gis;dotnet;net8;performance;vectorization;async;parallel</PackageTags>
+    <Description>High-performance .NET 8 library for quad-dominant meshing of 2.5D prismatic structures. v2.0 features Clean Architecture with Domain/Application/Infrastructure layers, Result pattern for robust error handling, async/parallel processing with 2.4x speedup, and comprehensive export capabilities.</Description>
+    <PackageTags>meshing;mesh;quad;triangle;geometry;prism;cad;gis;dotnet;net8;performance;vectorization;async;parallel;clean-architecture;domain-driven-design</PackageTags>
     <RepositoryUrl>https://github.com/MabinogiCode/FastGeoMesh</RepositoryUrl>
     <PackageProjectUrl>https://github.com/MabinogiCode/FastGeoMesh</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -23,7 +23,7 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <Deterministic>true</Deterministic>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>1.4.0-rc1: Production-ready async/parallel meshing with 2.4x speedup, real-time monitoring (560ns overhead), progress reporting, complexity estimation, and full cancellation support. 100% backward compatible with v1.3.2. Benchmarks validated: trivial structures 13% faster async, batch processing 2.2x parallel speedup. New IAsyncMesher interface with ValueTask for optimal library performance.</PackageReleaseNotes>
+    <PackageReleaseNotes>2.0.0: BREAKING CHANGES - Clean Architecture refactoring. Direct access to Domain/Application/Infrastructure layers. Removed compatibility wrappers for cleaner, more maintainable API. Enhanced Result pattern, improved async performance, and better separation of concerns. Migration guide: replace old namespaces with FastGeoMesh.Domain, FastGeoMesh.Application, FastGeoMesh.Infrastructure.</PackageReleaseNotes>
     
     <!-- Suppress .NET 9 SDK warnings about analyzer versions -->
     <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>

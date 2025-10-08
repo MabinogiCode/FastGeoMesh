@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Utils;
 using FluentAssertions;
 using Xunit;
@@ -17,11 +14,13 @@ namespace FastGeoMesh.Tests
         public void FromMeshUsesExactKeyingWhenEpsilonIsDoubleEpsilon()
         {
             // Two very close points should NOT merge with epsilon = double.Epsilon
-            var mesh = new Mesh();
             var p0 = new Vec3(0, 0, 0);
             var p1 = new Vec3(1e-10, 0, 0); // distinct but very close
-            mesh.AddPoint(p0);
-            mesh.AddPoint(p1);
+            
+            // Correctly chain the immutable AddPoint methods
+            var mesh = new ImmutableMesh()
+                .AddPoint(p0)
+                .AddPoint(p1);
 
             var imExact = IndexedMesh.FromMesh(mesh, double.Epsilon);
             _ = imExact.Vertices.Count.Should().Be(2);
@@ -39,8 +38,8 @@ namespace FastGeoMesh.Tests
                 new Vec2(0,0), new Vec2(20,0), new Vec2(20,5), new Vec2(0,5)
             });
             var structure = new PrismStructureDefinition(poly, -10, 10);
-            var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = true, GenerateTopCap = true };
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(1.0), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = true, GenerateTopCap = true };
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
 
             int capCount = mesh.Quads.Count(q =>
                 (MathUtil.NearlyEqual(q.V0.Z, -10, options.Epsilon) && MathUtil.NearlyEqual(q.V1.Z, -10, options.Epsilon) && MathUtil.NearlyEqual(q.V2.Z, -10, options.Epsilon) && MathUtil.NearlyEqual(q.V3.Z, -10, options.Epsilon)) ||
@@ -62,8 +61,8 @@ namespace FastGeoMesh.Tests
             var b = new Vec3(20, 4, 4);
             _ = structure.Geometry.AddPoint(a).AddPoint(b).AddSegment(new Segment3D(a, b));
 
-            var options = new MesherOptions { TargetEdgeLengthXY = 1.0, TargetEdgeLengthZ = 0.5, GenerateBottomCap = false, GenerateTopCap = false };
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(1.0), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = false, GenerateTopCap = false };
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
             // find indices for a and b
@@ -84,8 +83,8 @@ namespace FastGeoMesh.Tests
             var structure = new PrismStructureDefinition(poly, -10, 10);
             // FIXED: AddConstraintSegment returns new immutable instance - must reassign
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(10, 0)), 2.5);
-            var options = new MesherOptions { TargetEdgeLengthXY = 5.0, TargetEdgeLengthZ = 3.0, GenerateBottomCap = false, GenerateTopCap = false };
-            var mesh = new PrismMesher().Mesh(structure, options);
+            var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(5.0), TargetEdgeLengthZ = EdgeLength.From(3.0), GenerateBottomCap = false, GenerateTopCap = false };
+            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
 
             bool hasZ = mesh.Quads.Any(q =>
                 MathUtil.NearlyEqual(q.V0.Z, 2.5, options.Epsilon) ||

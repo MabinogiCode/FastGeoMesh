@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors>IDE0160;IDE0052;IDE0054</WarningsAsErrors>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
     
     <!-- Code coverage settings optimized for .NET 8 -->
     <CollectCoverage>true</CollectCoverage>

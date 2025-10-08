@@ -1,13 +1,18 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Meshing;
 using FastGeoMesh.Infrastructure;
 
-namespace FastGeoMesh.Meshing
+namespace FastGeoMesh.Application
 {
     /// <summary>Default cap meshing strategy delegating to CapMeshingHelper.</summary>
     internal sealed class DefaultCapMeshingStrategy : ICapMeshingStrategy
     {
-        public void GenerateCaps(Mesh mesh, PrismStructureDefinition definition, MesherOptions options, double z0, double z1)
-            => CapMeshingHelper.GenerateCaps(mesh, definition, options, z0, z1);
+        public CapGeometry GenerateCaps(PrismStructureDefinition definition, MesherOptions options, double z0, double z1)
+        {
+            // Create a temporary empty mesh and generate caps
+            var tempMesh = CapMeshingHelper.GenerateCaps(ImmutableMesh.Empty, definition, options, z0, z1);
+
+            // Extract the generated quads and triangles
+            return new CapGeometry(tempMesh.Quads, tempMesh.Triangles);
+        }
     }
 }

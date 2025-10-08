@@ -1,6 +1,8 @@
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
+
+
+
+using FastGeoMesh.Application;
+using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
@@ -26,13 +28,13 @@ namespace FastGeoMesh.Tests
                 .AddInternalSurface(plate, 3.0, holeA, holeB);
             var opt = new MesherOptions
             {
-                TargetEdgeLengthXY = 1.0,
-                TargetEdgeLengthZ = 2.0,
+                TargetEdgeLengthXY = EdgeLength.From(1.0),
+                TargetEdgeLengthZ = EdgeLength.From(2.0),
                 GenerateBottomCap = false,
                 GenerateTopCap = false,
                 MinCapQuadQuality = 0.0
             };
-            var mesh = new PrismMesher().Mesh(st, opt);
+            var mesh = new PrismMesher().Mesh(st, opt).UnwrapForTests();
             var plateQuads = mesh.Quads.Where(q => q.V0.Z == 3.0 && q.V1.Z == 3.0 && q.V2.Z == 3.0 && q.V3.Z == 3.0).ToList();
 
             if (plateQuads.Count == 0)

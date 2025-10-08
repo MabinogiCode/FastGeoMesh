@@ -1,7 +1,5 @@
 using System.Diagnostics;
-using FastGeoMesh.Geometry;
-using FastGeoMesh.Meshing;
-using FastGeoMesh.Structures;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Utils;
 using FluentAssertions;
 using Xunit;
@@ -23,14 +21,14 @@ namespace FastGeoMesh.Tests
                 .WithHoleRefinement(0.5, 1.0)
                 .WithMinCapQuadQuality(0.6)
                 .WithRejectedCapTriangles(true)
-                .Build();
+                .Build().UnwrapForTests();
 
             // Assert
-            options.TargetEdgeLengthXY.Should().Be(1.0);
-            options.TargetEdgeLengthZ.Should().Be(0.5);
+            options.TargetEdgeLengthXY.Value.Should().Be(1.0);
+            options.TargetEdgeLengthZ.Value.Should().Be(0.5);
             options.GenerateBottomCap.Should().BeTrue();
             options.GenerateTopCap.Should().BeTrue();
-            options.TargetEdgeLengthXYNearHoles.Should().Be(0.5);
+            options.TargetEdgeLengthXYNearHoles?.Value.Should().Be(0.5);
             options.HoleRefineBand.Should().Be(1.0);
             options.MinCapQuadQuality.Should().Be(0.6);
             options.OutputRejectedCapTriangles.Should().BeTrue();
@@ -43,11 +41,11 @@ namespace FastGeoMesh.Tests
             // Arrange & Act
             var options = MesherOptions.CreateBuilder()
                 .WithHighQualityPreset()
-                .Build();
+                .Build().UnwrapForTests();
 
             // Assert
-            options.TargetEdgeLengthXY.Should().Be(0.5);
-            options.TargetEdgeLengthZ.Should().Be(0.5);
+            options.TargetEdgeLengthXY.Value.Should().Be(0.5);
+            options.TargetEdgeLengthZ.Value.Should().Be(0.5);
             options.MinCapQuadQuality.Should().Be(0.7);
             options.OutputRejectedCapTriangles.Should().BeTrue();
         }
@@ -59,11 +57,11 @@ namespace FastGeoMesh.Tests
             // Arrange & Act
             var options = MesherOptions.CreateBuilder()
                 .WithFastPreset()
-                .Build();
+                .Build().UnwrapForTests();
 
             // Assert
-            options.TargetEdgeLengthXY.Should().Be(2.0);
-            options.TargetEdgeLengthZ.Should().Be(2.0);
+            options.TargetEdgeLengthXY.Value.Should().Be(2.0);
+            options.TargetEdgeLengthZ.Value.Should().Be(2.0);
             options.MinCapQuadQuality.Should().Be(0.3);
             options.OutputRejectedCapTriangles.Should().BeFalse();
         }
@@ -184,14 +182,14 @@ namespace FastGeoMesh.Tests
                 new Vec2(0, TestGeometries.SmallSquareSide)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
-            var options = MesherOptions.CreateBuilder().WithFastPreset().Build();
+            var options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
 
             // Act
             var mesh = await mesher.MeshAsync(structure, options, CancellationToken.None);
 
             // Assert
             mesh.Should().NotBeNull();
-            mesh.Quads.Should().NotBeEmpty();
+            mesh.Value.Quads.Should().NotBeEmpty();
         }
 
         /// <summary>Tests that enhanced pools reuse objects correctly.</summary>

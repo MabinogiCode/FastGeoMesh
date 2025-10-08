@@ -1,6 +1,4 @@
-using FastGeoMesh.Domain;
-
-namespace FastGeoMesh.Meshing
+namespace FastGeoMesh.Domain
 {
     /// <summary>
     /// Defines a strategy for generating top and bottom caps for a prism structure.
