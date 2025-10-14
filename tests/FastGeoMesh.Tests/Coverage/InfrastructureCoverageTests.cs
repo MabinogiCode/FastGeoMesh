@@ -1,5 +1,4 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 

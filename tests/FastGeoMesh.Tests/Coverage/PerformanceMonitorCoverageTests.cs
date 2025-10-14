@@ -1,8 +1,4 @@
-
-
-
-
-using FastGeoMesh.Utils;
+using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
@@ -19,15 +15,15 @@ namespace FastGeoMesh.Tests.Coverage
         public void PerformanceMonitorCountersTracksOperations()
         {
             // Arrange
-            var initialStats = PerformanceMonitor.Counters.GetStatistics();
+            var initialStats = PerformanceMonitorCounters.GetStatistics();
             var initialOperations = initialStats.MeshingOperations;
 
             // Act
-            PerformanceMonitor.Counters.IncrementMeshingOperations();
-            PerformanceMonitor.Counters.IncrementMeshingOperations();
+            PerformanceMonitorCounters.IncrementMeshingOperations();
+            PerformanceMonitorCounters.IncrementMeshingOperations();
 
             // Assert
-            var finalStats = PerformanceMonitor.Counters.GetStatistics();
+            var finalStats = PerformanceMonitorCounters.GetStatistics();
             (finalStats.MeshingOperations - initialOperations).Should().Be(2);
         }
 
@@ -50,7 +46,7 @@ namespace FastGeoMesh.Tests.Coverage
         public void PerformanceMonitorStatisticsHasAllProperties()
         {
             // Act
-            var stats = PerformanceMonitor.Counters.GetStatistics();
+            var stats = PerformanceMonitorCounters.GetStatistics();
 
             // Assert
             stats.MeshingOperations.Should().BeGreaterThanOrEqualTo(0);

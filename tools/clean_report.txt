@@ -1,0 +1,9 @@
+﻿Total files scanned: 156
+Files with violations: 5
+Clean code score: 97 / 100
+Violations detail (first 50):
+- C:\Git-perso\FastGeoMesh\tests\FastGeoMesh.Tests\Integration\GeneratedMeshMatchesReferenceFileTest.cs: Static method inside non-static class
+- C:\Git-perso\FastGeoMesh\tests\FastGeoMesh.Tests\Meshing\ComplexExcavationWithMultipleSlabsAndHolesTest.cs: Multiple top-level types (2)
+- C:\Git-perso\FastGeoMesh\tests\FastGeoMesh.Tests\Meshing\ExcavationSlabDoesNotInterferewithSideFacesTest.cs: Multiple top-level types (2)
+- C:\Git-perso\FastGeoMesh\tests\FastGeoMesh.Tests\Meshing\ExcavationWithIntermediateSlabAndHoleGeneratesCorrectMeshTest.cs: Multiple top-level types (2)
+- C:\Git-perso\FastGeoMesh\tests\FastGeoMesh.Tests\Validation\V2ValidationTests.cs: Method names contain underscores

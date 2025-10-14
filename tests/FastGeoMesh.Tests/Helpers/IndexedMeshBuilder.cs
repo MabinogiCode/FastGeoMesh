@@ -1,6 +1,6 @@
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Tests
+namespace FastGeoMesh.Tests.Helpers
 {
     /// <summary>
     /// Test helper for building indexed meshes in a fluent manner.
