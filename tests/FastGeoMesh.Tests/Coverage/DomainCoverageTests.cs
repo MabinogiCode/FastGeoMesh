@@ -1,9 +1,8 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Domain.Services;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
+namespace FastGeoMesh.Tests.Domain
 {
     /// <summary>
     /// Additional tests to improve coverage of Domain layer types and edge cases.

@@ -1,4 +1,4 @@
-using FastGeoMesh.Application;
+using FastGeoMesh.Application.Services;
 using FastGeoMesh.Infrastructure;
 
 namespace FastGeoMesh.Sample

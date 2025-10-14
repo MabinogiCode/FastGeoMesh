@@ -1,5 +1,6 @@
-using FastGeoMesh.Application;
+using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -396,3 +397,4 @@ namespace FastGeoMesh.Tests.Coverage
         }
     }
 }
+

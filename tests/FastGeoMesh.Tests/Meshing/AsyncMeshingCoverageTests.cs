@@ -1,7 +1,6 @@
-using System;
-using System.Linq;
-using FastGeoMesh.Application;
+using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -21,7 +20,7 @@ namespace FastGeoMesh.Tests.Meshing
         public AsyncMeshingCoverageTests()
         {
             _mesher = new PrismMesher();
-            _asyncMesher = (IAsyncMesher)_mesher;
+            _asyncMesher = _mesher;
             _options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
         }
 

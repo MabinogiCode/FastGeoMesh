@@ -1,4 +1,5 @@
 using FastGeoMesh.Domain;
+using FastGeoMesh.Infrastructure.FileOperations;
 using FluentAssertions;
 using Xunit;
 
@@ -49,9 +50,9 @@ namespace FastGeoMesh.Tests.Coverage
             }
         }
 
-        /// <summary>Tests IndexedMeshHelper static methods.</summary>
+        /// <summary>Tests IndexedMeshFileOperations static methods.</summary>
         [Fact]
-        public void IndexedMeshHelperReadWriteWorkCorrectly()
+        public void IndexedMeshFileOperationsReadWriteWorkCorrectly()
         {
             // Arrange - Create a simple test mesh
             var originalVertices = new[]
@@ -68,10 +69,10 @@ namespace FastGeoMesh.Tests.Coverage
             try
             {
                 // Write mesh using helper
-                IndexedMeshFileHelper.WriteCustomTxt(originalMesh, tempFile);
+                IndexedMeshFileOperations.WriteCustomTxt(originalMesh, tempFile);
 
                 // Read it back using helper
-                var loadedMesh = IndexedMeshHelper.ReadCustomTxt(tempFile);
+                var loadedMesh = IndexedMeshFileOperations.ReadCustomTxt(tempFile);
 
                 // Verify the round-trip
                 loadedMesh.Should().NotBeNull();
@@ -118,13 +119,13 @@ namespace FastGeoMesh.Tests.Coverage
             try
             {
                 // Test standard format
-                IndexedMeshFileHelper.WriteCustomTxt(originalMesh, tempFile);
+                IndexedMeshFileOperations.WriteCustomTxt(originalMesh, tempFile);
                 var content = File.ReadAllText(tempFile);
 
                 content.Should().StartWith("8"); // 8 vertices
                 content.Should().Contain("1.000000"); // Should contain coordinates
 
-                var loadedMesh = IndexedMeshFileHelper.ReadCustomTxt(tempFile);
+                var loadedMesh = IndexedMeshFileOperations.ReadCustomTxt(tempFile);
                 loadedMesh.Vertices.Should().HaveCount(8);
                 loadedMesh.Quads.Should().HaveCount(2);
 
@@ -132,14 +133,14 @@ namespace FastGeoMesh.Tests.Coverage
                 var altTempFile = Path.GetTempFileName();
                 try
                 {
-                    IndexedMeshFileHelper.WriteCustomTxtAlternative(originalMesh, altTempFile);
+                    IndexedMeshFileOperations.WriteCustomTxtAlternative(originalMesh, altTempFile);
                     var altContent = File.ReadAllText(altTempFile);
 
                     altContent.Should().Contain("# Custom mesh format");
                     altContent.Should().Contain("v 0.000000");
                     altContent.Should().Contain("q 0 1 4 3");
 
-                    var altLoadedMesh = IndexedMeshFileHelper.ReadCustomTxtAlternative(altTempFile);
+                    var altLoadedMesh = IndexedMeshFileOperations.ReadCustomTxtAlternative(altTempFile);
                     altLoadedMesh.Vertices.Should().HaveCount(8);
                     altLoadedMesh.Quads.Should().HaveCount(2);
                     altLoadedMesh.Triangles.Should().HaveCount(2);
@@ -168,15 +169,15 @@ namespace FastGeoMesh.Tests.Coverage
             var nonExistentFile = Path.Combine(Path.GetTempPath(), "nonexistent_mesh_file.txt");
 
             // Test file not found
-            Assert.Throws<FileNotFoundException>(() => IndexedMeshFileHelper.ReadCustomTxt(nonExistentFile));
-            Assert.Throws<FileNotFoundException>(() => IndexedMeshFileHelper.ReadCustomTxtAlternative(nonExistentFile));
+            Assert.Throws<FileNotFoundException>(() => IndexedMeshFileOperations.ReadCustomTxt(nonExistentFile));
+            Assert.Throws<FileNotFoundException>(() => IndexedMeshFileOperations.ReadCustomTxtAlternative(nonExistentFile));
 
             // Test invalid file format
             var invalidFile = Path.GetTempFileName();
             try
             {
                 File.WriteAllText(invalidFile, "invalid mesh data\nnot a number\n");
-                Assert.Throws<InvalidDataException>(() => IndexedMeshFileHelper.ReadCustomTxt(invalidFile));
+                Assert.Throws<InvalidDataException>(() => IndexedMeshFileOperations.ReadCustomTxt(invalidFile));
             }
             finally
             {
@@ -193,10 +194,10 @@ namespace FastGeoMesh.Tests.Coverage
                 Array.Empty<(int, int, int, int)>(),
                 Array.Empty<(int, int, int)>());
 
-            Assert.Throws<ArgumentNullException>(() => IndexedMeshFileHelper.WriteCustomTxt(null!, "test.txt"));
-            Assert.Throws<ArgumentException>(() => IndexedMeshFileHelper.WriteCustomTxt(emptyMesh, ""));
-            Assert.Throws<ArgumentNullException>(() => IndexedMeshFileHelper.WriteCustomTxtAlternative(null!, "test.txt"));
-            Assert.Throws<ArgumentException>(() => IndexedMeshFileHelper.WriteCustomTxtAlternative(emptyMesh, ""));
+            Assert.Throws<ArgumentNullException>(() => IndexedMeshFileOperations.WriteCustomTxt(null!, "test.txt"));
+            Assert.Throws<ArgumentException>(() => IndexedMeshFileOperations.WriteCustomTxt(emptyMesh, ""));
+            Assert.Throws<ArgumentNullException>(() => IndexedMeshFileOperations.WriteCustomTxtAlternative(null!, "test.txt"));
+            Assert.Throws<ArgumentException>(() => IndexedMeshFileOperations.WriteCustomTxtAlternative(emptyMesh, ""));
         }
 
         /// <summary>Tests alternative format with comments and empty lines.</summary>
@@ -228,7 +229,7 @@ e 0 1
 
                 File.WriteAllText(tempFile, content);
 
-                var mesh = IndexedMeshFileHelper.ReadCustomTxtAlternative(tempFile);
+                var mesh = IndexedMeshFileOperations.ReadCustomTxtAlternative(tempFile);
                 mesh.Vertices.Should().HaveCount(4);
                 mesh.Quads.Should().HaveCount(1);
                 mesh.Triangles.Should().HaveCount(1);
@@ -355,7 +356,7 @@ e 0 1
                 // Write invalid data that should cause parsing errors
                 File.WriteAllText(tempFile, "3\n1 invalid_number 0 0\n2 0 invalid_number 0\n3 0 0 invalid_number\n");
 
-                Assert.Throws<InvalidDataException>(() => IndexedMeshFileHelper.ReadCustomTxt(tempFile));
+                Assert.Throws<InvalidDataException>(() => IndexedMeshFileOperations.ReadCustomTxt(tempFile));
             }
             finally
             {
@@ -371,7 +372,7 @@ e 0 1
             {
                 File.WriteAllText(tempFile2, "1\n"); // Claims 1 vertex but provides none
 
-                Assert.Throws<InvalidDataException>(() => IndexedMeshFileHelper.ReadCustomTxt(tempFile2));
+                Assert.Throws<InvalidDataException>(() => IndexedMeshFileOperations.ReadCustomTxt(tempFile2));
             }
             finally
             {

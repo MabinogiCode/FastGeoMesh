@@ -1,4 +1,4 @@
-using FastGeoMesh.Application;
+using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
 
@@ -38,3 +38,4 @@ namespace FastGeoMesh.Tests.Helpers
             => _actualMesher.GetLivePerformanceStatsAsync();
     }
 }
+

@@ -1,5 +1,3 @@
-
-
 namespace FastGeoMesh.Tests.Helpers
 {
     /// <summary>

@@ -1,4 +1,3 @@
-using FastGeoMesh.Application;
 using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
@@ -27,7 +26,7 @@ namespace FastGeoMesh.Tests.Coverage
                 (edge1 != edge2).Should().BeTrue();
                 edge1.Equals(edge3).Should().BeTrue();
                 edge1.Equals((object)edge3).Should().BeTrue();
-                edge1.Equals((object)"not an edge").Should().BeFalse();
+                edge1.Equals("not an edge").Should().BeFalse();
                 edge1.Equals(null).Should().BeFalse();
 
                 // Test all boundary values
@@ -74,7 +73,7 @@ namespace FastGeoMesh.Tests.Coverage
                 (tol1 != tol2).Should().BeTrue();
                 tol1.Equals(tol3).Should().BeTrue();
                 tol1.Equals((object)tol3).Should().BeTrue();
-                tol1.Equals((object)"not a tolerance").Should().BeFalse();
+                tol1.Equals("not a tolerance").Should().BeFalse();
 
                 // Test all getters
                 tol1.Value.Should().Be(1e-9);
@@ -183,7 +182,7 @@ namespace FastGeoMesh.Tests.Coverage
             error1.Equals(error2).Should().BeFalse();
             error1.Equals((object)error3).Should().BeTrue();
             error1.Equals((object)error2).Should().BeFalse();
-            error1.Equals((object)"not an error").Should().BeFalse();
+            error1.Equals("not a error").Should().BeFalse();
             // Skip null test to avoid nullable warning
         }
 
@@ -224,7 +223,7 @@ namespace FastGeoMesh.Tests.Coverage
             quad1.Equals(quad2).Should().BeFalse();
             quad1.Equals((object)quad3).Should().BeTrue();
             quad1.Equals((object)quad2).Should().BeFalse();
-            quad1.Equals((object)"not a quad").Should().BeFalse();
+            quad1.Equals("not a quad").Should().BeFalse();
             // Skip null test to avoid nullable warning
         }
 
@@ -258,7 +257,7 @@ namespace FastGeoMesh.Tests.Coverage
             tri1.Equals(tri2).Should().BeFalse();
             tri1.Equals((object)tri3).Should().BeTrue();
             tri1.Equals((object)tri2).Should().BeFalse();
-            tri1.Equals((object)"not a triangle").Should().BeFalse();
+            tri1.Equals("not a triangle").Should().BeFalse();
             // Skip null test to avoid nullable warning
         }
 
@@ -300,7 +299,7 @@ namespace FastGeoMesh.Tests.Coverage
             v1.Equals(v2).Should().BeFalse();
             v1.Equals((object)v3).Should().BeTrue();
             v1.Equals((object)v2).Should().BeFalse();
-            v1.Equals((object)"not a vec2").Should().BeFalse();
+            v1.Equals("not a vec2").Should().BeFalse();
         }
 
         /// <summary>Tests every Vec3 static and instance operation.</summary>
@@ -341,7 +340,8 @@ namespace FastGeoMesh.Tests.Coverage
             v1.Equals(v2).Should().BeFalse();
             v1.Equals((object)v3).Should().BeTrue();
             v1.Equals((object)v2).Should().BeFalse();
-            v1.Equals((object)"not a vec3").Should().BeFalse();
+            v1.Equals("not a vec3").Should().BeFalse();
         }
     }
 }
+
