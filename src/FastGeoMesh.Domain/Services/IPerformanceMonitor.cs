@@ -8,7 +8,7 @@ namespace FastGeoMesh.Domain.Services
     {
         /// <summary>Gets current performance statistics.</summary>
         PerformanceStatistics GetLiveStatistics();
-        
+
         /// <summary>
         /// Starts a new meshing activity for performance tracking.
         /// </summary>
@@ -16,18 +16,18 @@ namespace FastGeoMesh.Domain.Services
         /// <param name="metadata">Optional metadata for the activity.</param>
         /// <returns>Disposable activity tracker.</returns>
         IDisposable StartMeshingActivity(string activityName, object? metadata = null);
-        
+
         /// <summary>
         /// Increments the meshing operations counter.
         /// </summary>
         void IncrementMeshingOperations();
-        
+
         /// <summary>
         /// Adds to the generated quads counter.
         /// </summary>
         /// <param name="count">Number of quads generated.</param>
         void AddQuadsGenerated(int count);
-        
+
         /// <summary>
         /// Adds to the generated triangles counter.
         /// </summary>

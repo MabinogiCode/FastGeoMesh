@@ -114,7 +114,9 @@ namespace FastGeoMesh.Application.Helpers
         internal static Vec2 Centroid(ReadOnlySpan<Vec2> points)
         {
             if (points.Length == 0)
+            {
                 return Vec2.Zero;
+            }
 
             double sumX = 0;
             double sumY = 0;

@@ -1,7 +1,7 @@
+using System.Diagnostics;
 using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
-using System.Diagnostics;
 
 namespace FastGeoMesh.Tests.Performance
 {

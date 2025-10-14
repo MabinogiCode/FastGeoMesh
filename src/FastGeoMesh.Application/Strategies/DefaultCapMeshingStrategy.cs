@@ -1,5 +1,5 @@
-using FastGeoMesh.Domain;
 using FastGeoMesh.Application.Helpers.Meshing;
+using FastGeoMesh.Domain;
 
 namespace FastGeoMesh.Application.Strategies
 {

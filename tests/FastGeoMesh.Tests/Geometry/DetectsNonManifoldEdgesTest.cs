@@ -1,7 +1,7 @@
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
-using FastGeoMesh.Tests.Helpers;
 
 namespace FastGeoMesh.Tests.Geometry
 {
