@@ -63,11 +63,17 @@ dotnet_diagnostic.SA1202.severity = none
 # Misc others
 dotnet_diagnostic.SA1117.severity = none
 
-# Temporarily treat some rules as warnings to allow iterative fixes
+# Temporarily treat many style rules as warnings to allow iterative fixes
 # Batch 1 focus: prefixing instance members (SA1101) and return docs (SA1615/SA1617)
 dotnet_diagnostic.SA1101.severity = warning
 dotnet_diagnostic.SA1615.severity = warning
 dotnet_diagnostic.SA1617.severity = warning
+dotnet_diagnostic.SA1642.severity = warning
+dotnet_diagnostic.SA1413.severity = warning
+dotnet_diagnostic.SA1514.severity = warning
+dotnet_diagnostic.SA1407.severity = warning
+dotnet_diagnostic.SA1107.severity = warning
+dotnet_diagnostic.SA1134.severity = warning
 
 # Misc
 csharp_style_var_for_built_in_types = true:silent
