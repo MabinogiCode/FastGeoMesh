@@ -1,21 +1,18 @@
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Tests.Helpers
-{
+namespace FastGeoMesh.Tests.Helpers {
     /// <summary>
     /// Helper utilities for property-based testing of mesh geometry.
     /// Contains static methods for geometric calculations and mesh analysis.
     /// </summary>
-    public static class PropertyBasedTestHelper
-    {
+    public static class PropertyBasedTestHelper {
         /// <summary>
         /// Determines if a quad is a cap quad (all vertices have the same Z coordinate).
         /// Cap quads are horizontal faces at the top or bottom of prism structures.
         /// </summary>
         /// <param name="quad">The quad to analyze.</param>
         /// <returns>True if the quad is a cap quad; otherwise, false.</returns>
-        public static bool IsCapQuad(Quad quad)
-        {
+        public static bool IsCapQuad(Quad quad) {
             const double epsilon = 1e-12;
             return Math.Abs(quad.V0.Z - quad.V1.Z) < epsilon &&
                    Math.Abs(quad.V1.Z - quad.V2.Z) < epsilon &&
@@ -28,8 +25,7 @@ namespace FastGeoMesh.Tests.Helpers
         /// </summary>
         /// <param name="vector">The vector to measure.</param>
         /// <returns>The length of the vector.</returns>
-        public static double CalculateLength(Vec3 vector)
-        {
+        public static double CalculateLength(Vec3 vector) {
             return Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y + vector.Z * vector.Z);
         }
 
@@ -51,8 +47,7 @@ namespace FastGeoMesh.Tests.Helpers
             double minX, double maxX,
             double minY, double maxY,
             double minZ, double maxZ,
-            double tolerance = 0.1)
-        {
+            double tolerance = 0.1) {
             return vertices.All(v =>
                 v.X >= minX - tolerance && v.X <= maxX + tolerance &&
                 v.Y >= minY - tolerance && v.Y <= maxY + tolerance &&
@@ -65,8 +60,7 @@ namespace FastGeoMesh.Tests.Helpers
         /// </summary>
         /// <param name="vertices">The vertices to validate.</param>
         /// <returns>True if no vertices contain NaN; otherwise, false.</returns>
-        public static bool ContainsNoNaNVertices(IEnumerable<Vec3> vertices)
-        {
+        public static bool ContainsNoNaNVertices(IEnumerable<Vec3> vertices) {
             return vertices.All(v =>
                 !double.IsNaN(v.X) && !double.IsNaN(v.Y) && !double.IsNaN(v.Z));
         }
@@ -77,8 +71,7 @@ namespace FastGeoMesh.Tests.Helpers
         /// </summary>
         /// <param name="triangles">The triangles to validate.</param>
         /// <returns>True if all triangles have valid vertices; otherwise, false.</returns>
-        public static bool AreTrianglesValid(IEnumerable<Triangle> triangles)
-        {
+        public static bool AreTrianglesValid(IEnumerable<Triangle> triangles) {
             return triangles.All(t =>
                 !double.IsNaN(t.V0.X) && !double.IsNaN(t.V0.Y) && !double.IsNaN(t.V0.Z) &&
                 !double.IsNaN(t.V1.X) && !double.IsNaN(t.V1.Y) && !double.IsNaN(t.V1.Z) &&
@@ -93,13 +86,11 @@ namespace FastGeoMesh.Tests.Helpers
         /// <param name="maxLength">Maximum allowed edge length.</param>
         /// <param name="sampleSize">Number of quads to sample for testing.</param>
         /// <returns>True if sampled quad edges respect the constraint; otherwise, false.</returns>
-        public static bool DoQuadEdgesRespectMaxLength(IEnumerable<Quad> quads, double maxLength, int sampleSize = 3)
-        {
+        public static bool DoQuadEdgesRespectMaxLength(IEnumerable<Quad> quads, double maxLength, int sampleSize = 3) {
             var tolerance = maxLength + 0.1; // Small tolerance for numerical precision
             var sample = quads.Take(sampleSize);
 
-            return sample.All(q =>
-            {
+            return sample.All(q => {
                 var edge1 = CalculateLength(q.V1 - q.V0);
                 var edge2 = CalculateLength(q.V2 - q.V1);
                 var edge3 = CalculateLength(q.V3 - q.V2);

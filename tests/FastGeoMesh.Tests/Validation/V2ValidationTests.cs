@@ -3,21 +3,18 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Validation
-{
+namespace FastGeoMesh.Tests.Validation {
     /// <summary>
     /// Validation tests for FastGeoMesh v2.0 Clean Architecture.
     /// Ensures the core functionality works with the new Result pattern.
     /// </summary>
-    public sealed class V2ValidationTests
-    {
+    public sealed class V2ValidationTests {
         /// <summary>
         /// Tests that v2.0 Result pattern for options validation works correctly.
         /// Validates the new error handling approach and ensures proper validation feedback.
         /// </summary>
         [Fact]
-        public void V2ResultPatternOptionsValidationWorks()
-        {
+        public void V2ResultPatternOptionsValidationWorks() {
             // Arrange & Act - Valid options
             var validResult = MesherOptions.CreateBuilder()
                 .WithFastPreset()
@@ -44,8 +41,7 @@ namespace FastGeoMesh.Tests.Validation
         /// Validates the enhanced error handling and success/failure result patterns.
         /// </summary>
         [Fact]
-        public void V2ResultPatternMeshingWorks()
-        {
+        public void V2ResultPatternMeshingWorks() {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[]
             {
@@ -81,8 +77,7 @@ namespace FastGeoMesh.Tests.Validation
         /// Validates asynchronous operations in the new Clean Architecture implementation.
         /// </summary>
         [Fact]
-        public async Task V2AsyncPatternWorks()
-        {
+        public async Task V2AsyncPatternWorks() {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[]
             {
@@ -112,8 +107,7 @@ namespace FastGeoMesh.Tests.Validation
         /// Validates proper namespace organization and dependency management across layers.
         /// </summary>
         [Fact]
-        public void V2CleanArchitectureLayerSeparationWorks()
-        {
+        public void V2CleanArchitectureLayerSeparationWorks() {
             // This test validates that we can use types from each layer independently
 
             // Domain layer
@@ -138,8 +132,7 @@ namespace FastGeoMesh.Tests.Validation
         /// Validates advanced meshing capabilities in the new architecture with complex geometries.
         /// </summary>
         [Fact]
-        public void V2ComplexStructureWithHoleWorks()
-        {
+        public void V2ComplexStructureWithHoleWorks() {
             // Arrange
             var outer = Polygon2D.FromPoints(new[]
             {

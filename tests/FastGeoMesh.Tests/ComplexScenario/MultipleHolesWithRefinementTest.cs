@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.ComplexScenario
-{
-    public sealed class MultipleHolesWithRefinementTest
-    {
+namespace FastGeoMesh.Tests.ComplexScenario {
+    public sealed class MultipleHolesWithRefinementTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(8, 0), new Vec2(8, 3), new Vec2(6, 3),

@@ -3,17 +3,13 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Performance
-{
-    public sealed class PerformanceMonitorActivitySourceWorksTest
-    {
+namespace FastGeoMesh.Tests.Performance {
+    public sealed class PerformanceMonitorActivitySourceWorksTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             using var activity1 = PerformanceMonitor.StartMeshingActivity("TestOperation", new { EdgeLength = 1.0, QuadCount = 100 });
 
-            using var listener = new ActivityListener
-            {
+            using var listener = new ActivityListener {
                 ShouldListenTo = source => source.Name == "FastGeoMesh",
                 Sample = (ref ActivityCreationOptions<ActivityContext> options) => ActivitySamplingResult.AllData
             };
@@ -24,13 +20,11 @@ namespace FastGeoMesh.Tests.Performance
             activity1.Should().NotBeNull();
             activity2.Should().NotBeNull();
 
-            if (activity1 != null)
-            {
+            if (activity1 != null) {
                 activity1.OperationName.Should().Be("TestOperation");
             }
 
-            if (activity2 != null)
-            {
+            if (activity2 != null) {
                 activity2.OperationName.Should().Be("TestOperationWithListener");
             }
         }

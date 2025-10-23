@@ -3,13 +3,10 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Performance
-{
-    public sealed class QuadQualityHelperOptimizedScoringWorksTest
-    {
+namespace FastGeoMesh.Tests.Performance {
+    public sealed class QuadQualityHelperOptimizedScoringWorksTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var perfectSquare = (
                 new Vec2(0, 0), new Vec2(TestGeometries.UnitSquareSide, 0),
                 new Vec2(TestGeometries.UnitSquareSide, TestGeometries.UnitSquareSide), new Vec2(0, TestGeometries.UnitSquareSide)

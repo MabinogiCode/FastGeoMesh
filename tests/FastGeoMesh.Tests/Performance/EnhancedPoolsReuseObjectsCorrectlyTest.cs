@@ -3,13 +3,10 @@ using FastGeoMesh.Infrastructure.Performance;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Performance
-{
-    public sealed class EnhancedPoolsReuseObjectsCorrectlyTest
-    {
+namespace FastGeoMesh.Tests.Performance {
+    public sealed class EnhancedPoolsReuseObjectsCorrectlyTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var list1 = MeshingPools.IntListPool.Get();
             var list2 = MeshingPools.DoubleListPool.Get();
             var vec2List = MeshingPools.Vec2ListPool.Get();

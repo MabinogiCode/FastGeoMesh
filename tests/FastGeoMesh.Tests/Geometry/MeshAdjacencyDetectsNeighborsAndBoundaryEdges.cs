@@ -3,16 +3,13 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
+namespace FastGeoMesh.Tests.Geometry {
     /// <summary>
     /// Vérifie que la détection d'adjacence identifie correctement les voisins et les arêtes frontières.
     /// </summary>
-    public sealed class MeshAdjacencyDetectsNeighborsAndBoundaryEdges
-    {
+    public sealed class MeshAdjacencyDetectsNeighborsAndBoundaryEdges {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var im = new IndexedMeshBuilder()
                 .AddVertex(0, 0, 0)
                 .AddVertex(1, 0, 0)

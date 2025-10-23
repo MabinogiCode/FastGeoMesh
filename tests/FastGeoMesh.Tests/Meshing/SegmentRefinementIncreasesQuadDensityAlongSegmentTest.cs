@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class SegmentRefinementIncreasesQuadDensityAlongSegmentTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class SegmentRefinementIncreasesQuadDensityAlongSegmentTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(30, 0), new Vec2(30, 10), new Vec2(0, 10) });
             var structure = new PrismStructureDefinition(rect, 0, 1);
             var seg = new Segment3D(new Vec3(0, 5, 0), new Vec3(30, 5, 0));

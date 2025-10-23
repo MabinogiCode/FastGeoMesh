@@ -4,18 +4,14 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.PropertyBased
-{
-    public sealed class PolygonInvariantValidPolygonProducesManifoldMeshTest
-    {
+namespace FastGeoMesh.Tests.PropertyBased {
+    public sealed class PolygonInvariantValidPolygonProducesManifoldMeshTest {
         [Theory]
         [InlineData(5, 5, 2)]
         [InlineData(10, 8, 3)]
         [InlineData(15, 12, 4)]
-        public void Test(int width, int height, int depth)
-        {
-            if (width <= 0 || height <= 0 || depth <= 0)
-            {
+        public void Test(int width, int height, int depth) {
+            if (width <= 0 || height <= 0 || depth <= 0) {
                 return;
             }
 

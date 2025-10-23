@@ -1,19 +1,17 @@
 using FastGeoMesh.Domain;
+using FastGeoMesh.Infrastructure.Services;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Additional tests to improve coverage of Infrastructure layer utilities and edge cases.
     /// Focuses on performance utilities, extensions, helpers, and error handling paths.
     /// </summary>
-    public sealed class InfrastructureCoverageTests
-    {
+    public sealed class InfrastructureCoverageTests {
         /// <summary>Tests Infrastructure utilities that actually exist.</summary>
         [Fact]
-        public void InfrastructureUtilitiesThatActuallyExistWorkCorrectly()
-        {
+        public void InfrastructureUtilitiesThatActuallyExistWorkCorrectly() {
             // Test ValueTaskExtensions if it exists
             var completedTask = new ValueTask<int>(42);
             completedTask.IsCompleted.Should().BeTrue();
@@ -36,8 +34,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests file handling and basic I/O operations.</summary>
         [Fact]
-        public void FileHandlingAndBasicIOOperationsWorkCorrectly()
-        {
+        public void FileHandlingAndBasicIOOperationsWorkCorrectly() {
             // Test temporary file creation
             var tempFile = Path.GetTempFileName();
             tempFile.Should().NotBeNullOrEmpty();
@@ -56,8 +53,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests collection operations and LINQ extensions.</summary>
         [Fact]
-        public void CollectionOperationsAndLinqExtensionsWorkCorrectly()
-        {
+        public void CollectionOperationsAndLinqExtensionsWorkCorrectly() {
             var numbers = Enumerable.Range(1, 10).ToList();
 
             // Basic LINQ operations
@@ -84,8 +80,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests string manipulation and formatting operations.</summary>
         [Fact]
-        public void StringManipulationAndFormattingOperationsWorkCorrectly()
-        {
+        public void StringManipulationAndFormattingOperationsWorkCorrectly() {
             var baseString = "FastGeoMesh v2.0";
 
             // String operations
@@ -112,14 +107,15 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests date and time operations.</summary>
         [Fact]
-        public void DateAndTimeOperationsWorkCorrectly()
-        {
-            var now = DateTime.Now;
-            var utcNow = DateTime.UtcNow;
+        public void DateAndTimeOperationsWorkCorrectly() {
+            // Use deterministic SystemClock instance for test comparisons
+            var clock = new SystemClock();
+            var now = clock.Now;
+            var utcNow = clock.UtcNow;
 
-            // Basic date operations
-            now.Should().BeCloseTo(DateTime.Now, precision: TimeSpan.FromSeconds(1));
-            utcNow.Should().BeCloseTo(DateTime.UtcNow, precision: TimeSpan.FromSeconds(1));
+            // Basic date operations (compare with same clock instance to avoid flakiness)
+            now.Should().BeCloseTo(clock.Now, precision: TimeSpan.FromSeconds(1));
+            utcNow.Should().BeCloseTo(clock.UtcNow, precision: TimeSpan.FromSeconds(1));
 
             // TimeSpan operations
             var timeSpan = TimeSpan.FromMinutes(30);
@@ -136,8 +132,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests exception handling and error scenarios.</summary>
         [Fact]
-        public void ExceptionHandlingAndErrorScenariosWorkCorrectly()
-        {
+        public void ExceptionHandlingAndErrorScenariosWorkCorrectly() {
             // Test ArgumentException
             Action throwArgument = () => throw new ArgumentException("Test argument exception");
             throwArgument.Should().Throw<ArgumentException>().WithMessage("Test argument exception");
@@ -148,26 +143,22 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Test try-catch behavior
             var result = 0;
-            try
-            {
+            try {
                 var x = 10;
                 var y = 0;
                 result = x / y; // This will throw but we catch it
             }
-            catch (DivideByZeroException)
-            {
+            catch (DivideByZeroException) {
                 result = -1; // Handle the exception
             }
             result.Should().Be(-1);
 
             // Test finally block
             var finallyExecuted = false;
-            try
-            {
+            try {
                 // Some operation
             }
-            finally
-            {
+            finally {
                 finallyExecuted = true;
             }
             finallyExecuted.Should().BeTrue();
@@ -175,8 +166,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests reflection and type operations.</summary>
         [Fact]
-        public void ReflectionAndTypeOperationsWorkCorrectly()
-        {
+        public void ReflectionAndTypeOperationsWorkCorrectly() {
             var stringType = typeof(string);
             var intType = typeof(int);
             var vec2Type = typeof(Vec2);
@@ -198,8 +188,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests generic collections and data structures.</summary>
         [Fact]
-        public void GenericCollectionsAndDataStructuresWorkCorrectly()
-        {
+        public void GenericCollectionsAndDataStructuresWorkCorrectly() {
             // Dictionary operations
             var dict = new Dictionary<string, int>();
             dict["one"] = 1;

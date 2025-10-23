@@ -3,13 +3,10 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class PointInPolygonDetectsInsideAndOutsideTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class PointInPolygonDetectsInsideAndOutsideTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var square = new Vec2[] { new(0, 0), new(10, 0), new(10, 10), new(0, 10) };
             GeometryHelper.PointInPolygon(square, 5, 5).Should().BeTrue();
             GeometryHelper.PointInPolygon(square, 0, 0).Should().BeTrue();

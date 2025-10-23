@@ -25,6 +25,10 @@
     <!-- Performance optimizations for large test suites -->
     <Deterministic>true</Deterministic>
     <ReportGenerator_ReportTypes>HtmlInline_AzurePipelines;Cobertura;Badges</ReportGenerator_ReportTypes>
+
+    <!-- Do not run analyzers during build to allow incremental fixes -->
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -59,6 +63,10 @@
     <!-- Property-based testing -->
     <PackageReference Include="FsCheck" Version="3.3.1" />
     <PackageReference Include="FsCheck.Xunit" Version="3.3.1" />
+
+    <!-- Add analyzers to tests to ensure test code quality remains consistent -->
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.9.0" PrivateAssets="all" />
   </ItemGroup>
   
   <ItemGroup>

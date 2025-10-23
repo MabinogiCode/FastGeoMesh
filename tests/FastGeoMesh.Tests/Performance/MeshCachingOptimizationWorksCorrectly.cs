@@ -4,23 +4,19 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Performance
-{
+namespace FastGeoMesh.Tests.Performance {
     /// <summary>
     /// Validates that mesh caching optimization works correctly.
     /// </summary>
-    public sealed class MeshCachingOptimizationWorksCorrectly
-    {
+    public sealed class MeshCachingOptimizationWorksCorrectly {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var polygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
-            var options = new MesherOptions
-            {
+            var options = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(1.0),
                 TargetEdgeLengthZ = EdgeLength.From(1.0)
             };

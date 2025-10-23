@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Domain
-{
-    public sealed class AreaInvariantRectangleCapsApproximateFootprintAreaMinusHolesTest
-    {
+namespace FastGeoMesh.Tests.Domain {
+    public sealed class AreaInvariantRectangleCapsApproximateFootprintAreaMinusHolesTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 6), new Vec2(0, 6) });
             var hole = Polygon2D.FromPoints(new[] { new Vec2(2, 2), new Vec2(4, 2), new Vec2(4, 4), new Vec2(2, 4) });
             var structure = new PrismStructureDefinition(outer, 0, 2).AddHole(hole);

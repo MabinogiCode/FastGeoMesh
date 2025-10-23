@@ -4,16 +4,13 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Validation
-{
+namespace FastGeoMesh.Tests.Validation {
     /// <summary>
     /// Validates that asynchronous meshing produces a valid mesh with expected properties.
     /// </summary>
-    public sealed class AsyncMesherBasicFunctionalityWorks
-    {
+    public sealed class AsyncMesherBasicFunctionalityWorks {
         [Fact]
-        public async Task Test()
-        {
+        public async Task Test() {
             var polygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5)

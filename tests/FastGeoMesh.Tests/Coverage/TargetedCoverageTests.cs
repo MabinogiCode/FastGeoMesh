@@ -2,18 +2,15 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Additional targeted tests to reach 80%+ coverage on Domain and Infrastructure layers.
     /// Focuses on less-used but important code paths.
     /// </summary>
-    public sealed class TargetedCoverageTests
-    {
+    public sealed class TargetedCoverageTests {
         /// <summary>Tests additional Polygon2D methods and edge cases.</summary>
         [Fact]
-        public void Polygon2DAdditionalMethodsAndEdgeCasesWorkCorrectly()
-        {
+        public void Polygon2DAdditionalMethodsAndEdgeCasesWorkCorrectly() {
             // Rectangle polygon
             var rect = Polygon2D.FromPoints(new[]
             {
@@ -47,22 +44,19 @@ namespace FastGeoMesh.Tests.Coverage
             pentagon.Count.Should().Be(5);
 
             // Test empty polygon - catch exception since it requires at least 3 vertices
-            try
-            {
+            try {
                 var emptyPolygon = Polygon2D.FromPoints(Array.Empty<Vec2>());
                 // If this doesn't throw, that's OK too
                 emptyPolygon.Count.Should().Be(0);
             }
-            catch (ArgumentException)
-            {
+            catch (ArgumentException) {
                 // Expected - Polygon2D requires at least 3 vertices
                 true.Should().BeTrue("Polygon2D correctly requires at least 3 vertices");
             }
 
             // Test enumeration
             var vertices = new List<Vec2>();
-            foreach (var vertex in rect.Vertices)
-            {
+            foreach (var vertex in rect.Vertices) {
                 vertices.Add(vertex);
             }
             vertices.Should().HaveCount(4);
@@ -70,8 +64,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests MeshingGeometry additional operations.</summary>
         [Fact]
-        public void MeshingGeometryAdditionalOperationsWorkCorrectly()
-        {
+        public void MeshingGeometryAdditionalOperationsWorkCorrectly() {
             var geometry = new MeshingGeometry();
 
             // Initially empty
@@ -114,8 +107,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests ImmutableMesh additional operations and edge cases.</summary>
         [Fact]
-        public void ImmutableMeshAdditionalOperationsAndEdgeCasesWorkCorrectly()
-        {
+        public void ImmutableMeshAdditionalOperationsAndEdgeCasesWorkCorrectly() {
             var mesh = new ImmutableMesh();
 
             // Test adding multiple elements at once
@@ -174,8 +166,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests PrismStructureDefinition additional operations.</summary>
         [Fact]
-        public void PrismStructureDefinitionAdditionalOperationsWorkCorrectly()
-        {
+        public void PrismStructureDefinitionAdditionalOperationsWorkCorrectly() {
             var footprint = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5)
@@ -249,16 +240,13 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests IndexedMesh additional operations and adjacency building.</summary>
         [Fact]
-        public void IndexedMeshAdditionalOperationsAndAdjacencyBuildingWorkCorrectly()
-        {
+        public void IndexedMeshAdditionalOperationsAndAdjacencyBuildingWorkCorrectly() {
             // Create mesh with multiple quads
             var mesh = new ImmutableMesh();
 
             // Create a 2x2 grid of quads
-            for (int x = 0; x < 2; x++)
-            {
-                for (int y = 0; y < 2; y++)
-                {
+            for (int x = 0; x < 2; x++) {
+                for (int y = 0; y < 2; y++) {
                     var quad = new Quad(
                         new Vec3(x, y, 0),
                         new Vec3(x + 1, y, 0),
@@ -284,8 +272,7 @@ namespace FastGeoMesh.Tests.Coverage
             adjacency.Neighbors.Should().HaveCount(4);
 
             // Each quad should have 4 edges
-            foreach (var neighbors in adjacency.Neighbors)
-            {
+            foreach (var neighbors in adjacency.Neighbors) {
                 neighbors.Should().HaveCount(4);
             }
 
@@ -296,8 +283,7 @@ namespace FastGeoMesh.Tests.Coverage
             indexedSmallEpsilon.Vertices.Count.Should().BeGreaterThanOrEqualTo(indexedLargeEpsilon.Vertices.Count);
 
             // Test edge properties
-            foreach (var edge in indexed.Edges)
-            {
+            foreach (var edge in indexed.Edges) {
                 edge.a.Should().BeInRange(0, indexed.Vertices.Count - 1);
                 edge.b.Should().BeInRange(0, indexed.Vertices.Count - 1);
                 edge.a.Should().NotBe(edge.b);
@@ -306,8 +292,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests complex MesherOptions builder scenarios.</summary>
         [Fact]
-        public void ComplexMesherOptionsBuilderScenariosWorkCorrectly()
-        {
+        public void ComplexMesherOptionsBuilderScenariosWorkCorrectly() {
             // Test preset configurations
             var fastPreset = MesherOptions.CreateBuilder()
                 .WithFastPreset()
@@ -328,8 +313,7 @@ namespace FastGeoMesh.Tests.Coverage
                 .WithRejectedCapTriangles(true)
                 .Build();
 
-            if (complexOptions.IsSuccess)
-            {
+            if (complexOptions.IsSuccess) {
                 var options = complexOptions.Value;
                 options.TargetEdgeLengthXY.Value.Should().Be(0.5);
                 options.TargetEdgeLengthZ.Value.Should().Be(0.25);
@@ -362,8 +346,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests error handling and validation edge cases.</summary>
         [Fact]
-        public void ErrorHandlingAndValidationEdgeCasesWorkCorrectly()
-        {
+        public void ErrorHandlingAndValidationEdgeCasesWorkCorrectly() {
             // Test error creation and properties
             var error1 = new Error("CODE001", "Test description");
             var error2 = new Error("CODE001", "Test description");

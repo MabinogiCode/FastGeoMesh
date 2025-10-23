@@ -4,18 +4,14 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.PropertyBased
-{
-    public sealed class QualityInvariantMeshGenerationSucceedsWithValidParametersTest
-    {
+namespace FastGeoMesh.Tests.PropertyBased {
+    public sealed class QualityInvariantMeshGenerationSucceedsWithValidParametersTest {
         [Theory]
         [InlineData(3)]
         [InlineData(5)]
         [InlineData(8)]
-        public void Test(int size)
-        {
-            if (size <= 0)
-            {
+        public void Test(int size) {
+            if (size <= 0) {
                 return;
             }
 

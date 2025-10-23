@@ -4,16 +4,13 @@ using FluentAssertions;
 using LibTessDotNet;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Quality
-{
+namespace FastGeoMesh.Tests.Quality {
     /// <summary>
     /// Validates MakeQuadFromTrianglePair rejects non-convex results or produces convex quads only.
     /// </summary>
-    public sealed class MakeQuadFromTrianglePairRejectsNonConvexResults
-    {
+    public sealed class MakeQuadFromTrianglePairRejectsNonConvexResults {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             // Arrange - Triangles that would create non-convex quad
             var vertices = new ContourVertex[4];
             vertices[0].Position = new LibTessDotNet.Vec3(0, 0, 0);
@@ -28,8 +25,7 @@ namespace FastGeoMesh.Tests.Quality
             var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangle1, triangle2, vertices);
 
             // Assert - Should either be null or create a valid convex quad
-            if (quad.HasValue)
-            {
+            if (quad.HasValue) {
                 GeometryHelper.IsConvex(quad.Value).Should().BeTrue("Created quad should be convex");
             }
         }

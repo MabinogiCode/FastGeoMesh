@@ -2,13 +2,10 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Performance
-{
-    public sealed class PerformanceMonitorTracksStatisticsTest
-    {
+namespace FastGeoMesh.Tests.Performance {
+    public sealed class PerformanceMonitorTracksStatisticsTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var initialStats = PerformanceMonitorCounters.GetStatistics();
             PerformanceMonitorCounters.IncrementMeshingOperations();
             PerformanceMonitorCounters.AddQuadsGenerated(10);

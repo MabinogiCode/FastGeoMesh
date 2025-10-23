@@ -3,13 +3,10 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Validation
-{
-    public sealed class V2ResultPatternMeshingWorks
-    {
+namespace FastGeoMesh.Tests.Validation {
+    public sealed class V2ResultPatternMeshingWorks {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var polygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5)

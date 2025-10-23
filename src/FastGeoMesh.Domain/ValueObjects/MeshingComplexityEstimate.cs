@@ -1,10 +1,8 @@
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>
     /// Defines the complexity levels for meshing operations.
     /// </summary>
-    public enum MeshingComplexity
-    {
+    public enum MeshingComplexity {
         /// <summary>
         /// Very simple structures that can use optimized fast paths.
         /// </summary>
@@ -39,8 +37,7 @@ namespace FastGeoMesh.Domain
     /// <summary>
     /// Provides complexity estimates and performance predictions for meshing operations.
     /// </summary>
-    public readonly struct MeshingComplexityEstimate
-    {
+    public readonly struct MeshingComplexityEstimate {
         /// <summary>
         /// Gets the estimated number of quadrilaterals that will be generated.
         /// </summary>
@@ -93,26 +90,24 @@ namespace FastGeoMesh.Domain
             TimeSpan estimatedComputationTime,
             int recommendedParallelism,
             MeshingComplexity complexity,
-            IReadOnlyList<string>? performanceHints = null)
-        {
-            EstimatedQuadCount = estimatedQuadCount;
-            EstimatedTriangleCount = estimatedTriangleCount;
-            EstimatedPeakMemoryBytes = estimatedPeakMemoryBytes;
-            EstimatedComputationTime = estimatedComputationTime;
-            RecommendedParallelism = recommendedParallelism;
-            Complexity = complexity;
-            PerformanceHints = performanceHints ?? Array.Empty<string>();
+            IReadOnlyList<string>? performanceHints = null) {
+            this.EstimatedQuadCount = estimatedQuadCount;
+            this.EstimatedTriangleCount = estimatedTriangleCount;
+            this.EstimatedPeakMemoryBytes = estimatedPeakMemoryBytes;
+            this.EstimatedComputationTime = estimatedComputationTime;
+            this.RecommendedParallelism = recommendedParallelism;
+            this.Complexity = complexity;
+            this.PerformanceHints = performanceHints ?? Array.Empty<string>();
         }
 
         /// <summary>
         /// Returns a string representation of the complexity estimate.
         /// </summary>
         /// <returns>A formatted string summarizing the complexity estimates.</returns>
-        public override string ToString()
-        {
-            var memoryMB = EstimatedPeakMemoryBytes / (1024.0 * 1024.0);
-            return $"{Complexity} complexity: ~{EstimatedQuadCount + EstimatedTriangleCount} elements, " +
-                   $"~{memoryMB:F1} MB peak, ~{EstimatedComputationTime.TotalMilliseconds:F0}ms";
+        public override string ToString() {
+            var memoryMB = this.EstimatedPeakMemoryBytes / (1024.0 * 1024.0);
+            return $"{this.Complexity} complexity: ~{this.EstimatedQuadCount + this.EstimatedTriangleCount} elements, " +
+                   $"~{memoryMB:F1} MB peak, ~{this.EstimatedComputationTime.TotalMilliseconds:F0}ms";
         }
     }
 }

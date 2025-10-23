@@ -3,8 +3,7 @@ namespace FastGeoMesh.Tests;
 /// <summary>
 /// Standard test geometry dimensions and coordinates.
 /// </summary>
-public static class TestGeometries
-{
+public static class TestGeometries {
     // Rectangle dimensions
 
     /// <summary>Width of the standard test rectangle (20 units).</summary>

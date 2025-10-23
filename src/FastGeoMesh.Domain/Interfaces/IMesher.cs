@@ -1,13 +1,11 @@
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>
     /// Core meshing interface for converting structure definitions into geometric meshes.
     /// Follows .NET 8 async best practices with ValueTask for better performance.
     /// </summary>
     /// <typeparam name="TStructure">The type of structure definition to mesh.</typeparam>
     public interface IMesher<in TStructure>
-        where TStructure : notnull
-    {
+        where TStructure : notnull {
         /// <summary>
         /// Generates a mesh from the given structure definition using the specified options.
         /// </summary>
@@ -29,7 +27,6 @@ namespace FastGeoMesh.Domain
     /// <summary>
     /// Specialized meshing interface for prism structure definitions.
     /// </summary>
-    public interface IPrismMesher : IMesher<PrismStructureDefinition>
-    {
+    public interface IPrismMesher : IMesher<PrismStructureDefinition> {
     }
 }

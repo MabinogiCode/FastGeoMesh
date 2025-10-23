@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers; // Required for UnwrapForTests extension
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class ExcavationWithIntermediateSlabAndHoleGeneratesCorrectMeshTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class ExcavationWithIntermediateSlabAndHoleGeneratesCorrectMeshTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var excavationFootprint = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5)
@@ -25,8 +22,7 @@ namespace FastGeoMesh.Tests.Meshing
             });
             var structure = new PrismStructureDefinition(excavationFootprint, -5, 0)
                 .AddInternalSurface(slabOutline, -2.5, slabHole);
-            var options = new MesherOptions
-            {
+            var options = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(0.5),
                 TargetEdgeLengthZ = EdgeLength.From(0.5),
                 GenerateBottomCap = true,
@@ -41,8 +37,7 @@ namespace FastGeoMesh.Tests.Meshing
             topQuads.Should().NotBeEmpty();
             var slabQuads = mesh.Quads.Where(q => ExcavationWithIntermediateSlabAndHoleHelpers.IsQuadAtZ(q, -2.5)).ToList();
             slabQuads.Should().NotBeEmpty();
-            foreach (var quad in slabQuads)
-            {
+            foreach (var quad in slabQuads) {
                 double centerX = (quad.V0.X + quad.V1.X + quad.V2.X + quad.V3.X) * 0.25;
                 double centerY = (quad.V0.Y + quad.V1.Y + quad.V2.Y + quad.V3.Y) * 0.25;
                 bool insideHole = centerX > 2.0 && centerX < 3.0 && centerY > 2.0 && centerY < 3.0;
@@ -61,20 +56,17 @@ namespace FastGeoMesh.Tests.Meshing
         }
     }
 
-    internal static class ExcavationWithIntermediateSlabAndHoleHelpers
-    {
+    internal static class ExcavationWithIntermediateSlabAndHoleHelpers {
         private const double Epsilon = 1e-9;
 
-        public static bool IsQuadAtZ(Quad q, double expectedZ)
-        {
+        public static bool IsQuadAtZ(Quad q, double expectedZ) {
             return Math.Abs(q.V0.Z - expectedZ) < Epsilon &&
                    Math.Abs(q.V1.Z - expectedZ) < Epsilon &&
                    Math.Abs(q.V2.Z - expectedZ) < Epsilon &&
                    Math.Abs(q.V3.Z - expectedZ) < Epsilon;
         }
 
-        public static bool IsCapQuad(Quad q)
-        {
+        public static bool IsCapQuad(Quad q) {
             return Math.Abs(q.V0.Z - q.V1.Z) < Epsilon &&
                    Math.Abs(q.V1.Z - q.V2.Z) < Epsilon &&
                    Math.Abs(q.V2.Z - q.V3.Z) < Epsilon;

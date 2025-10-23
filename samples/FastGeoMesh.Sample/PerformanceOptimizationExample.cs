@@ -1,18 +1,15 @@
 using FastGeoMesh.Application.Services;
 
-namespace FastGeoMesh.Sample
-{
+namespace FastGeoMesh.Sample {
     /// <summary>
     /// Demonstrates performance optimization techniques available in FastGeoMesh v2.0.
     /// Showcases Clean Architecture benefits and async processing capabilities.
     /// </summary>
-    public static class PerformanceOptimizationExample
-    {
+    public static class PerformanceOptimizationExample {
         /// <summary>
         /// Demonstrates memory-efficient processing with Clean Architecture.
         /// </summary>
-        public static void DemonstrateMemoryEfficiency()
-        {
+        public static void DemonstrateMemoryEfficiency() {
             Console.WriteLine("🧠 Memory Efficiency with Clean Architecture");
 
             // Domain layer provides immutable, efficient data structures
@@ -28,13 +25,11 @@ namespace FastGeoMesh.Sample
                 .WithTargetEdgeLengthXY(2.0)
                 .Build();
 
-            if (optionsResult.IsSuccess)
-            {
+            if (optionsResult.IsSuccess) {
                 var mesher = new PrismMesher();
                 var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
-                if (meshResult.IsSuccess)
-                {
+                if (meshResult.IsSuccess) {
                     var mesh = meshResult.Value;
                     Console.WriteLine($"✅ Efficient mesh: {mesh.QuadCount} quads, {mesh.TriangleCount} triangles");
                 }
@@ -44,15 +39,13 @@ namespace FastGeoMesh.Sample
         /// <summary>
         /// Demonstrates async processing advantages in v2.0.
         /// </summary>
-        public static async Task DemonstrateAsyncPerformance()
-        {
+        public static async Task DemonstrateAsyncPerformance() {
             Console.WriteLine("⚡ Async Performance with Clean Architecture");
 
             var structures = CreateTestStructures();
             var optionsResult = MesherOptions.CreateBuilder().WithFastPreset().Build();
 
-            if (optionsResult.IsSuccess)
-            {
+            if (optionsResult.IsSuccess) {
                 var mesher = new PrismMesher();
                 var asyncMesher = (IAsyncMesher)mesher;
 
@@ -60,15 +53,13 @@ namespace FastGeoMesh.Sample
                 var batchResult = await asyncMesher.MeshBatchAsync(structures, optionsResult.Value);
                 stopwatch.Stop();
 
-                if (batchResult.IsSuccess)
-                {
+                if (batchResult.IsSuccess) {
                     Console.WriteLine($"✅ Batch processing: {batchResult.Value.Count} meshes in {stopwatch.ElapsedMilliseconds}ms");
                 }
             }
         }
 
-        private static PrismStructureDefinition[] CreateTestStructures()
-        {
+        private static PrismStructureDefinition[] CreateTestStructures() {
             return new[]
             {
                 new PrismStructureDefinition(

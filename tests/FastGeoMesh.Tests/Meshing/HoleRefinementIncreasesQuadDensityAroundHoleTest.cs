@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class HoleRefinementIncreasesQuadDensityAroundHoleTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class HoleRefinementIncreasesQuadDensityAroundHoleTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10) });
             var hole = Polygon2D.FromPoints(new[] { new Vec2(8, 4), new Vec2(12, 4), new Vec2(12, 6), new Vec2(8, 6) });
             var baseStruct = new PrismStructureDefinition(rect, 0, 1).AddHole(hole);

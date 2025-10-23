@@ -1,11 +1,9 @@
 using FastGeoMesh.Domain;
 using Microsoft.Extensions.ObjectPool;
 
-namespace FastGeoMesh.Infrastructure.Performance
-{
+namespace FastGeoMesh.Infrastructure.Performance {
     /// <summary>Specialized pools for commonly used collection types in meshing with performance optimizations.</summary>
-    public static class MeshingPools
-    {
+    public static class MeshingPools {
         private static readonly DefaultObjectPoolProvider _provider = new();
 
         /// <summary>Pool for small integer lists (edge adjacencies) with size-based retention.</summary>
@@ -34,21 +32,17 @@ namespace FastGeoMesh.Infrastructure.Performance
     }
 
     /// <summary>Enhanced pooled object policy for List&lt;T&gt; with configurable capacity limits.</summary>
-    internal sealed class ListPoolPolicy<T> : PooledObjectPolicy<List<T>>
-    {
+    internal sealed class ListPoolPolicy<T> : PooledObjectPolicy<List<T>> {
         private readonly int _maxRetainedCapacity;
 
-        public ListPoolPolicy(int maxRetainedCapacity = 1024)
-        {
+        public ListPoolPolicy(int maxRetainedCapacity = 1024) {
             _maxRetainedCapacity = maxRetainedCapacity;
         }
 
         public override List<T> Create() => new List<T>();
 
-        public override bool Return(List<T> obj)
-        {
-            if (obj == null)
-            {
+        public override bool Return(List<T> obj) {
+            if (obj == null) {
                 return false;
             }
 
@@ -62,16 +56,13 @@ namespace FastGeoMesh.Infrastructure.Performance
 
     /// <summary>Enhanced pooled object policy for Dictionary&lt;K,V&gt; with memory optimization.</summary>
     internal sealed class DictionaryPoolPolicy<K, V> : PooledObjectPolicy<Dictionary<K, V>>
-        where K : notnull
-    {
+        where K : notnull {
         private const int MaxRetainedCount = 1024;
 
         public override Dictionary<K, V> Create() => new Dictionary<K, V>();
 
-        public override bool Return(Dictionary<K, V> obj)
-        {
-            if (obj == null)
-            {
+        public override bool Return(Dictionary<K, V> obj) {
+            if (obj == null) {
                 return false;
             }
 

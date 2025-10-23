@@ -3,13 +3,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Performance
-{
-    public sealed class MesherOptionsBuilderCreatesValidOptionsTest
-    {
+namespace FastGeoMesh.Tests.Performance {
+    public sealed class MesherOptionsBuilderCreatesValidOptionsTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var options = MesherOptions.CreateBuilder()
                 .WithTargetEdgeLengthXY(1.0)
                 .WithTargetEdgeLengthZ(0.5)

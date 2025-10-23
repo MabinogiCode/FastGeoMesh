@@ -4,21 +4,18 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
+namespace FastGeoMesh.Tests.Meshing {
     /// <summary>
     /// Comprehensive tests for v1.4.0 async capabilities to improve code coverage.
     /// Covers all async methods, progress reporting, batch processing, and monitoring.
     /// </summary>
-    public sealed class AsyncMeshingCoverageTests
-    {
+    public sealed class AsyncMeshingCoverageTests {
         private readonly PrismMesher _mesher;
         private readonly IAsyncMesher _asyncMesher;
         private readonly MesherOptions _options;
 
         /// <summary>Initializes the test class with mesher, async mesher, and options.</summary>
-        public AsyncMeshingCoverageTests()
-        {
+        public AsyncMeshingCoverageTests() {
             _mesher = new PrismMesher();
             _asyncMesher = _mesher;
             _options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
@@ -31,12 +28,10 @@ namespace FastGeoMesh.Tests.Meshing
         [InlineData(100, MeshingComplexity.Moderate)] // < 200 vertices
         [InlineData(500, MeshingComplexity.Complex)]  // < 1000 vertices
         [InlineData(1500, MeshingComplexity.Extreme)] // >= 1000 vertices
-        public async Task EstimateComplexityAsyncCategorizesDifferentSizesCorrectly(int vertexCount, MeshingComplexity expectedComplexity)
-        {
+        public async Task EstimateComplexityAsyncCategorizesDifferentSizesCorrectly(int vertexCount, MeshingComplexity expectedComplexity) {
             // Arrange
             var vertices = new List<Vec2>();
-            for (int i = 0; i < vertexCount; i++)
-            {
+            for (int i = 0; i < vertexCount; i++) {
                 double angle = 2 * Math.PI * i / vertexCount;
                 vertices.Add(new Vec2(Math.Cos(angle) * 10, Math.Sin(angle) * 10));
             }
@@ -60,8 +55,7 @@ namespace FastGeoMesh.Tests.Meshing
         /// Validates consistency between async and sync implementations across the core meshing algorithms.
         /// </summary>
         [Fact]
-        public async Task MeshAsyncSimpleStructureProducesSameResultAsSync()
-        {
+        public async Task MeshAsyncSimpleStructureProducesSameResultAsSync() {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
@@ -82,8 +76,7 @@ namespace FastGeoMesh.Tests.Meshing
         /// Validates that the cancellation token is respected in async operations and proper cleanup occurs.
         /// </summary>
         [Fact]
-        public async Task MeshAsyncWithCancellationThrowsOperationCanceledException()
-        {
+        public async Task MeshAsyncWithCancellationThrowsOperationCanceledException() {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(polygon, 0, 2);

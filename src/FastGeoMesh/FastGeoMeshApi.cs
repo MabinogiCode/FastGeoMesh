@@ -1,7 +1,6 @@
-// FastGeoMesh v2.0 - Clean Architecture Public API
-// This file exposes the Clean Architecture layers directly for maximum clarity and maintainability.
-// Breaking change from v1.x: Users must now reference the appropriate layer namespaces.
-
+// <copyright file="FastGeoMeshApi.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 // Export main domain types for convenience
 // V2.0 Breaking Changes:
 // - Remove compatibility wrappers

@@ -1,10 +1,8 @@
-namespace FastGeoMesh.Infrastructure
-{
+namespace FastGeoMesh.Infrastructure {
     /// <summary>
     /// Counters for PerformanceMonitor. Kept in separate file to respect one type per file guideline.
     /// </summary>
-    public static class PerformanceMonitorCounters
-    {
+    public static class PerformanceMonitorCounters {
         private static long _meshingOperations;
         private static long _quadsGenerated;
         private static long _trianglesGenerated;
@@ -49,10 +47,8 @@ namespace FastGeoMesh.Infrastructure
         public static void IncrementPoolMiss() => System.Threading.Interlocked.Increment(ref _poolMisses);
 
         /// <summary>Get current performance statistics.</summary>
-        public static PerformanceStatistics GetStatistics()
-        {
-            return new PerformanceStatistics
-            {
+        public static PerformanceStatistics GetStatistics() {
+            return new PerformanceStatistics {
                 MeshingOperations = _meshingOperations,
                 QuadsGenerated = _quadsGenerated,
                 TrianglesGenerated = _trianglesGenerated,

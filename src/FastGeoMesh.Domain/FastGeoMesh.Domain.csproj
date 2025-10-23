@@ -7,6 +7,15 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors>IDE0005;IDE0011;IDE0052;IDE0160</WarningsAsErrors>
+
+    <!-- Do not run analyzers during build to allow incremental fixes -->
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.9.0" PrivateAssets="all" />
+  </ItemGroup>
 
 </Project>

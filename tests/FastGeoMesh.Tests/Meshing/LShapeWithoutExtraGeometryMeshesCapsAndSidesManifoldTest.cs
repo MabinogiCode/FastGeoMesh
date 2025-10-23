@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class LShapeWithoutExtraGeometryMeshesCapsAndSidesManifoldTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class LShapeWithoutExtraGeometryMeshesCapsAndSidesManifoldTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(8, 0), new Vec2(8, 3), new Vec2(3, 3), new Vec2(3, 8), new Vec2(0, 8) });
             var structure = new PrismStructureDefinition(outer, 0, 4);
             var options = MesherOptions.CreateBuilder()

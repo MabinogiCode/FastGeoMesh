@@ -1,10 +1,8 @@
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Infrastructure
-{
+namespace FastGeoMesh.Infrastructure {
     /// <summary>Spatial acceleration structure for fast point-in-polygon queries.</summary>
-    public sealed class SpatialPolygonIndex
-    {
+    public sealed class SpatialPolygonIndex {
         private readonly IReadOnlyList<Vec2> _vertices;
         private readonly double _minX, _maxX, _minY, _maxY;
         private readonly int _gridSize;
@@ -12,11 +10,9 @@ namespace FastGeoMesh.Infrastructure
         private readonly CellResult[][] _grid; // jagged array replacing 2D array
 
         /// <summary>Create spatial index for a polygon.</summary>
-        public SpatialPolygonIndex(IReadOnlyList<Vec2> vertices, int gridResolution = 64)
-        {
+        public SpatialPolygonIndex(IReadOnlyList<Vec2> vertices, int gridResolution = 64) {
             ArgumentNullException.ThrowIfNull(vertices);
-            if (vertices.Count == 0)
-            {
+            if (vertices.Count == 0) {
                 throw new ArgumentException("Vertices collection must not be empty", nameof(vertices));
             }
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(gridResolution);
@@ -27,8 +23,7 @@ namespace FastGeoMesh.Infrastructure
             _minX = _maxX = vertices[0].X;
             _minY = _maxY = vertices[0].Y;
 
-            for (int i = 1; i < vertices.Count; i++)
-            {
+            for (int i = 1; i < vertices.Count; i++) {
                 var v = vertices[i];
                 if (v.X < _minX) { _minX = v.X; }
                 if (v.X > _maxX) { _maxX = v.X; }
@@ -46,8 +41,7 @@ namespace FastGeoMesh.Infrastructure
             _cellSizeX = (_maxX - _minX) / _gridSize;
             _cellSizeY = (_maxY - _minY) / _gridSize;
             _grid = new CellResult[_gridSize][];
-            for (int i = 0; i < _gridSize; i++)
-            {
+            for (int i = 0; i < _gridSize; i++) {
                 _grid[i] = new CellResult[_gridSize];
             }
 
@@ -56,11 +50,9 @@ namespace FastGeoMesh.Infrastructure
         }
 
         /// <summary>Fast point-in-polygon test using spatial index.</summary>
-        public bool IsInside(double x, double y)
-        {
+        public bool IsInside(double x, double y) {
             // Check bounds
-            if (x < _minX || x > _maxX || y < _minY || y > _maxY)
-            {
+            if (x < _minX || x > _maxX || y < _minY || y > _maxY) {
                 return false;
             }
 
@@ -70,21 +62,17 @@ namespace FastGeoMesh.Infrastructure
 
             var cellResult = _grid[cellX][cellY];
 
-            return cellResult switch
-            {
+            return cellResult switch {
                 CellResult.Inside => true,
                 CellResult.Outside => false,
                 _ => PointInPolygonRayCasting(x, y)
             };
         }
 
-        private void BuildIndex()
-        {
+        private void BuildIndex() {
             // Sample each grid cell to determine if it's entirely inside, outside, or crosses boundary
-            for (int i = 0; i < _gridSize; i++)
-            {
-                for (int j = 0; j < _gridSize; j++)
-                {
+            for (int i = 0; i < _gridSize; i++) {
+                for (int j = 0; j < _gridSize; j++) {
                     double cellMinX = _minX + i * _cellSizeX;
                     double cellMaxX = _minX + (i + 1) * _cellSizeX;
                     double cellMinY = _minY + j * _cellSizeY;
@@ -96,27 +84,23 @@ namespace FastGeoMesh.Infrastructure
                     bool bl = PointInPolygonRayCasting(cellMinX, cellMaxY);
                     bool br = PointInPolygonRayCasting(cellMaxX, cellMaxY);
 
-                    if (tl && tr && bl && br)
-                    {
+                    if (tl && tr && bl && br) {
                         _grid[i][j] = CellResult.Inside;
                     }
-                    else if (!tl && !tr && !bl && !br)
-                    {
+                    else if (!tl && !tr && !bl && !br) {
                         // Check center point to be more conservative
                         double centerX = (cellMinX + cellMaxX) * 0.5;
                         double centerY = (cellMinY + cellMaxY) * 0.5;
                         _grid[i][j] = PointInPolygonRayCasting(centerX, centerY) ? CellResult.Boundary : CellResult.Outside;
                     }
-                    else
-                    {
+                    else {
                         _grid[i][j] = CellResult.Boundary;
                     }
                 }
             }
         }
 
-        private bool PointInPolygonRayCasting(double x, double y)
-        {
+        private bool PointInPolygonRayCasting(double x, double y) {
             // Convert IReadOnlyList to ReadOnlySpan for optimal performance
             ReadOnlySpan<Vec2> span = _vertices is List<Vec2> list
                 ? System.Runtime.InteropServices.CollectionsMarshal.AsSpan(list)

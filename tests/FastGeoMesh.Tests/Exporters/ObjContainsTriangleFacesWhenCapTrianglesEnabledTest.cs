@@ -4,13 +4,10 @@ using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Tests.Helpers;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Exporters
-{
-    public sealed class ObjContainsTriangleFacesWhenCapTrianglesEnabledTest
-    {
+namespace FastGeoMesh.Tests.Exporters {
+    public sealed class ObjContainsTriangleFacesWhenCapTrianglesEnabledTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] {
                 new Vec2(0, 0),
                 new Vec2(TestGeometries.SmallSquareSide, 0),
@@ -22,8 +19,7 @@ namespace FastGeoMesh.Tests.Exporters
                 new Vec2(0, TestGeometries.SmallSquareSide + 1)
             });
             var structure = new PrismStructureDefinition(outer, 0, 1);
-            var options = new MesherOptions
-            {
+            var options = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(0.8),
                 TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ,
                 GenerateBottomCap = true,

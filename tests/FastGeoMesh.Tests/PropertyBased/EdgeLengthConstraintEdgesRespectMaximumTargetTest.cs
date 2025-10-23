@@ -4,18 +4,14 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.PropertyBased
-{
-    public sealed class EdgeLengthConstraintEdgesRespectMaximumTargetTest
-    {
+namespace FastGeoMesh.Tests.PropertyBased {
+    public sealed class EdgeLengthConstraintEdgesRespectMaximumTargetTest {
         [Theory]
         [InlineData(3)]
         [InlineData(5)]
         [InlineData(8)]
-        public void Test(int targetLength)
-        {
-            if (targetLength <= 0)
-            {
+        public void Test(int targetLength) {
+            if (targetLength <= 0) {
                 return;
             }
 
@@ -24,8 +20,7 @@ namespace FastGeoMesh.Tests.PropertyBased
             var options = MesherOptions.CreateBuilder().WithTargetEdgeLengthXY(targetLength).WithTargetEdgeLengthZ(targetLength).WithGenerateBottomCap(false).WithGenerateTopCap(false).Build().UnwrapForTests();
             var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
             var sideQuads = mesh.Quads.Where(q => !PropertyBasedTestHelper.IsCapQuad(q)).ToList();
-            if (sideQuads.Count == 0)
-            {
+            if (sideQuads.Count == 0) {
                 return;
             }
             PropertyBasedTestHelper.DoQuadEdgesRespectMaxLength(sideQuads, targetLength).Should().BeTrue();

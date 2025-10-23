@@ -1,13 +1,10 @@
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Application.Helpers.Meshing
-{
+namespace FastGeoMesh.Application.Helpers.Meshing {
     /// <summary>Helper methods for generating prism side face quads.</summary>
-    internal static class SideFaceMeshingHelper
-    {
+    internal static class SideFaceMeshingHelper {
         /// <summary>Generates side face quads for a prism structure.</summary>
-        internal static List<Quad> GenerateSideQuads(IReadOnlyList<Vec2> loop, IReadOnlyList<double> zLevels, MesherOptions options, bool outward)
-        {
+        internal static List<Quad> GenerateSideQuads(IReadOnlyList<Vec2> loop, IReadOnlyList<double> zLevels, MesherOptions options, bool outward) {
             ArgumentNullException.ThrowIfNull(loop);
             ArgumentNullException.ThrowIfNull(zLevels);
             ArgumentNullException.ThrowIfNull(options);
@@ -15,23 +12,20 @@ namespace FastGeoMesh.Application.Helpers.Meshing
             var quads = new List<Quad>();
             int n = loop.Count;
 
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 var a2 = loop[i];
                 var b2 = loop[(i + 1) % n];
                 double edgeLength = (b2 - a2).Length();
                 int hDiv = Math.Max(1, (int)Math.Ceiling(edgeLength / options.TargetEdgeLengthXY.Value));
                 double invHDiv = 1.0 / hDiv;
 
-                for (int hi = 0; hi < hDiv; hi++)
-                {
+                for (int hi = 0; hi < hDiv; hi++) {
                     double t0 = hi * invHDiv;
                     double t1 = (hi + 1) * invHDiv;
                     var a0 = Helpers.GeometryCalculationHelper.Lerp(a2, b2, t0);
                     var a1 = Helpers.GeometryCalculationHelper.Lerp(a2, b2, t1);
 
-                    for (int vi = 0; vi < zLevels.Count - 1; vi++)
-                    {
+                    for (int vi = 0; vi < zLevels.Count - 1; vi++) {
                         double za0 = zLevels[vi];
                         double za1 = zLevels[vi + 1];
 

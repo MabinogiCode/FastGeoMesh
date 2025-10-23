@@ -4,16 +4,13 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Validation
-{
+namespace FastGeoMesh.Tests.Validation {
     /// <summary>
     /// Validates that complexity estimation works and returns expected values.
     /// </summary>
-    public sealed class ComplexityEstimationWorks
-    {
+    public sealed class ComplexityEstimationWorks {
         [Fact]
-        public async Task Test()
-        {
+        public async Task Test() {
             var polygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5)

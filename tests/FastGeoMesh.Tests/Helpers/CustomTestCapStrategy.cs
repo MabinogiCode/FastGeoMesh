@@ -1,13 +1,11 @@
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Tests.Helpers
-{
+namespace FastGeoMesh.Tests.Helpers {
     /// <summary>
     /// Custom test cap strategy implementation for testing PrismMesher with dependency injection.
     /// Provides a simple test implementation that tracks whether it was called during meshing operations.
     /// </summary>
-    internal sealed class CustomTestCapStrategy : ICapMeshingStrategy
-    {
+    internal sealed class CustomTestCapStrategy : ICapMeshingStrategy {
         /// <summary>
         /// Gets a value indicating whether the strategy was called during cap generation.
         /// </summary>
@@ -22,8 +20,7 @@ namespace FastGeoMesh.Tests.Helpers
         /// <param name="z0">The base elevation.</param>
         /// <param name="z1">The top elevation.</param>
         /// <returns>Empty cap geometry for testing purposes.</returns>
-        public CapGeometry GenerateCaps(PrismStructureDefinition definition, MesherOptions options, double z0, double z1)
-        {
+        public CapGeometry GenerateCaps(PrismStructureDefinition definition, MesherOptions options, double z0, double z1) {
             WasCalled = true;
             // Simple implementation for testing - return empty cap geometry
             return new CapGeometry(

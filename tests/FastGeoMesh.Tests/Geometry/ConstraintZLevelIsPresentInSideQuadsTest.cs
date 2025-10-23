@@ -5,13 +5,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class ConstraintZLevelIsPresentInSideQuadsTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class ConstraintZLevelIsPresentInSideQuadsTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) });
             var structure = new PrismStructureDefinition(poly, -10, 10);
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(10, 0)), 2.5);

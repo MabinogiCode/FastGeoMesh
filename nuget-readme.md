@@ -255,35 +255,22 @@ indexed.ExportTxt()
 // - CountPlacement.None: No count written
 ```
 
-### Architecture & Code Quality Guidelines
+### Migration notes: Geometry configuration
 
-FastGeoMesh follows strict architectural principles:
+The project migrated from a mutable static `GeometryConfig` to an immutable `GeometryOptions` record in `FastGeoMesh.Domain`.
 
-- **🏗️ Clean Architecture**: Clear separation between Domain, Application, and Infrastructure layers
-- **🔒 Immutable Structures**: Thread-safe by design with immutable data structures
-- **⚡ Performance-First**: Optimized for .NET 8 with aggressive inlining and SIMD operations
-- **📋 Result Pattern**: No exceptions in normal flow - predictable error handling
-- **🧪 High Test Coverage**: Comprehensive test suite with 194+ passing tests
-- **📝 XML Documentation**: Complete API documentation for all public members
-- **🎯 SOLID Principles**: Single responsibility, dependency injection, interface segregation
+- Old API: `FastGeoMesh.Infrastructure.GeometryConfig.DefaultTolerance = 1e-6;`
+- New API: create a `GeometryOptions` instance and pass it explicitly to helpers:
 
-#### Code Quality Standards:
-- All public APIs have XML documentation
-- Immutable data structures prevent side effects  
-- Result<T> pattern for error handling
-- Aggressive performance optimizations
-- Clean separation of concerns
-- Thread-safe operations throughout
+```csharp
+var opts = new GeometryOptions(DefaultTolerance: 1e-6, ConvexityTolerance: -1e-6, PointInPolygonTolerance: 1e-8);
+var inside = GeometryHelper.PointInPolygon(polygonSpan, x, y, options: opts);
+```
 
-#### Performance Optimizations:
-- `[MethodImpl(MethodImplOptions.AggressiveInlining)]` for hot paths
-- Struct-based vectors (Vec2, Vec3) to avoid allocations
-- SIMD batch operations for geometric calculations
-- Object pooling for temporary collections
-- Span<T> and ReadOnlySpan<T> for zero-copy operations
+Rationale:
+- Removes global mutable state and improves test determinism.
+- Encourages dependency injection when components require non-default geometry tolerances.
 
-**📖 Documentation Complète** : https://github.com/MabinogiCode/FastGeoMesh  
-**📋 Référence API** : https://github.com/MabinogiCode/FastGeoMesh/blob/main/docs/api-reference-fr.md  
-**⚡ Guide Performance** : https://github.com/MabinogiCode/FastGeoMesh/blob/main/docs/performance-guide-fr.md
-
-**Licence** : MIT
+Recommendations:
+- For long-lived services, inject `GeometryOptions` via constructor.
+- For one-off calls, pass `options` directly to `GeometryHelper` methods that accept it.

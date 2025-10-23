@@ -1,8 +1,6 @@
-namespace FastGeoMesh.Infrastructure
-{
+namespace FastGeoMesh.Infrastructure {
     /// <summary>Performance statistics snapshot.</summary>
-    public readonly struct PerformanceStatistics
-    {
+    public readonly struct PerformanceStatistics {
         /// <summary>Total number of meshing operations performed.</summary>
         public long MeshingOperations { get; init; }
 
@@ -16,8 +14,7 @@ namespace FastGeoMesh.Infrastructure
         public double PoolHitRate { get; init; }
 
         /// <summary>Returns a string representation of the performance statistics.</summary>
-        public override string ToString()
-        {
+        public override string ToString() {
             return $"Operations: {MeshingOperations}, Quads: {QuadsGenerated}, Triangles: {TrianglesGenerated}, Pool Hit Rate: {PoolHitRate:P2}";
         }
     }

@@ -2,13 +2,10 @@ using System.Reflection;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
-    public sealed class CoverageCollectionIsEnabledTest
-    {
+namespace FastGeoMesh.Tests.Coverage {
+    public sealed class CoverageCollectionIsEnabledTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var isCIBuild = Environment.GetEnvironmentVariable("CI");
             var isCoverageBuild = Environment.GetEnvironmentVariable("GITHUB_ACTIONS");
 

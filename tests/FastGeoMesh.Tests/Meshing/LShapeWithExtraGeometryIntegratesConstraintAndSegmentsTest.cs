@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class LShapeWithExtraGeometryIntegratesConstraintAndSegmentsTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class LShapeWithExtraGeometryIntegratesConstraintAndSegmentsTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(8, 0), new Vec2(8, 3), new Vec2(3, 3), new Vec2(3, 8), new Vec2(0, 8) });
             var structure = new PrismStructureDefinition(outer, 0, 6);
             structure = structure.AddConstraintSegment(new Segment2D(new Vec2(0.5, 1.0), new Vec2(7.5, 1.0)), 2.0);

@@ -4,35 +4,29 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Additional coverage tests for exporters and core functionality to reach 90%+ coverage.
     /// Covers remaining edge cases in exporters, geometry helpers, and mesh operations.
     /// </summary>
-    public sealed class ExporterCoverageTests
-    {
+    public sealed class ExporterCoverageTests {
         /// <summary>Tests ObjExporter with empty mesh.</summary>
         [Fact]
-        public void ObjExporterWithEmptyMeshHandlesGracefully()
-        {
+        public void ObjExporterWithEmptyMeshHandlesGracefully() {
             // Arrange
             var emptyMesh = new ImmutableMesh();
             var indexed = IndexedMesh.FromMesh(emptyMesh);
             var tempFile = Path.GetTempFileName();
 
-            try
-            {
+            try {
                 // Act & Assert - Should not throw
                 ObjExporter.Write(indexed, tempFile);
 
                 // Verify file was created (even if empty)
                 File.Exists(tempFile).Should().BeTrue();
             }
-            finally
-            {
-                if (File.Exists(tempFile))
-                {
+            finally {
+                if (File.Exists(tempFile)) {
                     File.Delete(tempFile);
                 }
             }
@@ -40,25 +34,21 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests GltfExporter with empty mesh.</summary>
         [Fact]
-        public void GltfExporterWithEmptyMeshHandlesGracefully()
-        {
+        public void GltfExporterWithEmptyMeshHandlesGracefully() {
             // Arrange
             var emptyMesh = new ImmutableMesh();
             var indexed = IndexedMesh.FromMesh(emptyMesh);
             var tempFile = Path.GetTempFileName();
 
-            try
-            {
+            try {
                 // Act & Assert - Should not throw
                 GltfExporter.Write(indexed, tempFile);
 
                 // Verify file was created
                 File.Exists(tempFile).Should().BeTrue();
             }
-            finally
-            {
-                if (File.Exists(tempFile))
-                {
+            finally {
+                if (File.Exists(tempFile)) {
                     File.Delete(tempFile);
                 }
             }
@@ -66,25 +56,21 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests SvgExporter with empty mesh.</summary>
         [Fact]
-        public void SvgExporterWithEmptyMeshHandlesGracefully()
-        {
+        public void SvgExporterWithEmptyMeshHandlesGracefully() {
             // Arrange
             var emptyMesh = new ImmutableMesh();
             var indexed = IndexedMesh.FromMesh(emptyMesh);
             var tempFile = Path.GetTempFileName();
 
-            try
-            {
+            try {
                 // Act & Assert - Should not throw
                 SvgExporter.Write(indexed, tempFile);
 
                 // Verify file was created
                 File.Exists(tempFile).Should().BeTrue();
             }
-            finally
-            {
-                if (File.Exists(tempFile))
-                {
+            finally {
+                if (File.Exists(tempFile)) {
                     File.Delete(tempFile);
                 }
             }
@@ -92,8 +78,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests exporters with mesh containing only points.</summary>
         [Fact]
-        public void ExportersWithPointsOnlyMeshHandleGracefully()
-        {
+        public void ExportersWithPointsOnlyMeshHandleGracefully() {
             // Arrange
             var mesh = new ImmutableMesh();
             mesh = mesh.AddPoint(new Vec3(1, 2, 3)); // Fix: capture returned mesh
@@ -105,8 +90,7 @@ namespace FastGeoMesh.Tests.Coverage
             var gltfFile = Path.GetTempFileName();
             var svgFile = Path.GetTempFileName();
 
-            try
-            {
+            try {
                 ObjExporter.Write(indexed, objFile);
                 GltfExporter.Write(indexed, gltfFile);
                 SvgExporter.Write(indexed, svgFile);
@@ -115,18 +99,14 @@ namespace FastGeoMesh.Tests.Coverage
                 File.Exists(gltfFile).Should().BeTrue();
                 File.Exists(svgFile).Should().BeTrue();
             }
-            finally
-            {
-                if (File.Exists(objFile))
-                {
+            finally {
+                if (File.Exists(objFile)) {
                     File.Delete(objFile);
                 }
-                if (File.Exists(gltfFile))
-                {
+                if (File.Exists(gltfFile)) {
                     File.Delete(gltfFile);
                 }
-                if (File.Exists(svgFile))
-                {
+                if (File.Exists(svgFile)) {
                     File.Delete(svgFile);
                 }
             }
@@ -134,8 +114,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests IndexedMesh with extreme epsilon values.</summary>
         [Fact]
-        public void IndexedMeshWithExtremeEpsilonHandlesCorrectly()
-        {
+        public void IndexedMeshWithExtremeEpsilonHandlesCorrectly() {
             // Arrange
             var mesh = new ImmutableMesh();
             mesh = mesh.AddQuad(new Quad( // Fix: capture returned mesh
@@ -155,8 +134,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests IndexedMesh with tiny epsilon.</summary>
         [Fact]
-        public void IndexedMeshWithTinyEpsilonPreservesVertices()
-        {
+        public void IndexedMeshWithTinyEpsilonPreservesVertices() {
             // Arrange
             var mesh = new ImmutableMesh();
             mesh = mesh.AddQuad(new Quad( // Fix: capture returned mesh
@@ -176,8 +154,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests Mesh.AddInternalSegment functionality.</summary>
         [Fact]
-        public void MeshAddInternalSegmentAddsCorrectly()
-        {
+        public void MeshAddInternalSegmentAddsCorrectly() {
             // Arrange
             var mesh = new ImmutableMesh();
             var segment = new Segment3D(new Vec3(0, 0, 0), new Vec3(10, 10, 10));
@@ -192,8 +169,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests Mesh quad and triangle count properties.</summary>
         [Fact]
-        public void MeshCountPropertiesReflectActualCounts()
-        {
+        public void MeshCountPropertiesReflectActualCounts() {
             // Arrange
             var mesh = new ImmutableMesh();
 
@@ -211,8 +187,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests MesherOptions builder validation paths.</summary>
         [Fact]
-        public void MesherOptionsBuilderValidationPathsWorkCorrectly()
-        {
+        public void MesherOptionsBuilderValidationPathsWorkCorrectly() {
             // Act & Assert - Various builder configurations should work
             var fastPreset = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
             fastPreset.Should().NotBeNull();
@@ -233,8 +208,7 @@ namespace FastGeoMesh.Tests.Coverage
             customOptions.OutputRejectedCapTriangles.Should().BeTrue();
 
             // Test direct property assignment
-            var directOptions = new MesherOptions
-            {
+            var directOptions = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(1.5),
                 TargetEdgeLengthZ = EdgeLength.From(2.5),
                 GenerateBottomCap = true,
@@ -249,8 +223,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests Polygon2D with collinear points.</summary>
         [Fact]
-        public void Polygon2DWithCollinearPointsHandlesCorrectly()
-        {
+        public void Polygon2DWithCollinearPointsHandlesCorrectly() {
             // Arrange - Points that are collinear
             var points = new[]
             {
@@ -271,8 +244,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests Vec2 and Vec3 math operations.</summary>
         [Fact]
-        public void VectorTypesMathOperationsWorkCorrectly()
-        {
+        public void VectorTypesMathOperationsWorkCorrectly() {
             // Arrange
             var v2a = new Vec2(1, 2);
             var v2b = new Vec2(3, 4);
@@ -292,8 +264,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests PrismStructureDefinition method chaining.</summary>
         [Fact]
-        public void PrismStructureDefinitionMethodChainingWorksCorrectly()
-        {
+        public void PrismStructureDefinitionMethodChainingWorksCorrectly() {
             // Arrange
             var polygon = Polygon2D.FromPoints(new[]
             {

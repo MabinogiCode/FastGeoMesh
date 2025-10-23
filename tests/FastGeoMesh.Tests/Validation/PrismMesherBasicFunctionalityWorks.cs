@@ -4,16 +4,13 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Validation
-{
+namespace FastGeoMesh.Tests.Validation {
     /// <summary>
     /// Validates that synchronous meshing produces a valid mesh with expected properties.
     /// </summary>
-    public sealed class PrismMesherBasicFunctionalityWorks
-    {
+    public sealed class PrismMesherBasicFunctionalityWorks {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var polygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5)

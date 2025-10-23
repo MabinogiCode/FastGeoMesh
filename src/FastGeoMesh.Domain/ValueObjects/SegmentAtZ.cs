@@ -1,15 +1,21 @@
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>2D segment tagged with a Z elevation level.</summary>
-    public sealed class SegmentAtZ : IElement
-    {
-        /// <summary>Discriminator value.</summary>
+    public sealed class SegmentAtZ : IElement {
+        /// <summary>Gets the discriminator value.</summary>
         public string Kind => nameof(SegmentAtZ);
-        /// <summary>2D segment in footprint plane.</summary>
+
+        /// <summary>Gets the 2D segment in footprint plane.</summary>
         public Segment2D Segment { get; }
-        /// <summary>Z elevation associated to the segment.</summary>
+
+        /// <summary>Gets the Z elevation associated to the segment.</summary>
         public double Z { get; }
-        /// <summary>Create a segment-at-Z container.</summary>
-        public SegmentAtZ(Segment2D segment, double z) => (Segment, Z) = (segment, z);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SegmentAtZ"/> class.
+        /// </summary>
+        public SegmentAtZ(Segment2D segment, double z) {
+            this.Segment = segment;
+            this.Z = z;
+        }
     }
 }

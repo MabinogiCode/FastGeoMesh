@@ -2,16 +2,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Infrastructure
-{
+namespace FastGeoMesh.Infrastructure {
     /// <summary>glTF 2.0 exporter (.gltf JSON with embedded base64 buffer). Quads are triangulated; standalone triangles are exported directly.</summary>
-    public static class GltfExporter
-    {
+    public static class GltfExporter {
         private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 
         /// <summary>Write indexed mesh as glTF file (positions + indices only).</summary>
-        public static void Write(IndexedMesh mesh, string path)
-        {
+        public static void Write(IndexedMesh mesh, string path) {
             ArgumentNullException.ThrowIfNull(mesh);
             ArgumentException.ThrowIfNullOrEmpty(path);
 
@@ -19,8 +16,7 @@ namespace FastGeoMesh.Infrastructure
             using var bw = new BinaryWriter(ms);
 
             // positions
-            foreach (var v in mesh.Vertices)
-            {
+            foreach (var v in mesh.Vertices) {
                 bw.Write((float)v.X);
                 bw.Write((float)v.Y);
                 bw.Write((float)v.Z);
@@ -37,8 +33,7 @@ namespace FastGeoMesh.Infrastructure
             var (minX, minY, minZ, maxX, maxY, maxZ) = CalculateBounds(mesh);
 
             // write quad-derived triangles
-            foreach (var (v0, v1, v2, v3) in mesh.Quads)
-            {
+            foreach (var (v0, v1, v2, v3) in mesh.Quads) {
                 bw.Write((uint)v0);
                 bw.Write((uint)v1);
                 bw.Write((uint)v2);
@@ -47,8 +42,7 @@ namespace FastGeoMesh.Infrastructure
                 bw.Write((uint)v3);
             }
             // write standalone cap triangles
-            foreach (var (v0, v1, v2) in mesh.Triangles)
-            {
+            foreach (var (v0, v1, v2) in mesh.Triangles) {
                 bw.Write((uint)v0);
                 bw.Write((uint)v1);
                 bw.Write((uint)v2);
@@ -60,8 +54,7 @@ namespace FastGeoMesh.Infrastructure
             int posOffset = 0;
             int idxOffset = posBytes;
 
-            var gltf = new
-            {
+            var gltf = new {
                 asset = new { version = "2.0", generator = "FastGeoMesh" },
                 buffers = new object[] { new { uri = dataUri, byteLength = bufferByteLength } },
                 bufferViews = new object[]
@@ -84,41 +77,32 @@ namespace FastGeoMesh.Infrastructure
             File.WriteAllText(path, json);
         }
 
-        private static (double minX, double minY, double minZ, double maxX, double maxY, double maxZ) CalculateBounds(IndexedMesh mesh)
-        {
+        private static (double minX, double minY, double minZ, double maxX, double maxY, double maxZ) CalculateBounds(IndexedMesh mesh) {
             // Handle empty mesh case to avoid infinity values
-            if (mesh.Vertices.Count == 0)
-            {
+            if (mesh.Vertices.Count == 0) {
                 return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
             }
 
             double minX = double.PositiveInfinity, minY = double.PositiveInfinity, minZ = double.PositiveInfinity;
             double maxX = double.NegativeInfinity, maxY = double.NegativeInfinity, maxZ = double.NegativeInfinity;
 
-            foreach (var v in mesh.Vertices)
-            {
-                if (v.X < minX)
-                {
+            foreach (var v in mesh.Vertices) {
+                if (v.X < minX) {
                     minX = v.X;
                 }
-                if (v.Y < minY)
-                {
+                if (v.Y < minY) {
                     minY = v.Y;
                 }
-                if (v.Z < minZ)
-                {
+                if (v.Z < minZ) {
                     minZ = v.Z;
                 }
-                if (v.X > maxX)
-                {
+                if (v.X > maxX) {
                     maxX = v.X;
                 }
-                if (v.Y > maxY)
-                {
+                if (v.Y > maxY) {
                     maxY = v.Y;
                 }
-                if (v.Z > maxZ)
-                {
+                if (v.Z > maxZ) {
                     maxZ = v.Z;
                 }
             }

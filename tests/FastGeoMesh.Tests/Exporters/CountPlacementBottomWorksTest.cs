@@ -5,17 +5,13 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Exporters
-{
-    public sealed class CountPlacementBottomWorksTest
-    {
+namespace FastGeoMesh.Tests.Exporters {
+    public sealed class CountPlacementBottomWorksTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(1, 1), new Vec2(0, 1) });
             var structure = new PrismStructureDefinition(poly, 0, 1);
-            var options = new MesherOptions
-            {
+            var options = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(1.0),
                 TargetEdgeLengthZ = EdgeLength.From(1.0),
                 GenerateBottomCap = true,
@@ -36,8 +32,7 @@ namespace FastGeoMesh.Tests.Exporters
             int.TryParse(lines[^1], out int count).Should().BeTrue();
             count.Should().BeGreaterThan(0);
 
-            for (int i = 0; i < lines.Length - 1; i++)
-            {
+            for (int i = 0; i < lines.Length - 1; i++) {
                 lines[i].Should().StartWith("pt ");
             }
 

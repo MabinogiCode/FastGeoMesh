@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class CapsAreRefinedNearInternalSegmentsTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class CapsAreRefinedNearInternalSegmentsTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10) });
             var structure = new PrismStructureDefinition(outer, -1, 0);
             structure.Geometry.AddPoint(new Vec3(9, 5, -0.5)).AddPoint(new Vec3(11, 5, -0.5)).AddSegment(new Segment3D(new Vec3(9, 5, -0.5), new Vec3(11, 5, -0.5)));
@@ -30,10 +27,8 @@ namespace FastGeoMesh.Tests.Meshing
 
             totalTopElements.Should().BeGreaterThan(0, "Should have top cap elements (quads or triangles)");
 
-            if (topQuads.Count > 0)
-            {
-                topQuads.Should().AllSatisfy(q =>
-                {
+            if (topQuads.Count > 0) {
+                topQuads.Should().AllSatisfy(q => {
                     q.V0.Should().NotBe(q.V1, "Quad vertices should be distinct");
                     q.V1.Should().NotBe(q.V2, "Quad vertices should be distinct");
                     q.V2.Should().NotBe(q.V3, "Quad vertices should be distinct");

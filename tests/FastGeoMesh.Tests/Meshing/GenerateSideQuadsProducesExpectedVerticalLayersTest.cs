@@ -3,13 +3,10 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class GenerateSideQuadsProducesExpectedVerticalLayersTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class GenerateSideQuadsProducesExpectedVerticalLayersTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var loop = new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 2), new Vec2(0, 2) };
             var zLevels = new double[] { 0, 1, 2 };
             var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(2.0), TargetEdgeLengthZ = EdgeLength.From(1.0) };

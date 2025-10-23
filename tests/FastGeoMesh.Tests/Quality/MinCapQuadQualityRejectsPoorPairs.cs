@@ -4,16 +4,13 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Quality
-{
+namespace FastGeoMesh.Tests.Quality {
     /// <summary>
     /// Tests that minimum cap quad quality rejects poor quality quad pairs.
     /// </summary>
-    public sealed class MinCapQuadQualityRejectsPoorPairs
-    {
+    public sealed class MinCapQuadQualityRejectsPoorPairs {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 1), new Vec2(2.6, 1), new Vec2(2.4, 3), new Vec2(5, 3), new Vec2(5, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(outer, 0, 1);
             var strict = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.5), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = true, GenerateTopCap = true, MinCapQuadQuality = 0.5 };
@@ -39,8 +36,7 @@ namespace FastGeoMesh.Tests.Quality
             int badStrict = topStrictQuads.Count(q => q.QualityScore is { } s && s < thresh);
             int badLoose = topLooseQuads.Count(q => q.QualityScore is { } s && s < thresh);
 
-            if (topStrictQuads.Count > 0 && topLooseQuads.Count > 0)
-            {
+            if (topStrictQuads.Count > 0 && topLooseQuads.Count > 0) {
                 badStrict.Should().BeLessThanOrEqualTo(badLoose + 1);
             }
         }

@@ -4,18 +4,15 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Additional Infrastructure layer coverage tests.
     /// Focuses on exporters, performance monitoring, and utility classes.
     /// </summary>
-    public sealed class InfrastructureLayerCoverageTests
-    {
+    public sealed class InfrastructureLayerCoverageTests {
         /// <summary>Tests mesh validation and helper operations.</summary>
         [Fact]
-        public void MeshValidationAndHelperOperationsWorkCorrectly()
-        {
+        public void MeshValidationAndHelperOperationsWorkCorrectly() {
             // Create test mesh
             var mesh = new ImmutableMesh();
             mesh = mesh.AddQuad(new Quad(
@@ -50,8 +47,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests async meshing operations and progress reporting.</summary>
         [Fact]
-        public async Task AsyncMeshingOperationsAndProgressReportingWorkCorrectly()
-        {
+        public async Task AsyncMeshingOperationsAndProgressReportingWorkCorrectly() {
             var polygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 3), new Vec2(0, 3)
@@ -109,8 +105,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests various meshing scenarios with different geometries.</summary>
         [Fact]
-        public void VariousMeshingScenariosWithDifferentGeometriesWorkCorrectly()
-        {
+        public void VariousMeshingScenariosWithDifferentGeometriesWorkCorrectly() {
             var mesher = new PrismMesher();
 
             // Test simple rectangle
@@ -182,8 +177,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests different meshing options and presets.</summary>
         [Fact]
-        public void DifferentMeshingOptionsAndPresetsWorkCorrectly()
-        {
+        public void DifferentMeshingOptionsAndPresetsWorkCorrectly() {
             var polygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(3, 0), new Vec2(3, 2), new Vec2(0, 2)
@@ -247,8 +241,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests mesh export functionality if available.</summary>
         [Fact]
-        public void MeshExportFunctionalityIfAvailableWorksCorrectly()
-        {
+        public void MeshExportFunctionalityIfAvailableWorksCorrectly() {
             // Create simple test mesh
             var mesh = new ImmutableMesh();
             mesh = mesh.AddQuad(new Quad(
@@ -273,16 +266,14 @@ namespace FastGeoMesh.Tests.Coverage
             edges.Should().NotBeEmpty();
 
             // Test mesh validation for export
-            foreach (var quad in quads)
-            {
+            foreach (var quad in quads) {
                 quad.Item1.Should().BeInRange(0, vertices.Count - 1);
                 quad.Item2.Should().BeInRange(0, vertices.Count - 1);
                 quad.Item3.Should().BeInRange(0, vertices.Count - 1);
                 quad.Item4.Should().BeInRange(0, vertices.Count - 1);
             }
 
-            foreach (var edge in edges)
-            {
+            foreach (var edge in edges) {
                 edge.a.Should().BeInRange(0, vertices.Count - 1);
                 edge.b.Should().BeInRange(0, vertices.Count - 1);
                 edge.a.Should().NotBe(edge.b);
@@ -291,8 +282,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests geometric utility operations.</summary>
         [Fact]
-        public void GeometricUtilityOperationsWorkCorrectly()
-        {
+        public void GeometricUtilityOperationsWorkCorrectly() {
             // Test Vec2 operations
             var v2a = new Vec2(3, 4);
             var v2b = new Vec2(1, 2);
@@ -340,8 +330,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests complex scenarios with constraints and internal surfaces.</summary>
         [Fact]
-        public void ComplexScenariosWithConstraintsAndInternalSurfacesWorkCorrectly()
-        {
+        public void ComplexScenariosWithConstraintsAndInternalSurfacesWorkCorrectly() {
             var polygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(6, 0), new Vec2(6, 4), new Vec2(0, 4)

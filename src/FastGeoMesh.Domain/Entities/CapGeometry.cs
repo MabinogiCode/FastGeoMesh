@@ -1,5 +1,4 @@
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>
     /// Represents the geometry of a mesh cap, containing quads and triangles.
     /// </summary>

@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.ComplexScenario
-{
-    public sealed class TinyNotchHandlingTest
-    {
+namespace FastGeoMesh.Tests.ComplexScenario {
+    public sealed class TinyNotchHandlingTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var vertices = new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 2.5), new Vec2(5.01, 2.5), new Vec2(5.01, 2.51), new Vec2(5, 2.51), new Vec2(5, 5), new Vec2(0, 5) };
             var outer = Polygon2D.FromPoints(vertices);
             var structure = new PrismStructureDefinition(outer, 0, 1);

@@ -2,20 +2,16 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Ultra-targeted tests to push specific modules above 80% coverage.
     /// Focuses on the exact paths needed to reach the threshold.
     /// </summary>
-    public sealed class UltraTargetedCoverageTests
-    {
+    public sealed class UltraTargetedCoverageTests {
         /// <summary>Tests every EdgeLength operation and boundary.</summary>
         [Fact]
-        public void EdgeLengthEveryOperationAndBoundaryWorks()
-        {
-            try
-            {
+        public void EdgeLengthEveryOperationAndBoundaryWorks() {
+            try {
                 // Test all EdgeLength operations
                 var edge1 = EdgeLength.From(1.0);
                 var edge2 = EdgeLength.From(2.0);
@@ -50,8 +46,7 @@ namespace FastGeoMesh.Tests.Coverage
                 double value = edge1;
                 value.Should().Be(1.0);
             }
-            catch
-            {
+            catch {
                 // EdgeLength might not exist - that's OK
                 true.Should().BeTrue();
             }
@@ -59,10 +54,8 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests every Tolerance operation and boundary.</summary>
         [Fact]
-        public void ToleranceEveryOperationAndBoundaryWorks()
-        {
-            try
-            {
+        public void ToleranceEveryOperationAndBoundaryWorks() {
+            try {
                 // Test all Tolerance operations
                 var tol1 = Tolerance.From(1e-9);
                 var tol2 = Tolerance.From(1e-6);
@@ -88,8 +81,7 @@ namespace FastGeoMesh.Tests.Coverage
                 double value = tol1;
                 value.Should().Be(1e-9);
             }
-            catch
-            {
+            catch {
                 // Tolerance might not exist - that's OK
                 true.Should().BeTrue();
             }
@@ -97,10 +89,8 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests Result operations with simple scenarios.</summary>
         [Fact]
-        public void ResultEveryOperationAndEdgeCaseWorks()
-        {
-            try
-            {
+        public void ResultEveryOperationAndEdgeCaseWorks() {
+            try {
                 // Test success results with basic types
                 var intSuccess = Result<int>.Success(42);
                 var stringSuccess = Result<string>.Success("test");
@@ -146,8 +136,7 @@ namespace FastGeoMesh.Tests.Coverage
                 implicitError.IsFailure.Should().BeTrue();
                 implicitError.Error.Should().Be(error1);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Result pattern might be different - that's OK
                 true.Should().BeTrue("Result pattern might work differently");
             }
@@ -155,8 +144,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests every Error operation and property.</summary>
         [Fact]
-        public void ErrorEveryOperationAndPropertyWorks()
-        {
+        public void ErrorEveryOperationAndPropertyWorks() {
             // Test all Error constructors and properties
             var error1 = new Error("CODE001", "Description 1");
             var error2 = new Error("CODE002", "Description 2");
@@ -188,8 +176,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests every Quad operation and property.</summary>
         [Fact]
-        public void QuadEveryOperationAndPropertyWorks()
-        {
+        public void QuadEveryOperationAndPropertyWorks() {
             // Test all Quad constructors
             var quad1 = new Quad(
                 new Vec3(0, 0, 0), new Vec3(1, 0, 0),
@@ -229,8 +216,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests every Triangle operation and property.</summary>
         [Fact]
-        public void TriangleEveryOperationAndPropertyWorks()
-        {
+        public void TriangleEveryOperationAndPropertyWorks() {
             // Test all Triangle constructors
             var tri1 = new Triangle(
                 new Vec3(0, 0, 0), new Vec3(1, 0, 0), new Vec3(0.5, 1, 0));
@@ -263,8 +249,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests every Vec2 static and instance operation.</summary>
         [Fact]
-        public void Vec2EveryStaticAndInstanceOperationWorks()
-        {
+        public void Vec2EveryStaticAndInstanceOperationWorks() {
             var v1 = new Vec2(3, 4);
             var v2 = new Vec2(1, 2);
             var v3 = new Vec2(3, 4);
@@ -304,8 +289,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests every Vec3 static and instance operation.</summary>
         [Fact]
-        public void Vec3EveryStaticAndInstanceOperationWorks()
-        {
+        public void Vec3EveryStaticAndInstanceOperationWorks() {
             var v1 = new Vec3(1, 2, 3);
             var v2 = new Vec3(4, 5, 6);
             var v3 = new Vec3(1, 2, 3);

@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class GenericConcavePolygonWithHoleCapsGeneratedAndManifoldTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class GenericConcavePolygonWithHoleCapsGeneratedAndManifoldTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0,0), new Vec2(8,0), new Vec2(8,2), new Vec2(3,2), new Vec2(3,7), new Vec2(0,7)
@@ -23,8 +20,7 @@ namespace FastGeoMesh.Tests.Meshing
             var structure = new PrismStructureDefinition(outer, 0, 1)
                 .AddHole(hole);
 
-            var options = new MesherOptions
-            {
+            var options = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(0.5),
                 TargetEdgeLengthZ = EdgeLength.From(0.5),
                 GenerateBottomCap = true,

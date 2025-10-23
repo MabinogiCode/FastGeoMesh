@@ -4,18 +4,14 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class InternalSurfaceWithoutOuterCapStillGeneratesOnlyPlateTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class InternalSurfaceWithoutOuterCapStillGeneratesOnlyPlateTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(5, 0), new Vec2(5, 5), new Vec2(0, 5) });
             var plateOuter = outer;
             var structure = new PrismStructureDefinition(outer, 0, 5).AddInternalSurface(plateOuter, 2.5);
-            var opt = new MesherOptions
-            {
+            var opt = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(2.0),
                 TargetEdgeLengthZ = EdgeLength.From(2.0),
                 GenerateBottomCap = false,

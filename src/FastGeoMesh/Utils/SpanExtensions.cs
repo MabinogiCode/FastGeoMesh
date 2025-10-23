@@ -1,7 +1,11 @@
+// <copyright file="SpanExtensions.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System.Runtime.CompilerServices;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Infrastructure
+namespace FastGeoMesh.Utils
 {
     /// <summary>
     /// High-performance span-based extensions for geometric operations.

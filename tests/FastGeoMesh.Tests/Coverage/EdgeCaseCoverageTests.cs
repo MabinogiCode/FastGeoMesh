@@ -4,26 +4,22 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Tests edge cases, error conditions, and boundary scenarios to improve code coverage.
     /// Focuses on paths that are typically under-tested in normal scenarios.
     /// </summary>
-    public sealed class EdgeCaseCoverageTests
-    {
+    public sealed class EdgeCaseCoverageTests {
         private readonly MesherOptions _options;
 
         /// <summary>Initializes the test class with options.</summary>
-        public EdgeCaseCoverageTests()
-        {
+        public EdgeCaseCoverageTests() {
             _options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
         }
 
         /// <summary>Tests PrismMesher with custom cap strategy.</summary>
         [Fact]
-        public void PrismMesherWithCustomCapStrategyUsesCustomStrategy()
-        {
+        public void PrismMesherWithCustomCapStrategyUsesCustomStrategy() {
             // Arrange
             var customStrategy = new CustomTestCapStrategy();
             var mesher = new PrismMesher(customStrategy);
@@ -44,16 +40,14 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests null cap strategy validation.</summary>
         [Fact]
-        public void PrismMesherWithNullCapStrategyThrowsArgumentNullException()
-        {
+        public void PrismMesherWithNullCapStrategyThrowsArgumentNullException() {
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() => new PrismMesher(null!));
         }
 
         /// <summary>Tests MesherOptions validation with invalid values.</summary>
         [Fact]
-        public void MesherOptionsWithInvalidValuesFailsValidation()
-        {
+        public void MesherOptionsWithInvalidValuesFailsValidation() {
             // Act
             var result = MesherOptions.CreateBuilder()
                 .WithTargetEdgeLengthXY(-1.0) // Invalid negative value

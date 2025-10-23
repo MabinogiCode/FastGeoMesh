@@ -3,16 +3,13 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Quality
-{
+namespace FastGeoMesh.Tests.Quality {
     /// <summary>
     /// Validates that zero-area quads receive a low score.
     /// </summary>
-    public sealed class ScoreQuadHandlesZeroAreaQuads
-    {
+    public sealed class ScoreQuadHandlesZeroAreaQuads {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             // Arrange - Zero area quad (all points collinear)
             var zeroAreaQuad = (
                 new Vec2(0, 0), new Vec2(1, 0),

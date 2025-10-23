@@ -3,16 +3,13 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Quality
-{
+namespace FastGeoMesh.Tests.Quality {
     /// <summary>
     /// Ensures good quads (square) have higher scores than degenerate thin quads.
     /// </summary>
-    public sealed class ScoreQuadReturnsHighScoreForGoodQuads
-    {
+    public sealed class ScoreQuadReturnsHighScoreForGoodQuads {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             // Arrange - Perfect square
             var perfectSquare = (
                 new Vec2(0, 0), new Vec2(TestGeometries.UnitSquareSide, 0),

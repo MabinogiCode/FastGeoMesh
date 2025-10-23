@@ -1,14 +1,12 @@
 using System.Globalization;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Infrastructure.FileOperations
-{
+namespace FastGeoMesh.Infrastructure.FileOperations {
     /// <summary>
     /// Helper for reading and writing custom mesh file formats.
     /// Moved to Infrastructure layer as file operations are external concerns.
     /// </summary>
-    public static class IndexedMeshFileHelper
-    {
+    public static class IndexedMeshFileHelper {
         /// <summary>
         /// Reads an indexed mesh from the legacy format file.
         /// Expected format: [count]\n[vertices]\n[edge_count]\n[edges]\n[quad_count]\n[quads]
@@ -18,10 +16,8 @@ namespace FastGeoMesh.Infrastructure.FileOperations
         /// <returns>The loaded indexed mesh.</returns>
         /// <exception cref="FileNotFoundException">Thrown when the file does not exist.</exception>
         /// <exception cref="InvalidDataException">Thrown when the file format is invalid.</exception>
-        public static IndexedMesh ReadCustomTxt(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
+        public static IndexedMesh ReadCustomTxt(string filePath) {
+            if (!File.Exists(filePath)) {
                 throw new FileNotFoundException($"Mesh file not found: {filePath}");
             }
 
@@ -33,17 +29,14 @@ namespace FastGeoMesh.Infrastructure.FileOperations
             string[] lines = File.ReadAllLines(filePath);
             int lineIndex = 0;
 
-            try
-            {
+            try {
                 // Read vertex count
                 int vertexCount = int.Parse(lines[lineIndex++], CultureInfo.InvariantCulture);
 
                 // Read vertices
-                for (int i = 0; i < vertexCount; i++)
-                {
+                for (int i = 0; i < vertexCount; i++) {
                     var parts = lines[lineIndex++].Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 4)
-                    {
+                    if (parts.Length >= 4) {
                         // Format: index x y z
                         double x = double.Parse(parts[1], CultureInfo.InvariantCulture);
                         double y = double.Parse(parts[2], CultureInfo.InvariantCulture);
@@ -56,11 +49,9 @@ namespace FastGeoMesh.Infrastructure.FileOperations
                 int edgeCount = int.Parse(lines[lineIndex++], CultureInfo.InvariantCulture);
 
                 // Read edges
-                for (int i = 0; i < edgeCount; i++)
-                {
+                for (int i = 0; i < edgeCount; i++) {
                     var parts = lines[lineIndex++].Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 3)
-                    {
+                    if (parts.Length >= 3) {
                         // Format: index v0 v1
                         // Convert from 1-based to 0-based indexing
                         int v0 = int.Parse(parts[1], CultureInfo.InvariantCulture) - 1;
@@ -73,11 +64,9 @@ namespace FastGeoMesh.Infrastructure.FileOperations
                 int quadCount = int.Parse(lines[lineIndex++], CultureInfo.InvariantCulture);
 
                 // Read quads
-                for (int i = 0; i < quadCount; i++)
-                {
+                for (int i = 0; i < quadCount; i++) {
                     var parts = lines[lineIndex++].Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 5)
-                    {
+                    if (parts.Length >= 5) {
                         // Format: index v0 v1 v2 v3
                         // Convert from 1-based to 0-based indexing
                         int v0 = int.Parse(parts[1], CultureInfo.InvariantCulture) - 1;
@@ -88,8 +77,7 @@ namespace FastGeoMesh.Infrastructure.FileOperations
                     }
                 }
             }
-            catch (Exception ex) when (ex is FormatException || ex is OverflowException || ex is IndexOutOfRangeException)
-            {
+            catch (Exception ex) when (ex is FormatException || ex is OverflowException || ex is IndexOutOfRangeException) {
                 throw new InvalidDataException($"Invalid legacy mesh file format at line {lineIndex}: {ex.Message}", ex);
             }
 
@@ -104,10 +92,8 @@ namespace FastGeoMesh.Infrastructure.FileOperations
         /// <returns>The loaded indexed mesh.</returns>
         /// <exception cref="FileNotFoundException">Thrown when the file does not exist.</exception>
         /// <exception cref="InvalidDataException">Thrown when the file format is invalid.</exception>
-        public static IndexedMesh ReadCustomTxtAlternative(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
+        public static IndexedMesh ReadCustomTxtAlternative(string filePath) {
+            if (!File.Exists(filePath)) {
                 throw new FileNotFoundException($"Mesh file not found: {filePath}");
             }
 
@@ -118,24 +104,19 @@ namespace FastGeoMesh.Infrastructure.FileOperations
 
             string[] lines = File.ReadAllLines(filePath);
 
-            foreach (string line in lines)
-            {
+            foreach (string line in lines) {
                 string trimmed = line.Trim();
-                if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith('#'))
-                {
+                if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith('#')) {
                     continue;
                 }
 
                 string[] parts = trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length == 0)
-                {
+                if (parts.Length == 0) {
                     continue;
                 }
 
-                try
-                {
-                    switch (parts[0])
-                    {
+                try {
+                    switch (parts[0]) {
                         case "v" when parts.Length == 4:
                             // Vertex: v x y z
                             vertices.Add(new Vec3(
@@ -169,12 +150,10 @@ namespace FastGeoMesh.Infrastructure.FileOperations
                             break;
                     }
                 }
-                catch (FormatException ex)
-                {
+                catch (FormatException ex) {
                     throw new InvalidDataException($"Invalid number format in line: {trimmed}", ex);
                 }
-                catch (OverflowException ex)
-                {
+                catch (OverflowException ex) {
                     throw new InvalidDataException($"Number overflow in line: {trimmed}", ex);
                 }
             }
@@ -188,8 +167,7 @@ namespace FastGeoMesh.Infrastructure.FileOperations
         /// </summary>
         /// <param name="mesh">The mesh to write.</param>
         /// <param name="filePath">Path where to save the file.</param>
-        public static void WriteCustomTxt(IndexedMesh mesh, string filePath)
-        {
+        public static void WriteCustomTxt(IndexedMesh mesh, string filePath) {
             ArgumentNullException.ThrowIfNull(mesh);
             ArgumentException.ThrowIfNullOrEmpty(filePath);
 
@@ -199,8 +177,7 @@ namespace FastGeoMesh.Infrastructure.FileOperations
             writer.WriteLine(mesh.Vertices.Count);
 
             // Write vertices with 1-based indices
-            for (int i = 0; i < mesh.Vertices.Count; i++)
-            {
+            for (int i = 0; i < mesh.Vertices.Count; i++) {
                 var vertex = mesh.Vertices[i];
                 writer.WriteLine($"{i + 1} {vertex.X:F6} {vertex.Y:F6} {vertex.Z:F6}");
             }
@@ -209,8 +186,7 @@ namespace FastGeoMesh.Infrastructure.FileOperations
             writer.WriteLine(mesh.Edges.Count);
 
             // Write edges with 1-based indices
-            for (int i = 0; i < mesh.Edges.Count; i++)
-            {
+            for (int i = 0; i < mesh.Edges.Count; i++) {
                 var (v0, v1) = mesh.Edges[i];
                 writer.WriteLine($"{i + 1} {v0 + 1} {v1 + 1}");
             }
@@ -219,8 +195,7 @@ namespace FastGeoMesh.Infrastructure.FileOperations
             writer.WriteLine(mesh.Quads.Count);
 
             // Write quads with 1-based indices
-            for (int i = 0; i < mesh.Quads.Count; i++)
-            {
+            for (int i = 0; i < mesh.Quads.Count; i++) {
                 var (v0, v1, v2, v3) = mesh.Quads[i];
                 writer.WriteLine($"{i + 1} {v0 + 1} {v1 + 1} {v2 + 1} {v3 + 1}");
             }
@@ -231,8 +206,7 @@ namespace FastGeoMesh.Infrastructure.FileOperations
         /// </summary>
         /// <param name="mesh">The mesh to write.</param>
         /// <param name="filePath">Path where to save the file.</param>
-        public static void WriteCustomTxtAlternative(IndexedMesh mesh, string filePath)
-        {
+        public static void WriteCustomTxtAlternative(IndexedMesh mesh, string filePath) {
             ArgumentNullException.ThrowIfNull(mesh);
             ArgumentException.ThrowIfNullOrEmpty(filePath);
 
@@ -246,26 +220,22 @@ namespace FastGeoMesh.Infrastructure.FileOperations
             writer.WriteLine();
 
             // Write vertices
-            foreach (var vertex in mesh.Vertices)
-            {
+            foreach (var vertex in mesh.Vertices) {
                 writer.WriteLine($"v {vertex.X:F6} {vertex.Y:F6} {vertex.Z:F6}");
             }
 
             // Write quads
-            foreach (var (v0, v1, v2, v3) in mesh.Quads)
-            {
+            foreach (var (v0, v1, v2, v3) in mesh.Quads) {
                 writer.WriteLine($"q {v0} {v1} {v2} {v3}");
             }
 
             // Write triangles
-            foreach (var (v0, v1, v2) in mesh.Triangles)
-            {
+            foreach (var (v0, v1, v2) in mesh.Triangles) {
                 writer.WriteLine($"t {v0} {v1} {v2}");
             }
 
             // Write edges
-            foreach (var (v0, v1) in mesh.Edges)
-            {
+            foreach (var (v0, v1) in mesh.Edges) {
                 writer.WriteLine($"e {v0} {v1}");
             }
         }

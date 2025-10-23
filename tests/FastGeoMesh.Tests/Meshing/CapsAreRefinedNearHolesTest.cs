@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class CapsAreRefinedNearHolesTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class CapsAreRefinedNearHolesTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10) });
             var hole = Polygon2D.FromPoints(new[] { new Vec2(10, 4), new Vec2(12, 4), new Vec2(12, 6), new Vec2(10, 6) });
             var structure = new PrismStructureDefinition(outer, -1, 0).AddHole(hole);
@@ -39,10 +36,8 @@ namespace FastGeoMesh.Tests.Meshing
             refinedQuadCount.Should().BeGreaterThan(baseQuadCount);
             refinedQuadCount.Should().BeGreaterThan((int)(baseQuadCount * 1.5));
 
-            if (refinedTopQuads.Count > 0)
-            {
-                refinedTopQuads.Should().AllSatisfy(q =>
-                {
+            if (refinedTopQuads.Count > 0) {
+                refinedTopQuads.Should().AllSatisfy(q => {
                     q.V0.Should().NotBe(q.V1);
                     q.V1.Should().NotBe(q.V2);
                     q.V2.Should().NotBe(q.V3);

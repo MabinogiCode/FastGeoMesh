@@ -1,16 +1,13 @@
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>Spatial index-like mesh with vertex deduplication (explicit shared vertices for export).</summary>
-    public sealed class IndexedMesh
-    {
+    public sealed class IndexedMesh {
         private readonly IReadOnlyList<Vec3> _vertices;
         private readonly IReadOnlyList<(int a, int b)> _edges;
         private readonly IReadOnlyList<(int, int, int, int)> _quads;
         private readonly IReadOnlyList<(int, int, int)> _triangles;
 
         /// <summary>Create indexed mesh from explicit data.</summary>
-        public IndexedMesh(IReadOnlyList<Vec3> vertices, IReadOnlyList<(int a, int b)> edges, IReadOnlyList<(int, int, int, int)> quads, IReadOnlyList<(int, int, int)> triangles)
-        {
+        public IndexedMesh(IReadOnlyList<Vec3> vertices, IReadOnlyList<(int a, int b)> edges, IReadOnlyList<(int, int, int, int)> quads, IReadOnlyList<(int, int, int)> triangles) {
             _vertices = vertices ?? throw new ArgumentNullException(nameof(vertices));
             _edges = edges ?? throw new ArgumentNullException(nameof(edges));
             _quads = quads ?? throw new ArgumentNullException(nameof(quads));
@@ -39,8 +36,7 @@ namespace FastGeoMesh.Domain
         public int EdgeCount => _edges.Count;
 
         /// <summary>Create indexed mesh from immutable mesh with vertex deduplication.</summary>
-        public static IndexedMesh FromMesh(ImmutableMesh mesh, double epsilon = 1e-9)
-        {
+        public static IndexedMesh FromMesh(ImmutableMesh mesh, double epsilon = 1e-9) {
             ArgumentNullException.ThrowIfNull(mesh);
             ArgumentOutOfRangeException.ThrowIfNegative(epsilon);
 
@@ -50,13 +46,10 @@ namespace FastGeoMesh.Domain
             var quads = new List<(int, int, int, int)>();
             var triangles = new List<(int, int, int)>();
 
-            int GetOrAddVertex(Vec3 vertex)
-            {
+            int GetOrAddVertex(Vec3 vertex) {
                 // Find existing vertex within epsilon tolerance
-                foreach (var (existingVertex, index) in vertexMap)
-                {
-                    if ((vertex - existingVertex).LengthSquared() <= epsilon * epsilon)
-                    {
+                foreach (var (existingVertex, index) in vertexMap) {
+                    if ((vertex - existingVertex).LengthSquared() <= epsilon * epsilon) {
                         return index;
                     }
                 }
@@ -68,17 +61,14 @@ namespace FastGeoMesh.Domain
                 return newIndex;
             }
 
-            void AddEdge(int a, int b)
-            {
-                if (a != b)
-                {
+            void AddEdge(int a, int b) {
+                if (a != b) {
                     edges.Add(a < b ? (a, b) : (b, a));
                 }
             }
 
             // Process quads
-            foreach (var quad in mesh.Quads)
-            {
+            foreach (var quad in mesh.Quads) {
                 int v0 = GetOrAddVertex(quad.V0);
                 int v1 = GetOrAddVertex(quad.V1);
                 int v2 = GetOrAddVertex(quad.V2);
@@ -94,8 +84,7 @@ namespace FastGeoMesh.Domain
             }
 
             // Process triangles
-            foreach (var triangle in mesh.Triangles)
-            {
+            foreach (var triangle in mesh.Triangles) {
                 int v0 = GetOrAddVertex(triangle.V0);
                 int v1 = GetOrAddVertex(triangle.V1);
                 int v2 = GetOrAddVertex(triangle.V2);
@@ -109,14 +98,12 @@ namespace FastGeoMesh.Domain
             }
 
             // Process standalone points
-            foreach (var point in mesh.Points)
-            {
+            foreach (var point in mesh.Points) {
                 GetOrAddVertex(point);
             }
 
             // Process internal segments
-            foreach (var segment in mesh.InternalSegments)
-            {
+            foreach (var segment in mesh.InternalSegments) {
                 int v0 = GetOrAddVertex(segment.Start);
                 int v1 = GetOrAddVertex(segment.End);
                 AddEdge(v0, v1);

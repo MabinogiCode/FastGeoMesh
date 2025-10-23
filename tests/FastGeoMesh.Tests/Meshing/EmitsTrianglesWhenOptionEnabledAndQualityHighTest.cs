@@ -3,19 +3,15 @@ using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class EmitsTrianglesWhenOptionEnabledAndQualityHighTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class EmitsTrianglesWhenOptionEnabledAndQualityHighTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] {
                 new Vec2(0,0), new Vec2(6,0), new Vec2(6,2), new Vec2(4,2), new Vec2(4,4), new Vec2(6,4), new Vec2(6,6), new Vec2(0,6)
             });
             var structure = new PrismStructureDefinition(outer, 0, 1);
-            var options = new MesherOptions
-            {
+            var options = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(0.75),
                 TargetEdgeLengthZ = EdgeLength.From(0.5),
                 GenerateBottomCap = true,

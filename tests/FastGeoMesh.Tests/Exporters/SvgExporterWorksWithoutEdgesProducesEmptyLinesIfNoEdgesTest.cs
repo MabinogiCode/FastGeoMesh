@@ -3,13 +3,10 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Exporters
-{
-    public sealed class SvgExporterWorksWithoutEdgesProducesEmptyLinesIfNoEdgesTest
-    {
+namespace FastGeoMesh.Tests.Exporters {
+    public sealed class SvgExporterWorksWithoutEdgesProducesEmptyLinesIfNoEdgesTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var mesh = ImmutableMesh.Empty;
             mesh = mesh.AddPoint(new Vec3(0, 0, 0));
             var im = IndexedMesh.FromMesh(mesh);

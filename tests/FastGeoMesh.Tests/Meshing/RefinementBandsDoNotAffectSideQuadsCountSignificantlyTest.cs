@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class RefinementBandsDoNotAffectSideQuadsCountSignificantlyTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class RefinementBandsDoNotAffectSideQuadsCountSignificantlyTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(rect, 0, 4);
 

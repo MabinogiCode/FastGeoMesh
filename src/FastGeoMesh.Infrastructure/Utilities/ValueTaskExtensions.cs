@@ -1,10 +1,8 @@
-namespace FastGeoMesh.Infrastructure
-{
+namespace FastGeoMesh.Infrastructure {
     /// <summary>
     /// Performance-optimized extensions for ValueTask to improve async operations.
     /// </summary>
-    internal static class ValueTaskExtensions
-    {
+    internal static class ValueTaskExtensions {
         /// <summary>
         /// Creates a continuation for ValueTask that transforms the result.
         /// </summary>
@@ -17,19 +15,15 @@ namespace FastGeoMesh.Infrastructure
         public static ValueTask<TResult> ContinueWith<TSource, TResult>(
             this ValueTask<TSource> valueTask,
             Func<TSource, TResult> continuationFunction,
-            TaskContinuationOptions continuationOptions = TaskContinuationOptions.None)
-        {
+            TaskContinuationOptions continuationOptions = TaskContinuationOptions.None) {
             ArgumentNullException.ThrowIfNull(continuationFunction);
 
-            if (valueTask.IsCompletedSuccessfully)
-            {
+            if (valueTask.IsCompletedSuccessfully) {
                 // Fast path: if already completed successfully, apply transformation immediately
-                try
-                {
+                try {
                     return new ValueTask<TResult>(continuationFunction(valueTask.Result));
                 }
-                catch
-                {
+                catch {
                     // If transformation fails, let it propagate
                     throw;
                 }
@@ -37,8 +31,7 @@ namespace FastGeoMesh.Infrastructure
 
             // Slow path: create a proper Task continuation for incomplete or faulted tasks
             return new ValueTask<TResult>(valueTask.AsTask().ContinueWith(
-                task =>
-                {
+                task => {
                     // The task.Result access will throw if the task faulted or was canceled
                     // This ensures proper exception propagation
                     return continuationFunction(task.Result);

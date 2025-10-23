@@ -1,12 +1,10 @@
 using System.Globalization;
 
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>
     /// Represents progress information for meshing operations.
     /// </summary>
-    public readonly struct MeshingProgress
-    {
+    public readonly struct MeshingProgress {
         /// <summary>
         /// Gets the name of the current operation being performed.
         /// </summary>
@@ -52,14 +50,13 @@ namespace FastGeoMesh.Domain
             int processedElements,
             int totalElements,
             TimeSpan? estimatedTimeRemaining = null,
-            string? statusMessage = null)
-        {
-            Operation = operation;
-            Percentage = Math.Clamp(percentage, 0.0, 1.0);
-            ProcessedElements = processedElements;
-            TotalElements = totalElements;
-            EstimatedTimeRemaining = estimatedTimeRemaining;
-            StatusMessage = statusMessage;
+            string? statusMessage = null) {
+            this.Operation = operation;
+            this.Percentage = Math.Clamp(percentage, 0.0, 1.0);
+            this.ProcessedElements = processedElements;
+            this.TotalElements = totalElements;
+            this.EstimatedTimeRemaining = estimatedTimeRemaining;
+            this.StatusMessage = statusMessage;
         }
 
         /// <summary>
@@ -70,8 +67,7 @@ namespace FastGeoMesh.Domain
         /// <param name="total">The total number of elements to process.</param>
         /// <param name="statusMessage">Optional status message.</param>
         /// <returns>A new instance of <see cref="MeshingProgress"/>.</returns>
-        public static MeshingProgress FromCounts(string operation, int processed, int total, string? statusMessage = null)
-        {
+        public static MeshingProgress FromCounts(string operation, int processed, int total, string? statusMessage = null) {
             double percentage = total > 0 ? (double)processed / total : 0.0;
             return new MeshingProgress(operation, percentage, processed, total, statusMessage: statusMessage);
         }
@@ -82,8 +78,7 @@ namespace FastGeoMesh.Domain
         /// <param name="operation">The name of the operation that completed.</param>
         /// <param name="totalElements">The total number of elements that were processed.</param>
         /// <returns>A new instance of <see cref="MeshingProgress"/> representing completion.</returns>
-        public static MeshingProgress Completed(string operation, int totalElements)
-        {
+        public static MeshingProgress Completed(string operation, int totalElements) {
             return new MeshingProgress(operation, 1.0, totalElements, totalElements, TimeSpan.Zero, "Completed");
         }
 
@@ -91,17 +86,14 @@ namespace FastGeoMesh.Domain
         /// Returns a string representation of the meshing progress.
         /// </summary>
         /// <returns>A formatted string showing operation name, percentage, counts, and optional additional information.</returns>
-        public override string ToString()
-        {
-            var percentage = (Percentage * 100).ToString("F1", CultureInfo.InvariantCulture);
-            var baseMessage = $"{Operation}: {percentage}% ({ProcessedElements}/{TotalElements})";
-            if (EstimatedTimeRemaining.HasValue)
-            {
-                baseMessage += $" - ETA: {EstimatedTimeRemaining:mm\\:ss}";
+        public override string ToString() {
+            var percentage = (this.Percentage * 100).ToString("F1", CultureInfo.InvariantCulture);
+            var baseMessage = $"{this.Operation}: {percentage}% ({this.ProcessedElements}/{this.TotalElements})";
+            if (this.EstimatedTimeRemaining.HasValue) {
+                baseMessage += $" - ETA: {this.EstimatedTimeRemaining:mm\\:ss}";
             }
-            if (!string.IsNullOrEmpty(StatusMessage))
-            {
-                baseMessage += $" - {StatusMessage}";
+            if (!string.IsNullOrEmpty(this.StatusMessage)) {
+                baseMessage += $" - {this.StatusMessage}";
             }
             return baseMessage;
         }

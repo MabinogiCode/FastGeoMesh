@@ -3,13 +3,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Performance
-{
-    public sealed class AsyncMeshingInterfaceIsImplementableTest
-    {
+namespace FastGeoMesh.Tests.Performance {
+    public sealed class AsyncMeshingInterfaceIsImplementableTest {
         [Fact]
-        public async Task Test()
-        {
+        public async Task Test() {
             var mesher = new TestAsyncMesher();
             var polygon = Polygon2D.FromPoints(new[]
             {

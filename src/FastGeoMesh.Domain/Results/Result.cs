@@ -1,10 +1,8 @@
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>
     /// Represents the result of an operation, indicating success or failure and containing an error if failed.
     /// </summary>
-    public class Result
-    {
+    public class Result {
         /// <summary>
         /// Gets a value indicating whether the operation was successful.
         /// </summary>
@@ -24,10 +22,8 @@ namespace FastGeoMesh.Domain
         /// <param name="isSuccess">Indicates if the result is a success.</param>
         /// <param name="error">The error associated with the result.</param>
         /// <exception cref="InvalidOperationException">Thrown if the error state is invalid.</exception>
-        protected Result(bool isSuccess, Error error)
-        {
-            if ((isSuccess && error != Error.None) || (!isSuccess && error == Error.None))
-            {
+        protected Result(bool isSuccess, Error error) {
+            if ((isSuccess && error != Error.None) || (!isSuccess && error == Error.None)) {
                 throw new InvalidOperationException("Invalid error state for result.");
             }
             IsSuccess = isSuccess;
@@ -37,17 +33,21 @@ namespace FastGeoMesh.Domain
         /// <summary>
         /// Creates a successful result.
         /// </summary>
+        /// <returns>A <see cref="Result"/> representing success.</returns>
         public static Result Success() => new(true, Error.None);
+
         /// <summary>
         /// Creates a failed result with the specified error.
         /// </summary>
         /// <param name="error">The error associated with the failure.</param>
+        /// <returns>A <see cref="Result"/> representing failure.</returns>
         public static Result Failure(Error error) => new(false, error);
 
         /// <summary>
         /// Implicitly converts an <see cref="Error"/> to a failed <see cref="Result"/>.
         /// </summary>
         /// <param name="error">The error to convert.</param>
+        /// <returns>A <see cref="Result"/> representing the error.</returns>
         public static implicit operator Result(Error error) => Failure(error);
     }
 }

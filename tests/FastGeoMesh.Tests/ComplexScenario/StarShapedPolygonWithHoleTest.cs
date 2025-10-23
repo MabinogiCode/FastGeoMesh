@@ -4,24 +4,19 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.ComplexScenario
-{
-    public sealed class StarShapedPolygonWithHoleTest
-    {
+namespace FastGeoMesh.Tests.ComplexScenario {
+    public sealed class StarShapedPolygonWithHoleTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var starVertices = new Vec2[10];
-            for (int i = 0; i < 10; i++)
-            {
+            for (int i = 0; i < 10; i++) {
                 double angle = 2 * Math.PI * i / 10;
                 double r = (i % 2 == 0) ? 3.0 : 1.5;
                 starVertices[i] = new Vec2(r * Math.Cos(angle), r * Math.Sin(angle));
             }
             var outer = Polygon2D.FromPoints(starVertices);
             var holeVertices = new Vec2[8];
-            for (int i = 0; i < 8; i++)
-            {
+            for (int i = 0; i < 8; i++) {
                 double angle = 2 * Math.PI * i / 8;
                 holeVertices[i] = new Vec2(0.3 * Math.Cos(angle), 0.3 * Math.Sin(angle));
             }

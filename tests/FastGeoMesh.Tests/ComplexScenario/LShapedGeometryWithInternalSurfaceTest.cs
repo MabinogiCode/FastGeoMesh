@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.ComplexScenario
-{
-    public sealed class LShapedGeometryWithInternalSurfaceTest
-    {
+namespace FastGeoMesh.Tests.ComplexScenario {
+    public sealed class LShapedGeometryWithInternalSurfaceTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var lShape = new[] { new Vec2(0, 0), new Vec2(3, 0), new Vec2(3, 2), new Vec2(1, 2), new Vec2(1, 4), new Vec2(0, 4) };
             var outer = Polygon2D.FromPoints(lShape);
             var structure = new PrismStructureDefinition(outer, -1, 3);

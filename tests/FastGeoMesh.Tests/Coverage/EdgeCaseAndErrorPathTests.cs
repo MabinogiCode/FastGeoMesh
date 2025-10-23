@@ -4,18 +4,15 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Additional edge case and error path tests to improve overall coverage.
     /// Focuses on boundary conditions, error scenarios, and exception handling.
     /// </summary>
-    public sealed class EdgeCaseAndErrorPathTests
-    {
+    public sealed class EdgeCaseAndErrorPathTests {
         /// <summary>Tests PrismStructureDefinition with invalid or edge case inputs.</summary>
         [Fact]
-        public void PrismStructureDefinitionWithInvalidOrEdgeCaseInputsHandlesCorrectly()
-        {
+        public void PrismStructureDefinitionWithInvalidOrEdgeCaseInputsHandlesCorrectly() {
             var validPolygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(1, 0), new Vec2(1, 1), new Vec2(0, 1)
@@ -75,10 +72,8 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests MesherOptionsBuilder with invalid inputs and edge cases.</summary>
         [Fact]
-        public void MesherOptionsBuilderWithInvalidInputsAndEdgeCasesHandlesCorrectly()
-        {
-            try
-            {
+        public void MesherOptionsBuilderWithInvalidInputsAndEdgeCasesHandlesCorrectly() {
+            try {
                 // Valid builder operations
                 var validOptions = MesherOptions.CreateBuilder()
                     .WithTargetEdgeLengthXY(1.0)
@@ -121,8 +116,7 @@ namespace FastGeoMesh.Tests.Coverage
                 invalidQuality2.IsFailure.Should().BeTrue();
 
                 // Test refinement options - if they exist
-                try
-                {
+                try {
                     var withRefinement = MesherOptions.CreateBuilder()
                         .WithHoleRefinement(0.5, 1.0)
                         .WithSegmentRefinement(0.3, 0.8)
@@ -131,26 +125,22 @@ namespace FastGeoMesh.Tests.Coverage
                     withRefinement.IsSuccess.Should().BeTrue();
                     var refinementOptions = withRefinement.Value;
 
-                    if (refinementOptions.TargetEdgeLengthXYNearHoles != null)
-                    {
+                    if (refinementOptions.TargetEdgeLengthXYNearHoles != null) {
                         refinementOptions.TargetEdgeLengthXYNearHoles.Value.Should().Be(0.5);
                         refinementOptions.HoleRefineBand.Should().Be(1.0);
                     }
 
-                    if (refinementOptions.TargetEdgeLengthXYNearSegments != null)
-                    {
+                    if (refinementOptions.TargetEdgeLengthXYNearSegments != null) {
                         refinementOptions.TargetEdgeLengthXYNearSegments.Value.Should().Be(0.3);
                         refinementOptions.SegmentRefineBand.Should().Be(0.8);
                     }
                 }
-                catch (Exception)
-                {
+                catch (Exception) {
                     // Refinement API might not exist - that's OK
                 }
 
                 // Invalid refinement values - if they exist
-                try
-                {
+                try {
                     var invalidHoleRefinement = MesherOptions.CreateBuilder()
                         .WithHoleRefinement(-0.1, 1.0)
                         .Build();
@@ -161,13 +151,11 @@ namespace FastGeoMesh.Tests.Coverage
                         .Build();
                     invalidSegmentRefinement.IsFailure.Should().BeTrue();
                 }
-                catch (Exception)
-                {
+                catch (Exception) {
                     // Refinement API might not exist - that's OK
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // MesherOptionsBuilder API might be different - that's OK
                 true.Should().BeTrue("MesherOptionsBuilder API might be different");
             }
@@ -175,8 +163,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests ImmutableMesh builder methods and edge cases.</summary>
         [Fact]
-        public void ImmutableMeshBuilderMethodsAndEdgeCasesWorkCorrectly()
-        {
+        public void ImmutableMeshBuilderMethodsAndEdgeCasesWorkCorrectly() {
             var emptyMesh = new ImmutableMesh();
             emptyMesh.QuadCount.Should().Be(0);
             emptyMesh.TriangleCount.Should().Be(0);
@@ -260,8 +247,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests IndexedMesh creation with various epsilon values and edge cases.</summary>
         [Fact]
-        public void IndexedMeshCreationWithVariousEpsilonValuesAndEdgeCasesWorksCorrectly()
-        {
+        public void IndexedMeshCreationWithVariousEpsilonValuesAndEdgeCasesWorksCorrectly() {
             // Create a mesh with some duplicate vertices
             var mesh = new ImmutableMesh();
             mesh = mesh.AddQuad(new Quad(
@@ -288,8 +274,7 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Test edge computation
             indexedDefault.Edges.Should().NotBeEmpty();
-            foreach (var edge in indexedDefault.Edges)
-            {
+            foreach (var edge in indexedDefault.Edges) {
                 edge.a.Should().BeInRange(0, indexedDefault.Vertices.Count - 1);
                 edge.b.Should().BeInRange(0, indexedDefault.Vertices.Count - 1);
                 edge.a.Should().NotBe(edge.b);
@@ -317,8 +302,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests MeshAdjacency computation and edge case handling.</summary>
         [Fact]
-        public void MeshAdjacencyComputationAndEdgeCaseHandlingWorksCorrectly()
-        {
+        public void MeshAdjacencyComputationAndEdgeCaseHandlingWorksCorrectly() {
             // Create indexed mesh with known topology
             var mesh = new ImmutableMesh();
             mesh = mesh.AddQuad(new Quad(
@@ -342,11 +326,9 @@ namespace FastGeoMesh.Tests.Coverage
             adjacency.NonManifoldEdges.Should().NotBeNull();
 
             // Test neighbors structure
-            foreach (var neighbors in adjacency.Neighbors)
-            {
+            foreach (var neighbors in adjacency.Neighbors) {
                 neighbors.Should().HaveCount(4); // Each quad has 4 edges
-                foreach (var neighbor in neighbors)
-                {
+                foreach (var neighbor in neighbors) {
                     if (neighbor != -1) // Valid neighbor
                     {
                         neighbor.Should().BeInRange(0, adjacency.QuadCount - 1);
@@ -367,10 +349,8 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests complex meshing scenarios with multiple error conditions.</summary>
         [Fact]
-        public void ComplexMeshingScenarioswithMultipleErrorConditionsHandleCorrectly()
-        {
-            try
-            {
+        public void ComplexMeshingScenarioswithMultipleErrorConditionsHandleCorrectly() {
+            try {
                 var mesher = new PrismMesher();
 
                 // Test with degenerate polygon (too few vertices)
@@ -422,15 +402,13 @@ namespace FastGeoMesh.Tests.Coverage
                 extremeResult.Should().NotBeNull();
 
                 // If successful, should have reasonable mesh
-                if (extremeResult.IsSuccess)
-                {
+                if (extremeResult.IsSuccess) {
                     var extremeMesh = extremeResult.Value;
                     extremeMesh.Should().NotBeNull();
                     // Don't assert specific counts due to extreme geometry
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Complex meshing scenarios might have different behavior - that's OK
                 true.Should().BeTrue("Complex meshing scenarios might behave differently");
             }

@@ -2,13 +2,10 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Validation
-{
-    public sealed class V2ResultPatternOptionsValidationWorks
-    {
+namespace FastGeoMesh.Tests.Validation {
+    public sealed class V2ResultPatternOptionsValidationWorks {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             // Arrange & Act - Valid options
             var validResult = MesherOptions.CreateBuilder()
                 .WithFastPreset()

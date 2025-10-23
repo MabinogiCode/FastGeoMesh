@@ -4,16 +4,13 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Quality
-{
+namespace FastGeoMesh.Tests.Quality {
     /// <summary>
     /// Ensures cap quads have quality scores in valid [0,1] range.
     /// </summary>
-    public sealed class CapsQuadsExposeQualityScoresBetween0And1
-    {
+    public sealed class CapsQuadsExposeQualityScoresBetween0And1 {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(6, 0), new Vec2(6, 3), new Vec2(3, 3), new Vec2(3, 6), new Vec2(0, 6) });
             var hole = Polygon2D.FromPoints(new[] { new Vec2(1, 1), new Vec2(2, 1), new Vec2(2, 2), new Vec2(1, 2) });
             var structure = new PrismStructureDefinition(outer, 0, 1).AddHole(hole);
@@ -26,10 +23,8 @@ namespace FastGeoMesh.Tests.Quality
 
             totalCapElements.Should().BeGreaterThan(0, "Should have cap elements (quads or triangles)");
 
-            if (capQuads.Count > 0)
-            {
-                foreach (var q in capQuads)
-                {
+            if (capQuads.Count > 0) {
+                foreach (var q in capQuads) {
                     q.QualityScore.Should().NotBeNull("Cap quads should have quality scores");
                     q.QualityScore!.Value.Should().BeGreaterThanOrEqualTo(0).And.BeLessThanOrEqualTo(1);
                 }

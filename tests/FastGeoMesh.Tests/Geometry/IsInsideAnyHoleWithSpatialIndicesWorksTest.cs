@@ -4,13 +4,10 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class IsInsideAnyHoleWithSpatialIndicesWorksTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class IsInsideAnyHoleWithSpatialIndicesWorksTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var hole1 = Polygon2D.FromPoints(new[] { new Vec2(2, 2), new Vec2(4, 2), new Vec2(4, 4), new Vec2(2, 4) });
             var hole2 = Polygon2D.FromPoints(new[] { new Vec2(6, 6), new Vec2(8, 6), new Vec2(8, 8), new Vec2(6, 8) });
 

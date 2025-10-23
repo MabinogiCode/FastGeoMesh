@@ -3,13 +3,10 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class IsNearAnySegmentDetectsProximityTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class IsNearAnySegmentDetectsProximityTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(8, 0), new Vec2(8, 8), new Vec2(0, 8) });
             var st = new PrismStructureDefinition(outer, 0, 3);
             st.Geometry.AddSegment(new Segment3D(new Vec3(0, 0, 0), new Vec3(8, 8, 0)));

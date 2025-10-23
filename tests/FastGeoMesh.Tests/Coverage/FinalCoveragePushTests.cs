@@ -4,24 +4,19 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Final coverage push tests to reach 80%+ coverage.
     /// Targets remaining untested paths and edge cases.
     /// </summary>
-    public sealed class FinalCoveragePushTests
-    {
+    public sealed class FinalCoveragePushTests {
         /// <summary>Tests additional MesherOptions validation paths.</summary>
         [Fact]
-        public void AdditionalMesherOptionsValidationPathsWorkCorrectly()
-        {
+        public void AdditionalMesherOptionsValidationPathsWorkCorrectly() {
             // Test validation edge cases
-            try
-            {
+            try {
                 // Test direct property validation
-                var options = new MesherOptions
-                {
+                var options = new MesherOptions {
                     TargetEdgeLengthXY = EdgeLength.From(1.0),
                     TargetEdgeLengthZ = EdgeLength.From(1.0),
                     GenerateBottomCap = true,
@@ -34,8 +29,7 @@ namespace FastGeoMesh.Tests.Coverage
                 validation.IsSuccess.Should().BeTrue();
 
                 // Test extreme but valid values
-                var extremeOptions = new MesherOptions
-                {
+                var extremeOptions = new MesherOptions {
                     TargetEdgeLengthXY = EdgeLength.From(EdgeLength.MaxValue),
                     TargetEdgeLengthZ = EdgeLength.From(EdgeLength.MinValue),
                     GenerateBottomCap = false,
@@ -48,13 +42,11 @@ namespace FastGeoMesh.Tests.Coverage
                 extremeValidation.Should().NotBeNull();
 
                 // Test epsilon property
-                if (options.Epsilon > 0)
-                {
+                if (options.Epsilon > 0) {
                     ((double)options.Epsilon).Should().BeGreaterThan(0);
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // MesherOptions might have different validation - that's OK
                 true.Should().BeTrue("MesherOptions validation might work differently");
             }
@@ -62,10 +54,8 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests performance monitoring and statistics if available.</summary>
         [Fact]
-        public void PerformanceMonitoringAndStatisticsIfAvailableWorkCorrectly()
-        {
-            try
-            {
+        public void PerformanceMonitoringAndStatisticsIfAvailableWorkCorrectly() {
+            try {
                 // Test creating progress objects
                 var progress1 = MeshingProgress.FromCounts("Test Operation", 50, 100, "Working");
                 progress1.Operation.Should().Be("Test Operation");
@@ -113,8 +103,7 @@ namespace FastGeoMesh.Tests.Coverage
                 var estimateString = estimate.ToString();
                 estimateString.Should().Contain("Simple");
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Performance monitoring might not be available - that's OK
                 true.Should().BeTrue("Performance monitoring might not be available");
             }
@@ -122,8 +111,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests additional Vec2/Vec3 operations and edge cases.</summary>
         [Fact]
-        public void AdditionalVec2Vec3OperationsAndEdgeCasesWorkCorrectly()
-        {
+        public void AdditionalVec2Vec3OperationsAndEdgeCasesWorkCorrectly() {
             // Test Vec2 static operations
             var v2a = new Vec2(2, 3);
             var v2b = new Vec2(4, 1);
@@ -180,26 +168,22 @@ namespace FastGeoMesh.Tests.Coverage
             var tinyVec2 = new Vec2(1e-15, 1e-15);
             var normalizedTiny2 = tinyVec2.Normalize();
             // Should either be normalized or zero
-            if (normalizedTiny2 != Vec2.Zero)
-            {
+            if (normalizedTiny2 != Vec2.Zero) {
                 normalizedTiny2.Length().Should().BeApproximately(1.0, 1e-10);
             }
 
             var tinyVec3 = new Vec3(1e-15, 1e-15, 1e-15);
             var normalizedTiny3 = tinyVec3.Normalize();
             // Should either be normalized or zero
-            if (normalizedTiny3 != Vec3.Zero)
-            {
+            if (normalizedTiny3 != Vec3.Zero) {
                 normalizedTiny3.Length().Should().BeApproximately(1.0, 1e-10);
             }
         }
 
         /// <summary>Tests edge cases in meshing operations.</summary>
         [Fact]
-        public void EdgeCasesInMeshingOperationsWorkCorrectly()
-        {
-            try
-            {
+        public void EdgeCasesInMeshingOperationsWorkCorrectly() {
+            try {
                 var mesher = new PrismMesher();
 
                 // Test basic valid polygon
@@ -222,8 +206,7 @@ namespace FastGeoMesh.Tests.Coverage
                 // Test polygon with many vertices (circular)
                 var manyVertices = new List<Vec2>();
                 int vertexCount = 8; // Keep it reasonable
-                for (int i = 0; i < vertexCount; i++)
-                {
+                for (int i = 0; i < vertexCount; i++) {
                     double angle = 2 * Math.PI * i / vertexCount;
                     manyVertices.Add(new Vec2(
                         Math.Cos(angle) * 2 + 3, // Offset to avoid origin
@@ -240,8 +223,7 @@ namespace FastGeoMesh.Tests.Coverage
                 var totalComplexElements = complexMesh.QuadCount + complexMesh.TriangleCount;
                 totalComplexElements.Should().BeGreaterThan(0);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Edge cases might behave differently - that's OK
                 true.Should().BeTrue("Edge cases might behave differently");
             }
@@ -249,10 +231,8 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests additional Result pattern operations and edge cases.</summary>
         [Fact]
-        public void AdditionalResultPatternOperationsAndEdgeCasesWorkCorrectly()
-        {
-            try
-            {
+        public void AdditionalResultPatternOperationsAndEdgeCasesWorkCorrectly() {
+            try {
                 // Test Result with different types
                 var stringResult = Result<string>.Success("test string");
                 var intResult = Result<int>.Success(42);
@@ -312,8 +292,7 @@ namespace FastGeoMesh.Tests.Coverage
                 falseBool.IsSuccess.Should().BeTrue();
                 falseBool.Value.Should().BeFalse();
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Result pattern might work differently - that's OK
                 true.Should().BeTrue("Result pattern might work differently");
             }

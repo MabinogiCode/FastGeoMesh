@@ -3,18 +3,15 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Tests for span extensions and advanced geometric operations to improve coverage.
     /// Focuses on AdvancedSpanExtensions, SpanExtensions, and other utility classes.
     /// </summary>
-    public sealed class SpanAndUtilityCoverageTests
-    {
+    public sealed class SpanAndUtilityCoverageTests {
         /// <summary>Tests AdvancedSpanExtensions.ComputeSignedArea method.</summary>
         [Fact]
-        public void AdvancedSpanExtensionsComputeSignedAreaWorksCorrectly()
-        {
+        public void AdvancedSpanExtensionsComputeSignedAreaWorksCorrectly() {
             // Test with empty span
             ReadOnlySpan<Vec2> empty = Array.Empty<Vec2>();
             var emptyArea = empty.ComputeSignedArea();
@@ -68,8 +65,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests AdvancedSpanExtensions.ContainsPoint method.</summary>
         [Fact]
-        public void AdvancedSpanExtensionsContainsPointWorksCorrectly()
-        {
+        public void AdvancedSpanExtensionsContainsPointWorksCorrectly() {
             // Test with empty polygon
             ReadOnlySpan<Vec2> empty = Array.Empty<Vec2>();
             empty.ContainsPoint(new Vec2(1, 1)).Should().BeFalse();
@@ -117,8 +113,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests AdvancedSpanExtensions.ContainsPoints batch method.</summary>
         [Fact]
-        public void AdvancedSpanExtensionsContainsPointsBatchWorksCorrectly()
-        {
+        public void AdvancedSpanExtensionsContainsPointsBatchWorksCorrectly() {
             var square = new Vec2[]
             {
                 new Vec2(0, 0), new Vec2(2, 0),
@@ -152,28 +147,24 @@ namespace FastGeoMesh.Tests.Coverage
             var emptyResults = new bool[testPoints.Length];
             empty.ContainsPoints(testPointsSpan, emptyResults);
 
-            foreach (var result in emptyResults)
-            {
+            foreach (var result in emptyResults) {
                 result.Should().BeFalse();
             }
 
             // Test error case: results span too small - avoid using spans in lambda
             var smallResults = new bool[testPoints.Length - 1];
-            try
-            {
+            try {
                 squareSpan.ContainsPoints(testPointsSpan, smallResults);
                 Assert.Fail("Expected ArgumentException was not thrown");
             }
-            catch (ArgumentException)
-            {
+            catch (ArgumentException) {
                 // Expected exception
             }
         }
 
         /// <summary>Tests AdvancedSpanExtensions.ComputePaddedBounds method.</summary>
         [Fact]
-        public void AdvancedSpanExtensionsComputePaddedBoundsWorksCorrectly()
-        {
+        public void AdvancedSpanExtensionsComputePaddedBoundsWorksCorrectly() {
             // Test with empty span
             ReadOnlySpan<Vec2> empty = Array.Empty<Vec2>();
             var (emptyMin, emptyMax) = empty.ComputePaddedBounds();
@@ -217,8 +208,7 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Test with many points to exercise unrolled loop
             var manyPoints = new Vec2[10];
-            for (int i = 0; i < 10; i++)
-            {
+            for (int i = 0; i < 10; i++) {
                 manyPoints[i] = new Vec2(i, i * 0.5);
             }
             ReadOnlySpan<Vec2> manyPointsSpan = manyPoints;
@@ -229,44 +219,42 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests AdvancedSpanExtensions.DistanceToSegment method.</summary>
         [Fact]
-        public void AdvancedSpanExtensionsDistanceToSegmentWorksCorrectly()
-        {
+        public void AdvancedSpanExtensionsDistanceToSegmentWorksCorrectly() {
             // Test distance to horizontal segment
             var start = new Vec2(0, 0);
             var end = new Vec2(4, 0);
 
             // Point directly above middle of segment
-            var distance1 = AdvancedSpanExtensions.DistanceToSegment(new Vec2(2, 3), start, end);
+            var distance1 = GeometryHelper.DistanceToSegment(new Vec2(2, 3), start, end);
             distance1.Should().Be(3.0);
 
             // Point to the left of segment start
-            var distance2 = AdvancedSpanExtensions.DistanceToSegment(new Vec2(-2, 0), start, end);
+            var distance2 = GeometryHelper.DistanceToSegment(new Vec2(-2, 0), start, end);
             distance2.Should().Be(2.0);
 
             // Point to the right of segment end
-            var distance3 = AdvancedSpanExtensions.DistanceToSegment(new Vec2(6, 0), start, end);
+            var distance3 = GeometryHelper.DistanceToSegment(new Vec2(6, 0), start, end);
             distance3.Should().Be(2.0);
 
             // Point on the segment
-            var distance4 = AdvancedSpanExtensions.DistanceToSegment(new Vec2(2, 0), start, end);
+            var distance4 = GeometryHelper.DistanceToSegment(new Vec2(2, 0), start, end);
             distance4.Should().BeApproximately(0.0, 1e-10);
 
             // Test with degenerate segment (point)
             var point = new Vec2(5, 5);
-            var distanceToPoint = AdvancedSpanExtensions.DistanceToSegment(new Vec2(8, 9), point, point);
+            var distanceToPoint = GeometryHelper.DistanceToSegment(new Vec2(8, 9), point, point);
             distanceToPoint.Should().Be(5.0); // distance from (8,9) to (5,5) = sqrt(3^2 + 4^2) = 5
 
             // Test with vertical segment
             var vertStart = new Vec2(0, 0);
             var vertEnd = new Vec2(0, 4);
-            var distanceVert = AdvancedSpanExtensions.DistanceToSegment(new Vec2(3, 2), vertStart, vertEnd);
+            var distanceVert = GeometryHelper.DistanceToSegment(new Vec2(3, 2), vertStart, vertEnd);
             distanceVert.Should().Be(3.0);
         }
 
         /// <summary>Tests SpanExtensions.ComputeCentroid methods.</summary>
         [Fact]
-        public void SpanExtensionsComputeCentroidWorksCorrectly()
-        {
+        public void SpanExtensionsComputeCentroidWorksCorrectly() {
             // Test 2D centroid with empty span
             ReadOnlySpan<Vec2> empty2D = Array.Empty<Vec2>();
             var emptyCentroid2D = empty2D.ComputeCentroid();
@@ -311,8 +299,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests SpanExtensions.TransformTo3D method.</summary>
         [Fact]
-        public void SpanExtensionsTransformTo3DWorksCorrectly()
-        {
+        public void SpanExtensionsTransformTo3DWorksCorrectly() {
             var source2D = new Vec2[]
             {
                 new Vec2(0, 0), new Vec2(1, 2), new Vec2(3, 4)
@@ -331,13 +318,11 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Test error case: destination too small - avoid using spans in lambda
             var smallDestination = new Vec3[source2D.Length - 1];
-            try
-            {
+            try {
                 source2DSpan.TransformTo3D(smallDestination, z);
                 Assert.Fail("Expected ArgumentException was not thrown");
             }
-            catch (ArgumentException)
-            {
+            catch (ArgumentException) {
                 // Expected exception
             }
 
@@ -349,8 +334,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests SpanExtensions.ComputeBounds method.</summary>
         [Fact]
-        public void SpanExtensionsComputeBoundsWorksCorrectly()
-        {
+        public void SpanExtensionsComputeBoundsWorksCorrectly() {
             // Test with empty span
             ReadOnlySpan<Vec2> empty = Array.Empty<Vec2>();
             var (emptyMin, emptyMax) = empty.ComputeBounds();
@@ -389,8 +373,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests integration between different span extension methods.</summary>
         [Fact]
-        public void SpanExtensionsIntegrationWorksCorrectly()
-        {
+        public void SpanExtensionsIntegrationWorksCorrectly() {
             // Create a simple convex polygon (rectangle) to ensure centroid is inside
             var polygon = new Vec2[]
             {
@@ -432,8 +415,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests edge cases and performance characteristics.</summary>
         [Fact]
-        public void SpanExtensionsHandleEdgeCasesCorrectly()
-        {
+        public void SpanExtensionsHandleEdgeCasesCorrectly() {
             // Test with very large coordinates
             var largeCoords = new Vec2[]
             {
@@ -459,8 +441,7 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Test with many vertices to ensure performance
             var manyVertices = new Vec2[1000];
-            for (int i = 0; i < manyVertices.Length; i++)
-            {
+            for (int i = 0; i < manyVertices.Length; i++) {
                 double angle = 2 * Math.PI * i / manyVertices.Length;
                 manyVertices[i] = new Vec2(Math.Cos(angle), Math.Sin(angle));
             }

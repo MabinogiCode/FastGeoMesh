@@ -5,13 +5,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class InternalSegmentIsCarriedToIndexedMeshAsEdgeTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class InternalSegmentIsCarriedToIndexedMeshAsEdgeTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(poly, -10, 10);
             var a = new Vec3(0, 4, 2);

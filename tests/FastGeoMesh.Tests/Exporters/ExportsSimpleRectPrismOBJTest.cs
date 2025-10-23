@@ -4,13 +4,10 @@ using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Tests.Helpers;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Exporters
-{
-    public sealed class ExportsSimpleRectPrismOBJTest
-    {
+namespace FastGeoMesh.Tests.Exporters {
+    public sealed class ExportsSimpleRectPrismOBJTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var poly = Polygon2D.FromPoints(new[] {
                 new Vec2(0, 0),
                 new Vec2(TestGeometries.SmallRectangleWidth, 0),
@@ -18,8 +15,7 @@ namespace FastGeoMesh.Tests.Exporters
                 new Vec2(0, TestGeometries.SmallRectangleHeight)
             });
             var st = new PrismStructureDefinition(poly, 0, 1);
-            var opt = new MesherOptions
-            {
+            var opt = new MesherOptions {
                 TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY,
                 TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ,
                 GenerateBottomCap = true,

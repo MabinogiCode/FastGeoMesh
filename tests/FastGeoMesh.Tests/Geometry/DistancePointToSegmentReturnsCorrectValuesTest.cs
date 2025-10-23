@@ -3,13 +3,10 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class DistancePointToSegmentReturnsCorrectValuesTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class DistancePointToSegmentReturnsCorrectValuesTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var a = new Vec2(0, 0);
             var b = new Vec2(10, 0);
 

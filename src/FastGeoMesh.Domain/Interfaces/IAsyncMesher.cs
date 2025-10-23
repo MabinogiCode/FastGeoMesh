@@ -1,10 +1,8 @@
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>
     /// Defines an asynchronous interface for mesh generation operations with advanced features.
     /// </summary>
-    public interface IAsyncMesher : IMesher<PrismStructureDefinition>
-    {
+    public interface IAsyncMesher : IMesher<PrismStructureDefinition> {
         /// <summary>
         /// Generates a mesh asynchronously with progress reporting support.
         /// </summary>

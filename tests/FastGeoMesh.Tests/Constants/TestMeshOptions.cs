@@ -5,8 +5,7 @@ namespace FastGeoMesh.Tests;
 /// <summary>
 /// Constants for mesh options used in tests.
 /// </summary>
-public static class TestMeshOptions
-{
+public static class TestMeshOptions {
     /// <summary>Default target edge length for XY plane meshing.</summary>
     public static readonly EdgeLength DefaultTargetEdgeLengthXY = EdgeLength.From(1.0);
 

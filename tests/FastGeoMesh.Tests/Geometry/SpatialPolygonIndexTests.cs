@@ -3,17 +3,14 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
+namespace FastGeoMesh.Tests.Geometry {
     /// <summary>Tests for <see cref="SpatialPolygonIndex"/> performance and correctness.</summary>
-    public sealed class SpatialPolygonIndexTests
-    {
+    public sealed class SpatialPolygonIndexTests {
         /// <summary>
         /// Ensures inside points within a convex polygon return true.
         /// </summary>
         [Fact]
-        public void SpatialPolygonIndexDetectsInsidePoints()
-        {
+        public void SpatialPolygonIndexDetectsInsidePoints() {
             // Arrange - Square polygon
             var square = new Vec2[]
             {
@@ -31,8 +28,7 @@ namespace FastGeoMesh.Tests.Geometry
         /// Ensures outside points return false for containment queries.
         /// </summary>
         [Fact]
-        public void SpatialPolygonIndexDetectsOutsidePoints()
-        {
+        public void SpatialPolygonIndexDetectsOutsidePoints() {
             // Arrange
             var square = new Vec2[]
             {
@@ -52,8 +48,7 @@ namespace FastGeoMesh.Tests.Geometry
         /// Verifies index does not crash on boundary points (corner and edge).
         /// </summary>
         [Fact]
-        public void SpatialPolygonIndexHandlesBoundaryPoints()
-        {
+        public void SpatialPolygonIndexHandlesBoundaryPoints() {
             // Arrange
             var square = new Vec2[]
             {
@@ -74,8 +69,7 @@ namespace FastGeoMesh.Tests.Geometry
         /// Tests indexing on a non-convex L-shaped polygon.
         /// </summary>
         [Fact]
-        public void SpatialPolygonIndexWorksWithComplexPolygon()
-        {
+        public void SpatialPolygonIndexWorksWithComplexPolygon() {
             // Arrange - L-shaped polygon
             var lShape = new Vec2[]
             {
@@ -95,13 +89,11 @@ namespace FastGeoMesh.Tests.Geometry
         /// Performs broad sampling to ensure some points are classified inside and not everything is inside.
         /// </summary>
         [Fact]
-        public void SpatialPolygonIndexPerformsBetterThanNaive()
-        {
+        public void SpatialPolygonIndexPerformsBetterThanNaive() {
             // Arrange - Complex polygon with many vertices
             var vertices = new List<Vec2>();
             int n = 100;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 double angle = 2 * System.Math.PI * i / n;
                 double radius = 10 + 2 * System.Math.Sin(8 * angle); // Star-like shape
                 vertices.Add(new Vec2(
@@ -114,12 +106,9 @@ namespace FastGeoMesh.Tests.Geometry
 
             // Act - Test many points (in practice, spatial index should be faster)
             int insideCount = 0;
-            for (double x = -15; x <= 15; x += 0.5)
-            {
-                for (double y = -15; y <= 15; y += 0.5)
-                {
-                    if (index.IsInside(x, y))
-                    {
+            for (double x = -15; x <= 15; x += 0.5) {
+                for (double y = -15; y <= 15; y += 0.5) {
+                    if (index.IsInside(x, y)) {
                         insideCount++;
                     }
                 }
@@ -134,8 +123,7 @@ namespace FastGeoMesh.Tests.Geometry
         /// Ensures different grid resolutions produce same results for clear inside/outside points.
         /// </summary>
         [Fact]
-        public void SpatialPolygonIndexHandlesDifferentGridResolutions()
-        {
+        public void SpatialPolygonIndexHandlesDifferentGridResolutions() {
             // Arrange
             var square = new Vec2[]
             {
@@ -157,8 +145,7 @@ namespace FastGeoMesh.Tests.Geometry
         /// Tests triangle support for minimal polygon definitions.
         /// </summary>
         [Fact]
-        public void SpatialPolygonIndexHandlesTriangle()
-        {
+        public void SpatialPolygonIndexHandlesTriangle() {
             // Arrange - Simple triangle
             var triangle = new Vec2[]
             {
@@ -176,14 +163,11 @@ namespace FastGeoMesh.Tests.Geometry
         /// Cross-validates fast index against reference point-in-polygon for a sampled grid.
         /// </summary>
         [Fact]
-        public void SpatialPolygonIndexMatchesReferenceImplementation()
-        {
+        public void SpatialPolygonIndexMatchesReferenceImplementation() {
             var poly = new Vec2[] { new(0, 0), new(10, 0), new(10, 5), new(0, 5) };
             var idx = new SpatialPolygonIndex(poly, gridResolution: 32);
-            for (double x = -1; x <= 11; x += 0.8)
-            {
-                for (double y = -1; y <= 6; y += 0.6)
-                {
+            for (double x = -1; x <= 11; x += 0.8) {
+                for (double y = -1; y <= 6; y += 0.6) {
                     bool refInside = GeometryHelper.PointInPolygon(poly, x, y);
                     bool fastInside = idx.IsInside(x, y);
                     fastInside.Should().Be(refInside, $"Mismatch at ({x},{y})");

@@ -1,10 +1,8 @@
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>
     /// Backward-compatibility fluent extension methods (v1.3 style) for <see cref="MesherOptionsBuilder"/>.
     /// </summary>
-    public static class MesherOptionsBuilderExtensions
-    {
+    public static class MesherOptionsBuilderExtensions {
         /// <summary>Sets the target edge length in XY plane (fluent alias).</summary>
         /// <param name="b">Builder.</param>
         /// <param name="value">Edge length (&gt; 0).</param>

@@ -1,11 +1,9 @@
-namespace FastGeoMesh.Domain.Services
-{
+namespace FastGeoMesh.Domain.Services {
     /// <summary>
     /// Interface for performance monitoring services.
     /// Allows application layer to track performance without depending on infrastructure.
     /// </summary>
-    public interface IPerformanceMonitor
-    {
+    public interface IPerformanceMonitor {
         /// <summary>Gets current performance statistics.</summary>
         PerformanceStatistics GetLiveStatistics();
 
@@ -36,8 +34,7 @@ namespace FastGeoMesh.Domain.Services
     }
 
     /// <summary>Performance statistics snapshot.</summary>
-    public readonly struct PerformanceStatistics
-    {
+    public readonly struct PerformanceStatistics {
         /// <summary>Total number of meshing operations performed.</summary>
         public long MeshingOperations { get; init; }
 
@@ -51,8 +48,7 @@ namespace FastGeoMesh.Domain.Services
         public double PoolHitRate { get; init; }
 
         /// <summary>Returns a string representation of the performance statistics.</summary>
-        public override string ToString()
-        {
+        public override string ToString() {
             return $"Operations: {MeshingOperations}, Quads: {QuadsGenerated}, Triangles: {TrianglesGenerated}, Pool Hit Rate: {PoolHitRate:P2}";
         }
     }

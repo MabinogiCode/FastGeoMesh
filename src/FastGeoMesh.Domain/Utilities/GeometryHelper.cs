@@ -94,7 +94,6 @@ namespace FastGeoMesh.Domain {
         }
 
         /// <summary>Batch point-in-polygon tests for multiple points against the same polygon.</summary>
-        /// <returns>Nothing; results are written into the supplied <paramref name="results"/> span.</returns>
         public static void BatchPointInPolygon(ReadOnlySpan<Vec2> vertices, ReadOnlySpan<Vec2> points, Span<bool> results, double tolerance = 0, GeometryOptions? options = null) {
             if (results.Length < points.Length) {
                 throw new ArgumentException("Results span too small", nameof(results));
@@ -123,7 +122,6 @@ namespace FastGeoMesh.Domain {
         }
 
         /// <summary>Batch contains points alias.</summary>
-        /// <returns>Nothing; results are written into the supplied <paramref name="results"/> span.</returns>
         public static void ContainsPoints(ReadOnlySpan<Vec2> polygon, ReadOnlySpan<Vec2> points, Span<bool> results, GeometryOptions? options = null) {
             BatchPointInPolygon(polygon, points, results, 0, options);
         }

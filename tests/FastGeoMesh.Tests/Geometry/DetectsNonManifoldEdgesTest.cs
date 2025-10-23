@@ -3,13 +3,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class DetectsNonManifoldEdgesTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class DetectsNonManifoldEdgesTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var builder = new IndexedMeshBuilder()
                 .AddVertex(0, 0, 0)
                 .AddVertex(1, 0, 0)

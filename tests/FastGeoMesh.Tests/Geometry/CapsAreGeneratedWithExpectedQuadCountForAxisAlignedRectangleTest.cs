@@ -5,13 +5,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class CapsAreGeneratedWithExpectedQuadCountForAxisAlignedRectangleTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class CapsAreGeneratedWithExpectedQuadCountForAxisAlignedRectangleTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(poly, -10, 10);
             var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(1.0), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = true, GenerateTopCap = true };

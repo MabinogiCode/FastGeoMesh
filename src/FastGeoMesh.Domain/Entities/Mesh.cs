@@ -1,13 +1,11 @@
 using System.Collections.ObjectModel;
 
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>
     /// Mutable mesh implementation for efficient construction of geometry.
     /// Provides a builder pattern for assembling quads, triangles, and points before conversion to immutable forms.
     /// </summary>
-    public sealed class Mesh : IDisposable
-    {
+    public sealed class Mesh : IDisposable {
         private readonly List<Quad> _quads;
         private readonly List<Triangle> _triangles;
         private readonly List<Vec3> _points;
@@ -20,8 +18,7 @@ namespace FastGeoMesh.Domain
         /// <summary>
         /// Initializes a new instance of the <see cref="Mesh"/> class.
         /// </summary>
-        public Mesh()
-        {
+        public Mesh() {
             _quads = new List<Quad>();
             _triangles = new List<Triangle>();
             _points = new List<Vec3>();
@@ -73,8 +70,7 @@ namespace FastGeoMesh.Domain
         /// </summary>
         /// <param name="quad">The quad to add.</param>
         /// <returns>This mesh instance for method chaining.</returns>
-        public Mesh AddQuad(Quad quad)
-        {
+        public Mesh AddQuad(Quad quad) {
             _quads.Add(quad);
             InvalidateCache();
             return this;
@@ -85,8 +81,7 @@ namespace FastGeoMesh.Domain
         /// </summary>
         /// <param name="quads">The quads to add.</param>
         /// <returns>This mesh instance for method chaining.</returns>
-        public Mesh AddQuads(IEnumerable<Quad> quads)
-        {
+        public Mesh AddQuads(IEnumerable<Quad> quads) {
             ArgumentNullException.ThrowIfNull(quads);
             _quads.AddRange(quads);
             InvalidateCache();
@@ -98,8 +93,7 @@ namespace FastGeoMesh.Domain
         /// </summary>
         /// <param name="triangle">The triangle to add.</param>
         /// <returns>This mesh instance for method chaining.</returns>
-        public Mesh AddTriangle(Triangle triangle)
-        {
+        public Mesh AddTriangle(Triangle triangle) {
             _triangles.Add(triangle);
             InvalidateCache();
             return this;
@@ -110,8 +104,7 @@ namespace FastGeoMesh.Domain
         /// </summary>
         /// <param name="triangles">The triangles to add.</param>
         /// <returns>This mesh instance for method chaining.</returns>
-        public Mesh AddTriangles(IEnumerable<Triangle> triangles)
-        {
+        public Mesh AddTriangles(IEnumerable<Triangle> triangles) {
             ArgumentNullException.ThrowIfNull(triangles);
             _triangles.AddRange(triangles);
             InvalidateCache();
@@ -123,8 +116,7 @@ namespace FastGeoMesh.Domain
         /// </summary>
         /// <param name="point">The point to add.</param>
         /// <returns>This mesh instance for method chaining.</returns>
-        public Mesh AddPoint(Vec3 point)
-        {
+        public Mesh AddPoint(Vec3 point) {
             _points.Add(point);
             InvalidateCache();
             return this;
@@ -135,8 +127,7 @@ namespace FastGeoMesh.Domain
         /// </summary>
         /// <param name="points">The points to add.</param>
         /// <returns>This mesh instance for method chaining.</returns>
-        public Mesh AddPoints(IEnumerable<Vec3> points)
-        {
+        public Mesh AddPoints(IEnumerable<Vec3> points) {
             ArgumentNullException.ThrowIfNull(points);
             _points.AddRange(points);
             InvalidateCache();
@@ -148,8 +139,7 @@ namespace FastGeoMesh.Domain
         /// </summary>
         /// <param name="segment">The segment to add.</param>
         /// <returns>This mesh instance for method chaining.</returns>
-        public Mesh AddInternalSegment(Segment3D segment)
-        {
+        public Mesh AddInternalSegment(Segment3D segment) {
             _internalSegments.Add(segment);
             InvalidateCache();
             return this;
@@ -160,8 +150,7 @@ namespace FastGeoMesh.Domain
         /// </summary>
         /// <param name="segments">The segments to add.</param>
         /// <returns>This mesh instance for method chaining.</returns>
-        public Mesh AddInternalSegments(IEnumerable<Segment3D> segments)
-        {
+        public Mesh AddInternalSegments(IEnumerable<Segment3D> segments) {
             ArgumentNullException.ThrowIfNull(segments);
             _internalSegments.AddRange(segments);
             InvalidateCache();
@@ -172,27 +161,22 @@ namespace FastGeoMesh.Domain
         /// Converts this mutable mesh to an immutable mesh.
         /// </summary>
         /// <returns>An immutable mesh containing the same geometry.</returns>
-        public ImmutableMesh ToImmutableMesh()
-        {
+        public ImmutableMesh ToImmutableMesh() {
             var immutable = new ImmutableMesh();
 
-            foreach (var quad in _quads)
-            {
+            foreach (var quad in _quads) {
                 immutable = immutable.AddQuad(quad);
             }
 
-            foreach (var triangle in _triangles)
-            {
+            foreach (var triangle in _triangles) {
                 immutable = immutable.AddTriangle(triangle);
             }
 
-            foreach (var point in _points)
-            {
+            foreach (var point in _points) {
                 immutable = immutable.AddPoint(point);
             }
 
-            foreach (var segment in _internalSegments)
-            {
+            foreach (var segment in _internalSegments) {
                 immutable = immutable.AddInternalSegment(segment);
             }
 
@@ -203,8 +187,7 @@ namespace FastGeoMesh.Domain
         /// Clears all geometry from the mesh.
         /// </summary>
         /// <returns>This mesh instance for method chaining.</returns>
-        public Mesh Clear()
-        {
+        public Mesh Clear() {
             _quads.Clear();
             _triangles.Clear();
             _points.Clear();
@@ -216,8 +199,7 @@ namespace FastGeoMesh.Domain
         /// <summary>
         /// Invalidates cached read-only collections when the mesh is modified.
         /// </summary>
-        private void InvalidateCache()
-        {
+        private void InvalidateCache() {
             _quadsReadOnly = null;
             _trianglesReadOnly = null;
             _pointsReadOnly = null;
@@ -227,8 +209,7 @@ namespace FastGeoMesh.Domain
         /// <summary>
         /// Disposes the mesh and releases resources.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Clear();
             GC.SuppressFinalize(this);
         }

@@ -4,18 +4,15 @@ using FastGeoMesh.Infrastructure.Services;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Tests specifically targeting the lowest coverage files to improve overall coverage percentage.
     /// Focuses on PerformanceMonitorService, IndexedMeshAdjacencyHelper, SegmentAtZ, MeshPool, and GeometryHelper.
     /// </summary>
-    public sealed class LowCoverageTargetedTests
-    {
+    public sealed class LowCoverageTargetedTests {
         /// <summary>Tests PerformanceMonitorService functionality completely.</summary>
         [Fact]
-        public void PerformanceMonitorServiceProvidesStatistics()
-        {
+        public void PerformanceMonitorServiceProvidesStatistics() {
             // Arrange
             var service = new PerformanceMonitorService();
 
@@ -39,8 +36,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests IndexedMeshAdjacencyHelper methods thoroughly.</summary>
         [Fact]
-        public void IndexedMeshAdjacencyHelperBuildsAdjacencyCorrectly()
-        {
+        public void IndexedMeshAdjacencyHelperBuildsAdjacencyCorrectly() {
             // Arrange - Create a simple mesh with 2 adjacent quads
             var mesh = new ImmutableMesh();
 
@@ -73,8 +69,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests SegmentAtZ class completely.</summary>
         [Fact]
-        public void SegmentAtZImplementsIElementCorrectly()
-        {
+        public void SegmentAtZImplementsIElementCorrectly() {
             // Arrange
             var segment = new Segment2D(new Vec2(0, 0), new Vec2(10, 5));
             const double z = 3.5;
@@ -101,8 +96,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests MeshPool functionality completely.</summary>
         [Fact]
-        public void MeshPoolProvidesImmutableMeshInstances()
-        {
+        public void MeshPoolProvidesImmutableMeshInstances() {
             // Test basic Get operation
             var mesh1 = MeshPool.Get();
             var mesh2 = MeshPool.Get();
@@ -123,11 +117,9 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests PooledMeshExtensions methods completely.</summary>
         [Fact]
-        public void PooledMeshExtensionsExecuteOperationsCorrectly()
-        {
+        public void PooledMeshExtensionsExecuteOperationsCorrectly() {
             // Test WithPooledMesh with return value
-            var result = PooledMeshExtensions.WithPooledMesh(mesh =>
-            {
+            var result = PooledMeshExtensions.WithPooledMesh(mesh => {
                 mesh.Should().NotBeNull();
                 mesh.Should().Be(ImmutableMesh.Empty);
                 return mesh.QuadCount + mesh.TriangleCount;
@@ -137,8 +129,7 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Test WithPooledMesh with void operation
             var operationExecuted = false;
-            PooledMeshExtensions.WithPooledMesh(mesh =>
-            {
+            PooledMeshExtensions.WithPooledMesh(mesh => {
                 mesh.Should().NotBeNull();
                 mesh.Should().Be(ImmutableMesh.Empty);
                 operationExecuted = true;
@@ -147,8 +138,7 @@ namespace FastGeoMesh.Tests.Coverage
             operationExecuted.Should().BeTrue();
 
             // Test with more complex operations
-            var complexResult = PooledMeshExtensions.WithPooledMesh(mesh =>
-            {
+            var complexResult = PooledMeshExtensions.WithPooledMesh(mesh => {
                 // Add some elements to the mesh
                 var modifiedMesh = mesh.AddQuad(new Quad(
                     new Vec3(0, 0, 0), new Vec3(1, 0, 0),
@@ -162,8 +152,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests Infrastructure GeometryHelper methods (using Utils namespace).</summary>
         [Fact]
-        public void InfrastructureGeometryHelperWorksCorrectly()
-        {
+        public void InfrastructureGeometryHelperWorksCorrectly() {
             // Test 2D linear interpolation
             var start2D = new Vec2(0, 0);
             var end2D = new Vec2(10, 20);
@@ -217,8 +206,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests batch point-in-polygon functionality.</summary>
         [Fact]
-        public void BatchPointInPolygonWorksCorrectly()
-        {
+        public void BatchPointInPolygonWorksCorrectly() {
             var triangle = new Vec2[]
             {
                 new Vec2(0, 0), new Vec2(6, 0), new Vec2(3, 6)
@@ -252,42 +240,25 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests GeometryConfig settings.</summary>
         [Fact]
-        public void GeometryConfigurationCanBeModified()
-        {
-            // Store original values
-            var originalDefaultTolerance = GeometryConfig.DefaultTolerance;
-            var originalConvexityTolerance = GeometryConfig.ConvexityTolerance;
-            var originalPointInPolygonTolerance = GeometryConfig.PointInPolygonTolerance;
+        public void GeometryConfigurationCanBeModified() {
+            // Use immutable GeometryOptions instead of mutable global config
+            var opts = new GeometryOptions(DefaultTolerance: 1e-6, ConvexityTolerance: -1e-6, PointInPolygonTolerance: 1e-8);
 
-            try
+            // Verify option values
+            opts.DefaultTolerance.Should().Be(1e-6);
+            opts.ConvexityTolerance.Should().Be(-1e-6);
+            opts.PointInPolygonTolerance.Should().Be(1e-8);
+
+            // Test that the provided options are used in calculations
+            var square = new Vec2[]
             {
-                // Test setting new values
-                GeometryConfig.DefaultTolerance = 1e-6;
-                GeometryConfig.ConvexityTolerance = -1e-6;
-                GeometryConfig.PointInPolygonTolerance = 1e-8;
+                new Vec2(0, 0), new Vec2(1, 0),
+                new Vec2(1, 1), new Vec2(0, 1)
+            };
 
-                GeometryConfig.DefaultTolerance.Should().Be(1e-6);
-                GeometryConfig.ConvexityTolerance.Should().Be(-1e-6);
-                GeometryConfig.PointInPolygonTolerance.Should().Be(1e-8);
-
-                // Test that the new tolerances are used in calculations
-                var square = new Vec2[]
-                {
-                    new Vec2(0, 0), new Vec2(1, 0),
-                    new Vec2(1, 1), new Vec2(0, 1)
-                };
-
-                // This should still work with the new tolerance
-                var result = GeometryHelper.PointInPolygon(square, 0.5, 0.5, GeometryConfig.DefaultTolerance);
-                result.Should().BeTrue();
-            }
-            finally
-            {
-                // Restore original values
-                GeometryConfig.DefaultTolerance = originalDefaultTolerance;
-                GeometryConfig.ConvexityTolerance = originalConvexityTolerance;
-                GeometryConfig.PointInPolygonTolerance = originalPointInPolygonTolerance;
-            }
+            // This should work when passing options explicitly
+            var result = GeometryHelper.PointInPolygon(square, 0.5, 0.5, options: opts);
+            result.Should().BeTrue();
         }
     }
 }

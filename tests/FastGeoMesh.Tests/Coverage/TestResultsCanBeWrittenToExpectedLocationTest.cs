@@ -1,22 +1,17 @@
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
-    public sealed class TestResultsCanBeWrittenToExpectedLocationTest
-    {
+namespace FastGeoMesh.Tests.Coverage {
+    public sealed class TestResultsCanBeWrittenToExpectedLocationTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var testResultsPath = Path.Combine(baseDirectory, "..", "TestResults");
 
-            try
-            {
+            try {
                 var fullPath = Path.GetFullPath(testResultsPath);
 
-                if (!Directory.Exists(fullPath))
-                {
+                if (!Directory.Exists(fullPath)) {
                     Directory.CreateDirectory(fullPath);
                 }
 
@@ -29,8 +24,7 @@ namespace FastGeoMesh.Tests.Coverage
 
                 Console.WriteLine($"✓ Coverage infrastructure validated at: {fullPath}");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Console.WriteLine($"⚠ Coverage directory test failed: {ex.Message}");
 
                 var tempFile = Path.GetTempFileName();

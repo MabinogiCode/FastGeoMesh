@@ -3,13 +3,10 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class GenerateSideQuadsRespectsOutwardFlagOrientationTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class GenerateSideQuadsRespectsOutwardFlagOrientationTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var loop = new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(1, 1), new Vec2(0, 1) };
             var z = new double[] { 0, 1 };
             var opt = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.5), TargetEdgeLengthZ = EdgeLength.From(1.0) };

@@ -1,21 +1,18 @@
 using System.Collections.Frozen;
 using System.Runtime.CompilerServices;
 
-namespace FastGeoMesh.Infrastructure
-{
+namespace FastGeoMesh.Infrastructure {
     /// <summary>
     /// Optimized constants and lookup tables using .NET 8 frozen collections.
     /// These collections provide faster read operations for immutable data.
     /// </summary>
-    public static class OptimizedConstants
-    {
+    public static class OptimizedConstants {
         /// <summary>
         /// Frozen dictionary for common edge length validations.
         /// Uses .NET 8 FrozenDictionary for optimal read performance.
         /// </summary>
         public static readonly FrozenDictionary<string, (double Min, double Max)> EdgeLengthLimits =
-            new Dictionary<string, (double, double)>
-            {
+            new Dictionary<string, (double, double)> {
                 ["XY"] = (1e-6, 1e6),
                 ["Z"] = (1e-6, 1e6),
                 ["HoleRefinement"] = (1e-6, 1e4),
@@ -42,8 +39,7 @@ namespace FastGeoMesh.Infrastructure
         /// Optimized quality thresholds using frozen dictionary for constant-time lookup.
         /// </summary>
         public static readonly FrozenDictionary<string, double> QualityThresholds =
-            new Dictionary<string, double>
-            {
+            new Dictionary<string, double> {
                 ["MinCapQuad"] = 0.3,
                 ["PreferredCapQuad"] = 0.7,
                 ["ExcellentCapQuad"] = 0.9,
@@ -55,8 +51,7 @@ namespace FastGeoMesh.Infrastructure
         /// Fast lookup for geometric tolerance validation.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsValidEdgeLength(string category, double value)
-        {
+        public static bool IsValidEdgeLength(string category, double value) {
             return EdgeLengthLimits.TryGetValue(category, out var limits) &&
                    value >= limits.Min && value <= limits.Max;
         }
@@ -65,8 +60,7 @@ namespace FastGeoMesh.Infrastructure
         /// Fast lookup for quality threshold validation.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool MeetsQualityThreshold(string category, double value)
-        {
+        public static bool MeetsQualityThreshold(string category, double value) {
             return QualityThresholds.TryGetValue(category, out var threshold) &&
                    value >= threshold;
         }

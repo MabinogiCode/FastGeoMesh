@@ -2,13 +2,10 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class FromMeshUsesExactKeyingWhenEpsilonIsDoubleEpsilonTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class FromMeshUsesExactKeyingWhenEpsilonIsDoubleEpsilonTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var p0 = new Vec3(0, 0, 0);
             var p1 = new Vec3(1e-10, 0, 0);
             var mesh = new ImmutableMesh()

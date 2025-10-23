@@ -2,19 +2,15 @@ using System.Globalization;
 using System.Text;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Infrastructure
-{
+namespace FastGeoMesh.Infrastructure {
     /// <summary>Lightweight SVG top-view exporter (edges as lines).</summary>
-    public static class SvgExporter
-    {
+    public static class SvgExporter {
         /// <summary>Write a top-view SVG of the mesh edges.</summary>
-        public static void Write(IndexedMesh im, string path, double strokeWidth = 1.0, double? scale = null)
-        {
+        public static void Write(IndexedMesh im, string path, double strokeWidth = 1.0, double? scale = null) {
             ArgumentNullException.ThrowIfNull(im);
             ArgumentNullException.ThrowIfNull(path);
             var verts = im.Vertices;
-            if (verts.Count == 0)
-            {
+            if (verts.Count == 0) {
                 File.WriteAllText(path, "<svg xmlns='http://www.w3.org/2000/svg' />", Encoding.UTF8);
                 return;
             }
@@ -39,8 +35,7 @@ namespace FastGeoMesh.Infrastructure
                   .Append("' viewBox='0 0 ").Append(wStr).Append(' ').Append(hStr).Append("' shape-rendering='crispEdges'>\n<g stroke='#222' stroke-width='")
                   .Append(strokeStr).Append("' fill='none'>\n");
 
-            for (int ei = 0; ei < im.Edges.Count; ei++)
-            {
+            for (int ei = 0; ei < im.Edges.Count; ei++) {
                 var e = im.Edges[ei];
                 var va = verts[e.a];
                 var vb = verts[e.b];

@@ -4,16 +4,13 @@ using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Tests.Helpers;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Exporters
-{
+namespace FastGeoMesh.Tests.Exporters {
     /// <summary>
     /// Vérifie que l'export GLTF produit un fichier glTF valide avec buffer embarqué.
     /// </summary>
-    public sealed class GltfExporterExportsGltfWithEmbeddedBuffer
-    {
+    public sealed class GltfExporterExportsGltfWithEmbeddedBuffer {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var poly = Polygon2D.FromPoints(new[] {
                 new Vec2(0, 0),
                 new Vec2(2, 0),
@@ -21,8 +18,7 @@ namespace FastGeoMesh.Tests.Exporters
                 new Vec2(0, 1)
             });
             var st = new PrismStructureDefinition(poly, 0, 1);
-            var opt = new MesherOptions
-            {
+            var opt = new MesherOptions {
                 TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY,
                 TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ
             };

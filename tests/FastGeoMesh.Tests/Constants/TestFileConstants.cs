@@ -3,8 +3,7 @@ namespace FastGeoMesh.Tests;
 /// <summary>
 /// File paths and naming conventions for tests.
 /// </summary>
-public static class TestFileConstants
-{
+public static class TestFileConstants {
     /// <summary>Standard filename for legacy mesh files.</summary>
     public const string LegacyMeshFileName = "0_maill.txt";
 

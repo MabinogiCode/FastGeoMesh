@@ -3,20 +3,16 @@ using FluentAssertions;
 using LibTessDotNet;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Quality
-{
+namespace FastGeoMesh.Tests.Quality {
     /// <summary>
     /// Ensures MakeQuadFromTrianglePair returns null when triangles don't share an edge.
     /// </summary>
-    public sealed class MakeQuadFromTrianglePairReturnsNullForInvalidTriangles
-    {
+    public sealed class MakeQuadFromTrianglePairReturnsNullForInvalidTriangles {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             // Arrange - Two triangles not sharing exactly two vertices
             var vertices = new ContourVertex[6];
-            for (int i = 0; i < 6; i++)
-            {
+            for (int i = 0; i < 6; i++) {
                 vertices[i].Position = new LibTessDotNet.Vec3(i, 0, 0);
             }
 

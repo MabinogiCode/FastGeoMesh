@@ -1,14 +1,11 @@
 using FastGeoMesh.Application.Helpers.Meshing;
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Application.Strategies
-{
+namespace FastGeoMesh.Application.Strategies {
     /// <summary>Default cap meshing strategy with optimized path for axis-aligned rectangles.</summary>
-    public sealed class DefaultCapMeshingStrategy : ICapMeshingStrategy
-    {
+    public sealed class DefaultCapMeshingStrategy : ICapMeshingStrategy {
         /// <summary>Generate cap geometry for the given structure and options.</summary>
-        public CapGeometry GenerateCaps(PrismStructureDefinition structure, MesherOptions options, double z0, double z1)
-        {
+        public CapGeometry GenerateCaps(PrismStructureDefinition structure, MesherOptions options, double z0, double z1) {
             ArgumentNullException.ThrowIfNull(structure);
             ArgumentNullException.ThrowIfNull(options);
 

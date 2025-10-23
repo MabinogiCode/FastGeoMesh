@@ -3,13 +3,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Performance
-{
-    public sealed class HighQualityPresetConfiguresCorrectlyTest
-    {
+namespace FastGeoMesh.Tests.Performance {
+    public sealed class HighQualityPresetConfiguresCorrectlyTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var options = MesherOptions.CreateBuilder()
                 .WithHighQualityPreset()
                 .Build().UnwrapForTests();

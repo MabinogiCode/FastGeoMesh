@@ -1,15 +1,11 @@
 using System.Runtime.InteropServices;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure;
 
-namespace FastGeoMesh.Application.Helpers.Structure
-{
+namespace FastGeoMesh.Application.Helpers.Structure {
     /// <summary>Helper class for mesh structure operations and Z-level calculations.</summary>
-    internal static class MeshStructureHelper
-    {
+    internal static class MeshStructureHelper {
         /// <summary>Build sorted distinct list of Z levels for prism subdivision.</summary>
-        internal static IReadOnlyList<double> BuildZLevels(double z0, double z1, MesherOptions options, PrismStructureDefinition structure)
-        {
+        internal static IReadOnlyList<double> BuildZLevels(double z0, double z1, MesherOptions options, PrismStructureDefinition structure) {
             ArgumentNullException.ThrowIfNull(options);
             ArgumentNullException.ThrowIfNull(structure);
 
@@ -22,89 +18,71 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Adds uniformly spaced Z-levels based on the target edge length.</summary>
-        private static void AddUniformLevels(List<double> levels, double z0, double z1, double targetEdgeLengthZ)
-        {
-            if (targetEdgeLengthZ <= 0)
-            {
+        private static void AddUniformLevels(List<double> levels, double z0, double z1, double targetEdgeLengthZ) {
+            if (targetEdgeLengthZ <= 0) {
                 return;
             }
 
             double range = z1 - z0;
-            if (range <= 0)
-            {
+            if (range <= 0) {
                 return;
             }
 
             int vDiv = Math.Max(1, (int)Math.Ceiling(range / targetEdgeLengthZ));
-            if (vDiv <= 1)
-            {
+            if (vDiv <= 1) {
                 return;
             }
 
-            for (int i = 1; i < vDiv; i++)
-            {
+            for (int i = 1; i < vDiv; i++) {
                 levels.Add(z0 + range * (i / (double)vDiv));
             }
         }
 
         /// <summary>Adds Z-levels from the geometry and constraints of the prism structure.</summary>
-        private static void AddLevelsFromStructure(List<double> levels, double z0, double z1, double epsilon, PrismStructureDefinition structure)
-        {
+        private static void AddLevelsFromStructure(List<double> levels, double z0, double z1, double epsilon, PrismStructureDefinition structure) {
             double zMin = z0 + epsilon;
             double zMax = z1 - epsilon;
 
-            void AddIfInRange(double z)
-            {
-                if (z > zMin && z < zMax)
-                {
+            void AddIfInRange(double z) {
+                if (z > zMin && z < zMax) {
                     levels.Add(z);
                 }
             }
 
-            foreach (var (_, z) in structure.ConstraintSegments)
-            {
+            foreach (var (_, z) in structure.ConstraintSegments) {
                 AddIfInRange(z);
             }
-            foreach (var p in structure.Geometry.Points)
-            {
+            foreach (var p in structure.Geometry.Points) {
                 AddIfInRange(p.Z);
             }
-            foreach (var s in structure.Geometry.Segments)
-            {
+            foreach (var s in structure.Geometry.Segments) {
                 AddIfInRange(s.Start.Z);
                 AddIfInRange(s.End.Z);
             }
-            foreach (var plate in structure.InternalSurfaces)
-            {
+            foreach (var plate in structure.InternalSurfaces) {
                 AddIfInRange(plate.Elevation);
             }
         }
 
         /// <summary>Sorts the list of levels and removes duplicates using a tolerance.</summary>
-        private static List<double> SortAndMakeUnique(List<double> levels, double epsilon)
-        {
-            if (levels.Count < 2)
-            {
+        private static List<double> SortAndMakeUnique(List<double> levels, double epsilon) {
+            if (levels.Count < 2) {
                 return levels;
             }
 
             levels.Sort();
 
             int writeIndex = 1;
-            for (int readIndex = 1; readIndex < levels.Count; readIndex++)
-            {
-                if (Math.Abs(levels[readIndex] - levels[writeIndex - 1]) > epsilon)
-                {
-                    if (writeIndex != readIndex)
-                    {
+            for (int readIndex = 1; readIndex < levels.Count; readIndex++) {
+                if (Math.Abs(levels[readIndex] - levels[writeIndex - 1]) > epsilon) {
+                    if (writeIndex != readIndex) {
                         levels[writeIndex] = levels[readIndex];
                     }
                     writeIndex++;
                 }
             }
 
-            if (writeIndex < levels.Count)
-            {
+            if (writeIndex < levels.Count) {
                 levels.RemoveRange(writeIndex, levels.Count - writeIndex);
             }
 
@@ -112,19 +90,15 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is near any hole boundary within given distance.</summary>
-        internal static bool IsNearAnyHole(PrismStructureDefinition structure, double x, double y, double band)
-        {
+        internal static bool IsNearAnyHole(PrismStructureDefinition structure, double x, double y, double band) {
             ArgumentNullException.ThrowIfNull(structure);
-            foreach (var h in structure.Holes)
-            {
+            foreach (var h in structure.Holes) {
                 var vertices = h.Vertices;
-                for (int i = 0, j = vertices.Count - 1; i < vertices.Count; j = i++)
-                {
+                for (int i = 0, j = vertices.Count - 1; i < vertices.Count; j = i++) {
                     var a = vertices[j];
                     var b = vertices[i];
-                    double d = Infrastructure.GeometryHelper.DistancePointToSegment(new Vec2(x, y), a, b);
-                    if (d <= band)
-                    {
+                    double d = GeometryHelper.DistancePointToSegment(new Vec2(x, y), a, b);
+                    if (d <= band) {
                         return true;
                     }
                 }
@@ -133,30 +107,13 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is near any internal segment within given distance.</summary>
-        internal static bool IsNearAnySegment(PrismStructureDefinition structure, double x, double y, double band)
-        {
+        internal static bool IsNearAnySegment(PrismStructureDefinition structure, double x, double y, double band) {
             ArgumentNullException.ThrowIfNull(structure);
             var p = new Vec2(x, y);
-            foreach (var s in structure.Geometry.Segments)
-            {
+            foreach (var s in structure.Geometry.Segments) {
                 var a = new Vec2(s.Start.X, s.Start.Y);
                 var b = new Vec2(s.End.X, s.End.Y);
-                if (Infrastructure.GeometryHelper.DistancePointToSegment(p, a, b) <= band)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>Check if point is inside any hole using spatial indices.</summary>
-        internal static bool IsInsideAnyHole(SpatialPolygonIndex[] holeIndices, double x, double y)
-        {
-            ArgumentNullException.ThrowIfNull(holeIndices);
-            for (int i = 0; i < holeIndices.Length; i++)
-            {
-                if (holeIndices[i].IsInside(x, y))
-                {
+                if (GeometryHelper.DistancePointToSegment(p, a, b) <= band) {
                     return true;
                 }
             }
@@ -164,11 +121,9 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is inside any hole using standard polygon test.</summary>
-        internal static bool IsInsideAnyHole(PrismStructureDefinition structure, double x, double y)
-        {
+        internal static bool IsInsideAnyHole(PrismStructureDefinition structure, double x, double y) {
             ArgumentNullException.ThrowIfNull(structure);
-            foreach (var h in structure.Holes)
-            {
+            foreach (var h in structure.Holes) {
                 // Convert IReadOnlyList to ReadOnlySpan for the modern API
                 ReadOnlySpan<Vec2> span = h.Vertices is List<Vec2> list
                     ? CollectionsMarshal.AsSpan(list)
@@ -176,8 +131,18 @@ namespace FastGeoMesh.Application.Helpers.Structure
                         ? array.AsSpan()
                         : h.Vertices.ToArray().AsSpan();
 
-                if (Infrastructure.GeometryHelper.PointInPolygon(span, x, y))
-                {
+                if (GeometryHelper.PointInPolygon(span, x, y)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>Check if point is inside any hole using spatial indices.</summary>
+        internal static bool IsInsideAnyHole(FastGeoMesh.Infrastructure.SpatialPolygonIndex[] holeIndices, double x, double y) {
+            ArgumentNullException.ThrowIfNull(holeIndices);
+            for (int i = 0; i < holeIndices.Length; i++) {
+                if (holeIndices[i].IsInside(x, y)) {
                     return true;
                 }
             }

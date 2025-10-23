@@ -4,16 +4,13 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.PropertyBased
-{
-    public sealed class QuadInvariantAllQuadsHaveValidVertexIndicesTest
-    {
+namespace FastGeoMesh.Tests.PropertyBased {
+    public sealed class QuadInvariantAllQuadsHaveValidVertexIndicesTest {
         [Theory]
         [InlineData(8, 6)]
         [InlineData(12, 10)]
         [InlineData(6, 4)]
-        public void Test(int width, int height)
-        {
+        public void Test(int width, int height) {
             var rect = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(width, 0), new Vec2(width, height), new Vec2(0, height)

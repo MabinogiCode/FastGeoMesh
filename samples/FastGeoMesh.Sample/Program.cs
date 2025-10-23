@@ -1,17 +1,13 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Infrastructure;
 
-namespace FastGeoMesh.Sample
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
+namespace FastGeoMesh.Sample {
+    class Program {
+        static void Main(string[] args) {
             Console.WriteLine("🚀 FastGeoMesh v2.0 - Clean Architecture Sample");
             Console.WriteLine("===========================================");
 
-            try
-            {
+            try {
                 SimpleRectangleExample();
                 ComplexPolygonExample();
                 HoleExample();
@@ -20,8 +16,7 @@ namespace FastGeoMesh.Sample
                 Console.WriteLine("\n✅ All examples completed successfully!");
                 Console.WriteLine("📂 Output files: simple_rectangle.obj, l_shape.obj, polygon_with_hole.obj, async_mesh.obj");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Console.WriteLine($"❌ Error: {ex.Message}");
                 Console.WriteLine($"🔍 Stack: {ex.StackTrace}");
             }
@@ -30,8 +25,7 @@ namespace FastGeoMesh.Sample
             Console.ReadKey();
         }
 
-        static void SimpleRectangleExample()
-        {
+        static void SimpleRectangleExample() {
             Console.WriteLine("\n🔵 Domain Layer - Simple Rectangle");
             Console.WriteLine("----------------------------------");
 
@@ -49,8 +43,7 @@ namespace FastGeoMesh.Sample
                 .WithTargetEdgeLengthZ(1.0)
                 .Build();
 
-            if (optionsResult.IsFailure)
-            {
+            if (optionsResult.IsFailure) {
                 Console.WriteLine($"❌ Options validation failed: {optionsResult.Error.Description}");
                 return;
             }
@@ -59,8 +52,7 @@ namespace FastGeoMesh.Sample
             var mesher = new PrismMesher();
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
-            if (meshResult.IsFailure)
-            {
+            if (meshResult.IsFailure) {
                 Console.WriteLine($"❌ Meshing failed: {meshResult.Error.Description}");
                 return;
             }
@@ -74,8 +66,7 @@ namespace FastGeoMesh.Sample
             Console.WriteLine("📄 Exported to simple_rectangle.obj");
         }
 
-        static void ComplexPolygonExample()
-        {
+        static void ComplexPolygonExample() {
             Console.WriteLine("\n🟡 Application Layer - Complex L-Shape");
             Console.WriteLine("--------------------------------------");
 
@@ -94,8 +85,7 @@ namespace FastGeoMesh.Sample
                 .WithTargetEdgeLengthZ(0.8)
                 .Build();
 
-            if (optionsResult.IsFailure)
-            {
+            if (optionsResult.IsFailure) {
                 Console.WriteLine($"❌ Options validation failed: {optionsResult.Error.Description}");
                 return;
             }
@@ -104,8 +94,7 @@ namespace FastGeoMesh.Sample
             var mesher = new PrismMesher();
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
-            if (meshResult.IsSuccess)
-            {
+            if (meshResult.IsSuccess) {
                 var mesh = meshResult.Value;
                 Console.WriteLine($"✅ L-shaped mesh: {mesh.QuadCount} quads, {mesh.TriangleCount} triangles");
 
@@ -113,14 +102,12 @@ namespace FastGeoMesh.Sample
                 ObjExporter.Write(indexed, "l_shape.obj");
                 Console.WriteLine("📄 Exported L-shape to l_shape.obj");
             }
-            else
-            {
+            else {
                 Console.WriteLine($"❌ Failed to generate L-shaped mesh: {meshResult.Error.Description}");
             }
         }
 
-        static void HoleExample()
-        {
+        static void HoleExample() {
             Console.WriteLine("\n🟢 Infrastructure Layer - Polygon with Hole");
             Console.WriteLine("-------------------------------------------");
 
@@ -146,8 +133,7 @@ namespace FastGeoMesh.Sample
                 .WithHoleRefinement(0.2, 1.0) // Finer mesh near holes
                 .Build();
 
-            if (optionsResult.IsFailure)
-            {
+            if (optionsResult.IsFailure) {
                 Console.WriteLine($"❌ Options validation failed: {optionsResult.Error.Description}");
                 return;
             }
@@ -155,8 +141,7 @@ namespace FastGeoMesh.Sample
             var mesher = new PrismMesher();
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
-            if (meshResult.IsSuccess)
-            {
+            if (meshResult.IsSuccess) {
                 var mesh = meshResult.Value;
                 Console.WriteLine($"✅ Polygon with hole: {mesh.QuadCount} quads, {mesh.TriangleCount} triangles");
 
@@ -165,14 +150,12 @@ namespace FastGeoMesh.Sample
                 ObjExporter.Write(indexed, "polygon_with_hole.obj");
                 Console.WriteLine("📄 Exported polygon with hole to polygon_with_hole.obj");
             }
-            else
-            {
+            else {
                 Console.WriteLine($"❌ Failed to generate mesh with hole: {meshResult.Error.Description}");
             }
         }
 
-        static async Task AsyncExample()
-        {
+        static async Task AsyncExample() {
             Console.WriteLine("\n⚡ Async Performance - Batch Processing");
             Console.WriteLine("--------------------------------------");
 
@@ -195,8 +178,7 @@ namespace FastGeoMesh.Sample
                 .WithTargetEdgeLengthXY(0.5)
                 .Build();
 
-            if (optionsResult.IsFailure)
-            {
+            if (optionsResult.IsFailure) {
                 Console.WriteLine($"❌ Options validation failed: {optionsResult.Error.Description}");
                 return;
             }
@@ -219,22 +201,19 @@ namespace FastGeoMesh.Sample
 
             stopwatch.Stop();
 
-            if (batchResult.IsSuccess)
-            {
+            if (batchResult.IsSuccess) {
                 var meshes = batchResult.Value;
                 Console.WriteLine($"✅ Batch processing completed in {stopwatch.ElapsedMilliseconds}ms");
                 Console.WriteLine($"📈 Generated {meshes.Count} meshes with total {meshes.Sum(m => m.QuadCount)} quads");
 
                 // Export the first mesh as example
-                if (meshes.Count > 0)
-                {
+                if (meshes.Count > 0) {
                     var indexed = IndexedMesh.FromMesh(meshes[0]);
                     ObjExporter.Write(indexed, "async_mesh.obj");
                     Console.WriteLine("📄 Exported async result to async_mesh.obj");
                 }
             }
-            else
-            {
+            else {
                 Console.WriteLine($"❌ Batch processing failed: {batchResult.Error.Description}");
             }
         }

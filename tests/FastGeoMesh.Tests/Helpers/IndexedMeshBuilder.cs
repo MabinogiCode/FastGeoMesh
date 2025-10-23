@@ -1,13 +1,11 @@
 using FastGeoMesh.Domain;
 
-namespace FastGeoMesh.Tests.Helpers
-{
+namespace FastGeoMesh.Tests.Helpers {
     /// <summary>
     /// Test helper for building indexed meshes in a fluent manner.
     /// Used for testing mesh adjacency and other mesh operations.
     /// </summary>
-    internal sealed class IndexedMeshBuilder
-    {
+    internal sealed class IndexedMeshBuilder {
         private readonly List<Vec3> _verts = new();
         private readonly List<(int, int, int, int)> _quads = new();
 
@@ -16,8 +14,7 @@ namespace FastGeoMesh.Tests.Helpers
         /// <param name="y">Y coordinate.</param>
         /// <param name="z">Z coordinate.</param>
         /// <returns>This builder for chaining.</returns>
-        public IndexedMeshBuilder AddVertex(double x, double y, double z)
-        {
+        public IndexedMeshBuilder AddVertex(double x, double y, double z) {
             _verts.Add(new Vec3(x, y, z));
             return this;
         }
@@ -28,21 +25,18 @@ namespace FastGeoMesh.Tests.Helpers
         /// <param name="v2">Index of third vertex.</param>
         /// <param name="v3">Index of fourth vertex.</param>
         /// <returns>This builder for chaining.</returns>
-        public IndexedMeshBuilder AddQuad(int v0, int v1, int v2, int v3)
-        {
+        public IndexedMeshBuilder AddQuad(int v0, int v1, int v2, int v3) {
             _quads.Add((v0, v1, v2, v3));
             return this;
         }
 
         /// <summary>Build the final indexed mesh.</summary>
         /// <returns>An IndexedMesh containing the added vertices and quads.</returns>
-        public IndexedMesh Build()
-        {
+        public IndexedMesh Build() {
             using var mesh = new Mesh();
             var verts = _verts.ToArray();
 
-            foreach (var q in _quads)
-            {
+            foreach (var q in _quads) {
                 var quad = new Quad(verts[q.Item1], verts[q.Item2], verts[q.Item3], verts[q.Item4]);
                 mesh.AddQuad(quad);
             }

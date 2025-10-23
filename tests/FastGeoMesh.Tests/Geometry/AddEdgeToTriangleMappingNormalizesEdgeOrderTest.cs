@@ -2,13 +2,10 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Geometry
-{
-    public sealed class AddEdgeToTriangleMappingNormalizesEdgeOrderTest
-    {
+namespace FastGeoMesh.Tests.Geometry {
+    public sealed class AddEdgeToTriangleMappingNormalizesEdgeOrderTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var edgeToTris = new Dictionary<(int, int), List<int>>();
             EdgeMappingHelper.AddEdgeToTriangleMapping(edgeToTris, 5, 2, 100);
             EdgeMappingHelper.AddEdgeToTriangleMapping(edgeToTris, 2, 5, 200);

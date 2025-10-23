@@ -1,10 +1,8 @@
-namespace FastGeoMesh.Domain
-{
+namespace FastGeoMesh.Domain {
     /// <summary>
     /// Defines a strategy for generating top and bottom caps for a prism structure.
     /// </summary>
-    public interface ICapMeshingStrategy
-    {
+    public interface ICapMeshingStrategy {
         /// <summary>
         /// Generates the cap geometry for a prism structure.
         /// </summary>

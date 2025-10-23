@@ -5,13 +5,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Exporters
-{
-    public sealed class FlexibleTxtExporterWorksWithCustomFormatTest
-    {
+namespace FastGeoMesh.Tests.Exporters {
+    public sealed class FlexibleTxtExporterWorksWithCustomFormatTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var poly = Polygon2D.FromPoints(new[] {
                 new Vec2(0, 0),
                 new Vec2(1, 0),
@@ -19,8 +16,7 @@ namespace FastGeoMesh.Tests.Exporters
                 new Vec2(0, 1)
             });
             var structure = new PrismStructureDefinition(poly, 0, 1);
-            var options = new MesherOptions
-            {
+            var options = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(1.0),
                 TargetEdgeLengthZ = EdgeLength.From(1.0),
                 GenerateBottomCap = true,

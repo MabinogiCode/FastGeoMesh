@@ -3,8 +3,7 @@ namespace FastGeoMesh.Tests;
 /// <summary>
 /// Performance test limits and constraints.
 /// </summary>
-public static class TestPerformanceLimits
-{
+public static class TestPerformanceLimits {
     /// <summary>Maximum number of iterations for performance tests.</summary>
     public const int MaxTestIterations = 1000;
 

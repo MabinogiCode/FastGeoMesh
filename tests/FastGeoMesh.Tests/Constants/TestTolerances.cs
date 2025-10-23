@@ -3,8 +3,7 @@ namespace FastGeoMesh.Tests;
 /// <summary>
 /// Centralized constants for test tolerance values and numerical precision.
 /// </summary>
-public static class TestTolerances
-{
+public static class TestTolerances {
     /// <summary>Standard epsilon for floating-point comparisons in tests.</summary>
     public const double Epsilon = 1e-9;
 

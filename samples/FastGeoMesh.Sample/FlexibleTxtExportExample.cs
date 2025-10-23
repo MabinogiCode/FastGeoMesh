@@ -2,18 +2,15 @@ using FastGeoMesh.Application.Services;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Infrastructure.FileOperations;
 
-namespace FastGeoMesh.Sample
-{
+namespace FastGeoMesh.Sample {
     /// <summary>
     /// Demonstrates the flexible TXT export system with custom formats.
     /// </summary>
-    public static class FlexibleTxtExportExample
-    {
+    public static class FlexibleTxtExportExample {
         /// <summary>
         /// Shows various TXT export configurations with the builder pattern.
         /// </summary>
-        public static void DemonstrateFlexibleTxtExport()
-        {
+        public static void DemonstrateFlexibleTxtExport() {
             Console.WriteLine("🎯 Flexible TXT Export System Demo");
 
             // Create L-shaped structure for demonstration
@@ -29,11 +26,9 @@ namespace FastGeoMesh.Sample
                 .WithTargetEdgeLengthXY(0.8)
                 .Build();
 
-            if (optionsResult.IsSuccess)
-            {
+            if (optionsResult.IsSuccess) {
                 var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
-                if (meshResult.IsSuccess)
-                {
+                if (meshResult.IsSuccess) {
                     var indexed = IndexedMesh.FromMesh(meshResult.Value);
 
                     // Example 1: Custom scientific format
@@ -76,12 +71,10 @@ namespace FastGeoMesh.Sample
         /// <summary>
         /// Demonstrates reading and converting between formats.
         /// </summary>
-        public static void DemonstrateFormatConversion()
-        {
+        public static void DemonstrateFormatConversion() {
             Console.WriteLine("\n🔄 Format Conversion Demo");
 
-            try
-            {
+            try {
                 // Read Legacy format (the only text format that exists for reading)
                 var mesh = IndexedMeshFileHelper.ReadCustomTxt("mesh.txt");
                 Console.WriteLine($"📖 Read Legacy format: {mesh.VertexCount} vertices");
@@ -94,8 +87,7 @@ namespace FastGeoMesh.Sample
 
                 Console.WriteLine("✅ Converted to custom format: converted_mesh.txt");
             }
-            catch (FileNotFoundException)
-            {
+            catch (FileNotFoundException) {
                 Console.WriteLine("⚠️ Text mesh file not found. Create one first with the TXT exporter.");
             }
         }

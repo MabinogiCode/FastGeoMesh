@@ -4,16 +4,13 @@ using FluentAssertions;
 using LibTessDotNet;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Quality
-{
+namespace FastGeoMesh.Tests.Quality {
     /// <summary>
     /// Verifies MakeQuadFromTrianglePair succeeds with two triangles forming a quad.
     /// </summary>
-    public sealed class MakeQuadFromTrianglePairWorksWithValidTriangles
-    {
+    public sealed class MakeQuadFromTrianglePairWorksWithValidTriangles {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             // Arrange - Two triangles sharing an edge
             var vertices = new ContourVertex[4];
             vertices[0].Position = new LibTessDotNet.Vec3(0, 0, 0);

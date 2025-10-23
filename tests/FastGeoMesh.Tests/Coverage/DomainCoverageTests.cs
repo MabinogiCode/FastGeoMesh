@@ -2,21 +2,17 @@ using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Domain
-{
+namespace FastGeoMesh.Tests.Domain {
     /// <summary>
     /// Additional tests to improve coverage of Domain layer types and edge cases.
     /// Focuses on value objects, edge cases, and error handling paths.
     /// </summary>
-    public sealed class DomainCoverageTests
-    {
+    public sealed class DomainCoverageTests {
         /// <summary>Tests basic domain types validation and operations.</summary>
         [Fact]
-        public void BasicDomainTypesValidationAndOperationsWorkCorrectly()
-        {
+        public void BasicDomainTypesValidationAndOperationsWorkCorrectly() {
             // Test EdgeLength - if it exists
-            try
-            {
+            try {
                 var edge1 = EdgeLength.From(1.0);
                 var edge2 = EdgeLength.From(1.0);
                 var edge3 = EdgeLength.From(2.0);
@@ -37,8 +33,7 @@ namespace FastGeoMesh.Tests.Domain
                 // GetHashCode consistency
                 edge1.GetHashCode().Should().Be(edge2.GetHashCode());
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // EdgeLength might not exist or have different API - skip this part
                 true.Should().BeTrue("EdgeLength API might be different or not exist");
             }
@@ -54,10 +49,8 @@ namespace FastGeoMesh.Tests.Domain
 
         /// <summary>Tests Tolerance validation and operations - if type exists.</summary>
         [Fact]
-        public void ToleranceValidationAndOperationsWorkCorrectly()
-        {
-            try
-            {
+        public void ToleranceValidationAndOperationsWorkCorrectly() {
+            try {
                 // Valid tolerance
                 var tolerance = Tolerance.From(1e-9);
                 tolerance.Value.Should().Be(1e-9);
@@ -79,8 +72,7 @@ namespace FastGeoMesh.Tests.Domain
                 double value = tolerance;
                 value.Should().Be(1e-9);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Tolerance type might not exist or have different API - that's OK
                 true.Should().BeTrue("Tolerance type might not exist or have different API");
             }
@@ -88,10 +80,8 @@ namespace FastGeoMesh.Tests.Domain
 
         /// <summary>Tests EdgeLength validation boundaries and edge cases - if type exists.</summary>
         [Fact]
-        public void EdgeLengthValidationCoversAllBoundaries()
-        {
-            try
-            {
+        public void EdgeLengthValidationCoversAllBoundaries() {
+            try {
                 // Test valid boundaries
                 var minValid = EdgeLength.From(EdgeLength.MinValue);
                 var maxValid = EdgeLength.From(EdgeLength.MaxValue);
@@ -106,8 +96,7 @@ namespace FastGeoMesh.Tests.Domain
                 Assert.ThrowsAny<ArgumentException>(() => EdgeLength.From(double.PositiveInfinity));
                 Assert.ThrowsAny<ArgumentException>(() => EdgeLength.From(double.NegativeInfinity));
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // EdgeLength type might not exist or have different API - that's OK
                 true.Should().BeTrue("EdgeLength type might not exist or have different API");
             }
@@ -115,10 +104,8 @@ namespace FastGeoMesh.Tests.Domain
 
         /// <summary>Tests Polygon2D creation, validation and operations - if type exists.</summary>
         [Fact]
-        public void Polygon2DCreationValidationAndOperationsWorkCorrectly()
-        {
-            try
-            {
+        public void Polygon2DCreationValidationAndOperationsWorkCorrectly() {
+            try {
                 var vertices = new[]
                 {
                     new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 3), new Vec2(0, 3)
@@ -132,8 +119,7 @@ namespace FastGeoMesh.Tests.Domain
 
                 // Rectangle detection
                 var isRect = polygon.IsRectangleAxisAligned(out var min, out var max);
-                if (isRect)
-                {
+                if (isRect) {
                     min.Should().Be(new Vec2(0, 0));
                     max.Should().Be(new Vec2(4, 3));
                 }
@@ -160,8 +146,7 @@ namespace FastGeoMesh.Tests.Domain
                 var isRectL = lShapePolygon.IsRectangleAxisAligned(out _, out _);
                 isRectL.Should().BeFalse();
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Polygon2D might have different API - that's OK
                 true.Should().BeTrue("Polygon2D might have different API");
             }

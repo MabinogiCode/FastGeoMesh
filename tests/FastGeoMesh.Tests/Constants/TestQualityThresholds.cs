@@ -3,8 +3,7 @@ namespace FastGeoMesh.Tests;
 /// <summary>
 /// Quality thresholds for quad scoring tests.
 /// </summary>
-public static class TestQualityThresholds
-{
+public static class TestQualityThresholds {
     /// <summary>High quality threshold for quad scoring (0.8).</summary>
     public const double HighQualityThreshold = 0.8;
 

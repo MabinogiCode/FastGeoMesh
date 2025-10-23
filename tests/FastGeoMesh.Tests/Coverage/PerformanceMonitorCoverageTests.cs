@@ -2,18 +2,15 @@ using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Coverage
-{
+namespace FastGeoMesh.Tests.Coverage {
     /// <summary>
     /// Tests for PerformanceMonitor and related metrics functionality to improve code coverage.
     /// Covers performance tracking, activity monitoring, and statistics collection.
     /// </summary>
-    public sealed class PerformanceMonitorCoverageTests
-    {
+    public sealed class PerformanceMonitorCoverageTests {
         /// <summary>Tests PerformanceMonitor.Counters basic functionality.</summary>
         [Fact]
-        public void PerformanceMonitorCountersTracksOperations()
-        {
+        public void PerformanceMonitorCountersTracksOperations() {
             // Arrange
             var initialStats = PerformanceMonitorCounters.GetStatistics();
             var initialOperations = initialStats.MeshingOperations;
@@ -29,8 +26,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests PerformanceMonitor activity creation.</summary>
         [Fact]
-        public void PerformanceMonitorStartMeshingActivityCreatesActivity()
-        {
+        public void PerformanceMonitorStartMeshingActivityCreatesActivity() {
             // Arrange
             var operationData = new { VertexCount = 100, Complexity = "Moderate" };
 
@@ -43,8 +39,7 @@ namespace FastGeoMesh.Tests.Coverage
 
         /// <summary>Tests PerformanceMonitor statistics properties.</summary>
         [Fact]
-        public void PerformanceMonitorStatisticsHasAllProperties()
-        {
+        public void PerformanceMonitorStatisticsHasAllProperties() {
             // Act
             var stats = PerformanceMonitorCounters.GetStatistics();
 

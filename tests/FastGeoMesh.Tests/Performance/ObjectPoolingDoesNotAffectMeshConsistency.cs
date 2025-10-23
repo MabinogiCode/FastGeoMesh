@@ -4,23 +4,19 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Performance
-{
+namespace FastGeoMesh.Tests.Performance {
     /// <summary>
     /// Validates that object pooling does not affect mesh consistency.
     /// </summary>
-    public sealed class ObjectPoolingDoesNotAffectMeshConsistency
-    {
+    public sealed class ObjectPoolingDoesNotAffectMeshConsistency {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var polygon = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 8), new Vec2(0, 8)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 4);
-            var options = new MesherOptions
-            {
+            var options = new MesherOptions {
                 TargetEdgeLengthXY = EdgeLength.From(1.0),
                 TargetEdgeLengthZ = EdgeLength.From(1.0),
                 GenerateBottomCap = true,

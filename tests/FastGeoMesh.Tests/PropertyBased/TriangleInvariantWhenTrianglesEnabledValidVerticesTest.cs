@@ -4,17 +4,13 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.PropertyBased
-{
-    public sealed class TriangleInvariantWhenTrianglesEnabledValidVerticesTest
-    {
+namespace FastGeoMesh.Tests.PropertyBased {
+    public sealed class TriangleInvariantWhenTrianglesEnabledValidVerticesTest {
         [Theory]
         [InlineData(4)]
         [InlineData(6)]
-        public void Test(int size)
-        {
-            if (size <= 2)
-            {
+        public void Test(int size) {
+            if (size <= 2) {
                 return;
             }
 

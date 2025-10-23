@@ -4,13 +4,10 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.Meshing
-{
-    public sealed class GenericPolygonWithoutHolesProducesTopAndBottomCapsWithQuadsOnlyTest
-    {
+namespace FastGeoMesh.Tests.Meshing {
+    public sealed class GenericPolygonWithoutHolesProducesTopAndBottomCapsWithQuadsOnlyTest {
         [Fact]
-        public void Test()
-        {
+        public void Test() {
             var outer = Polygon2D.FromPoints(new[]
             {
                 new Vec2(0,0), new Vec2(4,0), new Vec2(5,2), new Vec2(2.5,4), new Vec2(0,2)

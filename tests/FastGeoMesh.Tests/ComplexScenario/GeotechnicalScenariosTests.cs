@@ -4,19 +4,16 @@ using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
-namespace FastGeoMesh.Tests.ComplexScenario
-{
+namespace FastGeoMesh.Tests.ComplexScenario {
     /// <summary>
     /// Geotechnical scenario tests including slabs with holes and external support / brace integration.
     /// </summary>
-    public sealed class GeotechnicalScenariosTests
-    {
+    public sealed class GeotechnicalScenariosTests {
         /// <summary>
         /// Ensures holes are not meshed as caps and internal vertical faces are generated around hole perimeters.
         /// </summary>
         [Fact]
-        public void SlabWithHolesDoesNotMeshHolesOnCapsAndGeneratesInnerSideFaces()
-        {
+        public void SlabWithHolesDoesNotMeshHolesOnCapsAndGeneratesInnerSideFaces() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, 10), new Vec2(0, 10) });
             var hole1 = Polygon2D.FromPoints(new[] { new Vec2(5, 3), new Vec2(7, 3), new Vec2(7, 5), new Vec2(5, 5) });
             var hole2 = Polygon2D.FromPoints(new[] { new Vec2(12, 6), new Vec2(13, 6), new Vec2(13, 8), new Vec2(12, 8) });
@@ -38,8 +35,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
         /// Ensures external support geometry endpoints are carried into the mesh as internal segment endpoints.
         /// </summary>
         [Fact]
-        public void BraceFootingOutsideIsCarriedAsInternalSegment()
-        {
+        public void BraceFootingOutsideIsCarriedAsInternalSegment() {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(outer, -2, 0);
             var support = new Vec3(-5, -2, 0);
