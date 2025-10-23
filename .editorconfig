@@ -45,39 +45,30 @@ dotnet_naming_rule.methods_must_be_pascal_without_underscore.severity = error
 # Sort usings (System first)
 dotnet_sort_system_directives_first = true
 
-# Disable several StyleCop rules that cause many existing violations so we can incrementally fix them
-# File header (SA1633) - keep disabled to avoid mass edits
-dotnet_diagnostic.SA1633.severity = none
-# Closing brace should be followed by blank line (SA1513)
-dotnet_diagnostic.SA1513.severity = none
-# Braces for multi-line statements should not share line (SA1500)
-dotnet_diagnostic.SA1500.severity = none
-# Tuple element naming casing (SA1316)
-dotnet_diagnostic.SA1316.severity = none
-# Missing XML docs (SA1600 etc.)
-dotnet_diagnostic.SA1600.severity = none
-dotnet_diagnostic.SA1611.severity = none
-dotnet_diagnostic.SA1618.severity = none
-# Ordering categories (SA1202) - reduce strictness
-dotnet_diagnostic.SA1202.severity = none
-# Misc others
-dotnet_diagnostic.SA1117.severity = none
+# Re-enable key StyleCop rules for strict pass (user asked to fix all remaining rules except SA1101)
+dotnet_diagnostic.SA1615.severity = error
+dotnet_diagnostic.SA1617.severity = error
+dotnet_diagnostic.SA1642.severity = error
+dotnet_diagnostic.SA1413.severity = error
+dotnet_diagnostic.SA1649.severity = error
+dotnet_diagnostic.IDE0005.severity = error
+dotnet_diagnostic.SA1407.severity = error
+dotnet_diagnostic.SA1107.severity = error
+dotnet_diagnostic.SA1134.severity = error
+dotnet_diagnostic.SA1514.severity = error
+dotnet_diagnostic.SA1502.severity = error
+dotnet_diagnostic.SA1201.severity = error
+dotnet_diagnostic.SA1204.severity = error
+dotnet_diagnostic.SA1119.severity = error
+dotnet_diagnostic.SA1518.severity = error
+dotnet_diagnostic.SA1128.severity = error
+dotnet_diagnostic.SA1206.severity = error
 
-# Disable SA1101 (per user request: no 'this.' requirement)
+# Disable SA1101 per user preference
 dotnet_diagnostic.SA1101.severity = none
 
-# Temporarily relax remaining noisy rules to none so CI/build can proceed while we iterate
-# These can be re-enabled and fixed precisely in a later strict pass.
-dotnet_diagnostic.SA1615.severity = none
-dotnet_diagnostic.SA1617.severity = none
-dotnet_diagnostic.SA1642.severity = none
-dotnet_diagnostic.SA1413.severity = none
-dotnet_diagnostic.SA1649.severity = none
-dotnet_diagnostic.IDE0005.severity = none
-
 # Keep a few other rules as warnings to guide future cleanup
-dotnet_diagnostic.SA1407.severity = warning
-dotnet_diagnostic.SA1107.severity = warning
+dotnet_diagnostic.SA1117.severity = warning
 
 # Misc
 csharp_style_var_for_built_in_types = true:silent
