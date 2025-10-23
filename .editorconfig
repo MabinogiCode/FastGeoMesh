@@ -64,8 +64,8 @@ dotnet_diagnostic.SA1202.severity = none
 dotnet_diagnostic.SA1117.severity = none
 
 # Temporarily treat many style rules as warnings to allow iterative fixes
-# Batch 1 focus: prefixing instance members (SA1101) and return docs (SA1615/SA1617)
-dotnet_diagnostic.SA1101.severity = warning
+# Batch 1 focus: return docs (SA1615/SA1617) and other style rules.  SA1101 is disabled per user request.
+dotnet_diagnostic.SA1101.severity = none
 dotnet_diagnostic.SA1615.severity = warning
 dotnet_diagnostic.SA1617.severity = warning
 dotnet_diagnostic.SA1642.severity = warning
