@@ -5,7 +5,7 @@ namespace FastGeoMesh.Sample
 {
     class Program
     {
-        static void Main(string[] args)
+        static async System.Threading.Tasks.Task Main(string[] args)
         {
             Console.WriteLine("🚀 FastGeoMesh v2.0 - Clean Architecture Sample");
             Console.WriteLine("===========================================");
@@ -15,7 +15,7 @@ namespace FastGeoMesh.Sample
                 SimpleRectangleExample();
                 ComplexPolygonExample();
                 HoleExample();
-                AsyncExample().Wait();
+                await AsyncExample();
 
                 Console.WriteLine("\n✅ All examples completed successfully!");
                 Console.WriteLine("📂 Output files: simple_rectangle.obj, l_shape.obj, polygon_with_hole.obj, async_mesh.obj");
@@ -171,7 +171,7 @@ namespace FastGeoMesh.Sample
             }
         }
 
-        static async Task AsyncExample()
+        static async System.Threading.Tasks.Task AsyncExample()
         {
             Console.WriteLine("\n⚡ Async Performance - Batch Processing");
             Console.WriteLine("--------------------------------------");

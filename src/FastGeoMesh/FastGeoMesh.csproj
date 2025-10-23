@@ -6,7 +6,7 @@
     <WarningsAsErrors>IDE0005;IDE0011;IDE0052;IDE0160</WarningsAsErrors>
     <Nullable>enable</Nullable>
     <PackageId>FastGeoMesh</PackageId>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <Authors>MabinogiCode</Authors>
     <Description>High-performance .NET 8 library for quad-dominant meshing of 2.5D prismatic structures. v2.0 features Clean Architecture with Domain/Application/Infrastructure layers, Result pattern for robust error handling, async/parallel processing with 2.4x speedup, and comprehensive export capabilities.</Description>
     <PackageTags>meshing;mesh;quad;triangle;geometry;prism;cad;gis;dotnet;net8;performance;vectorization;async;parallel;clean-architecture;domain-driven-design</PackageTags>

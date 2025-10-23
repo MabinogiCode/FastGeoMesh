@@ -252,14 +252,18 @@ namespace FastGeoMesh.Application.Services
             var estimatedQuads = (int)(totalVertices * 1.5 + structure.InternalSurfaces.Count * 10);
             var estimatedTriangles = Math.Max(1, (int)(totalVertices * 0.3));
             var estimatedMemory = (estimatedQuads + estimatedTriangles) * 160L;
+
+            // Time estimates - microseconds converted to ticks (1 tick = 100 ns = 0.1 microsecond)
+            static TimeSpan FromMicroseconds(long microseconds) => TimeSpan.FromTicks(microseconds * 10);
+
             var estimatedTime = complexity switch
             {
-                MeshingComplexity.Trivial => TimeSpan.FromMicroseconds(80),
-                MeshingComplexity.Simple => TimeSpan.FromMicroseconds(240),
-                MeshingComplexity.Moderate => TimeSpan.FromMicroseconds(800),
+                MeshingComplexity.Trivial => FromMicroseconds(80),
+                MeshingComplexity.Simple => FromMicroseconds(240),
+                MeshingComplexity.Moderate => FromMicroseconds(800),
                 MeshingComplexity.Complex => TimeSpan.FromMilliseconds(4),
                 MeshingComplexity.Extreme => TimeSpan.FromMilliseconds(16),
-                _ => TimeSpan.FromMicroseconds(800)
+                _ => FromMicroseconds(800)
             };
             var recommendedParallelism = complexity >= MeshingComplexity.Complex ? Math.Min(Environment.ProcessorCount, 4) : 1;
             var hints = new List<string>();
