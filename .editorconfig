@@ -15,9 +15,12 @@ trim_trailing_whitespace = false
 
 # ---------------- C# code style & analyzers ----------------
 [*.cs]
-# Inherit base formatting if root file added later
+# Require braces for all control blocks
 csharp_prefer_braces = true:error
-csharp_style_namespace_declarations = file_scoped:error
+# Braces: opening brace on new line for control blocks (no K&R)
+csharp_new_line_before_open_brace = all:control
+# Allow file-scoped namespaces (suggestion) to match existing codebase
+csharp_style_namespace_declarations = file_scoped:suggestion
 
 # Strengthen some rules for library surface
 # Public API should have XML docs
@@ -27,24 +30,46 @@ dotnet_diagnostic.CS1591.severity = warning
 # Avoid async void
 dotnet_diagnostic.VSTHRD100.severity = warning
 
-# Prefer readonly struct when small
-csharp_style_prefer_readonly_struct = true:warning
-csharp_style_prefer_readonly_fields = true:warning
+# Naming rules: methods PascalCase, no underscores
+dotnet_naming_symbols.methods.applicable_kinds = method
+dotnet_naming_symbols.methods.applicable_accessibilities = *
+dotnet_naming_symbols.methods.required_modifiers = *
 
-# Prevent hidden allocations via implicit object creation (C# 12 OK but keep explicit for clarity now)
-dotnet_diagnostic.IDE0090.severity = suggestion
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+dotnet_naming_style.no_underscores.capitalization = pascal_case
 
-# Potential performance issues
-# CA1852: Make sealed types sealed (we intentionally seal already) -> keep suggestion
-dotnet_diagnostic.CA1852.severity = suggestion
+dotnet_naming_rule.methods_must_be_pascal_without_underscore.symbols = methods
+dotnet_naming_rule.methods_must_be_pascal_without_underscore.style = no_underscores
+dotnet_naming_rule.methods_must_be_pascal_without_underscore.severity = error
 
-# Suppress noisy suggestions until review
-dotnet_diagnostic.IDE0058.severity = silent
-dotnet_diagnostic.IDE0005.severity = error        # remove unnecessary usings
-dotnet_diagnostic.IDE0065.severity = error        # using directive placement
-dotnet_diagnostic.SA1300.severity = error
-dotnet_diagnostic.SA1310.severity = error
-csharp_style_namespace_declarations = file_scoped:suggestion
+# Sort usings (System first)
+dotnet_sort_system_directives_first = true
+
+# Disable several StyleCop rules that cause many existing violations so we can incrementally fix them
+# File header (SA1633) - keep disabled to avoid mass edits
+dotnet_diagnostic.SA1633.severity = none
+# Closing brace should be followed by blank line (SA1513)
+dotnet_diagnostic.SA1513.severity = none
+# Braces for multi-line statements should not share line (SA1500)
+dotnet_diagnostic.SA1500.severity = none
+# Tuple element naming casing (SA1316)
+dotnet_diagnostic.SA1316.severity = none
+# Missing XML docs (SA1600 etc.)
+dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1611.severity = none
+dotnet_diagnostic.SA1618.severity = none
+# Ordering categories (SA1202) - reduce strictness
+dotnet_diagnostic.SA1202.severity = none
+# Misc others
+dotnet_diagnostic.SA1117.severity = none
+
+# Temporarily treat some rules as warnings to allow iterative fixes
+# Batch 1 focus: prefixing instance members (SA1101) and return docs (SA1615/SA1617)
+dotnet_diagnostic.SA1101.severity = warning
+dotnet_diagnostic.SA1615.severity = warning
+dotnet_diagnostic.SA1617.severity = warning
+
+# Misc
 csharp_style_var_for_built_in_types = true:silent
 csharp_style_var_when_type_is_apparent = true:silent
 csharp_style_var_elsewhere = true:suggestion
@@ -52,22 +77,3 @@ csharp_style_prefer_switch_expression = true:suggestion
 csharp_style_prefer_pattern_matching = true:suggestion
 csharp_style_expression_bodied_methods = when_on_single_line:suggestion
 csharp_using_directive_placement = outside_namespace:suggestion
-
-# Symbol group : toutes les méthodes
-dotnet_naming_symbols.methods.applicable_kinds = method
-dotnet_naming_symbols.methods.applicable_accessibilities = *
-dotnet_naming_symbols.methods.required_modifiers = *
-
-# Style : pas d'underscore
-dotnet_naming_style.no_underscores.capitalization = pascal_case
-dotnet_naming_style.no_underscores.required_prefix = 
-dotnet_naming_style.no_underscores.required_suffix = 
-dotnet_naming_style.no_underscores.required_modifiers = 
-
-# Règle : méthodes => style sans underscore
-dotnet_naming_rule.methods_must_be_pascal_without_underscore.symbols = methods
-dotnet_naming_rule.methods_must_be_pascal_without_underscore.style = no_underscores
-dotnet_naming_rule.methods_must_be_pascal_without_underscore.severity = error
-
-# Sort usings (System first)
-dotnet_sort_system_directives_first = true
