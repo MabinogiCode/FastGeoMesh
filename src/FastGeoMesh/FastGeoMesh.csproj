@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="LibTessDotNet" Version="1.1.15" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="9.0.9" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     <!-- Keep analyzer version compatible with .NET 8 targets -->
