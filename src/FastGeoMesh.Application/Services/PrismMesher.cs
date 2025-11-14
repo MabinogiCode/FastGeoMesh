@@ -80,11 +80,20 @@ namespace FastGeoMesh.Application.Services
             {
                 return Result<ImmutableMesh>.Failure(new Error("Meshing.OperationError", ex.Message));
             }
-            catch (Exception ex)
+            catch (ArithmeticException ex)
             {
-                // Preserve full exception details for diagnostics
-                return Result<ImmutableMesh>.Failure(new Error("Meshing.UnexpectedError",
-                    $"Unexpected error during meshing: {ex.Message}\n{ex}"));
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.ArithmeticError",
+                    $"Arithmetic error during meshing (overflow, division by zero, etc.): {ex.Message}"));
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.IndexError",
+                    $"Index out of range during meshing: {ex.Message}"));
+            }
+            catch (NullReferenceException ex)
+            {
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.NullReferenceError",
+                    $"Unexpected null reference during meshing: {ex.Message}"));
             }
         }
 
@@ -124,10 +133,24 @@ namespace FastGeoMesh.Application.Services
             {
                 return Result<ImmutableMesh>.Failure(new Error("Meshing.ArgumentError", ex.Message));
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                return Result<ImmutableMesh>.Failure(new Error("Meshing.UnexpectedError",
-                    $"Unexpected error during async meshing: {ex.Message}\n{ex}"));
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.OperationError", ex.Message));
+            }
+            catch (ArithmeticException ex)
+            {
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.ArithmeticError",
+                    $"Arithmetic error during async meshing: {ex.Message}"));
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.IndexError",
+                    $"Index out of range during async meshing: {ex.Message}"));
+            }
+            catch (NullReferenceException ex)
+            {
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.NullReferenceError",
+                    $"Unexpected null reference during async meshing: {ex.Message}"));
             }
         }
 
@@ -160,10 +183,28 @@ namespace FastGeoMesh.Application.Services
             {
                 return Result<ImmutableMesh>.Failure(new Error("Meshing.Cancelled", "Meshing operation was cancelled"));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return Result<ImmutableMesh>.Failure(new Error("Meshing.UnexpectedError",
-                    $"Unexpected error during meshing with progress: {ex.Message}\n{ex}"));
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.ArgumentError", ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.OperationError", ex.Message));
+            }
+            catch (ArithmeticException ex)
+            {
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.ArithmeticError",
+                    $"Arithmetic error during meshing with progress: {ex.Message}"));
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.IndexError",
+                    $"Index out of range during meshing with progress: {ex.Message}"));
+            }
+            catch (NullReferenceException ex)
+            {
+                return Result<ImmutableMesh>.Failure(new Error("Meshing.NullReferenceError",
+                    $"Unexpected null reference during meshing with progress: {ex.Message}"));
             }
         }
 
@@ -236,10 +277,33 @@ namespace FastGeoMesh.Application.Services
                 return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.Cancelled",
                     "Batch meshing operation was cancelled"));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.UnexpectedError",
-                    $"Unexpected error during batch meshing: {ex.Message}\n{ex}"));
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.ArgumentError", ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.OperationError", ex.Message));
+            }
+            catch (ArithmeticException ex)
+            {
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.ArithmeticError",
+                    $"Arithmetic error during batch meshing: {ex.Message}"));
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.IndexError",
+                    $"Index out of range during batch meshing: {ex.Message}"));
+            }
+            catch (NullReferenceException ex)
+            {
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.NullReferenceError",
+                    $"Unexpected null reference during batch meshing: {ex.Message}"));
+            }
+            catch (AggregateException ex)
+            {
+                return Result<IReadOnlyList<ImmutableMesh>>.Failure(new Error("Meshing.AggregateError",
+                    $"Multiple errors during batch meshing: {string.Join("; ", ex.InnerExceptions.Select(e => e.Message))}"));
             }
         }
 

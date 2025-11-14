@@ -156,7 +156,7 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is inside any hole using spatial indices.</summary>
-        internal static bool IsInsideAnyHole(SpatialPolygonIndex[] holeIndices, double x, double y)
+        internal static bool IsInsideAnyHole(ISpatialPolygonIndex[] holeIndices, double x, double y)
         {
             ArgumentNullException.ThrowIfNull(holeIndices);
             for (int i = 0; i < holeIndices.Length; i++)

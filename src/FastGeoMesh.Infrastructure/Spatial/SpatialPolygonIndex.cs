@@ -3,7 +3,7 @@ using FastGeoMesh.Domain;
 namespace FastGeoMesh.Infrastructure
 {
     /// <summary>Spatial acceleration structure for fast point-in-polygon queries.</summary>
-    public sealed class SpatialPolygonIndex
+    public sealed class SpatialPolygonIndex : ISpatialPolygonIndex
     {
         private readonly IReadOnlyList<Vec2> _vertices;
         private readonly double _minX, _maxX, _minY, _maxY;
