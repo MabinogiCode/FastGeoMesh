@@ -1,14 +1,15 @@
-using System.Runtime.InteropServices;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
 
-namespace FastGeoMesh.Application.Helpers.Structure
+namespace FastGeoMesh.Application.Services
 {
-    /// <summary>Helper class for mesh structure operations and Z-level calculations.</summary>
-    internal static class MeshStructureHelper
+    /// <summary>
+    /// Service for building Z-level subdivisions for prism meshing.
+    /// </summary>
+    public sealed class ZLevelBuilder : IZLevelBuilder
     {
         /// <summary>Build sorted distinct list of Z levels for prism subdivision.</summary>
-        internal static IReadOnlyList<double> BuildZLevels(double z0, double z1, MesherOptions options, PrismStructureDefinition structure)
+        public IReadOnlyList<double> BuildZLevels(double z0, double z1, MesherOptions options, PrismStructureDefinition structure)
         {
             ArgumentNullException.ThrowIfNull(options);
             ArgumentNullException.ThrowIfNull(structure);
@@ -113,82 +114,6 @@ namespace FastGeoMesh.Application.Helpers.Structure
             }
 
             return levels;
-        }
-
-        /// <summary>Check if point is near any hole boundary within given distance.</summary>
-        internal static bool IsNearAnyHole(PrismStructureDefinition structure, double x, double y, double band, IGeometryService geometryService)
-        {
-            ArgumentNullException.ThrowIfNull(structure);
-            ArgumentNullException.ThrowIfNull(geometryService);
-            foreach (var h in structure.Holes)
-            {
-                var vertices = h.Vertices;
-                for (int i = 0, j = vertices.Count - 1; i < vertices.Count; j = i++)
-                {
-                    var a = vertices[j];
-                    var b = vertices[i];
-                    double d = geometryService.DistancePointToSegment(new Vec2(x, y), a, b);
-                    if (d <= band)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>Check if point is near any internal segment within given distance.</summary>
-        internal static bool IsNearAnySegment(PrismStructureDefinition structure, double x, double y, double band, IGeometryService geometryService)
-        {
-            ArgumentNullException.ThrowIfNull(structure);
-            ArgumentNullException.ThrowIfNull(geometryService);
-            var p = new Vec2(x, y);
-            foreach (var s in structure.Geometry.Segments)
-            {
-                var a = new Vec2(s.Start.X, s.Start.Y);
-                var b = new Vec2(s.End.X, s.End.Y);
-                if (geometryService.DistancePointToSegment(p, a, b) <= band)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>Check if point is inside any hole using spatial indices.</summary>
-        internal static bool IsInsideAnyHole(SpatialPolygonIndex[] holeIndices, double x, double y)
-        {
-            ArgumentNullException.ThrowIfNull(holeIndices);
-            for (int i = 0; i < holeIndices.Length; i++)
-            {
-                if (holeIndices[i].IsInside(x, y))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>Check if point is inside any hole using standard polygon test.</summary>
-        internal static bool IsInsideAnyHole(PrismStructureDefinition structure, double x, double y, IGeometryService geometryService)
-        {
-            ArgumentNullException.ThrowIfNull(structure);
-            ArgumentNullException.ThrowIfNull(geometryService);
-            foreach (var h in structure.Holes)
-            {
-                // Convert IReadOnlyList to ReadOnlySpan for the modern API
-                ReadOnlySpan<Vec2> span = h.Vertices is List<Vec2> list
-                    ? CollectionsMarshal.AsSpan(list)
-                    : h.Vertices is Vec2[] array
-                        ? array.AsSpan()
-                        : h.Vertices.ToArray().AsSpan();
-
-                if (geometryService.PointInPolygon(span, x, y))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

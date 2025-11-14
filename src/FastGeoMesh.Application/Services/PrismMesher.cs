@@ -11,28 +11,46 @@ namespace FastGeoMesh.Application.Services
         private readonly ICapMeshingStrategy _capStrategy;
         private readonly IPerformanceMonitor _performanceMonitor;
         private readonly IGeometryService _geometryService;
+        private readonly IZLevelBuilder _zLevelBuilder;
+        private readonly IProximityChecker _proximityChecker;
 
-        /// <summary>Create a mesher with default cap strategy and default geometry service.</summary>
-        /// <remarks>
-        /// For production use, prefer constructor overloads that accept IGeometryService via dependency injection.
-        /// This parameterless constructor is provided for backward compatibility and testing convenience.
-        /// </remarks>
-        public PrismMesher() : this(DefaultGeometryServiceFactory.Create()) { }
+        /// <summary>Create a mesher with required services.</summary>
+        public PrismMesher(
+            IGeometryService geometryService,
+            IZLevelBuilder zLevelBuilder,
+            IProximityChecker proximityChecker)
+            : this(
+                new Strategies.DefaultCapMeshingStrategy(geometryService),
+                new NullPerformanceMonitor(),
+                geometryService,
+                zLevelBuilder,
+                proximityChecker)
+        {
+        }
 
-        /// <summary>Create a mesher with a geometry service.</summary>
-        public PrismMesher(IGeometryService geometryService)
-            : this(new Strategies.DefaultCapMeshingStrategy(geometryService), new NullPerformanceMonitor(), geometryService) { }
+        /// <summary>Create a mesher with custom cap strategy.</summary>
+        public PrismMesher(
+            ICapMeshingStrategy capStrategy,
+            IGeometryService geometryService,
+            IZLevelBuilder zLevelBuilder,
+            IProximityChecker proximityChecker)
+            : this(capStrategy, new NullPerformanceMonitor(), geometryService, zLevelBuilder, proximityChecker)
+        {
+        }
 
-        /// <summary>Create a mesher with a custom cap strategy.</summary>
-        public PrismMesher(ICapMeshingStrategy capStrategy, IGeometryService geometryService)
-            : this(capStrategy, new NullPerformanceMonitor(), geometryService) { }
-
-        /// <summary>Create a mesher with custom cap strategy and performance monitor.</summary>
-        public PrismMesher(ICapMeshingStrategy capStrategy, IPerformanceMonitor performanceMonitor, IGeometryService geometryService)
+        /// <summary>Create a mesher with all dependencies.</summary>
+        public PrismMesher(
+            ICapMeshingStrategy capStrategy,
+            IPerformanceMonitor performanceMonitor,
+            IGeometryService geometryService,
+            IZLevelBuilder zLevelBuilder,
+            IProximityChecker proximityChecker)
         {
             _capStrategy = capStrategy ?? throw new ArgumentNullException(nameof(capStrategy));
             _performanceMonitor = performanceMonitor ?? throw new ArgumentNullException(nameof(performanceMonitor));
             _geometryService = geometryService ?? throw new ArgumentNullException(nameof(geometryService));
+            _zLevelBuilder = zLevelBuilder ?? throw new ArgumentNullException(nameof(zLevelBuilder));
+            _proximityChecker = proximityChecker ?? throw new ArgumentNullException(nameof(proximityChecker));
         }
 
         /// <summary>Generate a mesh from the given prism structure definition and meshing options (thread-safe – no shared state).</summary>
@@ -320,7 +338,7 @@ namespace FastGeoMesh.Application.Services
             double z0 = structure.BaseElevation;
             double z1 = structure.TopElevation;
 
-            var zLevels = MeshStructureHelper.BuildZLevels(z0, z1, options, structure);
+            var zLevels = _zLevelBuilder.BuildZLevels(z0, z1, options, structure);
 
             // Generate side faces
             var sideQuads = SideFaceMeshingHelper.GenerateSideQuads(structure.Footprint.Vertices, zLevels, options, outward: true, _geometryService);
@@ -364,7 +382,7 @@ namespace FastGeoMesh.Application.Services
             progress?.Report(new MeshingProgress("Initializing", 0.0, 0, 1, statusMessage: "Analyzing structure"));
             cancellationToken.ThrowIfCancellationRequested();
 
-            var zLevels = MeshStructureHelper.BuildZLevels(z0, z1, options, structure);
+            var zLevels = _zLevelBuilder.BuildZLevels(z0, z1, options, structure);
 
             progress?.Report(new MeshingProgress("Side Faces", 0.1, 0, 1, statusMessage: "Generating side quads"));
             cancellationToken.ThrowIfCancellationRequested();

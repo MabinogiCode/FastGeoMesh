@@ -28,6 +28,8 @@ namespace FastGeoMesh
             // Application Services
             services.AddTransient<ICapMeshingStrategy, DefaultCapMeshingStrategy>();
             services.AddTransient<IPerformanceMonitor, NullPerformanceMonitor>(); // Default: no monitoring
+            services.AddTransient<IZLevelBuilder, ZLevelBuilder>();
+            services.AddTransient<IProximityChecker, ProximityChecker>();
 
             // Main mesher - uses all injected dependencies
             services.AddTransient<IAsyncMesher, PrismMesher>();
@@ -50,6 +52,8 @@ namespace FastGeoMesh
             // Application Services with monitoring
             services.AddTransient<ICapMeshingStrategy, DefaultCapMeshingStrategy>();
             services.AddSingleton<IPerformanceMonitor, PerformanceMonitorService>(); // Real monitoring
+            services.AddTransient<IZLevelBuilder, ZLevelBuilder>();
+            services.AddTransient<IProximityChecker, ProximityChecker>();
 
             // Main mesher
             services.AddTransient<IAsyncMesher, PrismMesher>();
