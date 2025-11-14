@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Domain.Services;
 using LibTessDotNet;
 
 namespace FastGeoMesh.Application.Helpers.Quality
@@ -89,9 +89,10 @@ namespace FastGeoMesh.Application.Helpers.Quality
         /// <summary>Create quad from triangle pair if possible with enhanced validation.</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static (Vec2 v0, Vec2 v1, Vec2 v2, Vec2 v3)? MakeQuadFromTrianglePair(
-            (int a, int b, int c) t0, (int a, int b, int c) t1, ContourVertex[] vertices)
+            (int a, int b, int c) t0, (int a, int b, int c) t1, ContourVertex[] vertices, IGeometryService geometryService)
         {
             ArgumentNullException.ThrowIfNull(vertices);
+            ArgumentNullException.ThrowIfNull(geometryService);
 
             // Validate all indices before proceeding
             if (t0.a < 0 || t0.a >= vertices.Length ||
@@ -168,13 +169,13 @@ namespace FastGeoMesh.Application.Helpers.Quality
             var vd = new Vec2(vertices[unique1].Position.X, vertices[unique1].Position.Y);
 
             var quad = (va, vc, vb, vd);
-            if (GeometryHelper.IsConvex(quad))
+            if (geometryService.IsConvex(quad))
             {
                 return quad;
             }
 
             quad = (va, vd, vb, vc);
-            return GeometryHelper.IsConvex(quad) ? quad : null;
+            return geometryService.IsConvex(quad) ? quad : null;
         }
 
         /// <summary>Calculate orthogonality measure between two vectors (0-1, 1 is perpendicular).</summary>

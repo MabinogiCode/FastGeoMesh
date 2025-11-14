@@ -2,7 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FastGeoMesh.Domain\FastGeoMesh.Domain.csproj" />
-    <ProjectReference Include="..\FastGeoMesh.Infrastructure\FastGeoMesh.Infrastructure.csproj" />
+    <!-- Infrastructure dependency removed - using IGeometryService interface from Domain instead -->
+    <!-- Application layer now properly depends only on Domain (Clean Architecture compliance) -->
   </ItemGroup>
 
   <ItemGroup>

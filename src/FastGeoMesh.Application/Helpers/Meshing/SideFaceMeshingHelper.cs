@@ -1,4 +1,5 @@
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Services;
 
 namespace FastGeoMesh.Application.Helpers.Meshing
 {
@@ -6,11 +7,12 @@ namespace FastGeoMesh.Application.Helpers.Meshing
     internal static class SideFaceMeshingHelper
     {
         /// <summary>Generates side face quads for a prism structure.</summary>
-        internal static List<Quad> GenerateSideQuads(IReadOnlyList<Vec2> loop, IReadOnlyList<double> zLevels, MesherOptions options, bool outward)
+        internal static List<Quad> GenerateSideQuads(IReadOnlyList<Vec2> loop, IReadOnlyList<double> zLevels, MesherOptions options, bool outward, IGeometryService geometryService)
         {
             ArgumentNullException.ThrowIfNull(loop);
             ArgumentNullException.ThrowIfNull(zLevels);
             ArgumentNullException.ThrowIfNull(options);
+            ArgumentNullException.ThrowIfNull(geometryService);
 
             var quads = new List<Quad>();
             int n = loop.Count;
@@ -27,8 +29,8 @@ namespace FastGeoMesh.Application.Helpers.Meshing
                 {
                     double t0 = hi * invHDiv;
                     double t1 = (hi + 1) * invHDiv;
-                    var a0 = Helpers.GeometryCalculationHelper.Lerp(a2, b2, t0);
-                    var a1 = Helpers.GeometryCalculationHelper.Lerp(a2, b2, t1);
+                    var a0 = geometryService.Lerp(a2, b2, t0);
+                    var a1 = geometryService.Lerp(a2, b2, t1);
 
                     for (int vi = 0; vi < zLevels.Count - 1; vi++)
                     {

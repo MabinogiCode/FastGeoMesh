@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Domain.Services;
 
 namespace FastGeoMesh.Application.Helpers.Structure
 {
@@ -112,9 +112,10 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is near any hole boundary within given distance.</summary>
-        internal static bool IsNearAnyHole(PrismStructureDefinition structure, double x, double y, double band)
+        internal static bool IsNearAnyHole(PrismStructureDefinition structure, double x, double y, double band, IGeometryService geometryService)
         {
             ArgumentNullException.ThrowIfNull(structure);
+            ArgumentNullException.ThrowIfNull(geometryService);
             foreach (var h in structure.Holes)
             {
                 var vertices = h.Vertices;
@@ -122,7 +123,7 @@ namespace FastGeoMesh.Application.Helpers.Structure
                 {
                     var a = vertices[j];
                     var b = vertices[i];
-                    double d = Infrastructure.GeometryHelper.DistancePointToSegment(new Vec2(x, y), a, b);
+                    double d = geometryService.DistancePointToSegment(new Vec2(x, y), a, b);
                     if (d <= band)
                     {
                         return true;
@@ -133,15 +134,16 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is near any internal segment within given distance.</summary>
-        internal static bool IsNearAnySegment(PrismStructureDefinition structure, double x, double y, double band)
+        internal static bool IsNearAnySegment(PrismStructureDefinition structure, double x, double y, double band, IGeometryService geometryService)
         {
             ArgumentNullException.ThrowIfNull(structure);
+            ArgumentNullException.ThrowIfNull(geometryService);
             var p = new Vec2(x, y);
             foreach (var s in structure.Geometry.Segments)
             {
                 var a = new Vec2(s.Start.X, s.Start.Y);
                 var b = new Vec2(s.End.X, s.End.Y);
-                if (Infrastructure.GeometryHelper.DistancePointToSegment(p, a, b) <= band)
+                if (geometryService.DistancePointToSegment(p, a, b) <= band)
                 {
                     return true;
                 }
@@ -164,9 +166,10 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is inside any hole using standard polygon test.</summary>
-        internal static bool IsInsideAnyHole(PrismStructureDefinition structure, double x, double y)
+        internal static bool IsInsideAnyHole(PrismStructureDefinition structure, double x, double y, IGeometryService geometryService)
         {
             ArgumentNullException.ThrowIfNull(structure);
+            ArgumentNullException.ThrowIfNull(geometryService);
             foreach (var h in structure.Holes)
             {
                 // Convert IReadOnlyList to ReadOnlySpan for the modern API
@@ -176,7 +179,7 @@ namespace FastGeoMesh.Application.Helpers.Structure
                         ? array.AsSpan()
                         : h.Vertices.ToArray().AsSpan();
 
-                if (Infrastructure.GeometryHelper.PointInPolygon(span, x, y))
+                if (geometryService.PointInPolygon(span, x, y))
                 {
                     return true;
                 }

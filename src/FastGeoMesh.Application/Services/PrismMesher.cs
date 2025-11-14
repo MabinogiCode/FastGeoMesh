@@ -10,18 +10,29 @@ namespace FastGeoMesh.Application.Services
     {
         private readonly ICapMeshingStrategy _capStrategy;
         private readonly IPerformanceMonitor _performanceMonitor;
+        private readonly IGeometryService _geometryService;
 
-        /// <summary>Create a mesher with default cap strategy.</summary>
-        public PrismMesher() : this(new Strategies.DefaultCapMeshingStrategy()) { }
+        /// <summary>Create a mesher with default cap strategy and default geometry service.</summary>
+        /// <remarks>
+        /// For production use, prefer constructor overloads that accept IGeometryService via dependency injection.
+        /// This parameterless constructor is provided for backward compatibility and testing convenience.
+        /// </remarks>
+        public PrismMesher() : this(DefaultGeometryServiceFactory.Create()) { }
+
+        /// <summary>Create a mesher with a geometry service.</summary>
+        public PrismMesher(IGeometryService geometryService)
+            : this(new Strategies.DefaultCapMeshingStrategy(geometryService), new NullPerformanceMonitor(), geometryService) { }
 
         /// <summary>Create a mesher with a custom cap strategy.</summary>
-        public PrismMesher(ICapMeshingStrategy capStrategy) : this(capStrategy, new NullPerformanceMonitor()) { }
+        public PrismMesher(ICapMeshingStrategy capStrategy, IGeometryService geometryService)
+            : this(capStrategy, new NullPerformanceMonitor(), geometryService) { }
 
         /// <summary>Create a mesher with custom cap strategy and performance monitor.</summary>
-        public PrismMesher(ICapMeshingStrategy capStrategy, IPerformanceMonitor performanceMonitor)
+        public PrismMesher(ICapMeshingStrategy capStrategy, IPerformanceMonitor performanceMonitor, IGeometryService geometryService)
         {
             _capStrategy = capStrategy ?? throw new ArgumentNullException(nameof(capStrategy));
             _performanceMonitor = performanceMonitor ?? throw new ArgumentNullException(nameof(performanceMonitor));
+            _geometryService = geometryService ?? throw new ArgumentNullException(nameof(geometryService));
         }
 
         /// <summary>Generate a mesh from the given prism structure definition and meshing options (thread-safe – no shared state).</summary>
@@ -312,12 +323,12 @@ namespace FastGeoMesh.Application.Services
             var zLevels = MeshStructureHelper.BuildZLevels(z0, z1, options, structure);
 
             // Generate side faces
-            var sideQuads = SideFaceMeshingHelper.GenerateSideQuads(structure.Footprint.Vertices, zLevels, options, outward: true);
+            var sideQuads = SideFaceMeshingHelper.GenerateSideQuads(structure.Footprint.Vertices, zLevels, options, outward: true, _geometryService);
             mesh = mesh.AddQuads(sideQuads);
 
             foreach (var hole in structure.Holes)
             {
-                var holeQuads = SideFaceMeshingHelper.GenerateSideQuads(hole.Vertices, zLevels, options, outward: false);
+                var holeQuads = SideFaceMeshingHelper.GenerateSideQuads(hole.Vertices, zLevels, options, outward: false, _geometryService);
                 mesh = mesh.AddQuads(holeQuads);
             }
 
@@ -359,13 +370,13 @@ namespace FastGeoMesh.Application.Services
             cancellationToken.ThrowIfCancellationRequested();
 
             // Generate side faces with progress tracking
-            var sideQuads = SideFaceMeshingHelper.GenerateSideQuads(structure.Footprint.Vertices, zLevels, options, outward: true);
+            var sideQuads = SideFaceMeshingHelper.GenerateSideQuads(structure.Footprint.Vertices, zLevels, options, outward: true, _geometryService);
             mesh = mesh.AddQuads(sideQuads);
 
             foreach (var hole in structure.Holes)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var holeQuads = SideFaceMeshingHelper.GenerateSideQuads(hole.Vertices, zLevels, options, outward: false);
+                var holeQuads = SideFaceMeshingHelper.GenerateSideQuads(hole.Vertices, zLevels, options, outward: false, _geometryService);
                 mesh = mesh.AddQuads(holeQuads);
             }
 

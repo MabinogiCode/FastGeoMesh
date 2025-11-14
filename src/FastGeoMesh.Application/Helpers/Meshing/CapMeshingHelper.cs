@@ -1,4 +1,5 @@
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Services;
 
 namespace FastGeoMesh.Application.Helpers.Meshing
 {
@@ -6,7 +7,7 @@ namespace FastGeoMesh.Application.Helpers.Meshing
     internal static class CapMeshingHelper
     {
         /// <summary>Create bottom/top caps according to options and return the resulting mesh.</summary>
-        internal static ImmutableMesh GenerateCaps(ImmutableMesh inputMesh, PrismStructureDefinition structure, MesherOptions options, double z0, double z1)
+        internal static ImmutableMesh GenerateCaps(ImmutableMesh inputMesh, PrismStructureDefinition structure, MesherOptions options, double z0, double z1, IGeometryService geometryService)
         {
             var mesh = inputMesh;
             bool genBottom = options.GenerateBottomCap;
@@ -16,7 +17,7 @@ namespace FastGeoMesh.Application.Helpers.Meshing
             {
                 if (structure.Footprint.IsRectangleAxisAligned(out var min, out var max))
                 {
-                    mesh = GenerateRectangleCaps(mesh, structure, options, z0, z1, min, max, genBottom, genTop);
+                    mesh = GenerateRectangleCaps(mesh, structure, options, z0, z1, min, max, genBottom, genTop, geometryService);
                 }
                 else
                 {
@@ -112,7 +113,7 @@ namespace FastGeoMesh.Application.Helpers.Meshing
 
                     // Check if this quad is inside a hole - if so, skip it
                     var quadCenter = new Vec2((x0 + x1) * 0.5, (y0 + y1) * 0.5);
-                    if (IsPointInAnyHole(quadCenter, structure))
+                    if (IsPointInAnyHole(quadCenter, structure, geometryService))
                     {
                         continue; // Skip quads inside holes
                     }
@@ -318,11 +319,11 @@ namespace FastGeoMesh.Application.Helpers.Meshing
         }
 
         /// <summary>Checks if a point is inside any hole.</summary>
-        private static bool IsPointInAnyHole(Vec2 point, PrismStructureDefinition structure)
+        private static bool IsPointInAnyHole(Vec2 point, PrismStructureDefinition structure, IGeometryService geometryService)
         {
             foreach (var hole in structure.Holes)
             {
-                if (Helpers.GeometryCalculationHelper.PointInPolygon(hole.Vertices.ToArray().AsSpan(), point.X, point.Y))
+                if (geometryService.PointInPolygon(hole.Vertices.ToArray().AsSpan(), point.X, point.Y))
                 {
                     return true;
                 }
