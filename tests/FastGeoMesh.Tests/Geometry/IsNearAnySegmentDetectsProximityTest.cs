@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Helpers.Structure;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Infrastructure.Services;
 using FluentAssertions;
 using Xunit;
 
@@ -14,8 +15,8 @@ namespace FastGeoMesh.Tests.Geometry
             var st = new PrismStructureDefinition(outer, 0, 3);
             st.Geometry.AddSegment(new Segment3D(new Vec3(0, 0, 0), new Vec3(8, 8, 0)));
             st.Geometry.AddSegment(new Segment3D(new Vec3(0, 8, 0), new Vec3(8, 0, 0)));
-            MeshStructureHelper.IsNearAnySegment(st, 4.1, 4.0, 0.3).Should().BeTrue();
-            MeshStructureHelper.IsNearAnySegment(st, 4.1, 4.0, 0.01).Should().BeFalse();
+            MeshStructureHelper.IsNearAnySegment(st, 4.1, 4.0, 0.3, new GeometryService()).Should().BeTrue();
+            MeshStructureHelper.IsNearAnySegment(st, 4.1, 4.0, 0.01, new GeometryService()).Should().BeFalse();
         }
     }
 }

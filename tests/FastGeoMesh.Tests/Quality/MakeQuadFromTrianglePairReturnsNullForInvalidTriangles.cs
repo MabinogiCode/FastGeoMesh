@@ -1,4 +1,5 @@
 using FastGeoMesh.Application.Helpers.Quality;
+using FastGeoMesh.Infrastructure.Services;
 using FluentAssertions;
 using LibTessDotNet;
 using Xunit;
@@ -24,7 +25,7 @@ namespace FastGeoMesh.Tests.Quality
             var triangle2 = (3, 4, 5); // No shared vertices
 
             // Act
-            var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangle1, triangle2, vertices);
+            var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangle1, triangle2, vertices, new GeometryService());
 
             // Assert
             quad.Should().BeNull("Triangles with no shared edge should not create quad");

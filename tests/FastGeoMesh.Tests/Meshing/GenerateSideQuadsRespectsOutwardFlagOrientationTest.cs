@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Helpers.Meshing;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Infrastructure.Services;
 using FluentAssertions;
 using Xunit;
 
@@ -13,8 +14,8 @@ namespace FastGeoMesh.Tests.Meshing
             var loop = new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(1, 1), new Vec2(0, 1) };
             var z = new double[] { 0, 1 };
             var opt = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.5), TargetEdgeLengthZ = EdgeLength.From(1.0) };
-            var outward = SideFaceMeshingHelper.GenerateSideQuads(loop, z, opt, true);
-            var inward = SideFaceMeshingHelper.GenerateSideQuads(loop, z, opt, false);
+            var outward = SideFaceMeshingHelper.GenerateSideQuads(loop, z, opt, true, new GeometryService());
+            var inward = SideFaceMeshingHelper.GenerateSideQuads(loop, z, opt, false, new GeometryService());
             outward.Should().HaveCount(inward.Count);
             outward.Should().NotBeEmpty();
             var oq = outward[0];

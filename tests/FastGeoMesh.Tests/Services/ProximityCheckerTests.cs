@@ -31,9 +31,8 @@ namespace FastGeoMesh.Tests.Services
             var structure = new PrismStructureDefinition(
                 new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
                 baseElevation: 0.0,
-                topElevation: 10.0,
-                holes: new[] { hole }
-            );
+                topElevation: 10.0
+            ).AddHole(hole);
 
             // Act - point near left edge of hole
             var result = _checker.IsNearAnyHole(structure, 1.9, 3.0, band: 0.2, _geometryService);
@@ -57,9 +56,8 @@ namespace FastGeoMesh.Tests.Services
             var structure = new PrismStructureDefinition(
                 new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
                 baseElevation: 0.0,
-                topElevation: 10.0,
-                holes: new[] { hole }
-            );
+                topElevation: 10.0
+            ).AddHole(hole);
 
             // Act - point far from hole
             var result = _checker.IsNearAnyHole(structure, 8.0, 8.0, band: 0.2, _geometryService);
@@ -94,17 +92,12 @@ namespace FastGeoMesh.Tests.Services
                 new Vec3(8, 2, 10)
             );
 
-            var geometry = new AdditionalGeometry(
-                points: Array.Empty<Vec3>(),
-                segments: new[] { segment }
-            );
-
             var structure = new PrismStructureDefinition(
                 new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
                 baseElevation: 0.0,
-                topElevation: 10.0,
-                geometry: geometry
+                topElevation: 10.0
             );
+            structure.Geometry.AddSegment(segment);
 
             // Act - point near the segment
             var result = _checker.IsNearAnySegment(structure, 5.0, 2.1, band: 0.2, _geometryService);
@@ -122,17 +115,12 @@ namespace FastGeoMesh.Tests.Services
                 new Vec3(8, 2, 10)
             );
 
-            var geometry = new AdditionalGeometry(
-                points: Array.Empty<Vec3>(),
-                segments: new[] { segment }
-            );
-
             var structure = new PrismStructureDefinition(
                 new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
                 baseElevation: 0.0,
-                topElevation: 10.0,
-                geometry: geometry
+                topElevation: 10.0
             );
+            structure.Geometry.AddSegment(segment);
 
             // Act - point far from segment
             var result = _checker.IsNearAnySegment(structure, 5.0, 8.0, band: 0.2, _geometryService);
@@ -156,9 +144,8 @@ namespace FastGeoMesh.Tests.Services
             var structure = new PrismStructureDefinition(
                 new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
                 baseElevation: 0.0,
-                topElevation: 10.0,
-                holes: new[] { hole }
-            );
+                topElevation: 10.0
+            ).AddHole(hole);
 
             // Act - point inside hole
             var result = _checker.IsInsideAnyHole(structure, 3.0, 3.0, _geometryService);
@@ -182,9 +169,8 @@ namespace FastGeoMesh.Tests.Services
             var structure = new PrismStructureDefinition(
                 new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
                 baseElevation: 0.0,
-                topElevation: 10.0,
-                holes: new[] { hole }
-            );
+                topElevation: 10.0
+            ).AddHole(hole);
 
             // Act - point outside hole
             var result = _checker.IsInsideAnyHole(structure, 8.0, 8.0, _geometryService);

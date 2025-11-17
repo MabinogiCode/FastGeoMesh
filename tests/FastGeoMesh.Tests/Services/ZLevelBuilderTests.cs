@@ -62,16 +62,13 @@ namespace FastGeoMesh.Tests.Services
         public void BuildZLevels_IncludesInternalSurfaceElevations()
         {
             // Arrange
-            var internalSurface = new InternalSurface(
-                new Polygon2D(new[] { new Vec2(2, 2), new Vec2(8, 2), new Vec2(8, 8), new Vec2(2, 8) }),
-                elevation: 5.0
-            );
-
             var structure = new PrismStructureDefinition(
                 new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
                 baseElevation: 0.0,
-                topElevation: 10.0,
-                internalSurfaces: new[] { internalSurface }
+                topElevation: 10.0
+            ).AddInternalSurface(
+                new Polygon2D(new[] { new Vec2(2, 2), new Vec2(8, 2), new Vec2(8, 8), new Vec2(2, 8) }),
+                elevation: 5.0
             );
 
             var options = MesherOptions.CreateBuilder()

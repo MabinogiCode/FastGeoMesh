@@ -1,6 +1,5 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Tests.Helpers; // Required for UnwrapForTests extension
 using FluentAssertions;
 using Xunit;
 
