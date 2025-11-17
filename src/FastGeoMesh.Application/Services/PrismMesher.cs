@@ -1,6 +1,5 @@
 using FastGeoMesh.Application.Helpers.Meshing;
 using FastGeoMesh.Application.Helpers.Structure;
-using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
 
 namespace FastGeoMesh.Application.Services
@@ -12,7 +11,9 @@ namespace FastGeoMesh.Application.Services
         private readonly IPerformanceMonitor _performanceMonitor;
         private readonly IGeometryService _geometryService;
         private readonly IZLevelBuilder _zLevelBuilder;
+#pragma warning disable IDE0052 // Remove unread private members - Reserved for future use in helper refactoring
         private readonly IProximityChecker _proximityChecker;
+#pragma warning restore IDE0052
 
         /// <summary>Create a mesher with required services.</summary>
         public PrismMesher(

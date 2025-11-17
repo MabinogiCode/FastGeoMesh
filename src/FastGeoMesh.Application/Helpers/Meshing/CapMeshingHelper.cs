@@ -88,7 +88,7 @@ namespace FastGeoMesh.Application.Helpers.Meshing
 
         /// <summary>Optimized axis-aligned rectangle cap generation with refinement near holes/segments.</summary>
         internal static ImmutableMesh GenerateRectangleCaps(ImmutableMesh inputMesh, PrismStructureDefinition structure, MesherOptions options,
-            double z0, double z1, Vec2 min, Vec2 max, bool genBottom, bool genTop)
+            double z0, double z1, Vec2 min, Vec2 max, bool genBottom, bool genTop, IGeometryService geometryService)
         {
             var mesh = inputMesh;
             var quadsToAdd = new List<Quad>();
