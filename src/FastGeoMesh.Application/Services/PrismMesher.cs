@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Helpers.Meshing;
 using FastGeoMesh.Application.Helpers.Structure;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
 
 namespace FastGeoMesh.Application.Services
