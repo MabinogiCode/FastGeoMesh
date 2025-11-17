@@ -5,7 +5,7 @@ using FastGeoMesh.Domain.Services;
 namespace FastGeoMesh.Application.Services
 {
     /// <summary>Prism mesher producing quad-dominant meshes (side quads + cap quads, optional cap triangles).</summary>
-    public sealed class PrismMesher : IAsyncMesher
+    public sealed class PrismMesher : IPrismMesher, IAsyncMesher
     {
         private readonly ICapMeshingStrategy _capStrategy;
         private readonly IPerformanceMonitor _performanceMonitor;

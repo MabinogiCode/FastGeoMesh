@@ -6,7 +6,7 @@ namespace FastGeoMesh.Application.Services
     /// Null object implementation of <see cref="IPerformanceMonitor"/> for use when no monitoring is required.
     /// Kept in Application layer as a lightweight default implementation for samples/tests.
     /// </summary>
-    internal sealed class NullPerformanceMonitor : IPerformanceMonitor
+    public sealed class NullPerformanceMonitor : IPerformanceMonitor
     {
         /// <summary>Returns empty performance statistics.</summary>
         public PerformanceStatistics GetLiveStatistics() => new();
