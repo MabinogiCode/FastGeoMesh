@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Services;
 using FastGeoMesh.Infrastructure.Services;
 
 namespace FastGeoMesh.Tests.Helpers
