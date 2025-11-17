@@ -23,7 +23,7 @@ namespace FastGeoMesh.Tests.Meshing
                 GenerateTopCap = true,
                 MinCapQuadQuality = 0.0
             };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var sideQuads = mesh.Quads.Where(q => !ExcavationSlabDoesNotInterferewithSideFacesTestHelpers.IsCapQuad(q)).ToList();
             sideQuads.Should().NotBeEmpty();
             var distinctZLevelsInSides = sideQuads

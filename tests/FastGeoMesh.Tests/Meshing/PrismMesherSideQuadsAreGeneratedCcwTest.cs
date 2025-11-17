@@ -17,7 +17,7 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithTargetEdgeLengthXY(10.0)
                 .WithTargetEdgeLengthZ(20.0)
                 .Build().UnwrapForTests();
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var result = mesher.Mesh(structure, options);
             result.IsSuccess.Should().BeTrue();
             var mesh = result.Value;

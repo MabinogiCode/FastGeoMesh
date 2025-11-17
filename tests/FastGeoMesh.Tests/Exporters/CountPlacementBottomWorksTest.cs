@@ -21,7 +21,7 @@ namespace FastGeoMesh.Tests.Exporters
                 GenerateBottomCap = true,
                 GenerateTopCap = false
             };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
 
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}_bottom.txt");

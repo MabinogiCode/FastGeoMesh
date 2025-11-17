@@ -26,7 +26,7 @@ namespace FastGeoMesh.Tests.Performance
                 GenerateBottomCap = true,
                 GenerateTopCap = true
             };
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var mesh1 = mesher.Mesh(structure, options).UnwrapForTests();
             var mesh2 = mesher.Mesh(structure, options).UnwrapForTests();
             var mesh3 = mesher.Mesh(structure, options).UnwrapForTests();

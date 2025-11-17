@@ -26,7 +26,7 @@ namespace FastGeoMesh.Tests.Exporters
                 TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY,
                 TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ
             };
-            var mesh = new PrismMesher().Mesh(st, opt).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
 
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.gltf");

@@ -22,7 +22,7 @@ namespace FastGeoMesh.Tests.Meshing
                 GenerateTopCap = false
             };
 
-            var mesh = new PrismMesher().Mesh(structure, opt).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, opt).UnwrapForTests();
 
             var zset = mesh.Quads
                 .Where(q => !(q.V0.Z == q.V1.Z && q.V1.Z == q.V2.Z && q.V2.Z == q.V3.Z))

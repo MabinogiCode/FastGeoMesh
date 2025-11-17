@@ -1,6 +1,7 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Infrastructure.FileOperations;
+using FastGeoMesh.Infrastructure.Services;
 
 namespace FastGeoMesh.Sample
 {
@@ -31,7 +32,11 @@ namespace FastGeoMesh.Sample
 
             if (optionsResult.IsSuccess)
             {
-                var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
+                var geometryService = new GeometryService();
+                var zLevelBuilder = new ZLevelBuilder();
+                var proximityChecker = new ProximityChecker();
+                var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
+                var meshResult = mesher.Mesh(structure, optionsResult.Value);
                 if (meshResult.IsSuccess)
                 {
                     var indexed = IndexedMesh.FromMesh(meshResult.Value);

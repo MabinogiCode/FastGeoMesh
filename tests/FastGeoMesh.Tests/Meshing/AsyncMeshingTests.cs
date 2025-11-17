@@ -20,7 +20,7 @@ namespace FastGeoMesh.Tests.Meshing
         /// </summary>
         public AsyncMeshingTests()
         {
-            _mesher = new PrismMesher();
+            _mesher = TestMesherFactory.CreatePrismMesher();
             _options = MesherOptions.CreateBuilder()
                 .WithFastPreset()
                 .Build().UnwrapForTests();

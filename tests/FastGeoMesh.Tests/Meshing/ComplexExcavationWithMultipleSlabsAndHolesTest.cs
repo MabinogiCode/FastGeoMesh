@@ -27,7 +27,7 @@ namespace FastGeoMesh.Tests.Meshing
                 GenerateTopCap = true,
                 MinCapQuadQuality = 0.1
             };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var upperSlabQuads = mesh.Quads.Where(q => ComplexExcavationWithMultipleSlabsAndHolesTestHelpers.IsQuadAtZ(q, -1)).ToList();
             var lowerSlabQuads = mesh.Quads.Where(q => ComplexExcavationWithMultipleSlabsAndHolesTestHelpers.IsQuadAtZ(q, -3)).ToList();
             upperSlabQuads.Should().NotBeEmpty();

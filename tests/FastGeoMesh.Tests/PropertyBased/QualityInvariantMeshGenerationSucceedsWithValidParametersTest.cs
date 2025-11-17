@@ -30,7 +30,7 @@ namespace FastGeoMesh.Tests.PropertyBased
                 .Build()
                 .UnwrapForTests();
 
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
             bool hasGeometry = indexed.Vertices.Count > 0 && indexed.Quads.Count > 0;

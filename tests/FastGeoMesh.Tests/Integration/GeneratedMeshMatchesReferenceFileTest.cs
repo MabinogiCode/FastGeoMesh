@@ -1,6 +1,7 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure.FileOperations;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -55,7 +56,7 @@ namespace FastGeoMesh.Tests.Integration
                 GenerateTopCap = true
             };
 
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var generatedMeshResult = mesher.Mesh(structure, options);
 
             if (generatedMeshResult.IsFailure)

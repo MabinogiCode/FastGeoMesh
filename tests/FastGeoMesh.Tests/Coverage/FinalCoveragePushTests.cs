@@ -200,7 +200,7 @@ namespace FastGeoMesh.Tests.Coverage
         {
             try
             {
-                var mesher = new PrismMesher();
+                var mesher = TestMesherFactory.CreatePrismMesher();
 
                 // Test basic valid polygon
                 var rect = Polygon2D.FromPoints(new[]

@@ -24,7 +24,7 @@ namespace FastGeoMesh.Tests.Performance
                 TargetEdgeLengthXY = EdgeLength.From(1.0),
                 TargetEdgeLengthZ = EdgeLength.From(1.0)
             };
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var quads1 = mesh.Quads;
             var quads2 = mesh.Quads;

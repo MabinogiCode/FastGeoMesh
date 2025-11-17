@@ -1,4 +1,5 @@
 using FastGeoMesh.Application.Services;
+using FastGeoMesh.Infrastructure.Services;
 
 namespace FastGeoMesh.Sample
 {
@@ -30,7 +31,10 @@ namespace FastGeoMesh.Sample
 
             if (optionsResult.IsSuccess)
             {
-                var mesher = new PrismMesher();
+                var geometryService = new GeometryService();
+                var zLevelBuilder = new ZLevelBuilder();
+                var proximityChecker = new ProximityChecker();
+                var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
                 var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
                 if (meshResult.IsSuccess)
@@ -53,7 +57,10 @@ namespace FastGeoMesh.Sample
 
             if (optionsResult.IsSuccess)
             {
-                var mesher = new PrismMesher();
+                var geometryService = new GeometryService();
+                var zLevelBuilder = new ZLevelBuilder();
+                var proximityChecker = new ProximityChecker();
+                var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
                 var asyncMesher = (IAsyncMesher)mesher;
 
                 var stopwatch = System.Diagnostics.Stopwatch.StartNew();

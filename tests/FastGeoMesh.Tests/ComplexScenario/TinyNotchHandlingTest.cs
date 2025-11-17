@@ -20,7 +20,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
                 .WithMinCapQuadQuality(0.1)
                 .Build()
                 .UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             mesh.QuadCount.Should().BeGreaterThan(5);
             var indexed = IndexedMesh.FromMesh(mesh);
             indexed.VertexCount.Should().BeGreaterThan(10);

@@ -371,7 +371,7 @@ namespace FastGeoMesh.Tests.Coverage
         {
             try
             {
-                var mesher = new PrismMesher();
+                var mesher = TestMesherFactory.CreatePrismMesher();
 
                 // Test with degenerate polygon (too few vertices)
                 var degenerateVertices = new[] { new Vec2(0, 0), new Vec2(1, 0) }; // Only 2 vertices

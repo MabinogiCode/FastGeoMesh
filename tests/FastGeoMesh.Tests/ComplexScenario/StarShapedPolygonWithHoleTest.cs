@@ -34,7 +34,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
                 .WithRejectedCapTriangles(true)
                 .Build()
                 .UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
             indexed.VertexCount.Should().BeGreaterThan(20);
             (indexed.QuadCount + indexed.TriangleCount).Should().BeGreaterThan(15);

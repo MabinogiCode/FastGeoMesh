@@ -21,7 +21,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
                 .WithTargetEdgeLengthZ(0.8)
                 .Build()
                 .UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
             indexed.VertexCount.Should().BeGreaterThan(30);
             indexed.QuadCount.Should().BeGreaterThan(25);

@@ -30,7 +30,7 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithTargetEdgeLengthZ(0.4)
                 .WithCaps(bottom: true, top: true)
                 .Build().UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             var adj = im.BuildAdjacency();
             mesh.Points.Should().Contain(refP);

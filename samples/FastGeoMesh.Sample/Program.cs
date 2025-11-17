@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Infrastructure.Services;
 
 namespace FastGeoMesh.Sample
 {
@@ -56,7 +57,10 @@ namespace FastGeoMesh.Sample
             }
 
             // 3. Application: Generate mesh with clean error handling
-            var mesher = new PrismMesher();
+            var geometryService = new GeometryService();
+            var zLevelBuilder = new ZLevelBuilder();
+            var proximityChecker = new ProximityChecker();
+            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             if (meshResult.IsFailure)
@@ -101,7 +105,10 @@ namespace FastGeoMesh.Sample
             }
 
             // Application layer handles complex meshing
-            var mesher = new PrismMesher();
+            var geometryService = new GeometryService();
+            var zLevelBuilder = new ZLevelBuilder();
+            var proximityChecker = new ProximityChecker();
+            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             if (meshResult.IsSuccess)
@@ -152,7 +159,10 @@ namespace FastGeoMesh.Sample
                 return;
             }
 
-            var mesher = new PrismMesher();
+            var geometryService = new GeometryService();
+            var zLevelBuilder = new ZLevelBuilder();
+            var proximityChecker = new ProximityChecker();
+            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             if (meshResult.IsSuccess)
@@ -201,7 +211,10 @@ namespace FastGeoMesh.Sample
                 return;
             }
 
-            var mesher = new PrismMesher();
+            var geometryService = new GeometryService();
+            var zLevelBuilder = new ZLevelBuilder();
+            var proximityChecker = new ProximityChecker();
+            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
             var asyncMesher = (IAsyncMesher)mesher;
 
             // Demonstrate async batch processing with progress

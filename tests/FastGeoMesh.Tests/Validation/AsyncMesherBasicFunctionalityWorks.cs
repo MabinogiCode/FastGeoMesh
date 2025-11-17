@@ -21,7 +21,7 @@ namespace FastGeoMesh.Tests.Validation
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             structure.Geometry.AddPoint(new Vec3(5, 2.5, 1));
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
             var mesh = await asyncMesher.MeshAsync(structure, options);
             mesh.Value.Should().NotBeNull();

@@ -28,8 +28,8 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithHoleRefinement(1.0, 2.5)
                 .Build().UnwrapForTests();
 
-            var meshCoarse = new PrismMesher().Mesh(baseStruct, coarse).UnwrapForTests();
-            var meshRefined = new PrismMesher().Mesh(baseStruct, refined).UnwrapForTests();
+            var meshCoarse = TestMesherFactory.CreatePrismMesher().Mesh(baseStruct, coarse).UnwrapForTests();
+            var meshRefined = TestMesherFactory.CreatePrismMesher().Mesh(baseStruct, refined).UnwrapForTests();
 
             int coarseCap = meshCoarse.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);
             int refinedCap = meshRefined.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);

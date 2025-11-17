@@ -1,6 +1,7 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Tests.Helpers;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
@@ -23,7 +24,7 @@ namespace FastGeoMesh.Tests.Meshing
                 MinCapQuadQuality = 0.95,
                 OutputRejectedCapTriangles = true
             };
-            var mesh = new PrismMesher().Mesh(structure, options).Value;
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).Value;
             Assert.True(mesh.Triangles.Count > 0, "Expected rejected cap triangles to be emitted");
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             Assert.True(im.Triangles.Count > 0, "Indexed mesh should retain triangle primitives");

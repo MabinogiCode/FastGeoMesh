@@ -27,8 +27,8 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithHoleRefinement(1.25, 2.0)
                 .Build().UnwrapForTests();
 
-            var baseMesh = new PrismMesher().Mesh(structure, baseOpt).UnwrapForTests();
-            var refinedMesh = new PrismMesher().Mesh(structure, refinedOpt).UnwrapForTests();
+            var baseMesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, baseOpt).UnwrapForTests();
+            var refinedMesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, refinedOpt).UnwrapForTests();
 
             int CountSideQuads(ImmutableMesh m) => m.Quads.Count(q => !(q.V0.Z == q.V1.Z && q.V1.Z == q.V2.Z && q.V2.Z == q.V3.Z));
             int sidesBase = CountSideQuads(baseMesh);

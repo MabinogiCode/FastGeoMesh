@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -62,7 +63,7 @@ namespace FastGeoMesh.Tests.Validation
             optionsResult.IsSuccess.Should().BeTrue();
 
             // Act
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             // Assert
@@ -97,7 +98,7 @@ namespace FastGeoMesh.Tests.Validation
                 .Value; // We know it's valid
 
             // Act
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
             var asyncResult = await asyncMesher.MeshAsync(structure, options);
 
@@ -123,7 +124,7 @@ namespace FastGeoMesh.Tests.Validation
             var structure = new PrismStructureDefinition(polygon, 0, 1);
 
             // Application layer
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
 
             // Verify types are accessible
             vec2.Should().NotBeNull();
@@ -160,7 +161,7 @@ namespace FastGeoMesh.Tests.Validation
                 .Value;
 
             // Act
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var meshResult = mesher.Mesh(structure, options);
 
             // Assert

@@ -25,7 +25,7 @@ namespace FastGeoMesh.Tests.Meshing
                 GenerateTopCap = false,
                 MinCapQuadQuality = 0.0
             };
-            var mesh = new PrismMesher().Mesh(st, opt).UnwrapForTests();
+            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(st, opt).UnwrapForTests();
             var plateQuads = mesh.Quads.Where(q => q.V0.Z == 3.0 && q.V1.Z == 3.0 && q.V2.Z == 3.0 && q.V3.Z == 3.0).ToList();
 
             if (plateQuads.Count == 0)

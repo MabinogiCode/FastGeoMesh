@@ -62,7 +62,7 @@ namespace FastGeoMesh.Tests.Coverage
                 .WithFastPreset()
                 .Build().UnwrapForTests();
 
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
 
             // Test basic async meshing
@@ -111,7 +111,7 @@ namespace FastGeoMesh.Tests.Coverage
         [Fact]
         public void VariousMeshingScenariosWithDifferentGeometriesWorkCorrectly()
         {
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
 
             // Test simple rectangle
             var rect = Polygon2D.FromPoints(new[]
@@ -189,7 +189,7 @@ namespace FastGeoMesh.Tests.Coverage
                 new Vec2(0, 0), new Vec2(3, 0), new Vec2(3, 2), new Vec2(0, 2)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 1);
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
 
             // Test fast preset
             var fastOptions = MesherOptions.CreateBuilder()
@@ -371,7 +371,7 @@ namespace FastGeoMesh.Tests.Coverage
                 .WithCaps(bottom: true, top: true)
                 .Build().UnwrapForTests();
 
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var result = mesher.Mesh(structure, options);
 
             result.IsSuccess.Should().BeTrue();

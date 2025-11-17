@@ -18,8 +18,8 @@ namespace FastGeoMesh.Tests.Quality
             var structure = new PrismStructureDefinition(outer, 0, 1);
             var withDefault = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.5), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = true, GenerateTopCap = true };
             var loose = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.5), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = true, GenerateTopCap = true, MinCapQuadQuality = 0.0 };
-            var meshDef = new PrismMesher().Mesh(structure, withDefault).UnwrapForTests();
-            var meshLoose = new PrismMesher().Mesh(structure, loose).UnwrapForTests();
+            var meshDef = TestMesherFactory.CreatePrismMesher().Mesh(structure, withDefault).UnwrapForTests();
+            var meshLoose = TestMesherFactory.CreatePrismMesher().Mesh(structure, loose).UnwrapForTests();
 
             bool IsTop(Quad q) => q.V0.Z == 1 && q.V1.Z == 1 && q.V2.Z == 1 && q.V3.Z == 1;
             bool IsTopTriangle(Triangle t) => t.V0.Z == 1 && t.V1.Z == 1 && t.V2.Z == 1;

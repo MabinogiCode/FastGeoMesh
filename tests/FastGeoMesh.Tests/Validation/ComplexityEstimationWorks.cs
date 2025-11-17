@@ -20,7 +20,7 @@ namespace FastGeoMesh.Tests.Validation
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
-            var mesher = new PrismMesher();
+            var mesher = TestMesherFactory.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
             var estimate = await asyncMesher.EstimateComplexityAsync(structure, options);
             estimate.Should().NotBeNull();

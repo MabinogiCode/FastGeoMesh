@@ -19,7 +19,7 @@ namespace FastGeoMesh.Tests.Meshing
         /// <summary>Initializes the test class with mesher, async mesher, and options.</summary>
         public AsyncMeshingCoverageTests()
         {
-            _mesher = new PrismMesher();
+            _mesher = TestMesherFactory.CreatePrismMesher();
             _asyncMesher = _mesher;
             _options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
         }

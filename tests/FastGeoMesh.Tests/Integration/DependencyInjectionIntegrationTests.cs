@@ -2,6 +2,7 @@ using FastGeoMesh;
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
+using FastGeoMesh.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -72,9 +73,9 @@ namespace FastGeoMesh.Tests.Integration
             var mesher = serviceProvider.GetRequiredService<IPrismMesher>();
 
             var structure = new PrismStructureDefinition(
-                new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
-                baseElevation: 0.0,
-                topElevation: 10.0
+                Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
+                0.0,
+                10.0
             );
 
             var optionsResult = MesherOptions.CreateBuilder()
@@ -149,9 +150,9 @@ namespace FastGeoMesh.Tests.Integration
             var mesher = serviceProvider.GetRequiredService<IAsyncMesher>();
 
             var structure = new PrismStructureDefinition(
-                new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
-                baseElevation: 0.0,
-                topElevation: 10.0
+                Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
+                0.0,
+                10.0
             );
 
             var optionsResult = MesherOptions.CreateBuilder()
@@ -177,9 +178,9 @@ namespace FastGeoMesh.Tests.Integration
             var zLevelBuilder = serviceProvider.GetRequiredService<IZLevelBuilder>();
 
             var structure = new PrismStructureDefinition(
-                new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
-                baseElevation: 0.0,
-                topElevation: 10.0
+                Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
+                0.0,
+                10.0
             );
 
             var options = MesherOptions.CreateBuilder().Build().Value;
@@ -203,7 +204,7 @@ namespace FastGeoMesh.Tests.Integration
             var proximityChecker = serviceProvider.GetRequiredService<IProximityChecker>();
             var geometryService = serviceProvider.GetRequiredService<IGeometryService>();
 
-            var hole = new Polygon2D(new[]
+            var hole = Polygon2D.FromPoints(new[]
             {
                 new Vec2(2, 2),
                 new Vec2(4, 2),
@@ -212,11 +213,10 @@ namespace FastGeoMesh.Tests.Integration
             });
 
             var structure = new PrismStructureDefinition(
-                new Polygon2D(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
-                baseElevation: 0.0,
-                topElevation: 10.0,
-                holes: new[] { hole }
-            );
+                Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) }),
+                0.0,
+                10.0
+            ).AddHole(hole);
 
             // Act
             var isNear = proximityChecker.IsNearAnyHole(structure, 1.9, 3.0, band: 0.2, geometryService);

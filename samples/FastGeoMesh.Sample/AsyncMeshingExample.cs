@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Infrastructure.Services;
 
 namespace FastGeoMesh.Sample
 {
@@ -37,7 +38,10 @@ namespace FastGeoMesh.Sample
             }
 
             // Application: Create mesher and use async interface
-            var mesher = new PrismMesher();
+            var geometryService = new GeometryService();
+            var zLevelBuilder = new ZLevelBuilder();
+            var proximityChecker = new ProximityChecker();
+            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
             var asyncMesher = (IAsyncMesher)mesher;
 
             // Set up progress reporting
@@ -113,7 +117,10 @@ namespace FastGeoMesh.Sample
             }
 
             // Application: Process batch with async interface
-            var mesher = new PrismMesher();
+            var geometryService = new GeometryService();
+            var zLevelBuilder = new ZLevelBuilder();
+            var proximityChecker = new ProximityChecker();
+            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
             var asyncMesher = (IAsyncMesher)mesher;
 
             var batchProgress = new Progress<MeshingProgress>(p =>
