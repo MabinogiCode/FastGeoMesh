@@ -1,6 +1,5 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure.Services;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
@@ -27,10 +26,7 @@ namespace FastGeoMesh.Tests.Coverage
         {
             // Arrange
             var customStrategy = new CustomTestCapStrategy();
-            var geometryService = new GeometryService();
-            var zLevelBuilder = new ZLevelBuilder();
-            var proximityChecker = new ProximityChecker();
-            var mesher = new PrismMesher(customStrategy, geometryService, zLevelBuilder, proximityChecker);
+            var mesher = TestServiceProvider.CreatePrismMesherWithCustomCapStrategy(customStrategy);
 
             var structure = new PrismStructureDefinition(
                 Polygon2D.FromPoints(new[]
@@ -50,13 +46,8 @@ namespace FastGeoMesh.Tests.Coverage
         [Fact]
         public void PrismMesherWithNullCapStrategyThrowsArgumentNullException()
         {
-            // Arrange
-            var geometryService = new GeometryService();
-            var zLevelBuilder = new ZLevelBuilder();
-            var proximityChecker = new ProximityChecker();
-
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => new PrismMesher(null!, geometryService, zLevelBuilder, proximityChecker));
+            Assert.Throws<ArgumentNullException>(() => TestServiceProvider.CreatePrismMesherWithCustomCapStrategy(null!));
         }
 
         /// <summary>Tests MesherOptions validation with invalid values.</summary>

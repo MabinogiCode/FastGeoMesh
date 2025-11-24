@@ -51,10 +51,6 @@ namespace FastGeoMesh.Application.Helpers.Quality
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static double ScoreQuadSIMD((Vec2 v0, Vec2 v1, Vec2 v2, Vec2 v3) quad)
         {
-            // Pack coordinates into SIMD vectors for parallel computation
-            var x = Vector256.Create(quad.v0.X, quad.v1.X, quad.v2.X, quad.v3.X);
-            var y = Vector256.Create(quad.v0.Y, quad.v1.Y, quad.v2.Y, quad.v3.Y);
-
             // Calculate edge vectors using SIMD
             var dx = Vector256.Create(quad.v1.X - quad.v0.X, quad.v2.X - quad.v1.X, quad.v3.X - quad.v2.X, quad.v0.X - quad.v3.X);
             var dy = Vector256.Create(quad.v1.Y - quad.v0.Y, quad.v2.Y - quad.v1.Y, quad.v3.Y - quad.v2.Y, quad.v0.Y - quad.v3.Y);

@@ -1,6 +1,8 @@
 using FastGeoMesh.Application.Helpers.Meshing;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure.Services;
+using FastGeoMesh.Domain.Services;
+using FastGeoMesh.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using FluentAssertions;
 using Xunit;
 
@@ -15,7 +17,13 @@ namespace FastGeoMesh.Tests.Meshing
             var structure = new PrismStructureDefinition(rect, 0, 2);
             var opt = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(2.0), TargetEdgeLengthZ = EdgeLength.From(1.0), GenerateBottomCap = true, GenerateTopCap = true };
             var mesh = new ImmutableMesh();
-            var resultMesh = CapMeshingHelper.GenerateCaps(mesh, structure, opt, 0, 2, new GeometryService());
+
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var geo = provider.GetRequiredService<IGeometryService>();
+
+            var resultMesh = CapMeshingHelper.GenerateCaps(mesh, structure, opt, 0, 2, geo);
             int bottom = resultMesh.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);
             int top = resultMesh.Quads.Count(q => q.V0.Z == 2 && q.V1.Z == 2 && q.V2.Z == 2 && q.V3.Z == 2);
             bottom.Should().BeGreaterThan(0);

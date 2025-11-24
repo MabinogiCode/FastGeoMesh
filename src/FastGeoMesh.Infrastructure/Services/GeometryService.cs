@@ -1,5 +1,6 @@
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
+using FastGeoMesh.Infrastructure.Utilities;
 
 namespace FastGeoMesh.Infrastructure.Services
 {
@@ -7,12 +8,20 @@ namespace FastGeoMesh.Infrastructure.Services
     /// Implementation of geometry service providing fundamental geometric calculations.
     /// Consolidates geometry operations from former GeometryHelper and GeometryCalculationHelper.
     /// </summary>
-    public sealed class GeometryService : IGeometryService
+    public sealed class GeometryService : IGeometryService, IGeometryHelper
     {
+        private readonly IGeometryConfig _config;
+
+        /// <summary>Creates a new <see cref="GeometryService"/>. If no config provided a default one is used.</summary>
+        public GeometryService(IGeometryConfig? config = null)
+        {
+            _config = config ?? new GeometryConfigImpl();
+        }
+
         /// <inheritdoc/>
         public double DistancePointToSegment(in Vec2 p, in Vec2 a, in Vec2 b, double tolerance = 0)
         {
-            tolerance = tolerance <= 0 ? GeometryConfig.DefaultTolerance : tolerance;
+            tolerance = tolerance <= 0 ? _config.DefaultTolerance : tolerance;
 
             var ab = b - a;
             var ap = p - a;
@@ -70,9 +79,9 @@ namespace FastGeoMesh.Infrastructure.Services
             var cross4 = (quad.a - quad.d).Cross(quad.b - quad.a);
 
             // All should have the same sign for convexity
-            var tolerance = GeometryConfig.ConvexityTolerance;
-            return (cross1 >= tolerance && cross2 >= tolerance && cross3 >= tolerance && cross4 >= tolerance) ||
-                   (cross1 <= -tolerance && cross2 <= -tolerance && cross3 <= -tolerance && cross4 <= -tolerance);
+            bool pos = cross1 > _config.ConvexityTolerance && cross2 > _config.ConvexityTolerance && cross3 > _config.ConvexityTolerance && cross4 > _config.ConvexityTolerance;
+            bool neg = cross1 < -_config.ConvexityTolerance && cross2 < -_config.ConvexityTolerance && cross3 < -_config.ConvexityTolerance && cross4 < -_config.ConvexityTolerance;
+            return pos || neg;
         }
 
         /// <inheritdoc/>
@@ -84,7 +93,7 @@ namespace FastGeoMesh.Infrastructure.Services
         /// <inheritdoc/>
         public bool PointInPolygon(ReadOnlySpan<Vec2> vertices, double x, double y, double tolerance = 0)
         {
-            tolerance = tolerance <= 0 ? GeometryConfig.PointInPolygonTolerance : tolerance;
+            tolerance = tolerance <= 0 ? _config.PointInPolygonTolerance : tolerance;
 
             int n = vertices.Length;
             if (n < 3)
@@ -209,7 +218,17 @@ namespace FastGeoMesh.Infrastructure.Services
         /// <inheritdoc/>
         public double Clamp(double value, double min, double max)
         {
-            return value < min ? min : value > max ? max : value;
+            if (value < min)
+            {
+                return min;
+            }
+
+            if (value > max)
+            {
+                return max;
+            }
+
+            return value;
         }
 
         #region Private Helper Methods
@@ -217,7 +236,8 @@ namespace FastGeoMesh.Infrastructure.Services
         /// <summary>
         /// Checks if a polygon edge crosses a horizontal ray extending to the right from a point.
         /// </summary>
-        private static bool DoesEdgeCrossHorizontalRay(in Vec2 edgeStart, in Vec2 edgeEnd, double pointX, double pointY)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1822:Mark members as static", Justification = "Coding guideline prohibits mixing static and instance methods")]
+        private bool DoesEdgeCrossHorizontalRay(in Vec2 edgeStart, in Vec2 edgeEnd, double pointX, double pointY)
         {
             // Check if the edge is not horizontal and straddles the horizontal line at pointY.
             if ((edgeStart.Y > pointY) == (edgeEnd.Y > pointY))
@@ -234,7 +254,8 @@ namespace FastGeoMesh.Infrastructure.Services
         /// <summary>
         /// Checks if a point lies on a line segment within tolerance.
         /// </summary>
-        private static bool IsPointOnSegment(double px, double py, double ax, double ay, double bx, double by, double tolerance)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1822:Mark members as static", Justification = "Coding guideline prohibits mixing static and instance methods")]
+        private bool IsPointOnSegment(double px, double py, double ax, double ay, double bx, double by, double tolerance)
         {
             // Vector from A to P
             double apx = px - ax;

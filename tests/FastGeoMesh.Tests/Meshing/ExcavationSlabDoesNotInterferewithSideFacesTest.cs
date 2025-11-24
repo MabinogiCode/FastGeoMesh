@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -22,7 +23,7 @@ namespace FastGeoMesh.Tests.Meshing
                 GenerateTopCap = true,
                 MinCapQuadQuality = 0.0
             };
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var sideQuads = mesh.Quads.Where(q => !ExcavationSlabDoesNotInterferewithSideFacesTestHelpers.IsCapQuad(q)).ToList();
             sideQuads.Should().NotBeEmpty();
             var distinctZLevelsInSides = sideQuads

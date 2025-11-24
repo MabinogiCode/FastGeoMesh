@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -27,7 +28,7 @@ namespace FastGeoMesh.Tests.PropertyBased
                 .Build()
                 .UnwrapForTests();
 
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
             indexed.Quads.All(q => q.Item1 >= 0 && q.Item1 < indexed.Vertices.Count && q.Item2 >= 0 && q.Item2 < indexed.Vertices.Count && q.Item3 >= 0 && q.Item3 < indexed.Vertices.Count && q.Item4 >= 0 && q.Item4 < indexed.Vertices.Count && q.Item1 != q.Item2 && q.Item2 != q.Item3 && q.Item3 != q.Item4 && q.Item4 != q.Item1).Should().BeTrue();

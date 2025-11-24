@@ -1,7 +1,9 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.PropertyBased
 {
@@ -29,7 +31,11 @@ namespace FastGeoMesh.Tests.PropertyBased
                 .Build()
                 .UnwrapForTests();
 
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+            var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
             bool hasGeometry = indexed.Vertices.Count > 0 && indexed.Quads.Count > 0;

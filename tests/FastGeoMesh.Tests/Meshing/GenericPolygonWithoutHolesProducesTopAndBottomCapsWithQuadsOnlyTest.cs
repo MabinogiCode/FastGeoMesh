@@ -1,7 +1,9 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Meshing
 {
@@ -17,7 +19,11 @@ namespace FastGeoMesh.Tests.Meshing
             var structure = new PrismStructureDefinition(outer, -2, -1);
             var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.75), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = true, GenerateTopCap = true };
 
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+            var mesh = mesher.Mesh(structure, options).UnwrapForTests();
 
             int topQuads = mesh.Quads.Count(q => q.V0.Z == -1 && q.V1.Z == -1 && q.V2.Z == -1 && q.V3.Z == -1);
             int topTriangles = mesh.Triangles.Count(t => t.V0.Z == -1 && t.V1.Z == -1 && t.V2.Z == -1);

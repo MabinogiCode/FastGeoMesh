@@ -1,7 +1,9 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Tests.Helpers;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Exporters
 {
@@ -25,7 +27,13 @@ namespace FastGeoMesh.Tests.Exporters
                 TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY,
                 TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ
             };
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(st, opt).UnwrapForTests();
+
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+
+            var mesh = mesher.Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
 
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.gltf");

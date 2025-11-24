@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace FastGeoMesh.Tests.Validation
 
             optionsResult.IsSuccess.Should().BeTrue();
 
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var mesher = TestServiceProvider.CreatePrismMesher();
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             meshResult.IsSuccess.Should().BeTrue();

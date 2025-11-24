@@ -1,14 +1,25 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
-using FastGeoMesh.Infrastructure.Services;
+using FastGeoMesh.Tests.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Helpers
 {
     /// <summary>Test implementation of async mesher interface for performance optimization tests.</summary>
     internal sealed class TestAsyncMesher : IAsyncMesher
     {
-        private readonly PrismMesher _actualMesher = TestMesherFactory.CreatePrismMesher();
+        private readonly IAsyncMesher _actualMesher;
+
+        public TestAsyncMesher()
+            : this(TestServiceProvider.CreateDefaultProvider().GetRequiredService<IAsyncMesher>())
+        {
+        }
+
+        public TestAsyncMesher(IAsyncMesher actualMesher)
+        {
+            _actualMesher = actualMesher;
+        }
 
         /// <summary>
         /// Synchronously meshes the provided structure definition with the supplied options.

@@ -1,7 +1,9 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Performance
 {
@@ -28,7 +30,10 @@ namespace FastGeoMesh.Tests.Performance
                 GenerateBottomCap = true,
                 GenerateTopCap = true
             };
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var indexedMesh = IndexedMesh.FromMesh(mesh);
             mesh.Quads.Should().NotBeEmpty();

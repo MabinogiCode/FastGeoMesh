@@ -68,7 +68,7 @@ namespace FastGeoMesh.Tests.Services
                 topElevation: 10.0
             ).AddInternalSurface(
                 new Polygon2D(new[] { new Vec2(2, 2), new Vec2(8, 2), new Vec2(8, 8), new Vec2(2, 8) }),
-                elevation: 5.0
+                z: 5.0
             );
 
             var options = MesherOptions.CreateBuilder()

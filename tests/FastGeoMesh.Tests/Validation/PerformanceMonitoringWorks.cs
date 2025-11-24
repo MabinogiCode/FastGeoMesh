@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -13,7 +14,7 @@ namespace FastGeoMesh.Tests.Validation
         [Fact]
         public async Task Test()
         {
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var mesher = TestServiceProvider.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
             var stats = await asyncMesher.GetLivePerformanceStatsAsync();
             stats.Should().NotBeNull();

@@ -8,21 +8,22 @@
         "resolved": "1.1.15",
         "contentHash": "KuA7N3Nv/lIeawJdQBQJR6oqWD9KETHLbWzBqapwFs+Tby+R5I4crkKujKMm5bXcSuFZ8LNtflFQVadsWCbBjg=="
       },
-      "Microsoft.Extensions.ObjectPool": {
+      "Microsoft.Extensions.DependencyInjection": {
+        "type": "Direct",
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "V8S3bsm50ig6JSyrbcJJ8bW2b9QLGouz+G1miK3UTaOWmMtFwNNNzUf4AleyDWUmTrWMLNnFSLEQtxmxgNQnNQ==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0"
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "Transitive",
-        "resolved": "9.0.9",
-        "contentHash": "jYZSlGBpPzqWr3mc7cf/YNTY45ys7FIaziQtHAK3sWtd5v4ehpowBmrL2aOSizfM7Q326PDw2P100ILpdEbhzg=="
+        "resolved": "8.0.0",
+        "contentHash": "cjWrLkJXK0rs4zofsK4bSdg+jhDLTaxrkXu4gS6Y7MAlCvRyNNgwY/lJi5RDlQOnSZweHqoyvgvbdvQsRIW+hg=="
       },
       "fastgeomesh.domain": {
         "type": "Project"
-      },
-      "fastgeomesh.infrastructure": {
-        "type": "Project",
-        "dependencies": {
-          "FastGeoMesh.Domain": "[1.0.0, )",
-          "LibTessDotNet": "[1.1.15, )",
-          "Microsoft.Extensions.ObjectPool": "[9.0.9, )"
-        }
       }
     }
   }

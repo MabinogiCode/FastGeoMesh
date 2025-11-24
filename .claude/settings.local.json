@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(head:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(Select-String -Pattern \"error\" -Context 0,0)",
+      "Bash(git -C \"C:\\Git-perso\\FastGeoMesh\" status --short)",
+      "Bash(dotnet clean:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

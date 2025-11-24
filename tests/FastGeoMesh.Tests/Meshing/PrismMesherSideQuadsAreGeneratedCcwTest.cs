@@ -1,7 +1,9 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Meshing
 {
@@ -16,7 +18,10 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithTargetEdgeLengthXY(10.0)
                 .WithTargetEdgeLengthZ(20.0)
                 .Build().UnwrapForTests();
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var result = mesher.Mesh(structure, options);
             result.IsSuccess.Should().BeTrue();
             var mesh = result.Value;

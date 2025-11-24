@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\FastGeoMesh.Domain\FastGeoMesh.Domain.csproj" />
+    <ProjectReference Include="..\src\FastGeoMesh.Infrastructure\FastGeoMesh.Infrastructure.csproj" />
+    <ProjectReference Include="..\src\FastGeoMesh\FastGeoMesh.csproj" />
+    <ProjectReference Include="..\src\FastGeoMesh.Application\FastGeoMesh.Application.csproj" />
+  </ItemGroup>
+
+</Project>

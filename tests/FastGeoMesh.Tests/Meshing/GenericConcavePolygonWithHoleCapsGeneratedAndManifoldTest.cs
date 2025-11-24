@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -30,7 +31,7 @@ namespace FastGeoMesh.Tests.Meshing
                 GenerateTopCap = true
             };
 
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
             int topQuads = mesh.Quads.Count(q => q.V0.Z == 1 && q.V1.Z == 1 && q.V2.Z == 1 && q.V3.Z == 1);

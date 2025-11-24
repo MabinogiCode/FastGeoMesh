@@ -1,6 +1,7 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace FastGeoMesh.Tests.Exporters
             var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 2), new Vec2(0, 2) });
             var st = new PrismStructureDefinition(poly, 0, 1);
             var opt = MesherOptions.CreateBuilder().WithTargetEdgeLengthXY(1.0).WithTargetEdgeLengthZ(0.5).Build().UnwrapForTests();
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(st, opt).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
             string path = Path.Combine(Path.GetTempPath(), $"fgm_test_{Guid.NewGuid():N}.svg");
             SvgExporter.Write(im, path);

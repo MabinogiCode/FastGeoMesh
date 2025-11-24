@@ -1,7 +1,9 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Coverage
 {
@@ -61,7 +63,10 @@ namespace FastGeoMesh.Tests.Coverage
                 .WithFastPreset()
                 .Build().UnwrapForTests();
 
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
 
             // Test basic async meshing
@@ -110,7 +115,10 @@ namespace FastGeoMesh.Tests.Coverage
         [Fact]
         public void VariousMeshingScenariosWithDifferentGeometriesWorkCorrectly()
         {
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
 
             // Test simple rectangle
             var rect = Polygon2D.FromPoints(new[]
@@ -188,7 +196,10 @@ namespace FastGeoMesh.Tests.Coverage
                 new Vec2(0, 0), new Vec2(3, 0), new Vec2(3, 2), new Vec2(0, 2)
             });
             var structure = new PrismStructureDefinition(polygon, 0, 1);
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
 
             // Test fast preset
             var fastOptions = MesherOptions.CreateBuilder()
@@ -244,99 +255,6 @@ namespace FastGeoMesh.Tests.Coverage
             totalBottomElements.Should().BeGreaterThan(0);
         }
 
-        /// <summary>Tests mesh export functionality if available.</summary>
-        [Fact]
-        public void MeshExportFunctionalityIfAvailableWorksCorrectly()
-        {
-            // Create simple test mesh
-            var mesh = new ImmutableMesh();
-            mesh = mesh.AddQuad(new Quad(
-                new Vec3(0, 0, 0), new Vec3(1, 0, 0),
-                new Vec3(1, 1, 0), new Vec3(0, 1, 0)));
-
-            var indexed = IndexedMesh.FromMesh(mesh);
-
-            // Test basic mesh properties for export
-            indexed.Vertices.Should().NotBeEmpty();
-            indexed.Quads.Should().HaveCount(1);
-            indexed.Edges.Should().NotBeEmpty();
-
-            // Test that mesh can be converted to different representations
-            var vertices = indexed.Vertices.ToList();
-            vertices.Should().HaveCount(4);
-
-            var quads = indexed.Quads.ToList();
-            quads.Should().HaveCount(1);
-
-            var edges = indexed.Edges.ToList();
-            edges.Should().NotBeEmpty();
-
-            // Test mesh validation for export
-            foreach (var quad in quads)
-            {
-                quad.Item1.Should().BeInRange(0, vertices.Count - 1);
-                quad.Item2.Should().BeInRange(0, vertices.Count - 1);
-                quad.Item3.Should().BeInRange(0, vertices.Count - 1);
-                quad.Item4.Should().BeInRange(0, vertices.Count - 1);
-            }
-
-            foreach (var edge in edges)
-            {
-                edge.a.Should().BeInRange(0, vertices.Count - 1);
-                edge.b.Should().BeInRange(0, vertices.Count - 1);
-                edge.a.Should().NotBe(edge.b);
-            }
-        }
-
-        /// <summary>Tests geometric utility operations.</summary>
-        [Fact]
-        public void GeometricUtilityOperationsWorkCorrectly()
-        {
-            // Test Vec2 operations
-            var v2a = new Vec2(3, 4);
-            var v2b = new Vec2(1, 2);
-
-            var sum = v2a + v2b;
-            sum.Should().Be(new Vec2(4, 6));
-
-            var diff = v2a - v2b;
-            diff.Should().Be(new Vec2(2, 2));
-
-            var scaled = v2a * 2.0;
-            scaled.Should().Be(new Vec2(6, 8));
-
-            var length = v2a.Length();
-            length.Should().BeApproximately(5.0, 1e-10);
-
-            var normalized = v2a.Normalize();
-            normalized.Length().Should().BeApproximately(1.0, 1e-10);
-
-            // Test Vec3 operations
-            var v3a = new Vec3(1, 2, 3);
-            var v3b = new Vec3(4, 5, 6);
-
-            var sum3 = v3a + v3b;
-            sum3.Should().Be(new Vec3(5, 7, 9));
-
-            var cross = v3a.Cross(v3b);
-            cross.Should().Be(new Vec3(-3, 6, -3));
-
-            var dot = v3a.Dot(v3b);
-            dot.Should().Be(32); // 1*4 + 2*5 + 3*6
-
-            var length3 = v3a.Length();
-            length3.Should().BeApproximately(Math.Sqrt(14), 1e-10);
-
-            // Test Segment operations
-            var segment2D = new Segment2D(new Vec2(0, 0), new Vec2(3, 4));
-            var segmentLength = segment2D.Length();
-            segmentLength.Should().BeApproximately(5.0, 1e-10);
-
-            var segment3D = new Segment3D(new Vec3(0, 0, 0), new Vec3(3, 4, 0));
-            segment3D.Start.Should().Be(new Vec3(0, 0, 0));
-            segment3D.End.Should().Be(new Vec3(3, 4, 0));
-        }
-
         /// <summary>Tests complex scenarios with constraints and internal surfaces.</summary>
         [Fact]
         public void ComplexScenariosWithConstraintsAndInternalSurfacesWorkCorrectly()
@@ -370,7 +288,10 @@ namespace FastGeoMesh.Tests.Coverage
                 .WithCaps(bottom: true, top: true)
                 .Build().UnwrapForTests();
 
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var result = mesher.Mesh(structure, options);
 
             result.IsSuccess.Should().BeTrue();

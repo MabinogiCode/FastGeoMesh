@@ -1,8 +1,9 @@
 using FastGeoMesh.Application.Helpers.Quality;
-using FastGeoMesh.Infrastructure;
-using FastGeoMesh.Infrastructure.Services;
+using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Services;
 using FluentAssertions;
 using LibTessDotNet;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Quality
@@ -25,13 +26,19 @@ namespace FastGeoMesh.Tests.Quality
             var triangle1 = (0, 1, 2);
             var triangle2 = (0, 2, 3);
 
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var geo = provider.GetRequiredService<IGeometryService>();
+
             // Act
-            var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangle1, triangle2, vertices, new GeometryService());
+            var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangle1, triangle2, vertices, geo);
 
             // Assert - Should either be null or create a valid convex quad
             if (quad.HasValue)
             {
-                GeometryHelper.IsConvex(quad.Value).Should().BeTrue("Created quad should be convex");
+                var helper = provider.GetRequiredService<IGeometryHelper>();
+                helper.IsConvex(quad.Value).Should().BeTrue("Created quad should be convex");
             }
         }
     }

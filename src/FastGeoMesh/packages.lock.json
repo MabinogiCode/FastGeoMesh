@@ -14,6 +14,12 @@
         "resolved": "9.0.0",
         "contentHash": "JajbvkrBgtdRghavIjcJuNHMOja4lqBmEezbhZyqWPYh2cpLhT5mPpfC7NQVDO4IehWQum9t/nwF4v+qQGtYWg=="
       },
+      "Microsoft.Extensions.DependencyInjection.Abstractions": {
+        "type": "Direct",
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "cjWrLkJXK0rs4zofsK4bSdg+jhDLTaxrkXu4gS6Y7MAlCvRyNNgwY/lJi5RDlQOnSZweHqoyvgvbdvQsRIW+hg=="
+      },
       "Microsoft.Extensions.ObjectPool": {
         "type": "Direct",
         "requested": "[9.0.9, )",
@@ -30,22 +36,44 @@
           "Microsoft.SourceLink.Common": "8.0.0"
         }
       },
+      "StyleCop.Analyzers": {
+        "type": "Direct",
+        "requested": "[1.2.0-beta.435, )",
+        "resolved": "1.2.0-beta.435",
+        "contentHash": "TADk7vdGXtfTnYCV7GyleaaRTQjfoSfZXprQrVMm7cSJtJbFc1QIbWPyLvrgrfGdfHbGmUPvaN4ODKNxg2jgPQ==",
+        "dependencies": {
+          "StyleCop.Analyzers.Unstable": "1.2.0.435"
+        }
+      },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
         "resolved": "8.0.0",
         "contentHash": "bZKfSIKJRXLTuSzLudMFte/8CempWjVamNUR5eHJizsy+iuOuO/k2gnh7W0dHJmYY0tBf+gUErfluCv5mySAOQ=="
+      },
+      "Microsoft.Extensions.DependencyInjection": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "V8S3bsm50ig6JSyrbcJJ8bW2b9QLGouz+G1miK3UTaOWmMtFwNNNzUf4AleyDWUmTrWMLNnFSLEQtxmxgNQnNQ==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0"
+        }
       },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
         "resolved": "8.0.0",
         "contentHash": "dk9JPxTCIevS75HyEQ0E4OVAFhB2N+V9ShCXf8Q6FkUQZDkgLI12y679Nym1YqsiSysuQskT7Z+6nUf3yab6Vw=="
       },
+      "StyleCop.Analyzers.Unstable": {
+        "type": "Transitive",
+        "resolved": "1.2.0.435",
+        "contentHash": "ouwPWZxbOV3SmCZxIRqHvljkSzkCyi1tDoMzQtDb/bRP8ctASV/iRJr+A2Gdj0QLaLmWnqTWDrH82/iP+X80Lg=="
+      },
       "fastgeomesh.application": {
         "type": "Project",
         "dependencies": {
           "FastGeoMesh.Domain": "[1.0.0, )",
-          "FastGeoMesh.Infrastructure": "[1.0.0, )",
-          "LibTessDotNet": "[1.1.15, )"
+          "LibTessDotNet": "[1.1.15, )",
+          "Microsoft.Extensions.DependencyInjection": "[8.0.0, )"
         }
       },
       "fastgeomesh.domain": {

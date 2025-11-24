@@ -1,7 +1,9 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Meshing
 {
@@ -26,8 +28,12 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithHoleRefinement(1.25, 2.0)
                 .Build().UnwrapForTests();
 
-            var baseMesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, baseOpt).UnwrapForTests();
-            var refinedMesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, refinedOpt).UnwrapForTests();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+            var baseMesh = mesher.Mesh(structure, baseOpt).UnwrapForTests();
+            var refinedMesh = mesher.Mesh(structure, refinedOpt).UnwrapForTests();
 
             int CountSideQuads(ImmutableMesh m) => m.Quads.Count(q => !(q.V0.Z == q.V1.Z && q.V1.Z == q.V2.Z && q.V2.Z == q.V3.Z));
             int sidesBase = CountSideQuads(baseMesh);

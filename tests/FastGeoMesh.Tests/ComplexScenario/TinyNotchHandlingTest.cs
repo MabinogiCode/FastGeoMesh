@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
                 .WithMinCapQuadQuality(0.1)
                 .Build()
                 .UnwrapForTests();
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             mesh.QuadCount.Should().BeGreaterThan(5);
             var indexed = IndexedMesh.FromMesh(mesh);
             indexed.VertexCount.Should().BeGreaterThan(10);

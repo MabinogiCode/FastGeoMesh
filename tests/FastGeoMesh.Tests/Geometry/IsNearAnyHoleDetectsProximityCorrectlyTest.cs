@@ -1,7 +1,7 @@
 using FastGeoMesh.Application.Helpers.Structure;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure.Services;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
@@ -15,9 +15,14 @@ namespace FastGeoMesh.Tests.Geometry
             var hole = Polygon2D.FromPoints(new[] { new Vec2(4, 4), new Vec2(6, 4), new Vec2(6, 6), new Vec2(4, 6) });
             var structure = new PrismStructureDefinition(outer, 0, 1).AddHole(hole);
 
-            MeshStructureHelper.IsNearAnyHole(structure, 5, 5, 0.5, new GeometryService()).Should().BeFalse();
-            MeshStructureHelper.IsNearAnyHole(structure, 3.5, 5, 0.6, new GeometryService()).Should().BeTrue();
-            MeshStructureHelper.IsNearAnyHole(structure, 1, 1, 0.5, new GeometryService()).Should().BeFalse();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var geo = provider.GetRequiredService<FastGeoMesh.Domain.Services.IGeometryService>();
+
+            MeshStructureHelper.IsNearAnyHole(structure, 5, 5, 0.5, geo).Should().BeFalse();
+            MeshStructureHelper.IsNearAnyHole(structure, 3.5, 5, 0.6, geo).Should().BeTrue();
+            MeshStructureHelper.IsNearAnyHole(structure, 1, 1, 0.5, geo).Should().BeFalse();
         }
     }
 }

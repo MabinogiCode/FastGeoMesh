@@ -3,6 +3,8 @@ using FastGeoMesh.Application.Strategies;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
 using FastGeoMesh.Infrastructure.Services;
+using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Infrastructure.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh
@@ -21,8 +23,15 @@ namespace FastGeoMesh
         /// <returns>The service collection for chaining.</returns>
         public static IServiceCollection AddFastGeoMesh(this IServiceCollection services)
         {
-            // Domain Services (implemented in Infrastructure)
+            // Configuration
+            services.AddSingleton<IGeometryConfig, GeometryConfigImpl>();
+
+            // Geometry helpers / service - consolidate to single implementation
             services.AddSingleton<IGeometryService, GeometryService>();
+            // Map the domain-level IGeometryHelper to the same GeometryService instance
+            services.AddSingleton<IGeometryHelper>(sp => (IGeometryHelper)sp.GetRequiredService<IGeometryService>());
+
+            // Domain Services (implemented in Infrastructure)
             services.AddSingleton<IClock, SystemClock>();
 
             // Application Services
@@ -45,8 +54,14 @@ namespace FastGeoMesh
         /// <returns>The service collection for chaining.</returns>
         public static IServiceCollection AddFastGeoMeshWithMonitoring(this IServiceCollection services)
         {
-            // Domain Services
+            // Configuration
+            services.AddSingleton<IGeometryConfig, GeometryConfigImpl>();
+
+            // Geometry helpers / service - consolidate to single implementation
             services.AddSingleton<IGeometryService, GeometryService>();
+            services.AddSingleton<IGeometryHelper>(sp => (IGeometryHelper)sp.GetRequiredService<IGeometryService>());
+
+            // Domain Services
             services.AddSingleton<IClock, SystemClock>();
 
             // Application Services with monitoring

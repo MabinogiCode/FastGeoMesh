@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -28,8 +29,8 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithSegmentRefinement(1.2, 3.5)
                 .Build().UnwrapForTests();
 
-            var meshCoarse = TestMesherFactory.CreatePrismMesher().Mesh(structure, coarse).UnwrapForTests();
-            var meshRefined = TestMesherFactory.CreatePrismMesher().Mesh(structure, refined).UnwrapForTests();
+            var meshCoarse = TestServiceProvider.CreatePrismMesher().Mesh(structure, coarse).UnwrapForTests();
+            var meshRefined = TestServiceProvider.CreatePrismMesher().Mesh(structure, refined).UnwrapForTests();
 
             int coarseCap = meshCoarse.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);
             int refinedCap = meshRefined.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);

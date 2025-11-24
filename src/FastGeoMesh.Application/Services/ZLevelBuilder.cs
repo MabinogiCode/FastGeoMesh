@@ -23,7 +23,8 @@ namespace FastGeoMesh.Application.Services
         }
 
         /// <summary>Adds uniformly spaced Z-levels based on the target edge length.</summary>
-        private static void AddUniformLevels(List<double> levels, double z0, double z1, double targetEdgeLengthZ)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1822:Mark members as static", Justification = "Coding guideline prohibits mixing static and instance methods")]
+        private void AddUniformLevels(List<double> levels, double z0, double z1, double targetEdgeLengthZ)
         {
             if (targetEdgeLengthZ <= 0)
             {
@@ -49,7 +50,7 @@ namespace FastGeoMesh.Application.Services
         }
 
         /// <summary>Adds Z-levels from the geometry and constraints of the prism structure.</summary>
-        private static void AddLevelsFromStructure(List<double> levels, double z0, double z1, double epsilon, PrismStructureDefinition structure)
+        private void AddLevelsFromStructure(List<double> levels, double z0, double z1, double epsilon, PrismStructureDefinition structure)
         {
             double zMin = z0 + epsilon;
             double zMax = z1 - epsilon;
@@ -77,7 +78,8 @@ namespace FastGeoMesh.Application.Services
         }
 
         /// <summary>Adds a Z value to the levels list if it's within the valid range.</summary>
-        private static void AddIfInRange(List<double> levels, double z, double zMin, double zMax)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1822:Mark members as static", Justification = "Coding guideline prohibits mixing static and instance methods")]
+        private void AddIfInRange(List<double> levels, double z, double zMin, double zMax)
         {
             if (z > zMin && z < zMax)
             {
@@ -86,7 +88,8 @@ namespace FastGeoMesh.Application.Services
         }
 
         /// <summary>Sorts the list of levels and removes duplicates using a tolerance.</summary>
-        private static List<double> SortAndMakeUnique(List<double> levels, double epsilon)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1822:Mark members as static", Justification = "Coding guideline prohibits mixing static and instance methods")]
+        private List<double> SortAndMakeUnique(List<double> levels, double epsilon)
         {
             if (levels.Count < 2)
             {

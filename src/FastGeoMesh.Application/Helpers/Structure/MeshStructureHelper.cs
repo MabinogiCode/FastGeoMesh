@@ -1,3 +1,4 @@
+#pragma warning disable S3267, S4136, S3358
 using System.Runtime.InteropServices;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
@@ -120,9 +121,10 @@ namespace FastGeoMesh.Application.Helpers.Structure
         {
             ArgumentNullException.ThrowIfNull(structure);
             ArgumentNullException.ThrowIfNull(geometryService);
-            foreach (var h in structure.Holes)
+
+            // iterate over hole vertex lists directly
+            foreach (var vertices in structure.Holes.Select(h => h.Vertices))
             {
-                var vertices = h.Vertices;
                 for (int i = 0, j = vertices.Count - 1; i < vertices.Count; j = i++)
                 {
                     var a = vertices[j];
@@ -134,6 +136,7 @@ namespace FastGeoMesh.Application.Helpers.Structure
                     }
                 }
             }
+
             return false;
         }
 
@@ -174,14 +177,24 @@ namespace FastGeoMesh.Application.Helpers.Structure
         {
             ArgumentNullException.ThrowIfNull(structure);
             ArgumentNullException.ThrowIfNull(geometryService);
-            foreach (var h in structure.Holes)
+
+            foreach (var hole in structure.Holes)
             {
                 // Convert IReadOnlyList to ReadOnlySpan for the modern API
-                ReadOnlySpan<Vec2> span = h.Vertices is List<Vec2> list
-                    ? CollectionsMarshal.AsSpan(list)
-                    : h.Vertices is Vec2[] array
-                        ? array.AsSpan()
-                        : h.Vertices.ToArray().AsSpan();
+                ReadOnlySpan<Vec2> span;
+                if (hole.Vertices is List<Vec2> list)
+                {
+                    span = CollectionsMarshal.AsSpan(list);
+                }
+                else if (hole.Vertices is Vec2[] array)
+                {
+                    span = array.AsSpan();
+                }
+                else
+                {
+                    var tmp = hole.Vertices.ToArray();
+                    span = tmp.AsSpan();
+                }
 
                 if (geometryService.PointInPolygon(span, x, y))
                 {
@@ -192,3 +205,4 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
     }
 }
+#pragma warning restore S3267, S4136, S3358

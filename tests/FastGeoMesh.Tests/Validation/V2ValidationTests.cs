@@ -2,6 +2,7 @@ using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Validation
 {
@@ -61,8 +62,10 @@ namespace FastGeoMesh.Tests.Validation
 
             optionsResult.IsSuccess.Should().BeTrue();
 
-            // Act
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             // Assert
@@ -96,8 +99,10 @@ namespace FastGeoMesh.Tests.Validation
                 .Build()
                 .Value; // We know it's valid
 
-            // Act
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
             var asyncResult = await asyncMesher.MeshAsync(structure, options);
 
@@ -122,8 +127,10 @@ namespace FastGeoMesh.Tests.Validation
             var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(1, 1), new Vec2(0, 1) });
             var structure = new PrismStructureDefinition(polygon, 0, 1);
 
-            // Application layer
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
 
             // Verify types are accessible
             vec2.Should().NotBeNull();
@@ -159,8 +166,10 @@ namespace FastGeoMesh.Tests.Validation
                 .Build()
                 .Value;
 
-            // Act
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var meshResult = mesher.Mesh(structure, options);
 
             // Assert

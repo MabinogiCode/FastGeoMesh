@@ -7,13 +7,28 @@ namespace FastGeoMesh.Domain
         public IReadOnlyList<Vec2> Vertices { get; }
         /// <summary>Vertex count.</summary>
         public int Count => Vertices.Count;
-        /// <summary>Create polygon from an enumerable of vertices (auto-CCW).</summary>
+
+        /// <summary>Create polygon from an enumerable of vertices (auto-CCW).
+        /// This constructor is tolerant: it will not throw for degenerate inputs so tests
+        /// and helpers can construct polygons and validate them separately.
+        /// </summary>
         public Polygon2D(IEnumerable<Vec2> verts)
         {
-            var list = verts.ToList();
+            var list = verts?.ToList() ?? new List<Vec2>();
+            if (list.Count >= 3 && SignedArea(list) < 0)
+            {
+                list.Reverse();
+            }
+            Vertices = list;
+        }
+
+        /// <summary>Create polygon and validate the input; throws on invalid polygons.</summary>
+        public static Polygon2D CreateValidated(IEnumerable<Vec2> verts)
+        {
+            var list = (verts ?? throw new ArgumentNullException(nameof(verts))).ToList();
             if (list.Count < 3)
             {
-                throw new ArgumentException("Polygon must have at least 3 vertices.");
+                throw new ArgumentException("Polygon must have at least 3 vertices.", nameof(verts));
             }
             if (SignedArea(list) < 0)
             {
@@ -21,12 +36,57 @@ namespace FastGeoMesh.Domain
             }
             if (!Validate(list, out var error))
             {
-                throw new ArgumentException($"Invalid polygon: {error}");
+                throw new ArgumentException($"Invalid polygon: {error}", nameof(verts));
             }
-            Vertices = list;
+            return new Polygon2D(list, true);
         }
-        /// <summary>Helper construct from points.</summary>
-        public static Polygon2D FromPoints(IEnumerable<Vec2> verts) => new(verts);
+
+        // Private constructor used by factories to bypass validation when appropriate
+        private Polygon2D(List<Vec2> validatedVertices, bool _) => Vertices = validatedVertices;
+
+        /// <summary>Unsafe factory that constructs a Polygon2D without performing validation. Use only when you know the input may be invalid (tests, diagnostics).</summary>
+        public static Polygon2D FromUnsafe(IEnumerable<Vec2> verts)
+        {
+            var list = (verts ?? throw new ArgumentNullException(nameof(verts))).ToList();
+            if (list.Count >= 3 && SignedArea(list) < 0)
+            {
+                list.Reverse();
+            }
+            return new Polygon2D(list, true);
+        }
+
+        /// <summary>Try to create a polygon without throwing; returns false and an error message on failure.</summary>
+        public static bool TryCreate(IEnumerable<Vec2> verts, out Polygon2D? polygon, out string? error)
+        {
+            polygon = null;
+            error = null;
+            if (verts == null)
+            {
+                error = "Vertices is null";
+                return false;
+            }
+            var list = verts.ToList();
+            if (list.Count < 3)
+            {
+                error = "Less than 3 vertices";
+                return false;
+            }
+            if (SignedArea(list) < 0)
+            {
+                list.Reverse();
+            }
+            if (!Validate(list, out var verror))
+            {
+                error = verror;
+                return false;
+            }
+            polygon = new Polygon2D(list, true);
+            return true;
+        }
+
+        /// <summary>Helper construct from points. Behaves like the strict constructor (will validate).</summary>
+        public static Polygon2D FromPoints(IEnumerable<Vec2> verts) => CreateValidated(verts);
+
         /// <summary>Signed area (positive if CCW).</summary>
         public static double SignedArea(IReadOnlyList<Vec2> verts)
         {
@@ -38,6 +98,7 @@ namespace FastGeoMesh.Domain
             }
             return 0.5 * a;
         }
+
         /// <summary>Perimeter length.</summary>
         public double Perimeter()
         {
@@ -50,6 +111,7 @@ namespace FastGeoMesh.Domain
             }
             return p;
         }
+
         /// <summary>Detect axis-aligned rectangle; returns bounding corner min/max.</summary>
         public bool IsRectangleAxisAligned(out Vec2 min, out Vec2 max, double eps = 1e-9)
         {
@@ -94,6 +156,7 @@ namespace FastGeoMesh.Domain
             }
             return true;
         }
+
         /// <summary>Validate polygon (non-degenerate, simple).</summary>
         public static bool Validate(IReadOnlyList<Vec2> verts, out string? error, double eps = 1e-9)
         {
@@ -149,6 +212,7 @@ namespace FastGeoMesh.Domain
             }
             return true;
         }
+
         private static int Orient(in Vec2 a, in Vec2 b, in Vec2 c, double eps)
         {
             double v = (b - a).Cross(c - a);

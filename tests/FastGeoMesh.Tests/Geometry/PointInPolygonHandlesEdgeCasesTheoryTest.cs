@@ -1,6 +1,6 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
@@ -17,8 +17,13 @@ namespace FastGeoMesh.Tests.Geometry
         [InlineData(5, 11, false)]
         public void Test(double x, double y, bool expected)
         {
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var helper = provider.GetRequiredService<IGeometryHelper>();
+
             var square = new Vec2[] { new(0, 0), new(10, 0), new(10, 10), new(0, 10) };
-            GeometryHelper.PointInPolygon(square, x, y).Should().Be(expected);
+            helper.PointInPolygon(square, x, y).Should().Be(expected);
         }
     }
 }

@@ -24,7 +24,7 @@
     <Deterministic>true</Deterministic>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>2.0.0: BREAKING CHANGES - Clean Architecture refactoring. Direct access to Domain/Application/Infrastructure layers. Removed compatibility wrappers for cleaner, more maintainable API. Enhanced Result pattern, improved async performance, and better separation of concerns. Migration guide: replace old namespaces with FastGeoMesh.Domain, FastGeoMesh.Application, FastGeoMesh.Infrastructure.</PackageReleaseNotes>
-    
+
     <!-- Suppress .NET 9 SDK warnings about analyzer versions -->
     <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
   </PropertyGroup>
@@ -36,6 +36,10 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     <!-- Keep analyzer version compatible with .NET 8 targets -->
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\nuget-readme.md" Pack="true" PackagePath="/" />

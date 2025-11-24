@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -17,8 +18,8 @@ namespace FastGeoMesh.Tests.Quality
             var structure = new PrismStructureDefinition(outer, 0, 1);
             var strict = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.5), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = true, GenerateTopCap = true, MinCapQuadQuality = 0.5 };
             var loose = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.5), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = true, GenerateTopCap = true, MinCapQuadQuality = 0.0 };
-            var meshStrict = TestMesherFactory.CreatePrismMesher().Mesh(structure, strict).UnwrapForTests();
-            var meshLoose = TestMesherFactory.CreatePrismMesher().Mesh(structure, loose).UnwrapForTests();
+            var meshStrict = TestServiceProvider.CreatePrismMesher().Mesh(structure, strict).UnwrapForTests();
+            var meshLoose = TestServiceProvider.CreatePrismMesher().Mesh(structure, loose).UnwrapForTests();
 
             bool IsTop(Quad q) => q.V0.Z == 1 && q.V1.Z == 1 && q.V2.Z == 1 && q.V3.Z == 1;
             bool IsTopTriangle(Triangle t) => t.V0.Z == 1 && t.V1.Z == 1 && t.V2.Z == 1;

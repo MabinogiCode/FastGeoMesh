@@ -1,7 +1,9 @@
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Services;
 using FastGeoMesh.Infrastructure;
-using FastGeoMesh.Infrastructure.Services;
+using FastGeoMesh.Infrastructure.Utilities;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
@@ -16,8 +18,11 @@ namespace FastGeoMesh.Tests.Coverage
         [Fact]
         public void PerformanceMonitorServiceProvidesStatistics()
         {
-            // Arrange
-            var service = new PerformanceMonitorService();
+            // Arrange - resolve via DI to obtain the real implementation
+            var services = new ServiceCollection();
+            services.AddFastGeoMeshWithMonitoring();
+            var provider = services.BuildServiceProvider();
+            var service = provider.GetRequiredService<IPerformanceMonitor>();
 
             // Act
             var stats = service.GetLiveStatistics();
@@ -164,20 +169,25 @@ namespace FastGeoMesh.Tests.Coverage
         [Fact]
         public void InfrastructureGeometryHelperWorksCorrectly()
         {
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var helper = provider.GetRequiredService<IGeometryHelper>();
+
             // Test 2D linear interpolation
             var start2D = new Vec2(0, 0);
             var end2D = new Vec2(10, 20);
 
-            var lerp2D_0 = GeometryHelper.Lerp(start2D, end2D, 0.0);
-            var lerp2D_1 = GeometryHelper.Lerp(start2D, end2D, 1.0);
-            var lerp2D_half = GeometryHelper.Lerp(start2D, end2D, 0.5);
+            var lerp2D_0 = helper.Lerp(start2D, end2D, 0.0);
+            var lerp2D_1 = helper.Lerp(start2D, end2D, 1.0);
+            var lerp2D_half = helper.Lerp(start2D, end2D, 0.5);
 
             lerp2D_0.Should().Be(start2D);
             lerp2D_1.Should().Be(end2D);
             lerp2D_half.Should().Be(new Vec2(5, 10));
 
             // Test scalar interpolation
-            var lerpScalar = GeometryHelper.LerpScalar(0, 100, 0.25);
+            var lerpScalar = helper.LerpScalar(0, 100, 0.25);
             lerpScalar.Should().Be(25);
 
             // Test point in polygon with simple square
@@ -188,12 +198,12 @@ namespace FastGeoMesh.Tests.Coverage
             };
 
             // Points clearly inside
-            GeometryHelper.PointInPolygon(square, new Vec2(2, 2)).Should().BeTrue();
-            GeometryHelper.PointInPolygon(square, 1, 1).Should().BeTrue();
+            helper.PointInPolygon(square, new Vec2(2, 2)).Should().BeTrue();
+            helper.PointInPolygon(square, 1, 1).Should().BeTrue();
 
             // Points clearly outside
-            GeometryHelper.PointInPolygon(square, new Vec2(-1, 2)).Should().BeFalse();
-            GeometryHelper.PointInPolygon(square, 5, 2).Should().BeFalse();
+            helper.PointInPolygon(square, new Vec2(-1, 2)).Should().BeFalse();
+            helper.PointInPolygon(square, 5, 2).Should().BeFalse();
 
             // Test convexity checking
             var convexQuad = (
@@ -202,16 +212,16 @@ namespace FastGeoMesh.Tests.Coverage
                 c: new Vec2(2, 2),
                 d: new Vec2(0, 2)
             );
-            GeometryHelper.IsConvex(convexQuad).Should().BeTrue();
+            helper.IsConvex(convexQuad).Should().BeTrue();
 
             // Test distance calculation - use a point that's definitely off the segment
             var point1 = new Vec2(0, 0);
             var point2 = new Vec2(3, 4);
-            var distance = GeometryHelper.DistancePointToSegment(new Vec2(0, 2), point1, point2);
+            var distance = helper.DistancePointToSegment(new Vec2(0, 2), point1, point2);
             distance.Should().BeGreaterThan(0);
 
             // Test polygon area calculation
-            var area = GeometryHelper.PolygonArea(square);
+            var area = helper.PolygonArea(square);
             area.Should().Be(16); // 4x4 square
         }
 
@@ -219,6 +229,11 @@ namespace FastGeoMesh.Tests.Coverage
         [Fact]
         public void BatchPointInPolygonWorksCorrectly()
         {
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var helper = provider.GetRequiredService<IGeometryHelper>();
+
             var triangle = new Vec2[]
             {
                 new Vec2(0, 0), new Vec2(6, 0), new Vec2(3, 6)
@@ -236,7 +251,7 @@ namespace FastGeoMesh.Tests.Coverage
             var results = new bool[testPoints.Length];
 
             // Test batch operation
-            GeometryHelper.BatchPointInPolygon(triangle, testPoints, results);
+            helper.BatchPointInPolygon(triangle, testPoints, results);
 
             results[0].Should().BeTrue();  // inside
             results[1].Should().BeTrue();  // inside
@@ -247,28 +262,34 @@ namespace FastGeoMesh.Tests.Coverage
             // Test argument validation
             var wrongSizeResults = new bool[testPoints.Length - 1];
             Assert.Throws<ArgumentException>(() =>
-                GeometryHelper.BatchPointInPolygon(triangle, testPoints, wrongSizeResults));
+                helper.BatchPointInPolygon(triangle, testPoints, wrongSizeResults));
         }
 
         /// <summary>Tests GeometryConfig settings.</summary>
         [Fact]
         public void GeometryConfigurationCanBeModified()
         {
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var config = provider.GetRequiredService<IGeometryConfig>() as GeometryConfigImpl;
+            Assert.NotNull(config);
+
             // Store original values
-            var originalDefaultTolerance = GeometryConfig.DefaultTolerance;
-            var originalConvexityTolerance = GeometryConfig.ConvexityTolerance;
-            var originalPointInPolygonTolerance = GeometryConfig.PointInPolygonTolerance;
+            var originalDefaultTolerance = config.DefaultTolerance;
+            var originalConvexityTolerance = config.ConvexityTolerance;
+            var originalPointInPolygonTolerance = config.PointInPolygonTolerance;
 
             try
             {
                 // Test setting new values
-                GeometryConfig.DefaultTolerance = 1e-6;
-                GeometryConfig.ConvexityTolerance = -1e-6;
-                GeometryConfig.PointInPolygonTolerance = 1e-8;
+                config.DefaultTolerance = 1e-6;
+                config.ConvexityTolerance = -1e-6;
+                config.PointInPolygonTolerance = 1e-8;
 
-                GeometryConfig.DefaultTolerance.Should().Be(1e-6);
-                GeometryConfig.ConvexityTolerance.Should().Be(-1e-6);
-                GeometryConfig.PointInPolygonTolerance.Should().Be(1e-8);
+                config.DefaultTolerance.Should().Be(1e-6);
+                config.ConvexityTolerance.Should().Be(-1e-6);
+                config.PointInPolygonTolerance.Should().Be(1e-8);
 
                 // Test that the new tolerances are used in calculations
                 var square = new Vec2[]
@@ -278,15 +299,16 @@ namespace FastGeoMesh.Tests.Coverage
                 };
 
                 // This should still work with the new tolerance
-                var result = GeometryHelper.PointInPolygon(square, 0.5, 0.5, GeometryConfig.DefaultTolerance);
+                var helper = provider.GetRequiredService<IGeometryHelper>();
+                var result = helper.PointInPolygon(square, 0.5, 0.5, config.DefaultTolerance);
                 result.Should().BeTrue();
             }
             finally
             {
                 // Restore original values
-                GeometryConfig.DefaultTolerance = originalDefaultTolerance;
-                GeometryConfig.ConvexityTolerance = originalConvexityTolerance;
-                GeometryConfig.PointInPolygonTolerance = originalPointInPolygonTolerance;
+                config.DefaultTolerance = originalDefaultTolerance;
+                config.ConvexityTolerance = originalConvexityTolerance;
+                config.PointInPolygonTolerance = originalPointInPolygonTolerance;
             }
         }
     }

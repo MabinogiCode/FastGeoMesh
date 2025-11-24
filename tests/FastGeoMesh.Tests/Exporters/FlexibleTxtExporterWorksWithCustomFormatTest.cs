@@ -1,8 +1,11 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Infrastructure.Exporters;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Exporters
 {
@@ -25,7 +28,11 @@ namespace FastGeoMesh.Tests.Exporters
                 GenerateBottomCap = true,
                 GenerateTopCap = true
             };
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+            var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
 
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.txt");

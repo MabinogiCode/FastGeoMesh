@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace FastGeoMesh.Tests.Validation
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var mesher = TestServiceProvider.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
             using var cts = new CancellationTokenSource();
             await cts.CancelAsync();

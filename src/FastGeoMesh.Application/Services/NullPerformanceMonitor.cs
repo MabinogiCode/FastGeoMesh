@@ -3,30 +3,53 @@ using FastGeoMesh.Domain.Services;
 namespace FastGeoMesh.Application.Services
 {
     /// <summary>
-    /// Null object implementation of <see cref="IPerformanceMonitor"/> for use when no monitoring is required.
-    /// Kept in Application layer as a lightweight default implementation for samples/tests.
+    /// Null object implementation for IPerformanceMonitor (no-op).
     /// </summary>
-    public sealed class NullPerformanceMonitor : IPerformanceMonitor
+    public class NullPerformanceMonitor : IPerformanceMonitor
     {
-        /// <summary>Returns empty performance statistics.</summary>
-        public PerformanceStatistics GetLiveStatistics() => new();
+        /// <summary>
+        /// Starts a no-op meshing activity.
+        /// </summary>
+        /// <param name="activityName">The name of the activity.</param>
+        /// <param name="metadata">Optional metadata for the activity.</param>
+        /// <returns>A dummy disposable object.</returns>
+        public IDisposable StartMeshingActivity(string activityName, object? metadata = null)
+        {
+            return System.Threading.Tasks.Task.CompletedTask as IDisposable ?? new DummyDisposable();
+        }
 
-        /// <summary>Returns a no-op disposable.</summary>
-        public IDisposable StartMeshingActivity(string activityName, object? metadata = null) => NullDisposable.Instance;
-
-        /// <summary>No-op implementation.</summary>
+        /// <summary>
+        /// No-op increment for meshing operations.
+        /// </summary>
         public void IncrementMeshingOperations() { }
 
-        /// <summary>No-op implementation.</summary>
+        /// <summary>
+        /// No-op for adding quads generated.
+        /// </summary>
+        /// <param name="count">The number of quads generated.</param>
         public void AddQuadsGenerated(int count) { }
 
-        /// <summary>No-op implementation.</summary>
+        /// <summary>
+        /// No-op for adding triangles generated.
+        /// </summary>
+        /// <param name="count">The number of triangles generated.</param>
         public void AddTrianglesGenerated(int count) { }
 
-        private sealed class NullDisposable : IDisposable
-        {
-            public static readonly NullDisposable Instance = new();
-            public void Dispose() { }
-        }
+        /// <summary>
+        /// Returns a default performance statistics object.
+        /// </summary>
+        /// <returns>A default performance statistics object.</returns>
+        public PerformanceStatistics GetLiveStatistics() => new PerformanceStatistics();
+    }
+
+    /// <summary>
+    /// No-op disposable implementation for NullPerformanceMonitor.
+    /// </summary>
+    internal sealed class DummyDisposable : IDisposable
+    {
+        /// <summary>
+        /// No-op dispose implementation.
+        /// </summary>
+        public void Dispose() { }
     }
 }

@@ -1,10 +1,9 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Infrastructure;
-using FastGeoMesh.Infrastructure.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Sample
 {
-    class Program
+    static class Program
     {
         static async System.Threading.Tasks.Task Main(string[] args)
         {
@@ -17,6 +16,9 @@ namespace FastGeoMesh.Sample
                 ComplexPolygonExample();
                 HoleExample();
                 await AsyncExample();
+
+                // New DI example demonstrating composition root and injected services
+                DependencyInjectionExample();
 
                 Console.WriteLine("\n✅ All examples completed successfully!");
                 Console.WriteLine("📂 Output files: simple_rectangle.obj, l_shape.obj, polygon_with_hole.obj, async_mesh.obj");
@@ -57,10 +59,11 @@ namespace FastGeoMesh.Sample
             }
 
             // 3. Application: Generate mesh with clean error handling
-            var geometryService = new GeometryService();
-            var zLevelBuilder = new ZLevelBuilder();
-            var proximityChecker = new ProximityChecker();
-            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            using var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             if (meshResult.IsFailure)
@@ -104,11 +107,11 @@ namespace FastGeoMesh.Sample
                 return;
             }
 
-            // Application layer handles complex meshing
-            var geometryService = new GeometryService();
-            var zLevelBuilder = new ZLevelBuilder();
-            var proximityChecker = new ProximityChecker();
-            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            using var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             if (meshResult.IsSuccess)
@@ -159,10 +162,11 @@ namespace FastGeoMesh.Sample
                 return;
             }
 
-            var geometryService = new GeometryService();
-            var zLevelBuilder = new ZLevelBuilder();
-            var proximityChecker = new ProximityChecker();
-            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            using var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             if (meshResult.IsSuccess)
@@ -211,11 +215,10 @@ namespace FastGeoMesh.Sample
                 return;
             }
 
-            var geometryService = new GeometryService();
-            var zLevelBuilder = new ZLevelBuilder();
-            var proximityChecker = new ProximityChecker();
-            var mesher = new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
-            var asyncMesher = (IAsyncMesher)mesher;
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            using var provider = services.BuildServiceProvider();
+            var asyncMesher = provider.GetRequiredService<IAsyncMesher>();
 
             // Demonstrate async batch processing with progress
             var progress = new Progress<MeshingProgress>(p =>
@@ -250,6 +253,47 @@ namespace FastGeoMesh.Sample
             {
                 Console.WriteLine($"❌ Batch processing failed: {batchResult.Error.Description}");
             }
+        }
+
+        static void DependencyInjectionExample()
+        {
+            Console.WriteLine("\n🧩 Dependency Injection Example");
+            Console.WriteLine("-------------------------------");
+
+            // Prepare DI container using the library's composition root
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+
+            // Resolve helper and mesher from DI
+            var helper = provider.GetRequiredService<IGeometryHelper>();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+
+            // Build a simple domain structure
+            var poly = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(4, 0), new Vec2(4, 2), new Vec2(0, 2) });
+            var structure = new PrismStructureDefinition(poly, 0, 1);
+
+            var optionsResult = MesherOptions.CreateBuilder().WithFastPreset().WithTargetEdgeLengthXY(0.5).Build();
+            if (optionsResult.IsFailure)
+            {
+                Console.WriteLine($"❌ Options validation failed: {optionsResult.Error.Description}");
+                return;
+            }
+
+            // Use the injected mesher to create a mesh
+            var meshResult = mesher.Mesh(structure, optionsResult.Value);
+            if (meshResult.IsFailure)
+            {
+                Console.WriteLine($"❌ Meshing failed: {meshResult.Error.Description}");
+                return;
+            }
+
+            var mesh = meshResult.Value;
+            Console.WriteLine($"✅ DI mesh: {mesh.QuadCount} quads, {mesh.TriangleCount} triangles");
+
+            // Show usage of injected geometry helper (example: point-in-polygon)
+            var inside = helper.PointInPolygon(poly.Vertices.ToArray().AsSpan(), 1.0, 0.5);
+            Console.WriteLine($"🔎 Point-in-polygon via injected helper: {inside}");
         }
     }
 }

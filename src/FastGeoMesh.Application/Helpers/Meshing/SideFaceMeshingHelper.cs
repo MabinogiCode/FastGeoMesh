@@ -1,3 +1,4 @@
+#pragma warning disable S2234
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
 
@@ -37,23 +38,24 @@ namespace FastGeoMesh.Application.Helpers.Meshing
                         double za0 = zLevels[vi];
                         double za1 = zLevels[vi + 1];
 
-                        // FINAL SOLUTION: Fixed order guaranteeing positive cross product
                         // For a vertical quad, the 4 vertices in CCW order as seen from outside:
                         // bottom-left → bottom-right → top-right → top-left
-                        var v0 = new Vec3(a0.X, a0.Y, za0);  // bottom-start
-                        var v1 = new Vec3(a1.X, a1.Y, za0);  // bottom-end
-                        var v2 = new Vec3(a1.X, a1.Y, za1);  // top-end
-                        var v3 = new Vec3(a0.X, a0.Y, za1);  // top-start
+                        var v0 = new Vec3(a0.X, a0.Y, za0);
+                        var v1 = new Vec3(a1.X, a1.Y, za0);
+                        var v2 = new Vec3(a1.X, a1.Y, za1);
+                        var v3 = new Vec3(a0.X, a0.Y, za1);
 
-                        Quad quad = outward
-                            ? new Quad(v0, v1, v2, v3)  // No quality score for side quads
-                            : new Quad(v0, v3, v2, v1); // No quality score for side quads
+                        var quad = outward
+                            ? new Quad(v0, v1, v2, v3)
+                            : new Quad(v1, v0, v3, v2);
 
                         quads.Add(quad);
                     }
                 }
             }
+
             return quads;
         }
     }
 }
+#pragma warning restore S2234

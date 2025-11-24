@@ -3,6 +3,7 @@ using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Meshing
 {
@@ -12,22 +13,25 @@ namespace FastGeoMesh.Tests.Meshing
     /// </summary>
     public sealed class AsyncMeshingCoverageTests
     {
-        private readonly PrismMesher _mesher;
+        private readonly IPrismMesher _mesher;
         private readonly IAsyncMesher _asyncMesher;
         private readonly MesherOptions _options;
 
         /// <summary>Initializes the test class with mesher, async mesher, and options.</summary>
         public AsyncMeshingCoverageTests()
         {
-            _mesher = TestMesherFactory.CreatePrismMesher();
-            _asyncMesher = _mesher;
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            _mesher = provider.GetRequiredService<IPrismMesher>();
+            _asyncMesher = (IAsyncMesher)_mesher;
             _options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
         }
 
         /// <summary>Tests all paths in EstimateComplexityAsync for different structure sizes.</summary>
         [Theory]
         [InlineData(3, MeshingComplexity.Trivial)]    // < 10 vertices
-        [InlineData(25, MeshingComplexity.Simple)]    // < 50 vertices  
+        [InlineData(25, MeshingComplexity.Simple)]    // < 50 vertices
         [InlineData(100, MeshingComplexity.Moderate)] // < 200 vertices
         [InlineData(500, MeshingComplexity.Complex)]  // < 1000 vertices
         [InlineData(1500, MeshingComplexity.Extreme)] // >= 1000 vertices

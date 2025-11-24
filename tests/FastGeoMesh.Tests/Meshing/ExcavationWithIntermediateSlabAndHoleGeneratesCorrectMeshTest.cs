@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers; // Required for UnwrapForTests extension
 using FluentAssertions;
 using Xunit;
 
@@ -32,7 +33,7 @@ namespace FastGeoMesh.Tests.Meshing
                 GenerateTopCap = true,
                 MinCapQuadQuality = 0.1
             };
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             mesh.Quads.Should().NotBeEmpty();
             var bottomQuads = mesh.Quads.Where(q => ExcavationWithIntermediateSlabAndHoleHelpers.IsQuadAtZ(q, -5)).ToList();
             bottomQuads.Should().NotBeEmpty();

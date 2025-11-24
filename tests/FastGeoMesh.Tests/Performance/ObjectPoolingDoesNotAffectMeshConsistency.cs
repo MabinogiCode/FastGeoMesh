@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace FastGeoMesh.Tests.Performance
                 GenerateBottomCap = true,
                 GenerateTopCap = true
             };
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var mesher = TestServiceProvider.CreatePrismMesher();
             var mesh1 = mesher.Mesh(structure, options).UnwrapForTests();
             var mesh2 = mesher.Mesh(structure, options).UnwrapForTests();
             var mesh3 = mesher.Mesh(structure, options).UnwrapForTests();

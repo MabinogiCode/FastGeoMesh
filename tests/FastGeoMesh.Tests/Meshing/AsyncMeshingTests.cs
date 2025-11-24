@@ -11,7 +11,7 @@ namespace FastGeoMesh.Tests.Meshing
     /// </summary>
     public class AsyncMeshingTests
     {
-        private readonly PrismMesher _mesher;
+        private readonly IPrismMesher _mesher;
         private readonly MesherOptions _options;
 
         /// <summary>
@@ -20,7 +20,8 @@ namespace FastGeoMesh.Tests.Meshing
         /// </summary>
         public AsyncMeshingTests()
         {
-            _mesher = TestMesherFactory.CreatePrismMesher();
+            _mesher = TestServiceProvider.CreatePrismMesher();
+
             _options = MesherOptions.CreateBuilder()
                 .WithFastPreset()
                 .Build().UnwrapForTests();

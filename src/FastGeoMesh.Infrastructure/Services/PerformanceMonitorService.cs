@@ -53,23 +53,5 @@ namespace FastGeoMesh.Infrastructure.Services
         {
             PerformanceMonitorCounters.AddTrianglesGenerated(count);
         }
-
-        /// <summary>
-        /// Wrapper to make Activity disposable for proper resource management.
-        /// </summary>
-        private sealed class ActivityDisposable : IDisposable
-        {
-            private readonly System.Diagnostics.Activity? _activity;
-
-            public ActivityDisposable(System.Diagnostics.Activity? activity)
-            {
-                _activity = activity;
-            }
-
-            public void Dispose()
-            {
-                _activity?.Dispose();
-            }
-        }
     }
 }

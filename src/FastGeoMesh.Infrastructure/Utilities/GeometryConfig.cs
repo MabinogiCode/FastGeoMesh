@@ -1,15 +1,2 @@
-namespace FastGeoMesh.Infrastructure
-{
-    /// <summary>Configuration for geometric calculations.</summary>
-    public static class GeometryConfig
-    {
-        /// <summary>Default geometric tolerance for calculations.</summary>
-        public static double DefaultTolerance { get; set; } = 1e-9;
-
-        /// <summary>Tolerance for convexity tests (allows tiny negative due to floating point noise).</summary>
-        public static double ConvexityTolerance { get; set; } = -1e-9;
-
-        /// <summary>Tolerance specifically for point-in-polygon tests (more lenient for practical use).</summary>
-        public static double PointInPolygonTolerance { get; set; } = 1e-9;
-    }
-}
+// This file intentionally left as a placeholder. The real injectable GeometryConfig is defined in IGeometryConfig.cs and GeometryConfigImpl.cs
+// The old static API has been removed in favor of an injectable configuration registered in DI.

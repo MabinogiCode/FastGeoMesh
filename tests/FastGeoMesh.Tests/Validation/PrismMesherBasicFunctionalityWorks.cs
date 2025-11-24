@@ -1,7 +1,9 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Validation
 {
@@ -20,7 +22,10 @@ namespace FastGeoMesh.Tests.Validation
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             structure.Geometry.AddPoint(new Vec3(5, 2.5, 1));
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
-            var mesher = TestMesherFactory.CreatePrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             mesh.Should().NotBeNull();
             mesh.QuadCount.Should().BeGreaterThan(0);

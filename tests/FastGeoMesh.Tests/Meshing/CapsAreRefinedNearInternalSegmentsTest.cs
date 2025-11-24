@@ -1,5 +1,6 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
@@ -21,7 +22,7 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithSegmentRefinement(0.5, 1.0)
                 .Build().UnwrapForTests();
 
-            var mesh = TestMesherFactory.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
 
             var topQuads = mesh.Quads.Where(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0).ToList();
             var topTriangles = mesh.Triangles.Where(t => t.V0.Z == 0 && t.V1.Z == 0 && t.V2.Z == 0).ToList();
