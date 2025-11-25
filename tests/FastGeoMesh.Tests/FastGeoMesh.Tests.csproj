@@ -3,7 +3,7 @@
     <IsPackable>false</IsPackable>
     <TargetFramework>net8.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors>IDE0160;IDE0052;IDE0054</WarningsAsErrors>
+    <WarningsAsErrors>IDE0005;IDE0160;IDE0052;IDE0054;xUnit1030;CA2007</WarningsAsErrors>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 

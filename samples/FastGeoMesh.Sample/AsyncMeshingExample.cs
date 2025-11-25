@@ -55,7 +55,7 @@ namespace FastGeoMesh.Sample
             try
             {
                 // Application: Generate mesh asynchronously
-                var meshResult = await asyncMesher.MeshWithProgressAsync(structure, optionsResult.Value, progress);
+                var meshResult = await asyncMesher.MeshWithProgressAsync(structure, optionsResult.Value, progress).ConfigureAwait(true);
                 stopwatch.Stop();
 
                 if (meshResult.IsSuccess)
@@ -136,7 +136,7 @@ namespace FastGeoMesh.Sample
                     structures,
                     optionsResult.Value,
                     maxDegreeOfParallelism: 4,
-                    progress: batchProgress);
+                    progress: batchProgress).ConfigureAwait(true);
 
                 batchStopwatch.Stop();
 

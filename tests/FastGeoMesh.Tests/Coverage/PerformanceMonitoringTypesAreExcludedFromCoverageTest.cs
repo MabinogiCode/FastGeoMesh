@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Xunit;
 
@@ -6,6 +7,7 @@ namespace FastGeoMesh.Tests.Coverage
     public sealed class PerformanceMonitoringTypesAreExcludedFromCoverageTest
     {
         [Fact]
+        [SuppressMessage("Globalization", "CA1303", Justification = "Test output strings are non-localized test artifacts")]
         public void Test()
         {
             var performanceMonitorType = Type.GetType("FastGeoMesh.Utils.PerformanceMonitor, FastGeoMesh");

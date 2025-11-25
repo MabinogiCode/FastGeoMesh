@@ -33,9 +33,13 @@ namespace FastGeoMesh.Tests.Coverage
                         break;
                     }
                 }
-                catch (Exception ex)
+                catch (IOException)
                 {
-                    Console.WriteLine($"Path validation failed for {relativePath}: {ex.Message}");
+                    Console.WriteLine($"IO exception encountered for {relativePath}");
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    Console.WriteLine($"UnauthorizedAccessException encountered for {relativePath}");
                 }
             }
 

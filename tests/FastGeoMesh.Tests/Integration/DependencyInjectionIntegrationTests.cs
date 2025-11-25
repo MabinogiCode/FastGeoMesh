@@ -159,7 +159,7 @@ namespace FastGeoMesh.Tests.Integration
                 .Build();
 
             // Act
-            var result = await mesher.MeshAsync(structure, optionsResult.Value).ConfigureAwait(false);
+            var result = await mesher.MeshAsync(structure, optionsResult.Value);
 
             // Assert
             Assert.True(result.IsSuccess);

@@ -49,13 +49,13 @@ namespace FastGeoMesh.Tests.Exporters
             int.TryParse(lines[0], out int vertexCount).Should().BeTrue();
             vertexCount.Should().BeGreaterThan(0);
 
-            bool hasPointLine = lines.Any(l => l.StartsWith("p ") && l.Split(' ').Length == 5);
+            bool hasPointLine = lines.Any(l => l.StartsWith("p ", StringComparison.Ordinal) && l.Split(' ').Length == 5);
             hasPointLine.Should().BeTrue();
 
-            bool hasEdgeLine = lines.Any(l => l.StartsWith("e ") && l.Split(' ').Length == 3);
+            bool hasEdgeLine = lines.Any(l => l.StartsWith("e ", StringComparison.Ordinal) && l.Split(' ').Length == 3);
             hasEdgeLine.Should().BeTrue();
 
-            bool hasQuadLine = lines.Any(l => l.StartsWith("q ") && l.Split(' ').Length == 6);
+            bool hasQuadLine = lines.Any(l => l.StartsWith("q ", StringComparison.Ordinal) && l.Split(' ').Length == 6);
             hasQuadLine.Should().BeTrue();
 
             File.Delete(path);

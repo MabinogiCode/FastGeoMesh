@@ -31,17 +31,13 @@ namespace FastGeoMesh.Tests.Coverage
                 {
                     Console.WriteLine($"⚠ {assemblyName} not found (optional in Clean Architecture)");
                 }
-                catch (Exception ex)
+                catch (ReflectionTypeLoadException ex)
                 {
-                    // Only handle ReflectionTypeLoadException and log, rethrow others
-                    if (ex is ReflectionTypeLoadException || ex is FileLoadException)
-                    {
-                        Console.WriteLine($"⚠ Failed to load {assemblyName}: {ex.Message}");
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    Console.WriteLine($"⚠ Failed to load {assemblyName}: {ex.Message}");
+                }
+                catch (FileLoadException ex)
+                {
+                    Console.WriteLine($"⚠ Failed to load {assemblyName}: {ex.Message}");
                 }
             }
 

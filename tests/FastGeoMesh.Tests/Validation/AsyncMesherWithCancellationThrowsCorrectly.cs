@@ -22,10 +22,10 @@ namespace FastGeoMesh.Tests.Validation
             var mesher = TestServiceProvider.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
             using var cts = new CancellationTokenSource();
-            await cts.CancelAsync().ConfigureAwait(false);
+            await cts.CancelAsync();
             try
             {
-                var result = await asyncMesher.MeshAsync(structure, options, cts.Token).ConfigureAwait(false);
+                var result = await asyncMesher.MeshAsync(structure, options, cts.Token);
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled");
                 result.Should().NotBeNull("Valid result or cancellation exception are both acceptable");
             }

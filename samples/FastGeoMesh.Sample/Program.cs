@@ -15,7 +15,7 @@ namespace FastGeoMesh.Sample
                 SimpleRectangleExample();
                 ComplexPolygonExample();
                 HoleExample();
-                await AsyncExample();
+                await AsyncExample().ConfigureAwait(true);
 
                 // New DI example demonstrating composition root and injected services
                 DependencyInjectionExample();
@@ -231,7 +231,7 @@ namespace FastGeoMesh.Sample
                 structures,
                 optionsResult.Value,
                 maxDegreeOfParallelism: 4,
-                progress: progress);
+                progress: progress).ConfigureAwait(true);
 
             stopwatch.Stop();
 

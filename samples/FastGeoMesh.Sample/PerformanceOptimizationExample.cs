@@ -64,7 +64,7 @@ namespace FastGeoMesh.Sample
                 var asyncMesher = (IAsyncMesher)mesher;
 
                 var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                var batchResult = await asyncMesher.MeshBatchAsync(structures, optionsResult.Value);
+                var batchResult = await asyncMesher.MeshBatchAsync(structures, optionsResult.Value).ConfigureAwait(true);
                 stopwatch.Stop();
 
                 if (batchResult.IsSuccess)

@@ -103,7 +103,7 @@ namespace FastGeoMesh.Tests.Validation
             var provider = services.BuildServiceProvider();
             var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
-            var asyncResult = await asyncMesher.MeshAsync(structure, options).ConfigureAwait(false);
+            var asyncResult = await asyncMesher.MeshAsync(structure, options);
 
             // Assert
             asyncResult.IsSuccess.Should().BeTrue();

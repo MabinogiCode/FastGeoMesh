@@ -142,9 +142,13 @@ namespace FastGeoMesh.Tests.Coverage
                         refinementOptions.SegmentRefineBand.Should().Be(0.8);
                     }
                 }
-                catch (Exception)
+                catch (ArgumentException)
                 {
-                    // Refinement API might not exist - that's OK
+                    // Refinement API might not exist or accept those values - that's OK
+                }
+                catch (TypeLoadException)
+                {
+                    // Types related to refinement might not exist - that's OK
                 }
 
                 // Invalid refinement values - if they exist
@@ -160,15 +164,23 @@ namespace FastGeoMesh.Tests.Coverage
                         .Build();
                     invalidSegmentRefinement.IsFailure.Should().BeTrue();
                 }
-                catch (Exception)
+                catch (ArgumentException)
                 {
-                    // Refinement API might not exist - that's OK
+                    // Invalid refinement inputs may throw ArgumentException - that's OK
+                }
+                catch (TypeLoadException)
+                {
+                    // Types related to refinement might not exist - that's OK
                 }
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 // MesherOptionsBuilder API might be different - that's OK
                 true.Should().BeTrue("MesherOptionsBuilder API might be different");
+            }
+            catch (TypeLoadException)
+            {
+                true.Should().BeTrue("MesherOptionsBuilder types might not exist");
             }
         }
 
@@ -428,10 +440,18 @@ namespace FastGeoMesh.Tests.Coverage
                     // Don't assert specific counts due to extreme geometry
                 }
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 // Complex meshing scenarios might have different behavior - that's OK
                 true.Should().BeTrue("Complex meshing scenarios might behave differently");
+            }
+            catch (TypeLoadException)
+            {
+                true.Should().BeTrue("Complex meshing scenario types might not exist");
+            }
+            catch (InvalidOperationException)
+            {
+                true.Should().BeTrue("Mesher operations might throw InvalidOperationException");
             }
         }
     }

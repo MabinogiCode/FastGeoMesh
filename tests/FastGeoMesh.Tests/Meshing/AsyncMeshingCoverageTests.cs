@@ -46,7 +46,7 @@ namespace FastGeoMesh.Tests.Meshing
             var structure = new PrismStructureDefinition(new Polygon2D(vertices), 0, 5);
 
             // Act
-            var estimate = await _asyncMesher.EstimateComplexityAsync(structure, _options).ConfigureAwait(false);
+            var estimate = await _asyncMesher.EstimateComplexityAsync(structure, _options).ConfigureAwait(true);
 
             // Assert
             estimate.Complexity.Should().Be(expectedComplexity);
@@ -71,13 +71,13 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act
             var syncMesh = _mesher.Mesh(structure, _options).UnwrapForTests();
-            var asyncMesh = await _asyncMesher.MeshAsync(structure, _options).UnwrapForTestsAsync().ConfigureAwait(false);
+            var asyncMesh = await _asyncMesher.MeshAsync(structure, _options).ConfigureAwait(true);
 
             // Assert
-            asyncMesh.Should().NotBeNull();
-            asyncMesh.QuadCount.Should().Be(syncMesh.QuadCount);
-            asyncMesh.TriangleCount.Should().Be(syncMesh.TriangleCount);
-            asyncMesh.Points.Count.Should().Be(syncMesh.Points.Count);
+            asyncMesh.Value.Should().NotBeNull();
+            asyncMesh.Value.QuadCount.Should().Be(syncMesh.QuadCount);
+            asyncMesh.Value.TriangleCount.Should().Be(syncMesh.TriangleCount);
+            asyncMesh.Value.Points.Count.Should().Be(syncMesh.Points.Count);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace FastGeoMesh.Tests.Meshing
             // Act & Assert
             cts.Cancel();
             await Assert.ThrowsAsync<OperationCanceledException>(
-                () => _asyncMesher.MeshAsync(structure, _options, cts.Token).UnwrapForTestsAsync()).ConfigureAwait(false);
+                () => _asyncMesher.MeshAsync(structure, _options, cts.Token).AsTask()).ConfigureAwait(true);
         }
     }
 }

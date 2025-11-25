@@ -29,15 +29,34 @@ namespace FastGeoMesh.Tests.Coverage
 
                 Console.WriteLine($"✓ Coverage infrastructure validated at: {fullPath}");
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                Console.WriteLine($"⚠ Coverage directory test failed: {ex.Message}");
-
-                var tempFile = Path.GetTempFileName();
-                File.WriteAllText(tempFile, "Test");
-                File.Exists(tempFile).Should().BeTrue();
-                File.Delete(tempFile);
+                HandleIOException(ex);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                HandleUnauthorizedAccessException(ex);
+            }
+        }
+
+        private static void HandleIOException(IOException ex)
+        {
+            Console.WriteLine($"⚠ Coverage directory test IO error: {ex.Message}");
+
+            var tempFile = Path.GetTempFileName();
+            File.WriteAllText(tempFile, "Test");
+            File.Exists(tempFile).Should().BeTrue();
+            File.Delete(tempFile);
+        }
+
+        private static void HandleUnauthorizedAccessException(UnauthorizedAccessException ex)
+        {
+            Console.WriteLine($"⚠ Coverage directory test access denied: {ex.Message}");
+
+            var tempFile = Path.GetTempFileName();
+            File.WriteAllText(tempFile, "Test");
+            File.Exists(tempFile).Should().BeTrue();
+            File.Delete(tempFile);
         }
     }
 }

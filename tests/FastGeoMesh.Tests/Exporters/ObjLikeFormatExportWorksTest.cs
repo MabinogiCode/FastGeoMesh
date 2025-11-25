@@ -30,13 +30,13 @@ namespace FastGeoMesh.Tests.Exporters
             File.Exists(path).Should().BeTrue();
             var lines = File.ReadAllLines(path);
 
-            bool hasVertexLine = lines.Any(l => l.StartsWith("v ") && l.Split(' ').Length == 4);
+            bool hasVertexLine = lines.Any(l => l.StartsWith("v ", StringComparison.Ordinal) && l.Split(' ').Length == 4);
             hasVertexLine.Should().BeTrue();
 
-            bool hasEdgeLine = lines.Any(l => l.StartsWith("l ") && l.Split(' ').Length == 3);
+            bool hasEdgeLine = lines.Any(l => l.StartsWith("l ", StringComparison.Ordinal) && l.Split(' ').Length == 3);
             hasEdgeLine.Should().BeTrue();
 
-            bool hasFaceLine = lines.Any(l => l.StartsWith("f ") && l.Split(' ').Length >= 4);
+            bool hasFaceLine = lines.Any(l => l.StartsWith("f ", StringComparison.Ordinal) && l.Split(' ').Length >= 4);
             hasFaceLine.Should().BeTrue();
 
             var countOnlyLines = lines.Where(l => int.TryParse(l.Trim(), out _) && l.Trim().Length < 5);

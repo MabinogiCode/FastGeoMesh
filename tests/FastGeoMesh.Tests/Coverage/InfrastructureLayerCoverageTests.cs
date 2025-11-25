@@ -69,12 +69,12 @@ namespace FastGeoMesh.Tests.Coverage
             var asyncMesher = (IAsyncMesher)mesher;
 
             // Test basic async meshing
-            var result = await asyncMesher.MeshAsync(structure, options).ConfigureAwait(false);
+            var result = await asyncMesher.MeshAsync(structure, options);
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
 
             // Test complexity estimation
-            var estimate = await asyncMesher.EstimateComplexityAsync(structure, options).ConfigureAwait(false);
+            var estimate = await asyncMesher.EstimateComplexityAsync(structure, options);
             estimate.Should().NotBeNull();
             estimate.EstimatedQuadCount.Should().BeGreaterThan(0);
             estimate.EstimatedTriangleCount.Should().BeGreaterThanOrEqualTo(0);
@@ -86,7 +86,7 @@ namespace FastGeoMesh.Tests.Coverage
             var progress = new Progress<MeshingProgress>(p => progressReports.Add(p));
 
             var resultWithProgress = await asyncMesher.MeshWithProgressAsync(
-                structure, options, progress).ConfigureAwait(false);
+                structure, options, progress);
             resultWithProgress.IsSuccess.Should().BeTrue();
 
             // Progress should be reported (at least start and end)
@@ -100,12 +100,12 @@ namespace FastGeoMesh.Tests.Coverage
                 new PrismStructureDefinition(polygon, 4, 6)
             };
 
-            var batchResult = await asyncMesher.MeshBatchAsync(structures, options).ConfigureAwait(false);
+            var batchResult = await asyncMesher.MeshBatchAsync(structures, options);
             batchResult.IsSuccess.Should().BeTrue();
             batchResult.Value.Should().HaveCount(3);
 
             // Test performance statistics
-            var stats = await asyncMesher.GetLivePerformanceStatsAsync().ConfigureAwait(false);
+            var stats = await asyncMesher.GetLivePerformanceStatsAsync();
             stats.Should().NotBeNull();
             stats.MeshingOperations.Should().BeGreaterThanOrEqualTo(0);
         }
