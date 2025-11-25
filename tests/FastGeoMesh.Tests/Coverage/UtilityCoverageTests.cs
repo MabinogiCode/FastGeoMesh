@@ -20,7 +20,7 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await completedValueTask.ContinueWith(
                 value => value * 2,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(false);
 
             // Assert
             result.Should().Be(84);
@@ -43,7 +43,7 @@ namespace FastGeoMesh.Tests.Coverage
             tcs.SetResult(10);
 
             // Act
-            var result = await continuationTask;
+            var result = await continuationTask.ConfigureAwait(false);
 
             // Assert
             result.Should().Be(30);
@@ -62,7 +62,7 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await completedValueTask.ContinueWith(
                 value => value + " World",
-                options);
+                options).ConfigureAwait(false);
 
             // Assert
             result.Should().Be("Hello World");
@@ -78,11 +78,11 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var stringResult = await valueTask.ContinueWith(
                 value => $"Number: {value}",
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(false);
 
             var boolResult = await valueTask.ContinueWith(
                 value => value > 100,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(false);
 
             // Assert
             stringResult.Should().Be("Number: 123");
@@ -105,7 +105,7 @@ namespace FastGeoMesh.Tests.Coverage
             tcs.SetException(new InvalidOperationException("Test exception"));
 
             // Act & Assert - Expect AggregateException containing the original exception
-            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask());
+            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask()).ConfigureAwait(false);
             exception.InnerException.Should().BeOfType<InvalidOperationException>();
             exception.InnerException.Message.Should().Be("Test exception");
         }
@@ -126,7 +126,7 @@ namespace FastGeoMesh.Tests.Coverage
             tcs.SetCanceled();
 
             // Act & Assert - Expect AggregateException containing TaskCanceledException
-            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask());
+            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask()).ConfigureAwait(false);
             exception.InnerException.Should().BeOfType<TaskCanceledException>();
         }
 
@@ -141,7 +141,7 @@ namespace FastGeoMesh.Tests.Coverage
             var result = await initialValueTask
                 .ContinueWith(x => x * 2, TaskContinuationOptions.ExecuteSynchronously)
                 .ContinueWith(x => x + 10, TaskContinuationOptions.ExecuteSynchronously)
-                .ContinueWith(x => x.ToString(), TaskContinuationOptions.ExecuteSynchronously);
+                .ContinueWith(x => x.ToString(), TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(false);
 
             // Assert
             result.Should().Be("20"); // (5 * 2) + 10 = 20
@@ -157,7 +157,7 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                valueTask.ContinueWith(nullFunction).AsTask());
+                valueTask.ContinueWith(nullFunction).AsTask()).ConfigureAwait(false);
         }
 
         /// <summary>Tests edge case with very large numbers.</summary>
@@ -170,7 +170,7 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await valueTask.ContinueWith(
                 value => value / 2,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(false);
 
             // Assert
             result.Should().Be(long.MaxValue / 2);
@@ -186,7 +186,7 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await valueTask.ContinueWith(
                 list => list.Count,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(false);
 
             // Assert
             result.Should().Be(3);
@@ -202,7 +202,7 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await valueTask.ContinueWith(
                 date => date.Year,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(false);
 
             // Assert
             result.Should().Be(2024);
@@ -229,7 +229,7 @@ namespace FastGeoMesh.Tests.Coverage
             var results = new List<int>();
             foreach (var task in tasks)
             {
-                results.Add(await task);
+                results.Add(await task.ConfigureAwait(false));
             }
 
             stopwatch.Stop();

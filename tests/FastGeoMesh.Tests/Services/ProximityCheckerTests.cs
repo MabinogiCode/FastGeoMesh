@@ -17,7 +17,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void IsNearAnyHole_ReturnsTrueWhenPointIsNearHoleBoundary()
+        public void IsNearAnyHoleReturnsTrueWhenPointIsNearHoleBoundary()
         {
             // Arrange
             var hole = new Polygon2D(new[]
@@ -42,7 +42,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void IsNearAnyHole_ReturnsFalseWhenPointIsFarFromHoles()
+        public void IsNearAnyHoleReturnsFalseWhenPointIsFarFromHoles()
         {
             // Arrange
             var hole = new Polygon2D(new[]
@@ -67,7 +67,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void IsNearAnyHole_ReturnsFalseWhenNoHoles()
+        public void IsNearAnyHoleReturnsFalseWhenNoHoles()
         {
             // Arrange
             var structure = new PrismStructureDefinition(
@@ -84,7 +84,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void IsNearAnySegment_ReturnsTrueWhenPointIsNearSegment()
+        public void IsNearAnySegmentReturnsTrueWhenPointIsNearSegment()
         {
             // Arrange
             var segment = new Segment3D(
@@ -107,7 +107,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void IsNearAnySegment_ReturnsFalseWhenPointIsFarFromSegments()
+        public void IsNearAnySegmentReturnsFalseWhenPointIsFarFromSegments()
         {
             // Arrange
             var segment = new Segment3D(
@@ -130,7 +130,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void IsInsideAnyHole_ReturnsTrueWhenPointIsInsideHole()
+        public void IsInsideAnyHoleReturnsTrueWhenPointIsInsideHole()
         {
             // Arrange
             var hole = new Polygon2D(new[]
@@ -155,7 +155,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void IsInsideAnyHole_ReturnsFalseWhenPointIsOutsideAllHoles()
+        public void IsInsideAnyHoleReturnsFalseWhenPointIsOutsideAllHoles()
         {
             // Arrange
             var hole = new Polygon2D(new[]
@@ -180,7 +180,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void IsInsideAnyHole_ReturnsFalseWhenNoHoles()
+        public void IsInsideAnyHoleReturnsFalseWhenNoHoles()
         {
             // Arrange
             var structure = new PrismStructureDefinition(

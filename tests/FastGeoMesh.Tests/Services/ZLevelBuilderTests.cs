@@ -14,7 +14,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void BuildZLevels_ReturnsBaseAndTopElevations()
+        public void BuildZLevelsReturnsBaseAndTopElevations()
         {
             // Arrange
             var structure = new PrismStructureDefinition(
@@ -37,7 +37,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void BuildZLevels_CreatesUniformSubdivisions()
+        public void BuildZLevelsCreatesUniformSubdivisions()
         {
             // Arrange
             var structure = new PrismStructureDefinition(
@@ -59,7 +59,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void BuildZLevels_IncludesInternalSurfaceElevations()
+        public void BuildZLevelsIncludesInternalSurfaceElevations()
         {
             // Arrange
             var structure = new PrismStructureDefinition(
@@ -83,7 +83,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void BuildZLevels_ReturnsDistinctSortedLevels()
+        public void BuildZLevelsReturnsDistinctSortedLevels()
         {
             // Arrange
             var structure = new PrismStructureDefinition(
@@ -106,7 +106,7 @@ namespace FastGeoMesh.Tests.Services
         }
 
         [Fact]
-        public void BuildZLevels_HandlesMinimalStructure()
+        public void BuildZLevelsHandlesMinimalStructure()
         {
             // Arrange
             var structure = new PrismStructureDefinition(

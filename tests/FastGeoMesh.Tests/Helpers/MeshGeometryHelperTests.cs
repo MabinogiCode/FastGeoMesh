@@ -7,7 +7,7 @@ namespace FastGeoMesh.Tests.Helpers
     public class MeshGeometryHelperTests
     {
         [Fact]
-        public void ComputeArea_ReturnsCorrectArea_ForSquare()
+        public void ComputeAreaReturnsCorrectAreaForSquare()
         {
             // Arrange - 10x10 square
             var polygon = new Polygon2D(new[]
@@ -26,7 +26,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ComputeArea_ReturnsCorrectArea_ForRectangle()
+        public void ComputeAreaReturnsCorrectAreaForRectangle()
         {
             // Arrange - 5x20 rectangle
             var polygon = new Polygon2D(new[]
@@ -45,7 +45,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ComputeArea_ReturnsCorrectArea_ForTriangle()
+        public void ComputeAreaReturnsCorrectAreaForTriangle()
         {
             // Arrange - Right triangle with base=10, height=10
             var polygon = new Polygon2D(new[]
@@ -63,7 +63,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ComputeArea_ReturnsZero_ForNullPolygon()
+        public void ComputeAreaReturnsZeroForNullPolygon()
         {
             // Arrange
             Polygon2D? polygon = null;
@@ -76,7 +76,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ComputeArea_ReturnsZero_ForLessThan3Vertices()
+        public void ComputeAreaReturnsZeroForLessThan3Vertices()
         {
             // Arrange
             var polygon = new Polygon2D(new[]
@@ -93,7 +93,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ComputeArea_ReturnsCorrectArea_ForLShape()
+        public void ComputeAreaReturnsCorrectAreaForLShape()
         {
             // Arrange - L-shape: 10x10 square with 5x5 square removed
             var polygon = new Polygon2D(new[]
@@ -115,7 +115,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ComputeArea_IsIndependentOfWindingOrder()
+        public void ComputeAreaIsIndependentOfWindingOrder()
         {
             // Arrange - Same square, different winding orders
             var polygonCW = new Polygon2D(new[]
@@ -145,7 +145,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ComputeArea_ReturnsCorrectArea_ForPentagon()
+        public void ComputeAreaReturnsCorrectAreaForPentagon()
         {
             // Arrange - Regular pentagon inscribed in unit circle
             // Using approximation for testing
@@ -167,7 +167,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ComputeArea_HandlesVerySmallPolygons()
+        public void ComputeAreaHandlesVerySmallPolygons()
         {
             // Arrange - Tiny triangle
             var polygon = new Polygon2D(new[]
@@ -185,7 +185,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ComputeArea_HandlesLargePolygons()
+        public void ComputeAreaHandlesLargePolygons()
         {
             // Arrange - Very large square
             var polygon = new Polygon2D(new[]

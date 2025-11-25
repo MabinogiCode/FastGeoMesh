@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -23,10 +22,10 @@ namespace FastGeoMesh.Tests.Validation
             var mesher = TestServiceProvider.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
             using var cts = new CancellationTokenSource();
-            await cts.CancelAsync();
+            await cts.CancelAsync().ConfigureAwait(false);
             try
             {
-                var result = await asyncMesher.MeshAsync(structure, options, cts.Token);
+                var result = await asyncMesher.MeshAsync(structure, options, cts.Token).ConfigureAwait(false);
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled");
                 result.Should().NotBeNull("Valid result or cancellation exception are both acceptable");
             }

@@ -343,7 +343,7 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Test with empty spans
             ReadOnlySpan<Vec2> emptySource = Array.Empty<Vec2>();
-            var emptyDestination = new Vec3[0];
+            var emptyDestination = Array.Empty<Vec3>();
             emptySource.TransformTo3D(emptyDestination, 1.0); // Should not throw
         }
 

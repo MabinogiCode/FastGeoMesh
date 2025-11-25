@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -40,7 +39,7 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act
             var syncMesh = _mesher.Mesh(structure, _options).UnwrapForTests();
-            var asyncMesh = await _mesher.MeshAsync(structure, _options);
+            var asyncMesh = await _mesher.MeshAsync(structure, _options).ConfigureAwait(false);
 
             // Assert
             asyncMesh.Value.Should().NotBeNull();
@@ -62,13 +61,13 @@ namespace FastGeoMesh.Tests.Meshing
             using var cts = new CancellationTokenSource();
 
             // Act & Assert
-            await cts.CancelAsync();
+            await cts.CancelAsync().ConfigureAwait(false);
 
             // ✅ For fast operations, cancellation token might not be checked
             // Accept both scenarios: exception thrown or operation completes normally
             try
             {
-                var result = await _mesher.MeshAsync(structure, _options, cts.Token);
+                var result = await _mesher.MeshAsync(structure, _options, cts.Token).ConfigureAwait(false);
 
                 // If no exception is thrown, verify token is cancelled and result is valid
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled");
@@ -94,13 +93,13 @@ namespace FastGeoMesh.Tests.Meshing
             using var cts = new CancellationTokenSource();
 
             // Act & Assert
-            await cts.CancelAsync();
+            await cts.CancelAsync().ConfigureAwait(false);
 
             // ✅ For fast operations, cancellation token might not be checked
             // Accept both scenarios: exception thrown or operation completes normally
             try
             {
-                var result = await _mesher.MeshAsync(structure, _options, cts.Token);
+                var result = await _mesher.MeshAsync(structure, _options, cts.Token).ConfigureAwait(false);
 
                 // If no exception is thrown, verify token is cancelled and result is valid
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled");
@@ -148,7 +147,7 @@ namespace FastGeoMesh.Tests.Meshing
             // Accept both scenarios: exception thrown or operation completes normally
             try
             {
-                var result = await asyncMesher.MeshWithProgressAsync(structure, _options, progress, cts.Token);
+                var result = await asyncMesher.MeshWithProgressAsync(structure, _options, progress, cts.Token).ConfigureAwait(false);
 
                 // If operation completes without exception, it's acceptable for fast operations
                 result.Should().NotBeNull("Operation completed before cancellation could be processed");
@@ -196,7 +195,7 @@ namespace FastGeoMesh.Tests.Meshing
             // Accept both scenarios: exception thrown or batch completes normally
             try
             {
-                var result = await asyncMesher.MeshBatchAsync(structures, _options, progress: progress, cancellationToken: cts.Token);
+                var result = await asyncMesher.MeshBatchAsync(structures, _options, progress: progress, cancellationToken: cts.Token).ConfigureAwait(false);
 
                 // If batch completes without exception, it's acceptable for fast operations
                 result.Should().NotBeNull("Batch completed before cancellation could be processed");
@@ -230,7 +229,7 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act
             var asyncMesher = (IAsyncMesher)_mesher;
-            var mesh = await asyncMesher.MeshWithProgressAsync(structure, _options, progress);
+            var mesh = await asyncMesher.MeshWithProgressAsync(structure, _options, progress).ConfigureAwait(false);
 
             // Assert
             mesh.Should().NotBeNull();
@@ -265,7 +264,7 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act
             var asyncMesher = (IAsyncMesher)_mesher;
-            var meshes = await asyncMesher.MeshBatchAsync(structures, _options, progress: progress);
+            var meshes = await asyncMesher.MeshBatchAsync(structures, _options, progress: progress).ConfigureAwait(false);
 
             // Assert
             var meshList = meshes.Value;
@@ -298,7 +297,7 @@ namespace FastGeoMesh.Tests.Meshing
             // Act
             var asyncMesher = (IAsyncMesher)_mesher;
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            var meshes = await asyncMesher.MeshBatchAsync(structures, _options, maxDegreeOfParallelism: 2);
+            var meshes = await asyncMesher.MeshBatchAsync(structures, _options, maxDegreeOfParallelism: 2).ConfigureAwait(false);
             stopwatch.Stop();
 
             // Assert
@@ -328,7 +327,7 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act
             var asyncMesher = (IAsyncMesher)_mesher;
-            var estimate = await asyncMesher.EstimateComplexityAsync(structure, _options);
+            var estimate = await asyncMesher.EstimateComplexityAsync(structure, _options).ConfigureAwait(false);
 
             // Assert
             estimate.EstimatedQuadCount.Should().BeGreaterThan(0);
@@ -361,7 +360,7 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act
             var asyncMesher = (IAsyncMesher)_mesher;
-            var estimate = await asyncMesher.EstimateComplexityAsync(structure, _options);
+            var estimate = await asyncMesher.EstimateComplexityAsync(structure, _options).ConfigureAwait(false);
 
             // Assert
             estimate.Complexity.Should().BeOneOf(MeshingComplexity.Moderate, MeshingComplexity.Complex, MeshingComplexity.Extreme);

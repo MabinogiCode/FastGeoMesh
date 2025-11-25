@@ -32,7 +32,7 @@ namespace FastGeoMesh.Tests.Helpers
         /// <summary>Extension to unwrap async Result&lt;ImmutableMesh&gt; for tests</summary>
         public static async Task<ImmutableMesh> UnwrapForTestsAsync(this ValueTask<Result<ImmutableMesh>> result)
         {
-            var r = await result;
+            var r = await result.ConfigureAwait(false);
             if (r.IsFailure)
             {
                 // Preserve cancellation semantics
@@ -48,7 +48,7 @@ namespace FastGeoMesh.Tests.Helpers
         /// <summary>Extension to unwrap async Result&lt;IReadOnlyList&lt;ImmutableMesh&gt;&gt; for tests</summary>
         public static async Task<IReadOnlyList<ImmutableMesh>> UnwrapForTestsAsync(this ValueTask<Result<IReadOnlyList<ImmutableMesh>>> result)
         {
-            var r = await result;
+            var r = await result.ConfigureAwait(false);
             if (r.IsFailure)
             {
                 throw new InvalidOperationException($"Async batch meshing failed: {r.Error.Description}");

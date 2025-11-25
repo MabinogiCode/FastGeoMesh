@@ -1,8 +1,7 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FluentAssertions;
-using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace FastGeoMesh.Tests.Validation
 {
@@ -104,7 +103,7 @@ namespace FastGeoMesh.Tests.Validation
             var provider = services.BuildServiceProvider();
             var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
-            var asyncResult = await asyncMesher.MeshAsync(structure, options);
+            var asyncResult = await asyncMesher.MeshAsync(structure, options).ConfigureAwait(false);
 
             // Assert
             asyncResult.IsSuccess.Should().BeTrue();

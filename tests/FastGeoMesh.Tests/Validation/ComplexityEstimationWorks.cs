@@ -1,9 +1,8 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
-using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace FastGeoMesh.Tests.Validation
 {
@@ -26,7 +25,7 @@ namespace FastGeoMesh.Tests.Validation
             var provider = services.BuildServiceProvider();
             var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
-            var estimate = await asyncMesher.EstimateComplexityAsync(structure, options);
+            var estimate = await asyncMesher.EstimateComplexityAsync(structure, options).ConfigureAwait(false);
             estimate.Should().NotBeNull();
             estimate.EstimatedQuadCount.Should().BeGreaterThan(0);
             estimate.EstimatedTriangleCount.Should().BeGreaterThan(0);

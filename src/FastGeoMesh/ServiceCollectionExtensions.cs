@@ -1,9 +1,12 @@
+// <copyright file="ServiceCollectionExtensions.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Application.Strategies;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
 using FastGeoMesh.Infrastructure.Services;
-using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Infrastructure.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,6 +31,7 @@ namespace FastGeoMesh
 
             // Geometry helpers / service - consolidate to single implementation
             services.AddSingleton<IGeometryService, GeometryService>();
+
             // Map the domain-level IGeometryHelper to the same GeometryService instance
             services.AddSingleton<IGeometryHelper>(sp => (IGeometryHelper)sp.GetRequiredService<IGeometryService>());
 

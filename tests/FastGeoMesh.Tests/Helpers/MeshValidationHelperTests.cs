@@ -7,7 +7,7 @@ namespace FastGeoMesh.Tests.Helpers
     public class MeshValidationHelperTests
     {
         [Fact]
-        public void ValidatePolygon_ReturnsTrue_ForValidSquare()
+        public void ValidatePolygonReturnsTrueForValidSquare()
         {
             // Arrange
             var polygon = new Polygon2D(new[]
@@ -26,7 +26,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ValidatePolygon_ReturnsTrue_ForValidTriangle()
+        public void ValidatePolygonReturnsTrueForValidTriangle()
         {
             // Arrange
             var polygon = new Polygon2D(new[]
@@ -44,7 +44,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ValidatePolygon_ReturnsFalse_ForNullPolygon()
+        public void ValidatePolygonReturnsFalseForNullPolygon()
         {
             // Arrange
             Polygon2D? polygon = null;
@@ -57,7 +57,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ValidatePolygon_ReturnsFalse_ForLessThan3Vertices()
+        public void ValidatePolygonReturnsFalseForLessThan3Vertices()
         {
             // Arrange
             var polygon = new Polygon2D(new[]
@@ -74,7 +74,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ValidatePolygon_ReturnsFalse_ForDuplicateConsecutiveVertices()
+        public void ValidatePolygonReturnsFalseForDuplicateConsecutiveVertices()
         {
             // Arrange
             var polygon = new Polygon2D(new[]
@@ -94,7 +94,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ValidatePolygon_ReturnsFalse_ForSelfIntersectingPolygon()
+        public void ValidatePolygonReturnsFalseForSelfIntersectingPolygon()
         {
             // Arrange - Bowtie/figure-eight shape
             var polygon = new Polygon2D(new[]
@@ -113,7 +113,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ValidatePolygon_ReturnsTrue_ForComplexValidPolygon()
+        public void ValidatePolygonReturnsTrueForComplexValidPolygon()
         {
             // Arrange - L-shape
             var polygon = new Polygon2D(new[]
@@ -134,7 +134,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ValidatePolygon_ReturnsTrue_ForConvexHexagon()
+        public void ValidatePolygonReturnsTrueForConvexHexagon()
         {
             // Arrange - Regular hexagon
             var polygon = new Polygon2D(new[]
@@ -155,7 +155,7 @@ namespace FastGeoMesh.Tests.Helpers
         }
 
         [Fact]
-        public void ValidatePolygon_ReturnsFalse_ForNearlyDuplicateVertices()
+        public void ValidatePolygonReturnsFalseForNearlyDuplicateVertices()
         {
             // Arrange - Vertices very close to each other (within tolerance)
             var polygon = new Polygon2D(new[]

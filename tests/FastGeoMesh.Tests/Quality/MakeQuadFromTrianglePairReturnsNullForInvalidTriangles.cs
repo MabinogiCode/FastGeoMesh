@@ -1,8 +1,8 @@
 using FastGeoMesh.Application.Helpers.Quality;
+using FastGeoMesh.Domain.Services;
 using FluentAssertions;
 using LibTessDotNet;
 using Microsoft.Extensions.DependencyInjection;
-using FastGeoMesh.Domain.Services;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Quality

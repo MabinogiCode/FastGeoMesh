@@ -8,7 +8,7 @@ namespace FastGeoMesh.Tests.Geometry
     public sealed class GeometryServiceTests
     {
         [Fact]
-        public void DistancePointToSegment_HandlesDegenerateSegment()
+        public void DistancePointToSegmentHandlesDegenerateSegment()
         {
             var services = new ServiceCollection();
             services.AddFastGeoMesh();
@@ -24,7 +24,7 @@ namespace FastGeoMesh.Tests.Geometry
         }
 
         [Fact]
-        public void PointInPolygon_TreatsBoundaryAsInside()
+        public void PointInPolygonTreatsBoundaryAsInside()
         {
             var services = new ServiceCollection();
             services.AddFastGeoMesh();
@@ -40,7 +40,7 @@ namespace FastGeoMesh.Tests.Geometry
         }
 
         [Fact]
-        public void BatchPointInPolygon_ThrowsOnMismatchedResultsLength()
+        public void BatchPointInPolygonThrowsOnMismatchedResultsLength()
         {
             var services = new ServiceCollection();
             services.AddFastGeoMesh();
@@ -55,17 +55,17 @@ namespace FastGeoMesh.Tests.Geometry
         }
 
         [Fact]
-        public void PolygonArea_ComputesExpectedValues()
+        public void PolygonAreaComputesExpectedValues()
         {
             var services = new ServiceCollection();
             services.AddFastGeoMesh();
             var provider = services.BuildServiceProvider();
             var helper = provider.GetRequiredService<IGeometryHelper>();
 
-            var square = new Vec2[] { new(0,0), new(4,0), new(4,4), new(0,4) };
+            var square = new Vec2[] { new(0, 0), new(4, 0), new(4, 4), new(0, 4) };
             helper.PolygonArea(square).Should().BeApproximately(16.0, 1e-9);
 
-            var triangle = new Vec2[] { new(0,0), new(10,0), new(0,10) };
+            var triangle = new Vec2[] { new(0, 0), new(10, 0), new(0, 10) };
             helper.PolygonArea(triangle).Should().BeApproximately(50.0, 1e-9);
         }
     }

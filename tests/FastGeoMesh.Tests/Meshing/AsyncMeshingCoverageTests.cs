@@ -1,9 +1,8 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
-using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
@@ -47,7 +46,7 @@ namespace FastGeoMesh.Tests.Meshing
             var structure = new PrismStructureDefinition(new Polygon2D(vertices), 0, 5);
 
             // Act
-            var estimate = await _asyncMesher.EstimateComplexityAsync(structure, _options);
+            var estimate = await _asyncMesher.EstimateComplexityAsync(structure, _options).ConfigureAwait(false);
 
             // Assert
             estimate.Complexity.Should().Be(expectedComplexity);
@@ -72,7 +71,7 @@ namespace FastGeoMesh.Tests.Meshing
 
             // Act
             var syncMesh = _mesher.Mesh(structure, _options).UnwrapForTests();
-            var asyncMesh = await _asyncMesher.MeshAsync(structure, _options).UnwrapForTestsAsync();
+            var asyncMesh = await _asyncMesher.MeshAsync(structure, _options).UnwrapForTestsAsync().ConfigureAwait(false);
 
             // Assert
             asyncMesh.Should().NotBeNull();
@@ -96,7 +95,7 @@ namespace FastGeoMesh.Tests.Meshing
             // Act & Assert
             cts.Cancel();
             await Assert.ThrowsAsync<OperationCanceledException>(
-                () => _asyncMesher.MeshAsync(structure, _options, cts.Token).UnwrapForTestsAsync());
+                () => _asyncMesher.MeshAsync(structure, _options, cts.Token).UnwrapForTestsAsync()).ConfigureAwait(false);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace FastGeoMesh.Tests.Integration
     public class DependencyInjectionIntegrationTests
     {
         [Fact]
-        public void AddFastGeoMesh_RegistersAllRequiredServices()
+        public void AddFastGeoMeshRegistersAllRequiredServices()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -31,7 +31,7 @@ namespace FastGeoMesh.Tests.Integration
         }
 
         [Fact]
-        public void AddFastGeoMesh_UsesSingletonForGeometryService()
+        public void AddFastGeoMeshUsesSingletonForGeometryService()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -47,7 +47,7 @@ namespace FastGeoMesh.Tests.Integration
         }
 
         [Fact]
-        public void AddFastGeoMesh_UsesTransientForPrismMesher()
+        public void AddFastGeoMeshUsesTransientForPrismMesher()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -63,7 +63,7 @@ namespace FastGeoMesh.Tests.Integration
         }
 
         [Fact]
-        public void PrismMesher_CanMeshWithDI()
+        public void PrismMesherCanMeshWithDI()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -91,7 +91,7 @@ namespace FastGeoMesh.Tests.Integration
         }
 
         [Fact]
-        public void AddFastGeoMeshWithMonitoring_RegistersPerformanceMonitor()
+        public void AddFastGeoMeshWithMonitoringRegistersPerformanceMonitor()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -107,7 +107,7 @@ namespace FastGeoMesh.Tests.Integration
         }
 
         [Fact]
-        public void AddFastGeoMeshWithMonitoring_UseSingletonForPerformanceMonitor()
+        public void AddFastGeoMeshWithMonitoringUseSingletonForPerformanceMonitor()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -123,7 +123,7 @@ namespace FastGeoMesh.Tests.Integration
         }
 
         [Fact]
-        public void IPrismMesher_AndIAsyncMesher_ResolveToSameImplementation()
+        public void IPrismMesherAndIAsyncMesherResolveToSameImplementation()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -140,7 +140,7 @@ namespace FastGeoMesh.Tests.Integration
         }
 
         [Fact]
-        public async Task AsyncMesher_CanMeshAsyncWithDI()
+        public async Task AsyncMesherCanMeshAsyncWithDI()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -159,7 +159,7 @@ namespace FastGeoMesh.Tests.Integration
                 .Build();
 
             // Act
-            var result = await mesher.MeshAsync(structure, optionsResult.Value);
+            var result = await mesher.MeshAsync(structure, optionsResult.Value).ConfigureAwait(false);
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -168,7 +168,7 @@ namespace FastGeoMesh.Tests.Integration
         }
 
         [Fact]
-        public void ZLevelBuilder_CanBeResolvedAndUsed()
+        public void ZLevelBuilderCanBeResolvedAndUsed()
         {
             // Arrange
             var services = new ServiceCollection();
@@ -194,7 +194,7 @@ namespace FastGeoMesh.Tests.Integration
         }
 
         [Fact]
-        public void ProximityChecker_CanBeResolvedAndUsed()
+        public void ProximityCheckerCanBeResolvedAndUsed()
         {
             // Arrange
             var services = new ServiceCollection();

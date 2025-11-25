@@ -1,7 +1,5 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
-using FastGeoMesh.Tests.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Helpers
@@ -31,7 +29,7 @@ namespace FastGeoMesh.Tests.Helpers
         /// Asynchronously meshes the provided structure definition simulating async workload.
         /// </summary>
         public async ValueTask<Result<ImmutableMesh>> MeshAsync(PrismStructureDefinition structureDefinition, MesherOptions options, CancellationToken cancellationToken = default)
-            => await _actualMesher.MeshAsync(structureDefinition, options, cancellationToken);
+            => await _actualMesher.MeshAsync(structureDefinition, options, cancellationToken).ConfigureAwait(false);
 
         /// <summary>Generate mesh asynchronously with progress reporting and cancellation support.</summary>
         public ValueTask<Result<ImmutableMesh>> MeshWithProgressAsync(PrismStructureDefinition structureDefinition, MesherOptions options, IProgress<MeshingProgress>? progress, CancellationToken cancellationToken = default)

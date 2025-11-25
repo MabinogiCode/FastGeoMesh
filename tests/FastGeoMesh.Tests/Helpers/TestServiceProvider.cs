@@ -1,7 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Helpers
 {
