@@ -33,7 +33,15 @@ namespace FastGeoMesh.Tests.Coverage
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"⚠ Failed to load {assemblyName}: {ex.Message}");
+                    // Only handle ReflectionTypeLoadException and log, rethrow others
+                    if (ex is ReflectionTypeLoadException || ex is FileLoadException)
+                    {
+                        Console.WriteLine($"⚠ Failed to load {assemblyName}: {ex.Message}");
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
 

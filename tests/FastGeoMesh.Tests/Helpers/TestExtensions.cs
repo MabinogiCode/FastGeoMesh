@@ -10,6 +10,11 @@ namespace FastGeoMesh.Tests.Helpers
         /// <summary>Extension to unwrap Result&lt;MesherOptions&gt; for tests expecting direct MesherOptions</summary>
         public static MesherOptions UnwrapForTests(this Result<MesherOptions> result)
         {
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
             if (result.IsFailure)
             {
                 throw new InvalidOperationException($"Options validation failed: {result.Error.Description}");
@@ -21,6 +26,11 @@ namespace FastGeoMesh.Tests.Helpers
         /// <summary>Extension to unwrap Result&lt;ImmutableMesh&gt; for tests expecting direct ImmutableMesh</summary>
         public static ImmutableMesh UnwrapForTests(this Result<ImmutableMesh> result)
         {
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
             if (result.IsFailure)
             {
                 throw new InvalidOperationException($"Meshing failed: {result.Error.Description}");
