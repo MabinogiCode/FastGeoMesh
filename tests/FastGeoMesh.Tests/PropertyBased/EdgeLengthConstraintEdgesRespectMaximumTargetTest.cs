@@ -17,7 +17,6 @@ namespace FastGeoMesh.Tests.PropertyBased
         [InlineData(3)]
         [InlineData(5)]
         [InlineData(8)]
-        [InlineData(8)]
         public void Test(int targetLength)
         {
             if (targetLength <= 0)

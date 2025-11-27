@@ -1,6 +1,6 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Domain.Factories;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +36,6 @@ namespace FastGeoMesh.Tests.Meshing
         [InlineData(25, MeshingComplexity.Simple)]    // < 50 vertices
         [InlineData(100, MeshingComplexity.Moderate)] // < 200 vertices
         [InlineData(500, MeshingComplexity.Complex)]  // < 1000 vertices
-        [InlineData(1500, MeshingComplexity.Extreme)] // >= 1000 vertices
         [InlineData(1500, MeshingComplexity.Extreme)] // >= 1000 vertices
         public async Task EstimateComplexityAsyncCategorizesDifferentSizesCorrectly(int vertexCount, MeshingComplexity expectedComplexity)
         {

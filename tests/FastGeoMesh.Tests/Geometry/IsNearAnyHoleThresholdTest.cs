@@ -20,7 +20,6 @@ namespace FastGeoMesh.Tests.Geometry
         [InlineData(5, 5, 1.2, true)]
         [InlineData(3.9, 5, 0.05, false)]
         [InlineData(3.9, 5, 0.2, true)]
-        [InlineData(3.9, 5, 0.2, true)]
         public void Test(double x, double y, double band, bool expected)
         {
             var outer = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 10), new Vec2(0, 10) });

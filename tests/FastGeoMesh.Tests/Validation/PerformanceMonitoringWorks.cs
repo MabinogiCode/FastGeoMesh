@@ -18,7 +18,7 @@ namespace FastGeoMesh.Tests.Validation
         {
             var mesher = TestServiceProvider.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
-            var stats = await asyncMesher.GetLivePerformanceStatsAsync().ConfigureAwait(false);
+            var stats = await asyncMesher.GetLivePerformanceStatsAsync();
             stats.Should().NotBeNull();
             stats.MeshingOperations.Should().BeGreaterThanOrEqualTo(0);
         }

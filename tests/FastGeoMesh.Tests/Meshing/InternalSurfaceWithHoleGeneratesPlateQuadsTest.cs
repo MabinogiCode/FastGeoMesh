@@ -1,4 +1,4 @@
-﻿using FastGeoMesh.Domain;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;

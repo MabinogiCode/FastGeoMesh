@@ -16,7 +16,6 @@ namespace FastGeoMesh.Tests.PropertyBased
         [Theory]
         [InlineData(4)]
         [InlineData(6)]
-        [InlineData(6)]
         public void Test(int size)
         {
             if (size <= 2)

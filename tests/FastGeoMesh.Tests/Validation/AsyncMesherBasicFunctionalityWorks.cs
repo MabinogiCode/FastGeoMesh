@@ -1,4 +1,4 @@
-﻿using FastGeoMesh.Domain;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -30,7 +30,7 @@ namespace FastGeoMesh.Tests.Validation
             var provider = services.BuildServiceProvider();
             var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
-            var mesh = await asyncMesher.MeshAsync(structure, options).ConfigureAwait(false);
+            var mesh = await asyncMesher.MeshAsync(structure, options);
             mesh.Value.Should().NotBeNull();
             mesh.Value.QuadCount.Should().BeGreaterThan(0);
             mesh.Value.Points.Should().NotBeEmpty();

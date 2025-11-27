@@ -1,4 +1,4 @@
-﻿using FastGeoMesh.Application.Services;
+using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Domain.Services;
@@ -161,7 +161,7 @@ namespace FastGeoMesh.Tests.Integration
                 .WithFastPreset()
                 .Build();
             // Act
-            var result = await mesher.MeshAsync(structure, optionsResult.Value).ConfigureAwait(false);
+            var result = await mesher.MeshAsync(structure, optionsResult.Value);
             // Assert
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Value);

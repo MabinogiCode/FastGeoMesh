@@ -17,7 +17,6 @@ namespace FastGeoMesh.Tests.PropertyBased
         [InlineData(5, 5, 2)]
         [InlineData(10, 8, 3)]
         [InlineData(15, 12, 4)]
-        [InlineData(15, 12, 4)]
         public void Test(int width, int height, int depth)
         {
             if (width <= 0 || height <= 0 || depth <= 0)

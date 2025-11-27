@@ -1,4 +1,4 @@
-﻿using FastGeoMesh.Domain;
+using FastGeoMesh.Domain;
 using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -17,7 +17,6 @@ namespace FastGeoMesh.Tests.PropertyBased
         /// </summary>
         [Theory]
         [InlineData(6, 4, 3)]
-        [InlineData(10, 8, 5)]
         [InlineData(10, 8, 5)]
         public void Test(int width, int height, int depth)
         {

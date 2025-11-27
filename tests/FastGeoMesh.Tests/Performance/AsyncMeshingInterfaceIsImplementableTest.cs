@@ -23,7 +23,7 @@ namespace FastGeoMesh.Tests.Performance
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
-            var mesh = await mesher.MeshAsync(structure, options, CancellationToken.None).ConfigureAwait(false);
+            var mesh = await mesher.MeshAsync(structure, options, CancellationToken.None);
             mesh.Should().NotBeNull();
             mesh.Value.Quads.Should().NotBeEmpty();
         }

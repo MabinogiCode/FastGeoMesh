@@ -1,4 +1,4 @@
-﻿using FastGeoMesh.Domain.Interfaces;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Infrastructure.Exporters;
 using FastGeoMesh.Infrastructure.FileOperations;

@@ -58,7 +58,6 @@ namespace FastGeoMesh.Tests.Coverage
         [InlineData(TaskContinuationOptions.None)]
         [InlineData(TaskContinuationOptions.ExecuteSynchronously)]
         [InlineData(TaskContinuationOptions.RunContinuationsAsynchronously)]
-        [InlineData(TaskContinuationOptions.RunContinuationsAsynchronously)]
         public async Task ValueTaskExtensionsContinueWithWithDifferentOptionsWorksCorrectly(TaskContinuationOptions options)
         {
             // Arrange

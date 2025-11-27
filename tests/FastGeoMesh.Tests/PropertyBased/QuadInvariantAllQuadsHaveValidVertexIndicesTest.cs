@@ -17,7 +17,6 @@ namespace FastGeoMesh.Tests.PropertyBased
         [InlineData(8, 6)]
         [InlineData(12, 10)]
         [InlineData(6, 4)]
-        [InlineData(6, 4)]
         public void Test(int width, int height)
         {
             var rect = Polygon2D.FromPoints(new[]

@@ -21,7 +21,6 @@ namespace FastGeoMesh.Tests.Geometry
         [InlineData(11, 5, false)]
         [InlineData(5, -1, false)]
         [InlineData(5, 11, false)]
-        [InlineData(5, 11, false)]
         public void Test(double x, double y, bool expected)
         {
             var services = new ServiceCollection();
