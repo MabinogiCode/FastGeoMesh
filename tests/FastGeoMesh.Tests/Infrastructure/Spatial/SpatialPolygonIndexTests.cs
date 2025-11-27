@@ -59,6 +59,13 @@ namespace FastGeoMesh.Tests.Infrastructure.Spatial
         }
 
         [Fact]
+        public void IsInsideWithPointOnVertexReturnsTrue()
+        {
+            var index = new SpatialPolygonIndex(_square, _geometryService);
+            index.IsInside(0, 0).Should().BeTrue();
+        }
+
+        [Fact]
         public void IsInsideWithPointInsideReturnsTrue()
         {
             var index = new SpatialPolygonIndex(_square, _geometryService);
@@ -83,6 +90,27 @@ namespace FastGeoMesh.Tests.Infrastructure.Spatial
             var vertices = new Vec2[] { new(0, 0), new(1, 0), new(1, 1), new(0, 1) };
             var index = new SpatialPolygonIndex(vertices, _geometryService);
             index.IsInside(0.5, 0.5).Should().BeTrue();
+        }
+
+        [Fact]
+        public void PointInPolygonRayCastingWithReadOnlyCollectionWorks()
+        {
+            var list = new List<Vec2> { new(0, 0), new(2, 0), new(2, 2), new(0, 2) };
+            IReadOnlyList<Vec2> ro = new System.Collections.ObjectModel.ReadOnlyCollection<Vec2>(list);
+            var index = new SpatialPolygonIndex(ro, _geometryService);
+            index.IsInside(1.0, 1.0).Should().BeTrue();
+        }
+
+        [Fact]
+        public void BuildIndexInvokesEdgeIntersectionLogic()
+        {
+            // A triangle spanning across the index bounds to exercise various cell classifications
+            var tri = new List<Vec2> { new(-0.5, 0.5), new(1.5, 0.5), new(0.5, 1.5) };
+            var index = new SpatialPolygonIndex(tri, _geometryService, gridResolution: 4);
+
+            // Sanity checks to ensure the index is usable and thus built.
+            index.IsInside(0.5, 0.75).Should().BeTrue();
+            index.IsInside(-0.25, -0.25).Should().BeFalse();
         }
     }
 }

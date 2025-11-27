@@ -115,5 +115,24 @@ namespace FastGeoMesh.Tests.Application.Services
             var concave = (new Vec2(0, 0), new Vec2(2, 0), new Vec2(1, 0.2), new Vec2(0, 2));
             _sut.IsConvex(concave).Should().BeFalse();
         }
+
+        [Fact]
+        public void LerpVariantsAndVec2OverloadAreCovered()
+        {
+            // Lerp(Vec2)
+            var v = _sut.Lerp(new Vec2(0, 0), new Vec2(2, 2), 0.25);
+            v.Should().Be(new Vec2(0.5, 0.5));
+
+            // Lerp(Vec3)
+            var v3 = _sut.Lerp(new Vec3(0, 0, 0), new Vec3(2, 4, 6), 0.5);
+            v3.Should().Be(new Vec3(1, 2, 3));
+
+            // LerpScalar
+            _sut.LerpScalar(2, 10, 0.25).Should().Be(4);
+
+            // PointInPolygon(Vec2 overload)
+            var square = new[] { new Vec2(0, 0), new Vec2(2, 0), new Vec2(2, 2), new Vec2(0, 2) };
+            _sut.PointInPolygon(square, new Vec2(1, 1)).Should().BeTrue();
+        }
     }
 }
