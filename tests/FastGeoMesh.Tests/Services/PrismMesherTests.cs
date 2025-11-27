@@ -7,19 +7,6 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Services
 {
-    public class StubZLevelBuilder : IZLevelBuilder
-    {
-        public Func<double, double, MesherOptions, PrismStructureDefinition, IReadOnlyList<double>> BuildZLevelsFunc { get; set; } = (z0, z1, opt, struc) => new List<double> { z0, z1 };
-        public IReadOnlyList<double> BuildZLevels(double z0, double z1, MesherOptions options, PrismStructureDefinition structure) => BuildZLevelsFunc(z0, z1, options, structure);
-    }
-
-    public class StubProximityChecker : IProximityChecker
-    {
-        public bool IsNearAnyHole(PrismStructureDefinition structure, double x, double y, double band, IGeometryService geometryService) => false;
-        public bool IsNearAnySegment(PrismStructureDefinition structure, double x, double y, double band, IGeometryService geometryService) => false;
-        public bool IsInsideAnyHole(PrismStructureDefinition structure, double x, double y, IGeometryService geometryService) => false;
-    }
-
     public class PrismMesherTests
     {
         private readonly GeometryService _geometryService;
