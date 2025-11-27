@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using FastGeoMesh.Domain.Interfaces;
+﻿using FastGeoMesh.Domain.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Sample
 {

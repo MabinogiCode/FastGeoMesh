@@ -1,8 +1,9 @@
 ﻿using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using FastGeoMesh.Domain.Interfaces;
+
 namespace FastGeoMesh.Tests.Validation
 {
     /// <summary>
@@ -151,4 +152,3 @@ namespace FastGeoMesh.Tests.Validation
         }
     }
 }
-

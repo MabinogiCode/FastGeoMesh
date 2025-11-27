@@ -1,11 +1,12 @@
 ﻿using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Infrastructure.Exporters;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using FastGeoMesh.Domain.Interfaces;
+
 namespace FastGeoMesh.Tests.Exporters
 {
     /// <summary>
@@ -60,4 +61,3 @@ namespace FastGeoMesh.Tests.Exporters
         }
     }
 }
-

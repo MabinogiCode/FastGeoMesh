@@ -1,10 +1,11 @@
 ﻿using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Domain.Services;
 using FastGeoMesh.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using FastGeoMesh.Domain.Interfaces;
+
 namespace FastGeoMesh.Tests.Integration
 {
     /// <summary>
@@ -221,4 +222,3 @@ namespace FastGeoMesh.Tests.Integration
         }
     }
 }
-

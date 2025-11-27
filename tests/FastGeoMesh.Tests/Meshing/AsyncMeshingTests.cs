@@ -1,8 +1,8 @@
 ﻿using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
-using FastGeoMesh.Domain.Interfaces;
 
 namespace FastGeoMesh.Tests.Meshing
 {
