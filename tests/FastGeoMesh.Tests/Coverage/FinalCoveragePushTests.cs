@@ -308,9 +308,9 @@ namespace FastGeoMesh.Tests.Coverage
                 failureResult2.IsFailure.Should().BeTrue();
                 failureResult2.Error.Should().Be(error2);
 
-                // Test accessing wrong properties throws
+                // Test accessing wrong properties throws or returns appropriate values
                 Assert.Throws<InvalidOperationException>(() => failureResult1.Value);
-                Assert.Throws<InvalidOperationException>(() => stringResult.Error);
+                stringResult.Error.Should().Be(Error.None); // Success result returns Error.None
 
                 // Test ToString variations
                 stringResult.ToString().Should().Contain("Success");

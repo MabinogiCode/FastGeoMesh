@@ -1,9 +1,9 @@
-using FastGeoMesh.Domain;
+﻿using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-
+using FastGeoMesh.Domain.Interfaces;
 namespace FastGeoMesh.Tests.Performance
 {
     /// <summary>
@@ -48,3 +48,4 @@ namespace FastGeoMesh.Tests.Performance
         }
     }
 }
+

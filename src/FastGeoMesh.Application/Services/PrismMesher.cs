@@ -1,6 +1,7 @@
 using FastGeoMesh.Application.Helpers;
 using FastGeoMesh.Application.Helpers.Meshing;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Domain.Services;
 
 namespace FastGeoMesh.Application.Services

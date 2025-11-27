@@ -5,6 +5,7 @@
 using FastGeoMesh.Application.Services;
 using FastGeoMesh.Application.Strategies;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Domain.Services;
 using FastGeoMesh.Infrastructure.Services;
 using FastGeoMesh.Infrastructure.Utilities;

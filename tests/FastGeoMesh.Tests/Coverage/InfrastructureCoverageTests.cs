@@ -96,12 +96,12 @@ namespace FastGeoMesh.Tests.Coverage
             baseString.ToUpperInvariant().Should().Be("FASTGEOMESH V2.0");
             // Use ToUpperInvariant instead of ToLowerInvariant (CA1308)
             var upper = baseString.ToUpperInvariant();
-            upper.Should().Be("FASTGEOMESH-V2.0");
+            upper.Should().Be("FASTGEOMESH V2.0");
             baseString.Replace("2.0", "3.0").Should().Be("FastGeoMesh v3.0");
 
             // String formatting
             // Use invariant culture for string.Format (CA1305)
-            var formatted = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} {1}", "FastGeoMesh", 2.0);
+            var formatted = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} {1:0.0}", "FastGeoMesh", 2.0);
             formatted.Should().Be("FastGeoMesh 2.0");
 
             // StringBuilder operations

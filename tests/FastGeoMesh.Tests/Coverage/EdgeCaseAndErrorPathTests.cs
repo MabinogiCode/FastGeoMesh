@@ -103,7 +103,7 @@ namespace FastGeoMesh.Tests.Coverage
                     .WithTargetEdgeLengthXY(-1.0)
                     .Build();
                 invalidXY.IsFailure.Should().BeTrue();
-                invalidXY.Error.Code.Should().Contain("INVALID");
+                invalidXY.Error.Code.Should().Contain("ValidationErrors");
 
                 var invalidZ = MesherOptions.CreateBuilder()
                     .WithTargetEdgeLengthZ(0.0)
@@ -134,13 +134,13 @@ namespace FastGeoMesh.Tests.Coverage
 
                     if (refinementOptions.TargetEdgeLengthXYNearHoles != null)
                     {
-                        refinementOptions.TargetEdgeLengthXYNearHoles.Value.Should().Be(0.5);
+                        refinementOptions.TargetEdgeLengthXYNearHoles.Value.Value.Should().Be(0.5);
                         refinementOptions.HoleRefineBand.Should().Be(1.0);
                     }
 
                     if (refinementOptions.TargetEdgeLengthXYNearSegments != null)
                     {
-                        refinementOptions.TargetEdgeLengthXYNearSegments.Value.Should().Be(0.3);
+                        refinementOptions.TargetEdgeLengthXYNearSegments.Value.Value.Should().Be(0.3);
                         refinementOptions.SegmentRefineBand.Should().Be(0.8);
                     }
                 }

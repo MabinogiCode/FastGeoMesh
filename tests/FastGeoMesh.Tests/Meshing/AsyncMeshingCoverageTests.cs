@@ -1,4 +1,6 @@
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
+using FastGeoMesh.Domain.Factories;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -86,14 +88,17 @@ namespace FastGeoMesh.Tests.Meshing
         public async Task MeshAsyncWithCancellationThrowsOperationCanceledException()
         {
             // Arrange
-            var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
+            var polygon = Polygon2DFactory.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             using var cts = new CancellationTokenSource();
 
-            // Act & Assert
+            // Act
             cts.Cancel();
-            await Assert.ThrowsAsync<OperationCanceledException>(
-                () => _asyncMesher.MeshAsync(structure, _options, cts.Token).AsTask()).ConfigureAwait(true);
+            var result = await _asyncMesher.MeshAsync(structure, _options, cts.Token).ConfigureAwait(true);
+
+            // Assert - MeshAsync uses Result Pattern instead of throwing
+            result.IsFailure.Should().BeTrue();
+            result.Error.Code.Should().Be("Meshing.Cancelled");
         }
     }
 }

@@ -1,9 +1,9 @@
-using FastGeoMesh.Domain;
+﻿using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Tests.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-
+using FastGeoMesh.Domain.Interfaces;
 namespace FastGeoMesh.Tests.Exporters
 {
     /// <summary>
@@ -29,19 +29,15 @@ namespace FastGeoMesh.Tests.Exporters
                 TargetEdgeLengthXY = TestMeshOptions.DefaultTargetEdgeLengthXY,
                 TargetEdgeLengthZ = TestMeshOptions.DefaultTargetEdgeLengthZ
             };
-
             var services = new ServiceCollection();
             services.AddFastGeoMesh();
             var provider = services.BuildServiceProvider();
             var mesher = provider.GetRequiredService<IPrismMesher>();
-
             var mesh = mesher.Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
-
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.gltf");
             GltfExporter.Write(im, path);
             Assert.True(File.Exists(path));
-
             var json = File.ReadAllText(path);
             Assert.Contains("\"asset\"", json, StringComparison.Ordinal);
             Assert.Contains("\"buffers\"", json, StringComparison.Ordinal);
@@ -50,3 +46,4 @@ namespace FastGeoMesh.Tests.Exporters
         }
     }
 }
+

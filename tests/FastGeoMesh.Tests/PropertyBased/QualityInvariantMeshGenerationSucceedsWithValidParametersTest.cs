@@ -1,9 +1,9 @@
-using FastGeoMesh.Domain;
+﻿using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-
+using FastGeoMesh.Domain.Interfaces;
 namespace FastGeoMesh.Tests.PropertyBased
 {
     /// <summary>
@@ -25,7 +25,6 @@ namespace FastGeoMesh.Tests.PropertyBased
             {
                 return;
             }
-
             var actualSize = Math.Max(size, 2);
             var square = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(actualSize, 0), new Vec2(actualSize, actualSize), new Vec2(0, actualSize) });
             var structure = new PrismStructureDefinition(square, 0, 1);
@@ -36,19 +35,17 @@ namespace FastGeoMesh.Tests.PropertyBased
                 .WithGenerateTopCap(true)
                 .Build()
                 .UnwrapForTests();
-
             var services = new ServiceCollection();
             services.AddFastGeoMesh();
             var provider = services.BuildServiceProvider();
             var mesher = provider.GetRequiredService<IPrismMesher>();
             var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
-
             bool hasGeometry = indexed.Vertices.Count > 0 && indexed.Quads.Count > 0;
             bool validQualityScores = mesh.Quads.All(q => !q.QualityScore.HasValue || (q.QualityScore.Value >= 0.0 && q.QualityScore.Value <= 1.0));
             bool noNaNVertices = PropertyBasedTestHelper.ContainsNoNaNVertices(indexed.Vertices);
-
             (hasGeometry && validQualityScores && noNaNVertices).Should().BeTrue();
         }
     }
 }
+

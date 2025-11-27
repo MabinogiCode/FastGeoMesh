@@ -325,14 +325,4 @@ namespace FastGeoMesh.Application.Helpers.Meshing
             return structure.Holes.Any(h => geometryService.PointInPolygon(h.Vertices.ToArray().AsSpan(), point.X, point.Y));
         }
     }
-
-    /// <summary>Structure to store adaptive grid divisions for cap meshing.</summary>
-    internal struct AdaptiveGrid
-    {
-        /// <summary>Gets or sets the X-axis division coordinates.</summary>
-        public List<double> XDivisions;
-
-        /// <summary>Gets or sets the Y-axis division coordinates.</summary>
-        public List<double> YDivisions;
-    }
 }

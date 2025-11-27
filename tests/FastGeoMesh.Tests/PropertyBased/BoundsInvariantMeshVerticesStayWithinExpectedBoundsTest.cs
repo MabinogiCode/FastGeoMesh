@@ -1,9 +1,9 @@
-using FastGeoMesh.Domain;
+﻿using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-
+using FastGeoMesh.Domain.Interfaces;
 namespace FastGeoMesh.Tests.PropertyBased
 {
     /// <summary>
@@ -24,7 +24,6 @@ namespace FastGeoMesh.Tests.PropertyBased
             {
                 return;
             }
-
             var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(width, 0), new Vec2(width, height), new Vec2(0, height) });
             var structure = new PrismStructureDefinition(rect, 0, depth);
             var options = MesherOptions.CreateBuilder().WithTargetEdgeLengthXY(2.0).WithTargetEdgeLengthZ(2.0).WithGenerateBottomCap(false).WithGenerateTopCap(false).Build().UnwrapForTests();
@@ -38,3 +37,4 @@ namespace FastGeoMesh.Tests.PropertyBased
         }
     }
 }
+
