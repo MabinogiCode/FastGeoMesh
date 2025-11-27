@@ -44,6 +44,17 @@ namespace FastGeoMesh.Tests.Application.Helpers.Structures
         }
 
         [Fact]
+        public void BuildZLevelsAddsUniformIntermediateWhenVDivGreaterThanOne()
+        {
+            // Range = 10, target Z edge = 4 => vDiv = ceil(10/4)=3 so 1 intermediate level expected
+            var options = new MesherOptions { TargetEdgeLengthZ = EdgeLength.From(4), Epsilon = Tolerance.From(1e-6) };
+            var structure = new PrismStructureDefinition(new Polygon2D(new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(0, 1) }), 0, 10);
+            var levels = MeshStructureHelper.BuildZLevels(0, 10, options, structure);
+            levels.Should().ContainInOrder(0.0, 10.0);
+            levels.Count(z => z > 0 && z < 10).Should().Be(2); // vDiv=3 => i=1,2 intermediates
+        }
+
+        [Fact]
         public void IsNearAnyHoleWithNoHolesReturnsFalse()
         {
             var structure = new PrismStructureDefinition(new Polygon2D(new[] { new Vec2(0, 0), new Vec2(1, 0), new Vec2(0, 1) }), 0, 10);
