@@ -145,7 +145,7 @@ using FastGeoMesh.Infrastructure;   // External services
 
 ### SpatialPolygonIndex: required DI for geometry helper (breaking)
 
-The `SpatialPolygonIndex` type used for fast point-in-polygon queries no longer creates an internal `GeometryHelperImpl` fallback.
+The `SpatialPolygonIndex` type used for fast point-in-polygon queries no longer creates an internal `GeometryService` fallback.
 Callers must now provide an `IGeometryHelper` instance when constructing a `SpatialPolygonIndex`.
 This avoids hidden allocations and ensures consistent geometry semantics across your application.
 
@@ -163,7 +163,7 @@ var index = new SpatialPolygonIndex(polygon.Vertices, helper, gridResolution: 64
 
 - Creating a helper explicitly (not recommended for production):
 ```csharp
-var helper = new GeometryHelperImpl(new GeometryConfigImpl());
+var helper = new GeometryService(new GeometryConfigImpl());
 var index = new SpatialPolygonIndex(polygon.Vertices, helper);
 ```
 
@@ -320,7 +320,7 @@ using FastGeoMesh.Infrastructure;   // Services externes
 
 ### SpatialPolygonIndex : passage obligatoire d'un `IGeometryHelper` (breaking)
 
-Le type `SpatialPolygonIndex` n'instancie plus automatiquement un `GeometryHelperImpl` en interne.
+Le type `SpatialPolygonIndex` n'instancie plus automatiquement un `GeometryService` en interne.
 Il faut désormais fournir une instance de `IGeometryHelper` au constructeur de `SpatialPolygonIndex`.
 Cela évite des allocations cachées et garantit des sémantiques géométriques cohérentes dans l'application.
 
@@ -338,7 +338,7 @@ var index = new SpatialPolygonIndex(polygon.Vertices, helper, gridResolution: 64
 
 - Création explicite d'un helper (non recommandée en production) :
 ```csharp
-var helper = new GeometryHelperImpl(new GeometryConfigImpl());
+var helper = new GeometryService(new GeometryConfigImpl());
 var index = new SpatialPolygonIndex(polygon.Vertices, helper);
 ```
 

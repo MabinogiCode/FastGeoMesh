@@ -71,3 +71,8 @@ dotnet_naming_rule.methods_must_be_pascal_without_underscore.severity = error
 
 # Sort usings (System first)
 dotnet_sort_system_directives_first = true
+
+# Per-file override to satisfy current file encoding without forcing churn
+[tests/FastGeoMesh.Tests/Infrastructure/Spatial/SpatialPolygonIndexTests.cs]
+charset = utf-8-bom
+end_of_line = lf

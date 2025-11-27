@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <WarningsAsErrors>IDE0005;IDE0160;IDE0052;IDE0054;xUnit1030;CA2007</WarningsAsErrors>
-        <NoWarn>CA2007</NoWarn>
+        <NoWarn>CA2007;1591</NoWarn>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
 

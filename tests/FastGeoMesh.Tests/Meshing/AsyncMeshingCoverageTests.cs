@@ -1,5 +1,4 @@
 using FastGeoMesh.Domain;
-using FastGeoMesh.Domain.Factories;
 using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -87,7 +86,7 @@ namespace FastGeoMesh.Tests.Meshing
         public async Task MeshAsyncWithCancellationThrowsOperationCanceledException()
         {
             // Arrange
-            var polygon = Polygon2DFactory.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
+            var polygon = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(10, 0), new Vec2(10, 5), new Vec2(0, 5) });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             using var cts = new CancellationTokenSource();
 
