@@ -1,13 +1,20 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class PrismMesherSideQuadsAreGeneratedCcwTest.
+    /// </summary>
     public sealed class PrismMesherSideQuadsAreGeneratedCcwTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -17,7 +24,10 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithTargetEdgeLengthXY(10.0)
                 .WithTargetEdgeLengthZ(20.0)
                 .Build().UnwrapForTests();
-            var mesher = new PrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var result = mesher.Mesh(structure, options);
             result.IsSuccess.Should().BeTrue();
             var mesh = result.Value;

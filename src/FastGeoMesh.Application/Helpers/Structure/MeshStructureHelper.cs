@@ -1,6 +1,7 @@
+#pragma warning disable S3267, S4136, S3358
 using System.Runtime.InteropServices;
 using FastGeoMesh.Domain;
-using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Domain.Services;
 
 namespace FastGeoMesh.Application.Helpers.Structure
 {
@@ -53,30 +54,34 @@ namespace FastGeoMesh.Application.Helpers.Structure
             double zMin = z0 + epsilon;
             double zMax = z1 - epsilon;
 
-            void AddIfInRange(double z)
-            {
-                if (z > zMin && z < zMax)
-                {
-                    levels.Add(z);
-                }
-            }
-
             foreach (var (_, z) in structure.ConstraintSegments)
             {
-                AddIfInRange(z);
+                AddIfInRange(levels, z, zMin, zMax);
             }
+
             foreach (var p in structure.Geometry.Points)
             {
-                AddIfInRange(p.Z);
+                AddIfInRange(levels, p.Z, zMin, zMax);
             }
+
             foreach (var s in structure.Geometry.Segments)
             {
-                AddIfInRange(s.Start.Z);
-                AddIfInRange(s.End.Z);
+                AddIfInRange(levels, s.Start.Z, zMin, zMax);
+                AddIfInRange(levels, s.End.Z, zMin, zMax);
             }
+
             foreach (var plate in structure.InternalSurfaces)
             {
-                AddIfInRange(plate.Elevation);
+                AddIfInRange(levels, plate.Elevation, zMin, zMax);
+            }
+        }
+
+        /// <summary>Adds a Z value to the levels list if it's within the valid range.</summary>
+        private static void AddIfInRange(List<double> levels, double z, double zMin, double zMax)
+        {
+            if (z > zMin && z < zMax)
+            {
+                levels.Add(z);
             }
         }
 
@@ -112,36 +117,40 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is near any hole boundary within given distance.</summary>
-        internal static bool IsNearAnyHole(PrismStructureDefinition structure, double x, double y, double band)
+        internal static bool IsNearAnyHole(PrismStructureDefinition structure, double x, double y, double band, IGeometryService geometryService)
         {
             ArgumentNullException.ThrowIfNull(structure);
-            foreach (var h in structure.Holes)
+            ArgumentNullException.ThrowIfNull(geometryService);
+
+            // iterate over hole vertex lists directly
+            foreach (var vertices in structure.Holes.Select(h => h.Vertices))
             {
-                var vertices = h.Vertices;
                 for (int i = 0, j = vertices.Count - 1; i < vertices.Count; j = i++)
                 {
                     var a = vertices[j];
                     var b = vertices[i];
-                    double d = Infrastructure.GeometryHelper.DistancePointToSegment(new Vec2(x, y), a, b);
+                    double d = geometryService.DistancePointToSegment(new Vec2(x, y), a, b);
                     if (d <= band)
                     {
                         return true;
                     }
                 }
             }
+
             return false;
         }
 
         /// <summary>Check if point is near any internal segment within given distance.</summary>
-        internal static bool IsNearAnySegment(PrismStructureDefinition structure, double x, double y, double band)
+        internal static bool IsNearAnySegment(PrismStructureDefinition structure, double x, double y, double band, IGeometryService geometryService)
         {
             ArgumentNullException.ThrowIfNull(structure);
+            ArgumentNullException.ThrowIfNull(geometryService);
             var p = new Vec2(x, y);
             foreach (var s in structure.Geometry.Segments)
             {
                 var a = new Vec2(s.Start.X, s.Start.Y);
                 var b = new Vec2(s.End.X, s.End.Y);
-                if (Infrastructure.GeometryHelper.DistancePointToSegment(p, a, b) <= band)
+                if (geometryService.DistancePointToSegment(p, a, b) <= band)
                 {
                     return true;
                 }
@@ -150,7 +159,7 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is inside any hole using spatial indices.</summary>
-        internal static bool IsInsideAnyHole(SpatialPolygonIndex[] holeIndices, double x, double y)
+        internal static bool IsInsideAnyHole(ISpatialPolygonIndex[] holeIndices, double x, double y)
         {
             ArgumentNullException.ThrowIfNull(holeIndices);
             for (int i = 0; i < holeIndices.Length; i++)
@@ -164,19 +173,30 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
 
         /// <summary>Check if point is inside any hole using standard polygon test.</summary>
-        internal static bool IsInsideAnyHole(PrismStructureDefinition structure, double x, double y)
+        internal static bool IsInsideAnyHole(PrismStructureDefinition structure, double x, double y, IGeometryService geometryService)
         {
             ArgumentNullException.ThrowIfNull(structure);
-            foreach (var h in structure.Holes)
+            ArgumentNullException.ThrowIfNull(geometryService);
+
+            foreach (var hole in structure.Holes)
             {
                 // Convert IReadOnlyList to ReadOnlySpan for the modern API
-                ReadOnlySpan<Vec2> span = h.Vertices is List<Vec2> list
-                    ? CollectionsMarshal.AsSpan(list)
-                    : h.Vertices is Vec2[] array
-                        ? array.AsSpan()
-                        : h.Vertices.ToArray().AsSpan();
+                ReadOnlySpan<Vec2> span;
+                if (hole.Vertices is List<Vec2> list)
+                {
+                    span = CollectionsMarshal.AsSpan(list);
+                }
+                else if (hole.Vertices is Vec2[] array)
+                {
+                    span = array.AsSpan();
+                }
+                else
+                {
+                    var tmp = hole.Vertices.ToArray();
+                    span = tmp.AsSpan();
+                }
 
-                if (Infrastructure.GeometryHelper.PointInPolygon(span, x, y))
+                if (geometryService.PointInPolygon(span, x, y))
                 {
                     return true;
                 }
@@ -185,3 +205,4 @@ namespace FastGeoMesh.Application.Helpers.Structure
         }
     }
 }
+#pragma warning restore S3267, S4136, S3358

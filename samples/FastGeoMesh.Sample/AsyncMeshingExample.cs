@@ -1,5 +1,6 @@
-using FastGeoMesh.Application.Services;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Sample
 {
@@ -36,8 +37,11 @@ namespace FastGeoMesh.Sample
                 return;
             }
 
-            // Application: Create mesher and use async interface
-            var mesher = new PrismMesher();
+            // Application: Resolve mesher from DI
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            using var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
 
             // Set up progress reporting
@@ -52,7 +56,7 @@ namespace FastGeoMesh.Sample
             try
             {
                 // Application: Generate mesh asynchronously
-                var meshResult = await asyncMesher.MeshWithProgressAsync(structure, optionsResult.Value, progress);
+                var meshResult = await asyncMesher.MeshWithProgressAsync(structure, optionsResult.Value, progress).ConfigureAwait(true);
                 stopwatch.Stop();
 
                 if (meshResult.IsSuccess)
@@ -112,8 +116,11 @@ namespace FastGeoMesh.Sample
                 return;
             }
 
-            // Application: Process batch with async interface
-            var mesher = new PrismMesher();
+            // Resolve mesher from DI
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            using var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
 
             var batchProgress = new Progress<MeshingProgress>(p =>
@@ -130,7 +137,7 @@ namespace FastGeoMesh.Sample
                     structures,
                     optionsResult.Value,
                     maxDegreeOfParallelism: 4,
-                    progress: batchProgress);
+                    progress: batchProgress).ConfigureAwait(true);
 
                 batchStopwatch.Stop();
 

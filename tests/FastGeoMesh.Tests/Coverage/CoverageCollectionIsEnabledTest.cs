@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
 {
+    /// <summary>
+    /// Tests for class CoverageCollectionIsEnabledTest.
+    /// </summary>
     public sealed class CoverageCollectionIsEnabledTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

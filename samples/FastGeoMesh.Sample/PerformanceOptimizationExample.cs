@@ -1,4 +1,5 @@
-using FastGeoMesh.Application.Services;
+using FastGeoMesh.Domain.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Sample
 {
@@ -30,7 +31,11 @@ namespace FastGeoMesh.Sample
 
             if (optionsResult.IsSuccess)
             {
-                var mesher = new PrismMesher();
+                var services = new ServiceCollection();
+                services.AddFastGeoMesh();
+                using var provider = services.BuildServiceProvider();
+                var mesher = provider.GetRequiredService<IPrismMesher>();
+
                 var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
                 if (meshResult.IsSuccess)
@@ -53,11 +58,14 @@ namespace FastGeoMesh.Sample
 
             if (optionsResult.IsSuccess)
             {
-                var mesher = new PrismMesher();
+                var services = new ServiceCollection();
+                services.AddFastGeoMesh();
+                using var provider = services.BuildServiceProvider();
+                var mesher = provider.GetRequiredService<IPrismMesher>();
                 var asyncMesher = (IAsyncMesher)mesher;
 
                 var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                var batchResult = await asyncMesher.MeshBatchAsync(structures, optionsResult.Value);
+                var batchResult = await asyncMesher.MeshBatchAsync(structures, optionsResult.Value).ConfigureAwait(true);
                 stopwatch.Stop();
 
                 if (batchResult.IsSuccess)

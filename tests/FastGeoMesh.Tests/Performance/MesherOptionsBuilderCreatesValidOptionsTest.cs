@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
+    /// <summary>
+    /// Tests for class MesherOptionsBuilderCreatesValidOptionsTest.
+    /// </summary>
     public sealed class MesherOptionsBuilderCreatesValidOptionsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

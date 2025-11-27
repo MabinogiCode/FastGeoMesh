@@ -1,16 +1,20 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Validation
 {
     /// <summary>
-    /// Validates that synchronous meshing produces a valid mesh with expected properties.
+    /// Tests for class PrismMesherBasicFunctionalityWorks.
     /// </summary>
     public sealed class PrismMesherBasicFunctionalityWorks
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -21,7 +25,10 @@ namespace FastGeoMesh.Tests.Validation
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             structure.Geometry.AddPoint(new Vec3(5, 2.5, 1));
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
-            var mesher = new PrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             mesh.Should().NotBeNull();
             mesh.QuadCount.Should().BeGreaterThan(0);

@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Tests.Helpers;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class ExportsSimpleRectPrismOBJTest.
+    /// </summary>
     public sealed class ExportsSimpleRectPrismOBJTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -25,7 +30,7 @@ namespace FastGeoMesh.Tests.Exporters
                 GenerateBottomCap = true,
                 GenerateTopCap = true
             };
-            var mesh = new PrismMesher().Mesh(st, opt).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.obj");
             ObjExporter.Write(im, path);

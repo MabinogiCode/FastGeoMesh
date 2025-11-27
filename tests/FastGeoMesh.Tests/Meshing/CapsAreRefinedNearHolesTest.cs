@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class CapsAreRefinedNearHolesTest.
+    /// </summary>
     public sealed class CapsAreRefinedNearHolesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -21,7 +26,7 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithCaps(bottom: true, top: true)
                 .Build().UnwrapForTests();
 
-            var baseMesh = new PrismMesher().Mesh(structure, baseOptions).UnwrapForTests();
+            var baseMesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, baseOptions).UnwrapForTests();
             var baseTopQuads = baseMesh.Quads.Where(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0).ToList();
             int baseQuadCount = baseTopQuads.Count;
 
@@ -32,7 +37,7 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithHoleRefinement(0.5, 1.0)
                 .Build().UnwrapForTests();
 
-            var refinedMesh = new PrismMesher().Mesh(structure, refinedOptions).UnwrapForTests();
+            var refinedMesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, refinedOptions).UnwrapForTests();
             var refinedTopQuads = refinedMesh.Quads.Where(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0).ToList();
             int refinedQuadCount = refinedTopQuads.Count;
 

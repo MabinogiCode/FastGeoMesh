@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.PropertyBased
 {
+    /// <summary>
+    /// Tests for class QuadInvariantAllQuadsHaveValidVertexIndicesTest.
+    /// </summary>
     public sealed class QuadInvariantAllQuadsHaveValidVertexIndicesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Theory]
         [InlineData(8, 6)]
         [InlineData(12, 10)]
@@ -28,7 +33,7 @@ namespace FastGeoMesh.Tests.PropertyBased
                 .Build()
                 .UnwrapForTests();
 
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
 
             indexed.Quads.All(q => q.Item1 >= 0 && q.Item1 < indexed.Vertices.Count && q.Item2 >= 0 && q.Item2 < indexed.Vertices.Count && q.Item3 >= 0 && q.Item3 < indexed.Vertices.Count && q.Item4 >= 0 && q.Item4 < indexed.Vertices.Count && q.Item1 != q.Item2 && q.Item2 != q.Item3 && q.Item3 != q.Item4 && q.Item4 != q.Item1).Should().BeTrue();

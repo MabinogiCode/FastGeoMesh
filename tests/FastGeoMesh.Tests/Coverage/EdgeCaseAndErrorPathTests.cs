@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -7,12 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Additional edge case and error path tests to improve overall coverage.
-    /// Focuses on boundary conditions, error scenarios, and exception handling.
+    /// Tests for class EdgeCaseAndErrorPathTests.
     /// </summary>
     public sealed class EdgeCaseAndErrorPathTests
     {
-        /// <summary>Tests PrismStructureDefinition with invalid or edge case inputs.</summary>
+        /// <summary>
+        /// Runs test PrismStructureDefinitionWithInvalidOrEdgeCaseInputsHandlesCorrectly.
+        /// </summary>
         [Fact]
         public void PrismStructureDefinitionWithInvalidOrEdgeCaseInputsHandlesCorrectly()
         {
@@ -72,8 +72,9 @@ namespace FastGeoMesh.Tests.Coverage
             var surfaceWithHole = validStructure.AddInternalSurface(internalSurface, 0.3, hole);
             surfaceWithHole.InternalSurfaces[0].Should().NotBeNull();
         }
-
-        /// <summary>Tests MesherOptionsBuilder with invalid inputs and edge cases.</summary>
+        /// <summary>
+        /// Runs test MesherOptionsBuilderWithInvalidInputsAndEdgeCasesHandlesCorrectly.
+        /// </summary>
         [Fact]
         public void MesherOptionsBuilderWithInvalidInputsAndEdgeCasesHandlesCorrectly()
         {
@@ -102,7 +103,7 @@ namespace FastGeoMesh.Tests.Coverage
                     .WithTargetEdgeLengthXY(-1.0)
                     .Build();
                 invalidXY.IsFailure.Should().BeTrue();
-                invalidXY.Error.Code.Should().Contain("INVALID");
+                invalidXY.Error.Code.Should().Contain("ValidationErrors");
 
                 var invalidZ = MesherOptions.CreateBuilder()
                     .WithTargetEdgeLengthZ(0.0)
@@ -133,19 +134,23 @@ namespace FastGeoMesh.Tests.Coverage
 
                     if (refinementOptions.TargetEdgeLengthXYNearHoles != null)
                     {
-                        refinementOptions.TargetEdgeLengthXYNearHoles.Value.Should().Be(0.5);
+                        refinementOptions.TargetEdgeLengthXYNearHoles.Value.Value.Should().Be(0.5);
                         refinementOptions.HoleRefineBand.Should().Be(1.0);
                     }
 
                     if (refinementOptions.TargetEdgeLengthXYNearSegments != null)
                     {
-                        refinementOptions.TargetEdgeLengthXYNearSegments.Value.Should().Be(0.3);
+                        refinementOptions.TargetEdgeLengthXYNearSegments.Value.Value.Should().Be(0.3);
                         refinementOptions.SegmentRefineBand.Should().Be(0.8);
                     }
                 }
-                catch (Exception)
+                catch (ArgumentException)
                 {
-                    // Refinement API might not exist - that's OK
+                    // Refinement API might not exist or accept those values - that's OK
+                }
+                catch (TypeLoadException)
+                {
+                    // Types related to refinement might not exist - that's OK
                 }
 
                 // Invalid refinement values - if they exist
@@ -161,19 +166,28 @@ namespace FastGeoMesh.Tests.Coverage
                         .Build();
                     invalidSegmentRefinement.IsFailure.Should().BeTrue();
                 }
-                catch (Exception)
+                catch (ArgumentException)
                 {
-                    // Refinement API might not exist - that's OK
+                    // Invalid refinement inputs may throw ArgumentException - that's OK
+                }
+                catch (TypeLoadException)
+                {
+                    // Types related to refinement might not exist - that's OK
                 }
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 // MesherOptionsBuilder API might be different - that's OK
                 true.Should().BeTrue("MesherOptionsBuilder API might be different");
             }
+            catch (TypeLoadException)
+            {
+                true.Should().BeTrue("MesherOptionsBuilder types might not exist");
+            }
         }
-
-        /// <summary>Tests ImmutableMesh builder methods and edge cases.</summary>
+        /// <summary>
+        /// Runs test ImmutableMeshBuilderMethodsAndEdgeCasesWorkCorrectly.
+        /// </summary>
         [Fact]
         public void ImmutableMeshBuilderMethodsAndEdgeCasesWorkCorrectly()
         {
@@ -257,8 +271,9 @@ namespace FastGeoMesh.Tests.Coverage
             meshWithEmptyCollections.Points.Should().BeEmpty();
             meshWithEmptyCollections.InternalSegments.Should().BeEmpty();
         }
-
-        /// <summary>Tests IndexedMesh creation with various epsilon values and edge cases.</summary>
+        /// <summary>
+        /// Runs test IndexedMeshCreationWithVariousEpsilonValuesAndEdgeCasesWorksCorrectly.
+        /// </summary>
         [Fact]
         public void IndexedMeshCreationWithVariousEpsilonValuesAndEdgeCasesWorksCorrectly()
         {
@@ -314,8 +329,9 @@ namespace FastGeoMesh.Tests.Coverage
             indexedEmpty.Triangles.Should().BeEmpty();
             indexedEmpty.Edges.Should().BeEmpty();
         }
-
-        /// <summary>Tests MeshAdjacency computation and edge case handling.</summary>
+        /// <summary>
+        /// Runs test MeshAdjacencyComputationAndEdgeCaseHandlingWorksCorrectly.
+        /// </summary>
         [Fact]
         public void MeshAdjacencyComputationAndEdgeCaseHandlingWorksCorrectly()
         {
@@ -364,14 +380,15 @@ namespace FastGeoMesh.Tests.Coverage
             emptyAdjacency.BoundaryEdges.Should().BeEmpty();
             emptyAdjacency.NonManifoldEdges.Should().BeEmpty();
         }
-
-        /// <summary>Tests complex meshing scenarios with multiple error conditions.</summary>
+        /// <summary>
+        /// Runs test ComplexMeshingScenarioswithMultipleErrorConditionsHandleCorrectly.
+        /// </summary>
         [Fact]
         public void ComplexMeshingScenarioswithMultipleErrorConditionsHandleCorrectly()
         {
             try
             {
-                var mesher = new PrismMesher();
+                var mesher = TestServiceProvider.CreatePrismMesher();
 
                 // Test with degenerate polygon (too few vertices)
                 var degenerateVertices = new[] { new Vec2(0, 0), new Vec2(1, 0) }; // Only 2 vertices
@@ -429,12 +446,19 @@ namespace FastGeoMesh.Tests.Coverage
                     // Don't assert specific counts due to extreme geometry
                 }
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 // Complex meshing scenarios might have different behavior - that's OK
                 true.Should().BeTrue("Complex meshing scenarios might behave differently");
             }
+            catch (TypeLoadException)
+            {
+                true.Should().BeTrue("Complex meshing scenario types might not exist");
+            }
+            catch (InvalidOperationException)
+            {
+                true.Should().BeTrue("Mesher operations might throw InvalidOperationException");
+            }
         }
     }
 }
-

@@ -1,13 +1,19 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure.FileOperations;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Integration
 {
+    /// <summary>
+    /// Tests for class GeneratedMeshMatchesReferenceFileTest.
+    /// </summary>
     public sealed class GeneratedMeshMatchesReferenceFileTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -55,7 +61,7 @@ namespace FastGeoMesh.Tests.Integration
                 GenerateTopCap = true
             };
 
-            var mesher = new PrismMesher();
+            var mesher = TestServiceProvider.CreatePrismMesher();
             var generatedMeshResult = mesher.Mesh(structure, options);
 
             if (generatedMeshResult.IsFailure)

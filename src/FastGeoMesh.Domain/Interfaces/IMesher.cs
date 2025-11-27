@@ -25,11 +25,4 @@ namespace FastGeoMesh.Domain
         /// <returns>A ValueTask containing the generated mesh result.</returns>
         ValueTask<Result<ImmutableMesh>> MeshAsync(TStructure input, MesherOptions options, CancellationToken cancellationToken = default);
     }
-
-    /// <summary>
-    /// Specialized meshing interface for prism structure definitions.
-    /// </summary>
-    public interface IPrismMesher : IMesher<PrismStructureDefinition>
-    {
-    }
 }

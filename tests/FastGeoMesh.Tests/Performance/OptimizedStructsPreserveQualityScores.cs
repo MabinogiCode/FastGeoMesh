@@ -1,16 +1,20 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
     /// <summary>
-    /// Validates that optimized structs preserve quality scores correctly.
+    /// Tests for class OptimizedStructsPreserveQualityScores.
     /// </summary>
     public sealed class OptimizedStructsPreserveQualityScores
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -28,7 +32,10 @@ namespace FastGeoMesh.Tests.Performance
                 GenerateTopCap = true,
                 MinCapQuadQuality = 0.5
             };
-            var mesher = new PrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var capQuads = mesh.Quads.Where(q => q.QualityScore.HasValue).ToList();
             var capTriangles = mesh.Triangles.Where(t => t.V0.Z == t.V1.Z && t.V1.Z == t.V2.Z).ToList();

@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class TShapeWithoutExtraGeometryMeshesCapsAndSidesManifoldTest.
+    /// </summary>
     public sealed class TShapeWithoutExtraGeometryMeshesCapsAndSidesManifoldTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -18,7 +23,7 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithTargetEdgeLengthZ(0.5)
                 .WithCaps(bottom: true, top: true)
                 .Build().UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             var adj = im.BuildAdjacency();
             int topQuads = mesh.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);

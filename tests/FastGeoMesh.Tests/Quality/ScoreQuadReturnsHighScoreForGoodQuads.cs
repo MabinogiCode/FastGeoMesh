@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Ensures good quads (square) have higher scores than degenerate thin quads.
+    /// Tests for class ScoreQuadReturnsHighScoreForGoodQuads.
     /// </summary>
     public sealed class ScoreQuadReturnsHighScoreForGoodQuads
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

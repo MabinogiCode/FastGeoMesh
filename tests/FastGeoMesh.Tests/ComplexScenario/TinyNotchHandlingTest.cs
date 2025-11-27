@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.ComplexScenario
 {
+    /// <summary>
+    /// Tests for class TinyNotchHandlingTest.
+    /// </summary>
     public sealed class TinyNotchHandlingTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -20,7 +25,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
                 .WithMinCapQuadQuality(0.1)
                 .Build()
                 .UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             mesh.QuadCount.Should().BeGreaterThan(5);
             var indexed = IndexedMesh.FromMesh(mesh);
             indexed.VertexCount.Should().BeGreaterThan(10);

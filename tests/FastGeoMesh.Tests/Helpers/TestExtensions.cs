@@ -3,13 +3,20 @@ using FastGeoMesh.Domain;
 namespace FastGeoMesh.Tests.Helpers
 {
     /// <summary>
-    /// V2.0 extensions to help tests transition from old API to new Result pattern.
+    /// Tests for class TestExtensions.
     /// </summary>
     public static class TestExtensions
     {
-        /// <summary>Extension to unwrap Result&lt;MesherOptions&gt; for tests expecting direct MesherOptions</summary>
+        /// <summary>
+        /// Runs test UnwrapForTests.
+        /// </summary>
         public static MesherOptions UnwrapForTests(this Result<MesherOptions> result)
         {
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
             if (result.IsFailure)
             {
                 throw new InvalidOperationException($"Options validation failed: {result.Error.Description}");
@@ -17,10 +24,16 @@ namespace FastGeoMesh.Tests.Helpers
 
             return result.Value;
         }
-
-        /// <summary>Extension to unwrap Result&lt;ImmutableMesh&gt; for tests expecting direct ImmutableMesh</summary>
+        /// <summary>
+        /// Runs test UnwrapForTests.
+        /// </summary>
         public static ImmutableMesh UnwrapForTests(this Result<ImmutableMesh> result)
         {
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
             if (result.IsFailure)
             {
                 throw new InvalidOperationException($"Meshing failed: {result.Error.Description}");
@@ -28,11 +41,12 @@ namespace FastGeoMesh.Tests.Helpers
 
             return result.Value;
         }
-
-        /// <summary>Extension to unwrap async Result&lt;ImmutableMesh&gt; for tests</summary>
+        /// <summary>
+        /// Public API used by tests.
+        /// </summary>
         public static async Task<ImmutableMesh> UnwrapForTestsAsync(this ValueTask<Result<ImmutableMesh>> result)
         {
-            var r = await result;
+            var r = await result.ConfigureAwait(true);
             if (r.IsFailure)
             {
                 // Preserve cancellation semantics
@@ -44,11 +58,12 @@ namespace FastGeoMesh.Tests.Helpers
             }
             return r.Value;
         }
-
-        /// <summary>Extension to unwrap async Result&lt;IReadOnlyList&lt;ImmutableMesh&gt;&gt; for tests</summary>
+        /// <summary>
+        /// Public API used by tests.
+        /// </summary>
         public static async Task<IReadOnlyList<ImmutableMesh>> UnwrapForTestsAsync(this ValueTask<Result<IReadOnlyList<ImmutableMesh>>> result)
         {
-            var r = await result;
+            var r = await result.ConfigureAwait(true);
             if (r.IsFailure)
             {
                 throw new InvalidOperationException($"Async batch meshing failed: {r.Error.Description}");

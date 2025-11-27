@@ -1,12 +1,20 @@
 using FastGeoMesh.Application.Helpers.Meshing;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Services;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class GenericCapsProduceQualityScoresWithinRangeTest.
+    /// </summary>
     public sealed class GenericCapsProduceQualityScoresWithinRangeTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -14,7 +22,13 @@ namespace FastGeoMesh.Tests.Meshing
             var structure = new PrismStructureDefinition(concave, -1, 0);
             var opt = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(0.75), TargetEdgeLengthZ = EdgeLength.From(1.0), GenerateBottomCap = true, GenerateTopCap = true };
             var mesh = new ImmutableMesh();
-            var resultMesh = CapMeshingHelper.GenerateCaps(mesh, structure, opt, -1, 0);
+
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var geo = provider.GetRequiredService<IGeometryService>();
+
+            var resultMesh = CapMeshingHelper.GenerateCaps(mesh, structure, opt, -1, 0, geo);
             var capQuads = resultMesh.Quads.Where(q => q.V0.Z == -1 || q.V0.Z == 0).ToList();
             var capTriangles = resultMesh.Triangles.Where(t => t.V0.Z == -1 || t.V0.Z == 0).ToList();
             (capQuads.Count + capTriangles.Count).Should().BeGreaterThan(0);

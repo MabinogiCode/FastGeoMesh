@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Tests.Helpers;
@@ -7,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class SvgExporterHandlesHolesAndRefinementTest.
+    /// </summary>
     public sealed class SvgExporterHandlesHolesAndRefinementTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -17,7 +22,7 @@ namespace FastGeoMesh.Tests.Exporters
             var st = new PrismStructureDefinition(outer, 0, 2).AddHole(hole);
             _ = st.AddConstraintSegment(new Segment2D(new Vec2(0, 0), new Vec2(10, 0)), 1.0);
             var opt = MesherOptions.CreateBuilder().WithTargetEdgeLengthXY(1.5).WithTargetEdgeLengthZ(1.0).WithHoleRefinement(1.0, 0.75).Build().UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(st, opt).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(st, opt).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh);
             string path = Path.Combine(Path.GetTempPath(), $"fgm_test_hole_{Guid.NewGuid():N}.svg");
             SvgExporter.Write(im, path);

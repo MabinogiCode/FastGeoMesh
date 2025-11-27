@@ -1,16 +1,20 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
     /// <summary>
-    /// Validates that spatial indexing gives the same results as the original algorithm.
+    /// Tests for class SpatialIndexingGivesSameResultsAsOriginalAlgorithm.
     /// </summary>
     public sealed class SpatialIndexingGivesSameResultsAsOriginalAlgorithm
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -29,7 +33,10 @@ namespace FastGeoMesh.Tests.Performance
                 GenerateBottomCap = true,
                 GenerateTopCap = true
             };
-            var mesher = new PrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var indexedMesh = IndexedMesh.FromMesh(mesh);
             mesh.Quads.Should().NotBeEmpty();

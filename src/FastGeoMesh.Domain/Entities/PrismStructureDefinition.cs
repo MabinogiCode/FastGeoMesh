@@ -25,6 +25,7 @@ namespace FastGeoMesh.Domain
         public PrismStructureDefinition(Polygon2D footprint, double baseElevation, double topElevation)
             : this(footprint, baseElevation, topElevation, Array.Empty<(Segment2D, double)>(), Array.Empty<Polygon2D>(), Array.Empty<InternalSurfaceDefinition>(), null) { }
 
+        // Private main constructor
         private PrismStructureDefinition(
             Polygon2D footprint,
             double baseElevation,

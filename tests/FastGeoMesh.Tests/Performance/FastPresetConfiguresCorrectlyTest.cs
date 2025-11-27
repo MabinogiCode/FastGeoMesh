@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
+    /// <summary>
+    /// Tests for class FastPresetConfiguresCorrectlyTest.
+    /// </summary>
     public sealed class FastPresetConfiguresCorrectlyTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

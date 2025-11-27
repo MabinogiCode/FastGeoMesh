@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Tests.Helpers;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class ObjContainsTriangleFacesWhenCapTrianglesEnabledTest.
+    /// </summary>
     public sealed class ObjContainsTriangleFacesWhenCapTrianglesEnabledTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -31,7 +36,7 @@ namespace FastGeoMesh.Tests.Exporters
                 MinCapQuadQuality = 0.95,
                 OutputRejectedCapTriangles = true
             };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             Assert.True(mesh.Triangles.Count > 0, "Expected triangles emitted");
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}obj_tri_{System.Guid.NewGuid():N}.obj");

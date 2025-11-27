@@ -1,15 +1,20 @@
 using FastGeoMesh.Application.Helpers.Quality;
+using FastGeoMesh.Domain.Services;
 using FluentAssertions;
 using LibTessDotNet;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Ensures MakeQuadFromTrianglePair returns null when triangles don't share an edge.
+    /// Tests for class MakeQuadFromTrianglePairReturnsNullForInvalidTriangles.
     /// </summary>
     public sealed class MakeQuadFromTrianglePairReturnsNullForInvalidTriangles
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -23,8 +28,13 @@ namespace FastGeoMesh.Tests.Quality
             var triangle1 = (0, 1, 2);
             var triangle2 = (3, 4, 5); // No shared vertices
 
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var geo = provider.GetRequiredService<IGeometryService>();
+
             // Act
-            var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangle1, triangle2, vertices);
+            var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangle1, triangle2, vertices, geo);
 
             // Assert
             quad.Should().BeNull("Triangles with no shared edge should not create quad");

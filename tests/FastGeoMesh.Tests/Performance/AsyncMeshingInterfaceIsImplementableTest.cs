@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
+    /// <summary>
+    /// Tests for class AsyncMeshingInterfaceIsImplementableTest.
+    /// </summary>
     public sealed class AsyncMeshingInterfaceIsImplementableTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public async Task Test()
         {

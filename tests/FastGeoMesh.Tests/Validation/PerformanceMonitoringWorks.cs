@@ -1,19 +1,22 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Validation
 {
     /// <summary>
-    /// Validates that performance monitoring works and returns statistics.
+    /// Tests for class PerformanceMonitoringWorks.
     /// </summary>
     public sealed class PerformanceMonitoringWorks
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public async Task Test()
         {
-            var mesher = new PrismMesher();
+            var mesher = TestServiceProvider.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
             var stats = await asyncMesher.GetLivePerformanceStatsAsync();
             stats.Should().NotBeNull();

@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.ComplexScenario
 {
+    /// <summary>
+    /// Tests for class HighRefinementStressTest.
+    /// </summary>
     public sealed class HighRefinementStressTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -22,7 +27,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
                 .WithMinCapQuadQuality(0.2)
                 .Build()
                 .UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
             indexed.VertexCount.Should().BeGreaterThan(100);
             indexed.QuadCount.Should().BeGreaterThan(80);

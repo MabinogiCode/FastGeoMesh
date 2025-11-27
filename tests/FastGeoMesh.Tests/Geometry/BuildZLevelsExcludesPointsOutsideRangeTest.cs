@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class BuildZLevelsExcludesPointsOutsideRangeTest.
+    /// </summary>
     public sealed class BuildZLevelsExcludesPointsOutsideRangeTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,12 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Tests for span extensions and advanced geometric operations to improve coverage.
-    /// Focuses on AdvancedSpanExtensions, SpanExtensions, and other utility classes.
+    /// Tests for class SpanAndUtilityCoverageTests.
     /// </summary>
     public sealed class SpanAndUtilityCoverageTests
     {
-        /// <summary>Tests AdvancedSpanExtensions.ComputeSignedArea method.</summary>
+        /// <summary>
+        /// Runs test AdvancedSpanExtensionsComputeSignedAreaWorksCorrectly.
+        /// </summary>
         [Fact]
         public void AdvancedSpanExtensionsComputeSignedAreaWorksCorrectly()
         {
@@ -65,8 +66,9 @@ namespace FastGeoMesh.Tests.Coverage
             var pentagonArea = pentagonSpan.ComputeSignedArea();
             pentagonArea.Should().BeGreaterThan(0); // Should be positive for CCW
         }
-
-        /// <summary>Tests AdvancedSpanExtensions.ContainsPoint method.</summary>
+        /// <summary>
+        /// Runs test AdvancedSpanExtensionsContainsPointWorksCorrectly.
+        /// </summary>
         [Fact]
         public void AdvancedSpanExtensionsContainsPointWorksCorrectly()
         {
@@ -114,8 +116,9 @@ namespace FastGeoMesh.Tests.Coverage
             triangleSpan.ContainsPoint(new Vec2(5, 1)).Should().BeFalse();
             triangleSpan.ContainsPoint(new Vec2(2, 4)).Should().BeFalse();
         }
-
-        /// <summary>Tests AdvancedSpanExtensions.ContainsPoints batch method.</summary>
+        /// <summary>
+        /// Runs test AdvancedSpanExtensionsContainsPointsBatchWorksCorrectly.
+        /// </summary>
         [Fact]
         public void AdvancedSpanExtensionsContainsPointsBatchWorksCorrectly()
         {
@@ -169,8 +172,9 @@ namespace FastGeoMesh.Tests.Coverage
                 // Expected exception
             }
         }
-
-        /// <summary>Tests AdvancedSpanExtensions.ComputePaddedBounds method.</summary>
+        /// <summary>
+        /// Runs test AdvancedSpanExtensionsComputePaddedBoundsWorksCorrectly.
+        /// </summary>
         [Fact]
         public void AdvancedSpanExtensionsComputePaddedBoundsWorksCorrectly()
         {
@@ -226,8 +230,9 @@ namespace FastGeoMesh.Tests.Coverage
             manyMin.Should().Be(new Vec2(0, 0));
             manyMax.Should().Be(new Vec2(9, 4.5));
         }
-
-        /// <summary>Tests AdvancedSpanExtensions.DistanceToSegment method.</summary>
+        /// <summary>
+        /// Runs test AdvancedSpanExtensionsDistanceToSegmentWorksCorrectly.
+        /// </summary>
         [Fact]
         public void AdvancedSpanExtensionsDistanceToSegmentWorksCorrectly()
         {
@@ -262,8 +267,9 @@ namespace FastGeoMesh.Tests.Coverage
             var distanceVert = AdvancedSpanExtensions.DistanceToSegment(new Vec2(3, 2), vertStart, vertEnd);
             distanceVert.Should().Be(3.0);
         }
-
-        /// <summary>Tests SpanExtensions.ComputeCentroid methods.</summary>
+        /// <summary>
+        /// Runs test SpanExtensionsComputeCentroidWorksCorrectly.
+        /// </summary>
         [Fact]
         public void SpanExtensionsComputeCentroidWorksCorrectly()
         {
@@ -308,8 +314,9 @@ namespace FastGeoMesh.Tests.Coverage
             var cubeCentroid3D = cube3DSpan.ComputeCentroid();
             cubeCentroid3D.Should().Be(new Vec3(1, 1, 1));
         }
-
-        /// <summary>Tests SpanExtensions.TransformTo3D method.</summary>
+        /// <summary>
+        /// Runs test SpanExtensionsTransformTo3DWorksCorrectly.
+        /// </summary>
         [Fact]
         public void SpanExtensionsTransformTo3DWorksCorrectly()
         {
@@ -343,11 +350,12 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Test with empty spans
             ReadOnlySpan<Vec2> emptySource = Array.Empty<Vec2>();
-            var emptyDestination = new Vec3[0];
+            var emptyDestination = Array.Empty<Vec3>();
             emptySource.TransformTo3D(emptyDestination, 1.0); // Should not throw
         }
-
-        /// <summary>Tests SpanExtensions.ComputeBounds method.</summary>
+        /// <summary>
+        /// Runs test SpanExtensionsComputeBoundsWorksCorrectly.
+        /// </summary>
         [Fact]
         public void SpanExtensionsComputeBoundsWorksCorrectly()
         {
@@ -386,8 +394,9 @@ namespace FastGeoMesh.Tests.Coverage
             identicalMin.Should().Be(new Vec2(2, 3));
             identicalMax.Should().Be(new Vec2(2, 3));
         }
-
-        /// <summary>Tests integration between different span extension methods.</summary>
+        /// <summary>
+        /// Runs test SpanExtensionsIntegrationWorksCorrectly.
+        /// </summary>
         [Fact]
         public void SpanExtensionsIntegrationWorksCorrectly()
         {
@@ -429,8 +438,9 @@ namespace FastGeoMesh.Tests.Coverage
             results[2].Should().BeFalse(); // outside max
             results[3].Should().BeTrue();  // center of rectangle should be inside
         }
-
-        /// <summary>Tests edge cases and performance characteristics.</summary>
+        /// <summary>
+        /// Runs test SpanExtensionsHandleEdgeCasesCorrectly.
+        /// </summary>
         [Fact]
         public void SpanExtensionsHandleEdgeCasesCorrectly()
         {

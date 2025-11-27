@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors>IDE0005;IDE0011;IDE0052;IDE0160</WarningsAsErrors>
+    <WarningsAsErrors>IDE0005;IDE0011;IDE0052;IDE0160;xUnit1030;CA2007</WarningsAsErrors>
   </PropertyGroup>
 
 </Project>

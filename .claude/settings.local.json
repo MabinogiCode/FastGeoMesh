@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -ExecutionPolicy Bypass -File \"scripts\\fix_all_iprism_mesher_using.ps1\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

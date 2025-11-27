@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class AddEdgeToTriangleMappingWorksWithMultipleTrianglesTest.
+    /// </summary>
     public sealed class AddEdgeToTriangleMappingWorksWithMultipleTrianglesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

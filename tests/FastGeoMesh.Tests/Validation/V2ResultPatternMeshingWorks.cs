@@ -1,12 +1,18 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Validation
 {
+    /// <summary>
+    /// Tests for class V2ResultPatternMeshingWorks.
+    /// </summary>
     public sealed class V2ResultPatternMeshingWorks
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -24,7 +30,7 @@ namespace FastGeoMesh.Tests.Validation
 
             optionsResult.IsSuccess.Should().BeTrue();
 
-            var mesher = new PrismMesher();
+            var mesher = TestServiceProvider.CreatePrismMesher();
             var meshResult = mesher.Mesh(structure, optionsResult.Value);
 
             meshResult.IsSuccess.Should().BeTrue();

@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Tests scoring stability across a variety of aspect ratios including perfect square and thin quads.
+    /// Tests for class ScoreQuadHandlesDifferentAspectRatios.
     /// </summary>
     public sealed class ScoreQuadHandlesDifferentAspectRatios
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Theory]
         [InlineData(1.0, 1.0)]   // Perfect square
         [InlineData(2.0, 1.0)]   // Rectangle

@@ -1,18 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\FastGeoMesh.Domain\FastGeoMesh.Domain.csproj" />
-    <ProjectReference Include="..\FastGeoMesh.Infrastructure\FastGeoMesh.Infrastructure.csproj" />
+    <!-- Infrastructure dependency removed - using IGeometryService interface from Domain instead -->
+    <!-- Application layer now properly depends only on Domain (Clean Architecture compliance) -->
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LibTessDotNet" Version="1.1.15" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DependencyInjection\" />
   </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors>IDE0005;xUnit1030;CA2007</WarningsAsErrors>
   </PropertyGroup>
 
 </Project>

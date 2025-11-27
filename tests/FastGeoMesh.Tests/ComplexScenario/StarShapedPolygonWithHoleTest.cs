@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.ComplexScenario
 {
+    /// <summary>
+    /// Tests for class StarShapedPolygonWithHoleTest.
+    /// </summary>
     public sealed class StarShapedPolygonWithHoleTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -34,7 +39,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
                 .WithRejectedCapTriangles(true)
                 .Build()
                 .UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
             indexed.VertexCount.Should().BeGreaterThan(20);
             (indexed.QuadCount + indexed.TriangleCount).Should().BeGreaterThan(15);

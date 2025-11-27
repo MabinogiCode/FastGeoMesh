@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class AddEdgeToTriangleMappingHandlesLargeVertexIndicesTest.
+    /// </summary>
     public sealed class AddEdgeToTriangleMappingHandlesLargeVertexIndicesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

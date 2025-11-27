@@ -6,11 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Additional tests for low-coverage files focusing on file operations and extensions.
+    /// Tests for class FilesAndExtensionsCoverageTests.
     /// </summary>
     public sealed class FilesAndExtensionsCoverageTests
     {
-        /// <summary>Tests IndexedMeshExtensions methods.</summary>
+        /// <summary>
+        /// Runs test IndexedMeshExtensionMethodsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void IndexedMeshExtensionMethodsWorkCorrectly()
         {
@@ -49,8 +51,9 @@ namespace FastGeoMesh.Tests.Coverage
                 }
             }
         }
-
-        /// <summary>Tests IndexedMeshFileOperations static methods.</summary>
+        /// <summary>
+        /// Runs test IndexedMeshFileOperationsReadWriteWorkCorrectly.
+        /// </summary>
         [Fact]
         public void IndexedMeshFileOperationsReadWriteWorkCorrectly()
         {
@@ -96,8 +99,9 @@ namespace FastGeoMesh.Tests.Coverage
                 }
             }
         }
-
-        /// <summary>Tests IndexedMeshFileHelper read/write operations comprehensively.</summary>
+        /// <summary>
+        /// Runs test IndexedMeshFileHelperHandlesComplexMeshes.
+        /// </summary>
         [Fact]
         public void IndexedMeshFileHelperHandlesComplexMeshes()
         {
@@ -161,8 +165,9 @@ namespace FastGeoMesh.Tests.Coverage
                 }
             }
         }
-
-        /// <summary>Tests IndexedMeshFileHelper error handling.</summary>
+        /// <summary>
+        /// Runs test IndexedMeshFileHelperHandlesErrorsCorrectly.
+        /// </summary>
         [Fact]
         public void IndexedMeshFileHelperHandlesErrorsCorrectly()
         {
@@ -199,8 +204,9 @@ namespace FastGeoMesh.Tests.Coverage
             Assert.Throws<ArgumentNullException>(() => IndexedMeshFileOperations.WriteCustomTxtAlternative(null!, "test.txt"));
             Assert.Throws<ArgumentException>(() => IndexedMeshFileOperations.WriteCustomTxtAlternative(emptyMesh, ""));
         }
-
-        /// <summary>Tests alternative format with comments and empty lines.</summary>
+        /// <summary>
+        /// Runs test AlternativeFormatHandlesCommentsAndEmptyLines.
+        /// </summary>
         [Fact]
         public void AlternativeFormatHandlesCommentsAndEmptyLines()
         {
@@ -243,8 +249,9 @@ e 0 1
                 }
             }
         }
-
-        /// <summary>Tests SpanExtensions if accessible.</summary>
+        /// <summary>
+        /// Runs test SpanExtensionsCanBeUsed.
+        /// </summary>
         [Fact]
         public void SpanExtensionsCanBeUsed()
         {
@@ -268,8 +275,9 @@ e 0 1
             readOnlySpan.Length.Should().Be(5);
             readOnlySpan[2].Should().Be(3);
         }
-
-        /// <summary>Tests ImmutableMesh additional operations.</summary>
+        /// <summary>
+        /// Runs test ImmutableMeshAdditionalOperationsCovered.
+        /// </summary>
         [Fact]
         public void ImmutableMeshAdditionalOperationsCovered()
         {
@@ -304,8 +312,9 @@ e 0 1
             mesh.Points.Should().HaveCount(1);
             mesh.InternalSegments.Should().HaveCount(1);
         }
-
-        /// <summary>Tests MesherOptions additional scenarios.</summary>
+        /// <summary>
+        /// Runs test MesherOptionsAdditionalScenariosCovered.
+        /// </summary>
         [Fact]
         public void MesherOptionsAdditionalScenariosCovered()
         {
@@ -344,8 +353,9 @@ e 0 1
                 presetOverride.Value.TargetEdgeLengthXY.Value.Should().Be(2.0);
             }
         }
-
-        /// <summary>Tests various error scenarios in a controlled way.</summary>
+        /// <summary>
+        /// Runs test ErrorScenariosHandledGracefully.
+        /// </summary>
         [Fact]
         public void ErrorScenariosHandledGracefully()
         {

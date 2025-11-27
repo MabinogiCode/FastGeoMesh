@@ -49,5 +49,13 @@ namespace FastGeoMesh.Domain
         /// </summary>
         /// <param name="error">The error to convert.</param>
         public static implicit operator Result(Error error) => Failure(error);
+
+        /// <summary>
+        /// Returns a string representation of the result.
+        /// </summary>
+        public override string ToString()
+        {
+            return IsSuccess ? "Success" : $"Failure: {Error}";
+        }
     }
 }

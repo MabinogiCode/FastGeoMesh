@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -7,12 +6,12 @@ using Xunit;
 namespace FastGeoMesh.Tests.ComplexScenario
 {
     /// <summary>
-    /// Geotechnical scenario tests including slabs with holes and external support / brace integration.
+    /// Tests for class GeotechnicalScenariosTests.
     /// </summary>
     public sealed class GeotechnicalScenariosTests
     {
         /// <summary>
-        /// Ensures holes are not meshed as caps and internal vertical faces are generated around hole perimeters.
+        /// Runs test SlabWithHolesDoesNotMeshHolesOnCapsAndGeneratesInnerSideFaces.
         /// </summary>
         [Fact]
         public void SlabWithHolesDoesNotMeshHolesOnCapsAndGeneratesInnerSideFaces()
@@ -22,7 +21,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
             var hole2 = Polygon2D.FromPoints(new[] { new Vec2(12, 6), new Vec2(13, 6), new Vec2(13, 8), new Vec2(12, 8) });
             var structure = new PrismStructureDefinition(outer, -1, 0).AddHole(hole1).AddHole(hole2);
             var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(1.0), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = false, GenerateTopCap = false };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             int capTop = mesh.Quads.Count(q => q.V0.Z == 0 && q.V1.Z == 0 && q.V2.Z == 0 && q.V3.Z == 0);
             int capBottom = mesh.Quads.Count(q => q.V0.Z == -1 && q.V1.Z == -1 && q.V2.Z == -1 && q.V3.Z == -1);
@@ -33,9 +32,8 @@ namespace FastGeoMesh.Tests.ComplexScenario
             var adj = im.BuildAdjacency();
             adj.NonManifoldEdges.Should().BeEmpty();
         }
-
         /// <summary>
-        /// Ensures external support geometry endpoints are carried into the mesh as internal segment endpoints.
+        /// Runs test BraceFootingOutsideIsCarriedAsInternalSegment.
         /// </summary>
         [Fact]
         public void BraceFootingOutsideIsCarriedAsInternalSegment()
@@ -46,7 +44,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
             var inside = new Vec3(0, 0, 0);
             structure.Geometry.AddPoint(support).AddPoint(inside).AddSegment(new Segment3D(support, inside));
             var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(1.0), TargetEdgeLengthZ = EdgeLength.From(1.0), GenerateBottomCap = false, GenerateTopCap = false };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             int present = im.Vertices.Count(v => (v.X == support.X && v.Y == support.Y && v.Z == support.Z) || (v.X == inside.X && v.Y == inside.Y && v.Z == inside.Z));
             present.Should().Be(2);

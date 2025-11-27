@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.PropertyBased
 {
+    /// <summary>
+    /// Tests for class PolygonInvariantValidPolygonProducesManifoldMeshTest.
+    /// </summary>
     public sealed class PolygonInvariantValidPolygonProducesManifoldMeshTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Theory]
         [InlineData(5, 5, 2)]
         [InlineData(10, 8, 3)]
@@ -33,7 +38,7 @@ namespace FastGeoMesh.Tests.PropertyBased
                 .Build()
                 .UnwrapForTests();
 
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
             var adjacency = indexed.BuildAdjacency();
 

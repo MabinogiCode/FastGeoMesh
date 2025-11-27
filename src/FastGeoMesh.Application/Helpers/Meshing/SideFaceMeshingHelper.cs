@@ -1,4 +1,6 @@
+#pragma warning disable S2234
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Services;
 
 namespace FastGeoMesh.Application.Helpers.Meshing
 {
@@ -6,11 +8,12 @@ namespace FastGeoMesh.Application.Helpers.Meshing
     internal static class SideFaceMeshingHelper
     {
         /// <summary>Generates side face quads for a prism structure.</summary>
-        internal static List<Quad> GenerateSideQuads(IReadOnlyList<Vec2> loop, IReadOnlyList<double> zLevels, MesherOptions options, bool outward)
+        internal static List<Quad> GenerateSideQuads(IReadOnlyList<Vec2> loop, IReadOnlyList<double> zLevels, MesherOptions options, bool outward, IGeometryService geometryService)
         {
             ArgumentNullException.ThrowIfNull(loop);
             ArgumentNullException.ThrowIfNull(zLevels);
             ArgumentNullException.ThrowIfNull(options);
+            ArgumentNullException.ThrowIfNull(geometryService);
 
             var quads = new List<Quad>();
             int n = loop.Count;
@@ -27,31 +30,32 @@ namespace FastGeoMesh.Application.Helpers.Meshing
                 {
                     double t0 = hi * invHDiv;
                     double t1 = (hi + 1) * invHDiv;
-                    var a0 = Helpers.GeometryCalculationHelper.Lerp(a2, b2, t0);
-                    var a1 = Helpers.GeometryCalculationHelper.Lerp(a2, b2, t1);
+                    var a0 = geometryService.Lerp(a2, b2, t0);
+                    var a1 = geometryService.Lerp(a2, b2, t1);
 
                     for (int vi = 0; vi < zLevels.Count - 1; vi++)
                     {
                         double za0 = zLevels[vi];
                         double za1 = zLevels[vi + 1];
 
-                        // FINAL SOLUTION: Fixed order guaranteeing positive cross product
                         // For a vertical quad, the 4 vertices in CCW order as seen from outside:
                         // bottom-left → bottom-right → top-right → top-left
-                        var v0 = new Vec3(a0.X, a0.Y, za0);  // bottom-start
-                        var v1 = new Vec3(a1.X, a1.Y, za0);  // bottom-end
-                        var v2 = new Vec3(a1.X, a1.Y, za1);  // top-end
-                        var v3 = new Vec3(a0.X, a0.Y, za1);  // top-start
+                        var v0 = new Vec3(a0.X, a0.Y, za0);
+                        var v1 = new Vec3(a1.X, a1.Y, za0);
+                        var v2 = new Vec3(a1.X, a1.Y, za1);
+                        var v3 = new Vec3(a0.X, a0.Y, za1);
 
-                        Quad quad = outward
-                            ? new Quad(v0, v1, v2, v3)  // No quality score for side quads
-                            : new Quad(v0, v3, v2, v1); // No quality score for side quads
+                        var quad = outward
+                            ? new Quad(v0, v1, v2, v3)
+                            : new Quad(v1, v0, v3, v2);
 
                         quads.Add(quad);
                     }
                 }
             }
+
             return quads;
         }
     }
 }
+#pragma warning restore S2234

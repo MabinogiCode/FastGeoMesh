@@ -1,13 +1,20 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.PropertyBased
 {
+    /// <summary>
+    /// Tests for class BoundsInvariantMeshVerticesStayWithinExpectedBoundsTest.
+    /// </summary>
     public sealed class BoundsInvariantMeshVerticesStayWithinExpectedBoundsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Theory]
         [InlineData(6, 4, 3)]
         [InlineData(10, 8, 5)]
@@ -17,11 +24,14 @@ namespace FastGeoMesh.Tests.PropertyBased
             {
                 return;
             }
-
             var rect = Polygon2D.FromPoints(new[] { new Vec2(0, 0), new Vec2(width, 0), new Vec2(width, height), new Vec2(0, height) });
             var structure = new PrismStructureDefinition(rect, 0, depth);
             var options = MesherOptions.CreateBuilder().WithTargetEdgeLengthXY(2.0).WithTargetEdgeLengthZ(2.0).WithGenerateBottomCap(false).WithGenerateTopCap(false).Build().UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+            var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh, options.Epsilon);
             PropertyBasedTestHelper.AreVerticesWithinBounds(indexed.Vertices, 0, width, 0, height, 0, depth).Should().BeTrue();
         }

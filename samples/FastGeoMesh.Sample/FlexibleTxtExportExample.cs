@@ -1,6 +1,8 @@
-using FastGeoMesh.Application.Services;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Infrastructure.Exporters;
 using FastGeoMesh.Infrastructure.FileOperations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Sample
 {
@@ -31,7 +33,12 @@ namespace FastGeoMesh.Sample
 
             if (optionsResult.IsSuccess)
             {
-                var meshResult = new PrismMesher().Mesh(structure, optionsResult.Value);
+                var services = new ServiceCollection();
+                services.AddFastGeoMesh();
+                using var provider = services.BuildServiceProvider();
+                var mesher = provider.GetRequiredService<IPrismMesher>();
+
+                var meshResult = mesher.Mesh(structure, optionsResult.Value);
                 if (meshResult.IsSuccess)
                 {
                     var indexed = IndexedMesh.FromMesh(meshResult.Value);

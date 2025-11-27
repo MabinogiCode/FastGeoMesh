@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Validates that zero-area quads receive a low score.
+    /// Tests for class ScoreQuadHandlesZeroAreaQuads.
     /// </summary>
     public sealed class ScoreQuadHandlesZeroAreaQuads
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class DetectsNonManifoldEdgesTest.
+    /// </summary>
     public sealed class DetectsNonManifoldEdgesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

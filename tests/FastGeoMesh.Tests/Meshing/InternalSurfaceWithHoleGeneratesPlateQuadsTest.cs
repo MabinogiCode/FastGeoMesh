@@ -1,13 +1,20 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class InternalSurfaceWithHoleGeneratesPlateQuadsTest.
+    /// </summary>
     public sealed class InternalSurfaceWithHoleGeneratesPlateQuadsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -16,7 +23,11 @@ namespace FastGeoMesh.Tests.Meshing
             var hole = Polygon2D.FromPoints(new[] { new Vec2(2, 2), new Vec2(3, 2), new Vec2(3, 3), new Vec2(2, 3) });
             var structure = new PrismStructureDefinition(outer, 0, 5).AddInternalSurface(plateOuter, 2.5, hole);
             var opt = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(1.0), TargetEdgeLengthZ = EdgeLength.From(1.0), GenerateBottomCap = true, GenerateTopCap = true };
-            var mesh = new PrismMesher().Mesh(structure, opt).UnwrapForTests();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+            var mesh = mesher.Mesh(structure, opt).UnwrapForTests();
             var plateQuads = mesh.Quads.Where(q => q.V0.Z == 2.5 && q.V1.Z == 2.5 && q.V2.Z == 2.5 && q.V3.Z == 2.5).ToList();
             plateQuads.Should().NotBeEmpty();
             foreach (var q in plateQuads)

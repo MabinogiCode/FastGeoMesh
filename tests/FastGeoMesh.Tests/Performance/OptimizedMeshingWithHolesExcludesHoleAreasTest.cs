@@ -1,13 +1,20 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
+    /// <summary>
+    /// Tests for class OptimizedMeshingWithHolesExcludesHoleAreasTest.
+    /// </summary>
     public sealed class OptimizedMeshingWithHolesExcludesHoleAreasTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -15,7 +22,10 @@ namespace FastGeoMesh.Tests.Performance
             var hole = Polygon2D.FromPoints(new[] { new Vec2(5, 5), new Vec2(15, 5), new Vec2(15, 15), new Vec2(5, 15) });
             var structure = new PrismStructureDefinition(outer, 0, 2).AddHole(hole);
             var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(2.0), TargetEdgeLengthZ = EdgeLength.From(1.0), GenerateBottomCap = true, GenerateTopCap = true };
-            var mesher = new PrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             mesh.Quads.Should().NotBeEmpty();
             var capQuads = mesh.Quads.Where(q => System.Math.Abs(q.V0.Z - 0) < 0.1 || System.Math.Abs(q.V0.Z - 2) < 0.1).ToList();

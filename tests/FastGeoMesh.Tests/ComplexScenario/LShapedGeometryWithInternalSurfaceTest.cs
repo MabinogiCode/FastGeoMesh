@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.ComplexScenario
 {
+    /// <summary>
+    /// Tests for class LShapedGeometryWithInternalSurfaceTest.
+    /// </summary>
     public sealed class LShapedGeometryWithInternalSurfaceTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -21,7 +26,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
                 .WithTargetEdgeLengthZ(0.8)
                 .Build()
                 .UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
             indexed.VertexCount.Should().BeGreaterThan(30);
             indexed.QuadCount.Should().BeGreaterThan(25);

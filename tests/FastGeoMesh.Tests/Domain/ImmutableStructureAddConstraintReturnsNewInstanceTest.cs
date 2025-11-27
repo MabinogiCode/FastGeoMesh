@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Domain
 {
+    /// <summary>
+    /// Tests for class ImmutableStructureAddConstraintReturnsNewInstanceTest.
+    /// </summary>
     public sealed class ImmutableStructureAddConstraintReturnsNewInstanceTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

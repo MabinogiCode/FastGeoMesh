@@ -1,16 +1,20 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
     /// <summary>
-    /// Validates that mesh caching optimization works correctly.
+    /// Tests for class MeshCachingOptimizationWorksCorrectly.
     /// </summary>
     public sealed class MeshCachingOptimizationWorksCorrectly
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -24,7 +28,10 @@ namespace FastGeoMesh.Tests.Performance
                 TargetEdgeLengthXY = EdgeLength.From(1.0),
                 TargetEdgeLengthZ = EdgeLength.From(1.0)
             };
-            var mesher = new PrismMesher();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
             var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var quads1 = mesh.Quads;
             var quads2 = mesh.Quads;

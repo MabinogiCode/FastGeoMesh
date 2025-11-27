@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class ComplexExcavationWithMultipleSlabsAndHolesTest.
+    /// </summary>
     public sealed class ComplexExcavationWithMultipleSlabsAndHolesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -27,7 +32,7 @@ namespace FastGeoMesh.Tests.Meshing
                 GenerateTopCap = true,
                 MinCapQuadQuality = 0.1
             };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var upperSlabQuads = mesh.Quads.Where(q => ComplexExcavationWithMultipleSlabsAndHolesTestHelpers.IsQuadAtZ(q, -1)).ToList();
             var lowerSlabQuads = mesh.Quads.Where(q => ComplexExcavationWithMultipleSlabsAndHolesTestHelpers.IsQuadAtZ(q, -3)).ToList();
             upperSlabQuads.Should().NotBeEmpty();
@@ -53,6 +58,9 @@ namespace FastGeoMesh.Tests.Meshing
 
     internal static class ComplexExcavationWithMultipleSlabsAndHolesTestHelpers
     {
+        /// <summary>
+        /// Runs test IsQuadAtZ.
+        /// </summary>
         public static bool IsQuadAtZ(Quad q, double expectedZ)
         {
             const double Epsilon = 1e-9;

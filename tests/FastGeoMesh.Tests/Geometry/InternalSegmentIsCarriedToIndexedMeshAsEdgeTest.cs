@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
 using FastGeoMesh.Tests.Helpers;
@@ -7,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class InternalSegmentIsCarriedToIndexedMeshAsEdgeTest.
+    /// </summary>
     public sealed class InternalSegmentIsCarriedToIndexedMeshAsEdgeTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -18,7 +23,7 @@ namespace FastGeoMesh.Tests.Geometry
             var b = new Vec3(20, 4, 4);
             _ = structure.Geometry.AddPoint(a).AddPoint(b).AddSegment(new Segment3D(a, b));
             var options = new MesherOptions { TargetEdgeLengthXY = EdgeLength.From(1.0), TargetEdgeLengthZ = EdgeLength.From(0.5), GenerateBottomCap = false, GenerateTopCap = false };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             int ia = im.Vertices.Select((v, i) => (v, i)).First(t => MathUtil.NearlyEqual(t.v.X, a.X, options.Epsilon) && MathUtil.NearlyEqual(t.v.Y, a.Y, options.Epsilon) && MathUtil.NearlyEqual(t.v.Z, a.Z, options.Epsilon)).i;
             int ib = im.Vertices.Select((v, i) => (v, i)).First(t => MathUtil.NearlyEqual(t.v.X, b.X, options.Epsilon) && MathUtil.NearlyEqual(t.v.Y, b.Y, options.Epsilon) && MathUtil.NearlyEqual(t.v.Z, b.Z, options.Epsilon)).i;

@@ -1,16 +1,21 @@
 using FastGeoMesh.Application.Helpers.Quality;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Services;
 using FluentAssertions;
 using LibTessDotNet;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Verifies MakeQuadFromTrianglePair succeeds with two triangles forming a quad.
+    /// Tests for class MakeQuadFromTrianglePairWorksWithValidTriangles.
     /// </summary>
     public sealed class MakeQuadFromTrianglePairWorksWithValidTriangles
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -24,8 +29,13 @@ namespace FastGeoMesh.Tests.Quality
             var triangle1 = (0, 1, 2); // Bottom-right triangle
             var triangle2 = (0, 2, 3); // Top-left triangle
 
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var geo = provider.GetRequiredService<IGeometryService>();
+
             // Act
-            var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangle1, triangle2, vertices);
+            var quad = QuadQualityHelper.MakeQuadFromTrianglePair(triangle1, triangle2, vertices, geo);
 
             // Assert
             quad.Should().NotBeNull("Valid triangle pair should create quad");

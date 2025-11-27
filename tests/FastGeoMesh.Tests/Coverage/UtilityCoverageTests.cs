@@ -1,3 +1,4 @@
+using System.Globalization;
 using FastGeoMesh.Infrastructure;
 using FluentAssertions;
 using Xunit;
@@ -5,12 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Tests for utility classes and helper methods to improve code coverage.
-    /// Covers ValueTaskExtensions and other internal utilities.
+    /// Tests for class UtilityCoverageTests.
     /// </summary>
     public sealed class UtilityCoverageTests
     {
-        /// <summary>Tests ValueTaskExtensions.ContinueWith with completed ValueTask.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithCompletedValueTaskUsesFastPath.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithCompletedValueTaskUsesFastPath()
         {
@@ -20,13 +22,14 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await completedValueTask.ContinueWith(
                 value => value * 2,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(true);
 
             // Assert
             result.Should().Be(84);
         }
-
-        /// <summary>Tests ValueTaskExtensions.ContinueWith with non-completed ValueTask.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithNonCompletedValueTaskUsesAsyncPath.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithNonCompletedValueTaskUsesAsyncPath()
         {
@@ -43,13 +46,14 @@ namespace FastGeoMesh.Tests.Coverage
             tcs.SetResult(10);
 
             // Act
-            var result = await continuationTask;
+            var result = await continuationTask.ConfigureAwait(true);
 
             // Assert
             result.Should().Be(30);
         }
-
-        /// <summary>Tests ValueTaskExtensions.ContinueWith with different continuation options.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithWithDifferentOptionsWorksCorrectly.
+        /// </summary>
         [Theory]
         [InlineData(TaskContinuationOptions.None)]
         [InlineData(TaskContinuationOptions.ExecuteSynchronously)]
@@ -62,13 +66,14 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await completedValueTask.ContinueWith(
                 value => value + " World",
-                options);
+                options).ConfigureAwait(true);
 
             // Assert
             result.Should().Be("Hello World");
         }
-
-        /// <summary>Tests ValueTaskExtensions.ContinueWith with transformation function.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithTransformsDifferentTypes.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithTransformsDifferentTypes()
         {
@@ -78,18 +83,19 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var stringResult = await valueTask.ContinueWith(
                 value => $"Number: {value}",
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(true);
 
             var boolResult = await valueTask.ContinueWith(
                 value => value > 100,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(true);
 
             // Assert
             stringResult.Should().Be("Number: 123");
             boolResult.Should().BeTrue();
         }
-
-        /// <summary>Tests ValueTaskExtensions with exception handling.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithWithExceptionPropagatesException.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithWithExceptionPropagatesException()
         {
@@ -105,12 +111,13 @@ namespace FastGeoMesh.Tests.Coverage
             tcs.SetException(new InvalidOperationException("Test exception"));
 
             // Act & Assert - Expect AggregateException containing the original exception
-            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask());
+            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask()).ConfigureAwait(true);
             exception.InnerException.Should().BeOfType<InvalidOperationException>();
             exception.InnerException.Message.Should().Be("Test exception");
         }
-
-        /// <summary>Tests ValueTaskExtensions with cancellation.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithWithCancellationPropagatesCancellation.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithWithCancellationPropagatesCancellation()
         {
@@ -126,11 +133,12 @@ namespace FastGeoMesh.Tests.Coverage
             tcs.SetCanceled();
 
             // Act & Assert - Expect AggregateException containing TaskCanceledException
-            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask());
+            var exception = await Assert.ThrowsAsync<AggregateException>(() => continuationTask.AsTask()).ConfigureAwait(true);
             exception.InnerException.Should().BeOfType<TaskCanceledException>();
         }
-
-        /// <summary>Tests complex transformation chain with ValueTaskExtensions.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithChainedTransformationsWorksCorrectly.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithChainedTransformationsWorksCorrectly()
         {
@@ -141,13 +149,14 @@ namespace FastGeoMesh.Tests.Coverage
             var result = await initialValueTask
                 .ContinueWith(x => x * 2, TaskContinuationOptions.ExecuteSynchronously)
                 .ContinueWith(x => x + 10, TaskContinuationOptions.ExecuteSynchronously)
-                .ContinueWith(x => x.ToString(), TaskContinuationOptions.ExecuteSynchronously);
+                .ContinueWith(x => x.ToString(CultureInfo.InvariantCulture), TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(true);
 
             // Assert
             result.Should().Be("20"); // (5 * 2) + 10 = 20
         }
-
-        /// <summary>Tests ValueTaskExtensions with null transformation function.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithWithNullFunctionThrowsException.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithWithNullFunctionThrowsException()
         {
@@ -157,10 +166,11 @@ namespace FastGeoMesh.Tests.Coverage
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                valueTask.ContinueWith(nullFunction).AsTask());
+                valueTask.ContinueWith(nullFunction).AsTask()).ConfigureAwait(true);
         }
-
-        /// <summary>Tests edge case with very large numbers.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithWithLargeNumbersHandlesCorrectly.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithWithLargeNumbersHandlesCorrectly()
         {
@@ -170,13 +180,14 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await valueTask.ContinueWith(
                 value => value / 2,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(true);
 
             // Assert
             result.Should().Be(long.MaxValue / 2);
         }
-
-        /// <summary>Tests ValueTaskExtensions with generic types.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithWithGenericTypesWorksCorrectly.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithWithGenericTypesWorksCorrectly()
         {
@@ -186,13 +197,14 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await valueTask.ContinueWith(
                 list => list.Count,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(true);
 
             // Assert
             result.Should().Be(3);
         }
-
-        /// <summary>Tests ValueTaskExtensions with struct types.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithWithStructTypesWorksCorrectly.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithWithStructTypesWorksCorrectly()
         {
@@ -202,13 +214,14 @@ namespace FastGeoMesh.Tests.Coverage
             // Act
             var result = await valueTask.ContinueWith(
                 date => date.Year,
-                TaskContinuationOptions.ExecuteSynchronously);
+                TaskContinuationOptions.ExecuteSynchronously).ConfigureAwait(true);
 
             // Assert
             result.Should().Be(2024);
         }
-
-        /// <summary>Tests ValueTaskExtensions performance with many operations.</summary>
+        /// <summary>
+        /// Runs test ValueTaskExtensionsContinueWithPerformanceTestCompletesQuickly.
+        /// </summary>
         [Fact]
         public async Task ValueTaskExtensionsContinueWithPerformanceTestCompletesQuickly()
         {
@@ -229,7 +242,7 @@ namespace FastGeoMesh.Tests.Coverage
             var results = new List<int>();
             foreach (var task in tasks)
             {
-                results.Add(await task);
+                results.Add(await task.ConfigureAwait(true));
             }
 
             stopwatch.Stop();

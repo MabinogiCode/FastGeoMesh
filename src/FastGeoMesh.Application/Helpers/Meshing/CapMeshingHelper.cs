@@ -1,4 +1,5 @@
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Services;
 
 namespace FastGeoMesh.Application.Helpers.Meshing
 {
@@ -6,7 +7,8 @@ namespace FastGeoMesh.Application.Helpers.Meshing
     internal static class CapMeshingHelper
     {
         /// <summary>Create bottom/top caps according to options and return the resulting mesh.</summary>
-        internal static ImmutableMesh GenerateCaps(ImmutableMesh inputMesh, PrismStructureDefinition structure, MesherOptions options, double z0, double z1)
+        /// <remarks>Callers must supply an IGeometryService (via DI).</remarks>
+        internal static ImmutableMesh GenerateCaps(ImmutableMesh inputMesh, PrismStructureDefinition structure, MesherOptions options, double z0, double z1, IGeometryService geometryService)
         {
             var mesh = inputMesh;
             bool genBottom = options.GenerateBottomCap;
@@ -16,7 +18,7 @@ namespace FastGeoMesh.Application.Helpers.Meshing
             {
                 if (structure.Footprint.IsRectangleAxisAligned(out var min, out var max))
                 {
-                    mesh = GenerateRectangleCaps(mesh, structure, options, z0, z1, min, max, genBottom, genTop);
+                    mesh = GenerateRectangleCaps(mesh, structure, options, z0, z1, min, max, genBottom, genTop, geometryService);
                 }
                 else
                 {
@@ -27,20 +29,20 @@ namespace FastGeoMesh.Application.Helpers.Meshing
             // Internal surfaces (always generic path, independent) - no extrusion, single elevation each
             foreach (var plate in structure.InternalSurfaces)
             {
-                mesh = GenerateInternalSurface(mesh, plate, options);
+                mesh = GenerateInternalSurface(mesh, plate);
             }
 
             return mesh;
         }
 
-        private static ImmutableMesh GenerateInternalSurface(ImmutableMesh inputMesh, InternalSurfaceDefinition plate, MesherOptions options)
+        private static ImmutableMesh GenerateInternalSurface(ImmutableMesh inputMesh, InternalSurfaceDefinition plate)
         {
             // For now, return a simple fallback implementation
-            return GenerateFallbackInternalSurface(inputMesh, plate, options);
+            return GenerateFallbackInternalSurface(inputMesh, plate);
         }
 
         /// <summary>Fallback method when tessellation fails - generates a simple grid covering the outer polygon.</summary>
-        private static ImmutableMesh GenerateFallbackInternalSurface(ImmutableMesh inputMesh, InternalSurfaceDefinition plate, MesherOptions _)
+        private static ImmutableMesh GenerateFallbackInternalSurface(ImmutableMesh inputMesh, InternalSurfaceDefinition plate)
         {
             var mesh = inputMesh;
             var quadsToAdd = new List<Quad>();
@@ -57,37 +59,37 @@ namespace FastGeoMesh.Application.Helpers.Meshing
                 maxY = Math.Max(maxY, v.Y);
             }
 
-            // Generate a simple 2x2 grid over the bounding box
-            double midX = (minX + maxX) * 0.5;
-            double midY = (minY + maxY) * 0.5;
+            // Simple grid generation
+            int cols = 4;
+            int rows = 4;
+            double stepX = (maxX - minX) / cols;
+            double stepY = (maxY - minY) / rows;
 
-            // Create 4 quads covering the outer polygon
-            var quadShapes = new[]
+            for (int i = 0; i < cols; i++)
             {
-                (new Vec2(minX, minY), new Vec2(midX, minY), new Vec2(midX, midY), new Vec2(minX, midY)),
-                (new Vec2(midX, minY), new Vec2(maxX, minY), new Vec2(maxX, midY), new Vec2(midX, midY)),
-                (new Vec2(minX, midY), new Vec2(midX, midY), new Vec2(midX, maxY), new Vec2(minX, maxY)),
-                (new Vec2(midX, midY), new Vec2(maxX, midY), new Vec2(maxX, maxY), new Vec2(midX, maxY))
-            };
+                for (int j = 0; j < rows; j++)
+                {
+                    double x0 = minX + i * stepX;
+                    double y0 = minY + j * stepY;
+                    double x1 = x0 + stepX;
+                    double y1 = y0 + stepY;
 
-            foreach (var quad in quadShapes)
-            {
-                // Simple quad for the internal surface
-                var meshQuad = new Quad(
-                    new Vec3(quad.Item1.X, quad.Item1.Y, plate.Elevation),
-                    new Vec3(quad.Item2.X, quad.Item2.Y, plate.Elevation),
-                    new Vec3(quad.Item3.X, quad.Item3.Y, plate.Elevation),
-                    new Vec3(quad.Item4.X, quad.Item4.Y, plate.Elevation),
-                    1.0);
-                quadsToAdd.Add(meshQuad);
+                    var v0 = new Vec3(x0, y0, plate.Elevation);
+                    var v1 = new Vec3(x1, y0, plate.Elevation);
+                    var v2 = new Vec3(x1, y1, plate.Elevation);
+                    var v3 = new Vec3(x0, y1, plate.Elevation);
+
+                    quadsToAdd.Add(new Quad(v0, v1, v2, v3));
+                }
             }
 
-            return mesh.AddQuads(quadsToAdd);
+            mesh = mesh.AddQuads(quadsToAdd);
+            return mesh;
         }
 
         /// <summary>Optimized axis-aligned rectangle cap generation with refinement near holes/segments.</summary>
         internal static ImmutableMesh GenerateRectangleCaps(ImmutableMesh inputMesh, PrismStructureDefinition structure, MesherOptions options,
-            double z0, double z1, Vec2 min, Vec2 max, bool genBottom, bool genTop)
+            double z0, double z1, Vec2 min, Vec2 max, bool genBottom, bool genTop, IGeometryService geometryService)
         {
             var mesh = inputMesh;
             var quadsToAdd = new List<Quad>();
@@ -112,7 +114,7 @@ namespace FastGeoMesh.Application.Helpers.Meshing
 
                     // Check if this quad is inside a hole - if so, skip it
                     var quadCenter = new Vec2((x0 + x1) * 0.5, (y0 + y1) * 0.5);
-                    if (IsPointInAnyHole(quadCenter, structure))
+                    if (IsPointInAnyHole(quadCenter, structure, geometryService))
                     {
                         continue; // Skip quads inside holes
                     }
@@ -318,23 +320,9 @@ namespace FastGeoMesh.Application.Helpers.Meshing
         }
 
         /// <summary>Checks if a point is inside any hole.</summary>
-        private static bool IsPointInAnyHole(Vec2 point, PrismStructureDefinition structure)
+        private static bool IsPointInAnyHole(Vec2 point, PrismStructureDefinition structure, IGeometryService geometryService)
         {
-            foreach (var hole in structure.Holes)
-            {
-                if (Helpers.GeometryCalculationHelper.PointInPolygon(hole.Vertices.ToArray().AsSpan(), point.X, point.Y))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>Structure to store adaptive grid.</summary>
-        private struct AdaptiveGrid
-        {
-            public List<double> XDivisions;
-            public List<double> YDivisions;
+            return structure.Holes.Any(h => geometryService.PointInPolygon(h.Vertices.ToArray().AsSpan(), point.X, point.Y));
         }
     }
 }

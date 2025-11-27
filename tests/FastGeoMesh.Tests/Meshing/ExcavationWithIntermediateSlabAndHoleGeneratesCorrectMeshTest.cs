@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers; // Required for UnwrapForTests extension
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class ExcavationWithIntermediateSlabAndHoleGeneratesCorrectMeshTest.
+    /// </summary>
     public sealed class ExcavationWithIntermediateSlabAndHoleGeneratesCorrectMeshTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -33,7 +38,7 @@ namespace FastGeoMesh.Tests.Meshing
                 GenerateTopCap = true,
                 MinCapQuadQuality = 0.1
             };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             mesh.Quads.Should().NotBeEmpty();
             var bottomQuads = mesh.Quads.Where(q => ExcavationWithIntermediateSlabAndHoleHelpers.IsQuadAtZ(q, -5)).ToList();
             bottomQuads.Should().NotBeEmpty();
@@ -64,7 +69,9 @@ namespace FastGeoMesh.Tests.Meshing
     internal static class ExcavationWithIntermediateSlabAndHoleHelpers
     {
         private const double Epsilon = 1e-9;
-
+        /// <summary>
+        /// Runs test IsQuadAtZ.
+        /// </summary>
         public static bool IsQuadAtZ(Quad q, double expectedZ)
         {
             return Math.Abs(q.V0.Z - expectedZ) < Epsilon &&
@@ -72,7 +79,9 @@ namespace FastGeoMesh.Tests.Meshing
                    Math.Abs(q.V2.Z - expectedZ) < Epsilon &&
                    Math.Abs(q.V3.Z - expectedZ) < Epsilon;
         }
-
+        /// <summary>
+        /// Runs test IsCapQuad.
+        /// </summary>
         public static bool IsCapQuad(Quad q)
         {
             return Math.Abs(q.V0.Z - q.V1.Z) < Epsilon &&

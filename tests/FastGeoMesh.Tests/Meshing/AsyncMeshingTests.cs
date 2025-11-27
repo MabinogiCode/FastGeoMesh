@@ -1,5 +1,5 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
@@ -7,28 +7,25 @@ using Xunit;
 namespace FastGeoMesh.Tests.Meshing
 {
     /// <summary>
-    /// Tests for asynchronous meshing capabilities introduced in v1.4.0.
+    /// Tests for class AsyncMeshingTests.
     /// </summary>
     public class AsyncMeshingTests
     {
-        private readonly PrismMesher _mesher;
+        private readonly IPrismMesher _mesher;
         private readonly MesherOptions _options;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncMeshingTests"/> class.
-        /// Sets up the mesher and default options for all test methods.
+        /// Runs test AsyncMeshingTests.
         /// </summary>
         public AsyncMeshingTests()
         {
-            _mesher = new PrismMesher();
+            _mesher = TestServiceProvider.CreatePrismMesher();
+
             _options = MesherOptions.CreateBuilder()
                 .WithFastPreset()
                 .Build().UnwrapForTests();
         }
-
         /// <summary>
-        /// Tests that async meshing produces the same result as synchronous meshing for simple structures.
-        /// Validates that the async implementation maintains result consistency with the sync version.
+        /// Runs test MeshAsyncSimpleStructureProducesSameResultAsSync.
         /// </summary>
         [Fact]
         public async Task MeshAsyncSimpleStructureProducesSameResultAsSync()
@@ -47,10 +44,8 @@ namespace FastGeoMesh.Tests.Meshing
             asyncMesh.Value.TriangleCount.Should().Be(syncMesh.TriangleCount);
             asyncMesh.Value.Points.Count.Should().Be(syncMesh.Points.Count);
         }
-
         /// <summary>
-        /// Tests that async meshing properly throws OperationCanceledException when cancellation is requested.
-        /// Validates cancellation token handling in the async meshing pipeline.
+        /// Runs test MeshAsyncWithCancellationThrowsOperationCanceledException.
         /// </summary>
         [Fact]
         public async Task MeshAsyncWithCancellationThrowsOperationCanceledException()
@@ -79,10 +74,8 @@ namespace FastGeoMesh.Tests.Meshing
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled when exception is thrown");
             }
         }
-
         /// <summary>
-        /// Tests alternate cancellation path to ensure comprehensive cancellation token coverage.
-        /// Provides additional validation for different cancellation scenarios.
+        /// Runs test MeshAsyncWithCancellationThrowsOperationCanceledExceptionAlternate.
         /// </summary>
         [Fact]
         public async Task MeshAsyncWithCancellationThrowsOperationCanceledExceptionAlternate()
@@ -111,10 +104,8 @@ namespace FastGeoMesh.Tests.Meshing
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled when exception is thrown");
             }
         }
-
         /// <summary>
-        /// Tests that mesh with progress async properly handles cancellation during operation.
-        /// Validates that complex mesh structures can be cancelled mid-operation with proper cleanup.
+        /// Runs test MeshWithProgressAsyncProperlyHandlesCancellation.
         /// </summary>
         [Fact]
         public async Task MeshWithProgressAsyncProperlyHandlesCancellation()
@@ -161,10 +152,8 @@ namespace FastGeoMesh.Tests.Meshing
             // Progress should be reported regardless of cancellation outcome
             progressReports.Should().NotBeEmpty("Progress should be reported");
         }
-
         /// <summary>
-        /// Tests that batch async meshing respects cancellation tokens during batch processing.
-        /// Validates that large batch operations can be properly cancelled without data corruption.
+        /// Runs test MeshBatchAsyncRespectsCancellationToken.
         /// </summary>
         [Fact]
         public async Task MeshBatchAsyncRespectsCancellationToken()
@@ -213,10 +202,8 @@ namespace FastGeoMesh.Tests.Meshing
             // Progress should be reported regardless of cancellation outcome
             progressReports.Should().NotBeEmpty("Progress should be reported during batch processing");
         }
-
         /// <summary>
-        /// Tests that async meshing with progress reporting properly reports progress throughout the operation.
-        /// Validates progress tracking functionality and ensures all expected progress stages are reported.
+        /// Runs test MeshAsyncWithProgressReportsProgress.
         /// </summary>
         [Fact]
         public async Task MeshAsyncWithProgressReportsProgress()
@@ -237,10 +224,8 @@ namespace FastGeoMesh.Tests.Meshing
             progressReports.Should().Contain(p => p.Operation == "Initializing");
             progressReports.Should().Contain(p => p.Percentage >= 1.0);
         }
-
         /// <summary>
-        /// Tests that batch async processing correctly handles multiple structures and processes all of them.
-        /// Validates parallel processing capabilities and result consistency across multiple structures.
+        /// Runs test MeshBatchAsyncMultipleStructuresProcessesAllStructures.
         /// </summary>
         [Fact]
         public async Task MeshBatchAsyncMultipleStructuresProcessesAllStructures()
@@ -279,10 +264,8 @@ namespace FastGeoMesh.Tests.Meshing
             progressReports.Should().NotBeEmpty();
             progressReports.Should().Contain(p => p.Operation == "Batch Processing");
         }
-
         /// <summary>
-        /// Tests that batch async processing with limited parallelism respects the degree of parallelism constraint.
-        /// Validates that the system properly limits concurrent operations while maintaining performance.
+        /// Runs test MeshBatchAsyncWithParallelismLimitsParallelism.
         /// </summary>
         [Fact]
         public async Task MeshBatchAsyncWithParallelismLimitsParallelism()
@@ -313,10 +296,8 @@ namespace FastGeoMesh.Tests.Meshing
             // This is more of a smoke test - exact timing depends on hardware
             stopwatch.ElapsedMilliseconds.Should().BeLessThan((long)CIEnvironmentHelper.AdjustThreshold(5000));
         }
-
         /// <summary>
-        /// Tests that complexity estimation async returns reasonable estimates for simple structures.
-        /// Validates that the complexity analysis provides meaningful metrics for performance planning.
+        /// Runs test EstimateComplexityAsyncSimpleStructureReturnsReasonableEstimate.
         /// </summary>
         [Fact]
         public async Task EstimateComplexityAsyncSimpleStructureReturnsReasonableEstimate()
@@ -337,10 +318,8 @@ namespace FastGeoMesh.Tests.Meshing
             estimate.Complexity.Should().BeOneOf(MeshingComplexity.Trivial, MeshingComplexity.Simple);
             estimate.RecommendedParallelism.Should().BeGreaterThan(0);
         }
-
         /// <summary>
-        /// Tests that complexity estimation correctly categorizes complex structures with higher complexity ratings.
-        /// Validates that the complexity analysis scales appropriately for structures with many vertices and holes.
+        /// Runs test EstimateComplexityAsyncComplexStructureReturnsHigherComplexity.
         /// </summary>
         [Fact]
         public async Task EstimateComplexityAsyncComplexStructureReturnsHigherComplexity()
@@ -368,10 +347,8 @@ namespace FastGeoMesh.Tests.Meshing
             estimate.RecommendedParallelism.Should().BeGreaterThanOrEqualTo(1);
             estimate.PerformanceHints.Should().NotBeEmpty();
         }
-
         /// <summary>
-        /// Tests that MeshingProgress.FromCounts correctly calculates percentage from element counts.
-        /// Validates the helper method for creating progress reports from processed/total element counts.
+        /// Runs test MeshingProgressFromCountsCalculatesPercentageCorrectly.
         /// </summary>
         [Fact]
         public void MeshingProgressFromCountsCalculatesPercentageCorrectly()
@@ -386,10 +363,8 @@ namespace FastGeoMesh.Tests.Meshing
             progress.TotalElements.Should().Be(100);
             progress.StatusMessage.Should().Be("Processing");
         }
-
         /// <summary>
-        /// Tests that MeshingProgress.Completed creates a properly completed progress report.
-        /// Validates the helper method for creating completion progress reports.
+        /// Runs test MeshingProgressCompletedReturnsCompletedProgress.
         /// </summary>
         [Fact]
         public void MeshingProgressCompletedReturnsCompletedProgress()
@@ -404,10 +379,8 @@ namespace FastGeoMesh.Tests.Meshing
             progress.TotalElements.Should().Be(150);
             progress.StatusMessage.Should().Be("Completed");
         }
-
         /// <summary>
-        /// Tests that MeshingProgress.ToString returns a properly formatted string representation.
-        /// Validates the string formatting for progress reporting in logging and UI scenarios.
+        /// Runs test MeshingProgressToStringReturnsFormattedString.
         /// </summary>
         [Fact]
         public void MeshingProgressToStringReturnsFormattedString()
@@ -431,12 +404,9 @@ namespace FastGeoMesh.Tests.Meshing
             result.Should().Contain("ETA:");
             result.Should().Contain("In progress");
         }
-
         /// <summary>
-        /// Tests that MeshingComplexityEstimate.ToString returns formatted string for different complexity levels.
-        /// Validates string representation of complexity estimates for different scenarios.
+        /// Runs test MeshingComplexityEstimateToStringReturnsFormattedString.
         /// </summary>
-        /// <param name="complexity">The complexity level to test.</param>
         [Theory]
         [InlineData(MeshingComplexity.Trivial)]
         [InlineData(MeshingComplexity.Simple)]
@@ -460,4 +430,3 @@ namespace FastGeoMesh.Tests.Meshing
         }
     }
 }
-

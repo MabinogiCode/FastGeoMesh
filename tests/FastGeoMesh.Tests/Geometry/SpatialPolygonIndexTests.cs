@@ -1,15 +1,29 @@
 using FastGeoMesh.Domain;
 using FastGeoMesh.Infrastructure;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
-    /// <summary>Tests for <see cref="SpatialPolygonIndex"/> performance and correctness.</summary>
+    /// <summary>
+    /// Tests for class SpatialPolygonIndexTests.
+    /// </summary>
     public sealed class SpatialPolygonIndexTests
     {
+        private readonly IGeometryHelper _helper;
         /// <summary>
-        /// Ensures inside points within a convex polygon return true.
+        /// Runs test SpatialPolygonIndexTests.
+        /// </summary>
+        public SpatialPolygonIndexTests()
+        {
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            _helper = provider.GetRequiredService<IGeometryHelper>();
+        }
+        /// <summary>
+        /// Runs test SpatialPolygonIndexDetectsInsidePoints.
         /// </summary>
         [Fact]
         public void SpatialPolygonIndexDetectsInsidePoints()
@@ -19,16 +33,15 @@ namespace FastGeoMesh.Tests.Geometry
             {
                 new(0, 0), new(10, 0), new(10, 10), new(0, 10)
             };
-            var index = new SpatialPolygonIndex(square);
+            var index = new SpatialPolygonIndex(square, _helper);
 
             // Act & Assert
             index.IsInside(5, 5).Should().BeTrue("Point inside square");
             index.IsInside(1, 1).Should().BeTrue("Point near corner inside");
             index.IsInside(9, 9).Should().BeTrue("Point near opposite corner inside");
         }
-
         /// <summary>
-        /// Ensures outside points return false for containment queries.
+        /// Runs test SpatialPolygonIndexDetectsOutsidePoints.
         /// </summary>
         [Fact]
         public void SpatialPolygonIndexDetectsOutsidePoints()
@@ -38,7 +51,7 @@ namespace FastGeoMesh.Tests.Geometry
             {
                 new(0, 0), new(10, 0), new(10, 10), new(0, 10)
             };
-            var index = new SpatialPolygonIndex(square);
+            var index = new SpatialPolygonIndex(square, _helper);
 
             // Act & Assert
             index.IsInside(-1, 5).Should().BeFalse("Point outside left");
@@ -47,9 +60,8 @@ namespace FastGeoMesh.Tests.Geometry
             index.IsInside(5, 11).Should().BeFalse("Point outside top");
             index.IsInside(-5, -5).Should().BeFalse("Point far outside");
         }
-
         /// <summary>
-        /// Verifies index does not crash on boundary points (corner and edge).
+        /// Runs test SpatialPolygonIndexHandlesBoundaryPoints.
         /// </summary>
         [Fact]
         public void SpatialPolygonIndexHandlesBoundaryPoints()
@@ -59,7 +71,7 @@ namespace FastGeoMesh.Tests.Geometry
             {
                 new(0, 0), new(10, 0), new(10, 10), new(0, 10)
             };
-            var index = new SpatialPolygonIndex(square);
+            var index = new SpatialPolygonIndex(square, _helper);
 
             // Act & Assert - Boundary behavior may vary but should be consistent
             var corner = index.IsInside(0, 0);
@@ -69,9 +81,8 @@ namespace FastGeoMesh.Tests.Geometry
             Assert.True(corner || !corner, "Corner test should not crash");
             Assert.True(edge || !edge, "Edge test should not crash");
         }
-
         /// <summary>
-        /// Tests indexing on a non-convex L-shaped polygon.
+        /// Runs test SpatialPolygonIndexWorksWithComplexPolygon.
         /// </summary>
         [Fact]
         public void SpatialPolygonIndexWorksWithComplexPolygon()
@@ -82,7 +93,7 @@ namespace FastGeoMesh.Tests.Geometry
                 new(0, 0), new(6, 0), new(6, 3),
                 new(3, 3), new(3, 6), new(0, 6)
             };
-            var index = new SpatialPolygonIndex(lShape);
+            var index = new SpatialPolygonIndex(lShape, _helper);
 
             // Act & Assert
             index.IsInside(1, 1).Should().BeTrue("Point in bottom-left rectangle");
@@ -90,9 +101,8 @@ namespace FastGeoMesh.Tests.Geometry
             index.IsInside(5, 1).Should().BeTrue("Point in bottom-right rectangle");
             index.IsInside(5, 5).Should().BeFalse("Point in missing top-right rectangle");
         }
-
         /// <summary>
-        /// Performs broad sampling to ensure some points are classified inside and not everything is inside.
+        /// Runs test SpatialPolygonIndexPerformsBetterThanNaive.
         /// </summary>
         [Fact]
         public void SpatialPolygonIndexPerformsBetterThanNaive()
@@ -110,7 +120,7 @@ namespace FastGeoMesh.Tests.Geometry
                 ));
             }
 
-            var index = new SpatialPolygonIndex(vertices);
+            var index = new SpatialPolygonIndex(vertices, _helper);
 
             // Act - Test many points (in practice, spatial index should be faster)
             int insideCount = 0;
@@ -129,9 +139,8 @@ namespace FastGeoMesh.Tests.Geometry
             insideCount.Should().BeGreaterThan(0, "Should find some points inside");
             insideCount.Should().BeLessThan(1900, "Should not classify all points as inside"); // Total points: 31*31 = 961
         }
-
         /// <summary>
-        /// Ensures different grid resolutions produce same results for clear inside/outside points.
+        /// Runs test SpatialPolygonIndexHandlesDifferentGridResolutions.
         /// </summary>
         [Fact]
         public void SpatialPolygonIndexHandlesDifferentGridResolutions()
@@ -142,8 +151,8 @@ namespace FastGeoMesh.Tests.Geometry
                 new(0, 0), new(10, 0), new(10, 10), new(0, 10)
             };
 
-            var coarseIndex = new SpatialPolygonIndex(square, gridResolution: 4);
-            var fineIndex = new SpatialPolygonIndex(square, gridResolution: 64);
+            var coarseIndex = new SpatialPolygonIndex(square, _helper, gridResolution: 4);
+            var fineIndex = new SpatialPolygonIndex(square, _helper, gridResolution: 64);
 
             // Act & Assert - Both should give same results for clear inside/outside points
             coarseIndex.IsInside(5, 5).Should().BeTrue("Coarse index should detect inside");
@@ -152,9 +161,8 @@ namespace FastGeoMesh.Tests.Geometry
             coarseIndex.IsInside(-1, -1).Should().BeFalse("Coarse index should detect outside");
             fineIndex.IsInside(-1, -1).Should().BeFalse("Fine index should detect outside");
         }
-
         /// <summary>
-        /// Tests triangle support for minimal polygon definitions.
+        /// Runs test SpatialPolygonIndexHandlesTriangle.
         /// </summary>
         [Fact]
         public void SpatialPolygonIndexHandlesTriangle()
@@ -164,27 +172,28 @@ namespace FastGeoMesh.Tests.Geometry
             {
                 new(0, 0), new(10, 0), new(5, 10)
             };
-            var index = new SpatialPolygonIndex(triangle);
+            var index = new SpatialPolygonIndex(triangle, _helper);
 
             // Act & Assert
             index.IsInside(5, 3).Should().BeTrue("Point inside triangle");
             index.IsInside(1, 8).Should().BeFalse("Point outside triangle");
             index.IsInside(9, 8).Should().BeFalse("Point outside triangle");
         }
-
         /// <summary>
-        /// Cross-validates fast index against reference point-in-polygon for a sampled grid.
+        /// Runs test SpatialPolygonIndexMatchesReferenceImplementation.
         /// </summary>
         [Fact]
         public void SpatialPolygonIndexMatchesReferenceImplementation()
         {
             var poly = new Vec2[] { new(0, 0), new(10, 0), new(10, 5), new(0, 5) };
-            var idx = new SpatialPolygonIndex(poly, gridResolution: 32);
+            var idx = new SpatialPolygonIndex(poly, _helper, gridResolution: 32);
+
+
             for (double x = -1; x <= 11; x += 0.8)
             {
                 for (double y = -1; y <= 6; y += 0.6)
                 {
-                    bool refInside = GeometryHelper.PointInPolygon(poly, x, y);
+                    bool refInside = _helper.PointInPolygon(poly, x, y);
                     bool fastInside = idx.IsInside(x, y);
                     fastInside.Should().Be(refInside, $"Mismatch at ({x},{y})");
                 }

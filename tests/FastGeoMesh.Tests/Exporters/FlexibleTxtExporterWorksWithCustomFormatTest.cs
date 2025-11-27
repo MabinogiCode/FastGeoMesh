@@ -1,14 +1,22 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
+using FastGeoMesh.Domain.Interfaces;
 using FastGeoMesh.Infrastructure;
+using FastGeoMesh.Infrastructure.Exporters;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class FlexibleTxtExporterWorksWithCustomFormatTest.
+    /// </summary>
     public sealed class FlexibleTxtExporterWorksWithCustomFormatTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -26,33 +34,29 @@ namespace FastGeoMesh.Tests.Exporters
                 GenerateBottomCap = true,
                 GenerateTopCap = true
             };
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var services = new ServiceCollection();
+            services.AddFastGeoMesh();
+            var provider = services.BuildServiceProvider();
+            var mesher = provider.GetRequiredService<IPrismMesher>();
+            var mesh = mesher.Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(mesh);
-
             string path = Path.Combine(Path.GetTempPath(), $"{TestFileConstants.TestFilePrefix}{Guid.NewGuid():N}.txt");
-
             indexed.ExportTxt()
                 .WithPoints("p", CountPlacement.Top, true)
                 .WithEdges("e", CountPlacement.None, false)
                 .WithQuads("q", CountPlacement.Bottom, true)
                 .ToFile(path);
-
             File.Exists(path).Should().BeTrue();
             var lines = File.ReadAllLines(path);
             lines.Should().NotBeEmpty();
-
             int.TryParse(lines[0], out int vertexCount).Should().BeTrue();
             vertexCount.Should().BeGreaterThan(0);
-
-            bool hasPointLine = lines.Any(l => l.StartsWith("p ") && l.Split(' ').Length == 5);
+            bool hasPointLine = lines.Any(l => l.StartsWith("p ", StringComparison.Ordinal) && l.Split(' ').Length == 5);
             hasPointLine.Should().BeTrue();
-
-            bool hasEdgeLine = lines.Any(l => l.StartsWith("e ") && l.Split(' ').Length == 3);
+            bool hasEdgeLine = lines.Any(l => l.StartsWith("e ", StringComparison.Ordinal) && l.Split(' ').Length == 3);
             hasEdgeLine.Should().BeTrue();
-
-            bool hasQuadLine = lines.Any(l => l.StartsWith("q ") && l.Split(' ').Length == 6);
+            bool hasQuadLine = lines.Any(l => l.StartsWith("q ", StringComparison.Ordinal) && l.Split(' ').Length == 6);
             hasQuadLine.Should().BeTrue();
-
             File.Delete(path);
         }
     }

@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
 {
+    /// <summary>
+    /// Tests for class CoverageExclusionsAreProperlyConfiguredTest.
+    /// </summary>
     public sealed class CoverageExclusionsAreProperlyConfiguredTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -31,7 +37,11 @@ namespace FastGeoMesh.Tests.Coverage
                 {
                     Console.WriteLine($"⚠ {assemblyName} not found (optional in Clean Architecture)");
                 }
-                catch (Exception ex)
+                catch (ReflectionTypeLoadException ex)
+                {
+                    Console.WriteLine($"⚠ Failed to load {assemblyName}: {ex.Message}");
+                }
+                catch (FileLoadException ex)
                 {
                     Console.WriteLine($"⚠ Failed to load {assemblyName}: {ex.Message}");
                 }

@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -7,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Performance
 {
     /// <summary>
-    /// Validates that object pooling does not affect mesh consistency.
+    /// Tests for class ObjectPoolingDoesNotAffectMeshConsistency.
     /// </summary>
     public sealed class ObjectPoolingDoesNotAffectMeshConsistency
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -26,7 +28,7 @@ namespace FastGeoMesh.Tests.Performance
                 GenerateBottomCap = true,
                 GenerateTopCap = true
             };
-            var mesher = new PrismMesher();
+            var mesher = TestServiceProvider.CreatePrismMesher();
             var mesh1 = mesher.Mesh(structure, options).UnwrapForTests();
             var mesh2 = mesher.Mesh(structure, options).UnwrapForTests();
             var mesh3 = mesher.Mesh(structure, options).UnwrapForTests();

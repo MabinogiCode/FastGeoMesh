@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class TShapeWithExtraGeometryIntegratesConstraintsTest.
+    /// </summary>
     public sealed class TShapeWithExtraGeometryIntegratesConstraintsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -30,7 +35,7 @@ namespace FastGeoMesh.Tests.Meshing
                 .WithTargetEdgeLengthZ(0.4)
                 .WithCaps(bottom: true, top: true)
                 .Build().UnwrapForTests();
-            var mesh = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var mesh = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var im = IndexedMesh.FromMesh(mesh, options.Epsilon);
             var adj = im.BuildAdjacency();
             mesh.Points.Should().Contain(refP);

@@ -1,4 +1,3 @@
-using FastGeoMesh.Application.Services;
 using FastGeoMesh.Domain;
 using FastGeoMesh.Tests.Helpers;
 using FluentAssertions;
@@ -6,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.ComplexScenario
 {
+    /// <summary>
+    /// Tests for class MultipleHolesWithRefinementTest.
+    /// </summary>
     public sealed class MultipleHolesWithRefinementTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -27,7 +32,7 @@ namespace FastGeoMesh.Tests.ComplexScenario
                 .WithRejectedCapTriangles(true)
                 .Build()
                 .UnwrapForTests();
-            var result = new PrismMesher().Mesh(structure, options).UnwrapForTests();
+            var result = TestServiceProvider.CreatePrismMesher().Mesh(structure, options).UnwrapForTests();
             var indexed = IndexedMesh.FromMesh(result);
             indexed.VertexCount.Should().BeGreaterThan(50);
             indexed.QuadCount.Should().BeGreaterThan(30);
