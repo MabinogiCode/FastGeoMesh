@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Tests that default quality threshold applies correctly.
+    /// Tests for class DefaultQualityThresholdApplies.
     /// </summary>
     public sealed class DefaultQualityThresholdApplies
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

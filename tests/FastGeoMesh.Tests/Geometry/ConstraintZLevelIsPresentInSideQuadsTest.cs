@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class ConstraintZLevelIsPresentInSideQuadsTest.
+    /// </summary>
     public sealed class ConstraintZLevelIsPresentInSideQuadsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

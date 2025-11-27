@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class RefinementBandsDoNotAffectSideQuadsCountSignificantlyTest.
+    /// </summary>
     public sealed class RefinementBandsDoNotAffectSideQuadsCountSignificantlyTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

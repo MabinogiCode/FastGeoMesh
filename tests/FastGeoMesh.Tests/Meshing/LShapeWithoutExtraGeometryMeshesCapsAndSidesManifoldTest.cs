@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class LShapeWithoutExtraGeometryMeshesCapsAndSidesManifoldTest.
+    /// </summary>
     public sealed class LShapeWithoutExtraGeometryMeshesCapsAndSidesManifoldTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -5,11 +5,18 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.PropertyBased
 {
+    /// <summary>
+    /// Tests for class PolygonInvariantValidPolygonProducesManifoldMeshTest.
+    /// </summary>
     public sealed class PolygonInvariantValidPolygonProducesManifoldMeshTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Theory]
         [InlineData(5, 5, 2)]
         [InlineData(10, 8, 3)]
+        [InlineData(15, 12, 4)]
         [InlineData(15, 12, 4)]
         public void Test(int width, int height, int depth)
         {

@@ -7,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Integration
 {
+    /// <summary>
+    /// Tests for class DependencyInjectionIntegrationTests.
+    /// </summary>
     public class DependencyInjectionIntegrationTests
     {
+        /// <summary>
+        /// Runs test AddFastGeoMeshRegistersAllRequiredServices.
+        /// </summary>
         [Fact]
         public void AddFastGeoMeshRegistersAllRequiredServices()
         {
@@ -29,7 +35,9 @@ namespace FastGeoMesh.Tests.Integration
             Assert.NotNull(serviceProvider.GetRequiredService<IPrismMesher>());
             Assert.NotNull(serviceProvider.GetRequiredService<IAsyncMesher>());
         }
-
+        /// <summary>
+        /// Runs test AddFastGeoMeshUsesSingletonForGeometryService.
+        /// </summary>
         [Fact]
         public void AddFastGeoMeshUsesSingletonForGeometryService()
         {
@@ -45,7 +53,9 @@ namespace FastGeoMesh.Tests.Integration
             // Assert - Same instance
             Assert.Same(service1, service2);
         }
-
+        /// <summary>
+        /// Runs test AddFastGeoMeshUsesTransientForPrismMesher.
+        /// </summary>
         [Fact]
         public void AddFastGeoMeshUsesTransientForPrismMesher()
         {
@@ -61,7 +71,9 @@ namespace FastGeoMesh.Tests.Integration
             // Assert - Different instances
             Assert.NotSame(mesher1, mesher2);
         }
-
+        /// <summary>
+        /// Runs test PrismMesherCanMeshWithDI.
+        /// </summary>
         [Fact]
         public void PrismMesherCanMeshWithDI()
         {
@@ -89,7 +101,9 @@ namespace FastGeoMesh.Tests.Integration
             Assert.NotNull(result.Value);
             Assert.True(result.Value.QuadCount > 0);
         }
-
+        /// <summary>
+        /// Runs test AddFastGeoMeshWithMonitoringRegistersPerformanceMonitor.
+        /// </summary>
         [Fact]
         public void AddFastGeoMeshWithMonitoringRegistersPerformanceMonitor()
         {
@@ -105,7 +119,9 @@ namespace FastGeoMesh.Tests.Integration
             Assert.NotNull(monitor);
             Assert.IsType<PerformanceMonitorService>(monitor);
         }
-
+        /// <summary>
+        /// Runs test AddFastGeoMeshWithMonitoringUseSingletonForPerformanceMonitor.
+        /// </summary>
         [Fact]
         public void AddFastGeoMeshWithMonitoringUseSingletonForPerformanceMonitor()
         {
@@ -121,7 +137,9 @@ namespace FastGeoMesh.Tests.Integration
             // Assert - Same instance
             Assert.Same(monitor1, monitor2);
         }
-
+        /// <summary>
+        /// Runs test IPrismMesherAndIAsyncMesherResolveToSameImplementation.
+        /// </summary>
         [Fact]
         public void IPrismMesherAndIAsyncMesherResolveToSameImplementation()
         {
@@ -138,7 +156,9 @@ namespace FastGeoMesh.Tests.Integration
             Assert.IsType<PrismMesher>(prismMesher);
             Assert.IsType<PrismMesher>(asyncMesher);
         }
-
+        /// <summary>
+        /// Runs test AsyncMesherCanMeshAsyncWithDI.
+        /// </summary>
         [Fact]
         public async Task AsyncMesherCanMeshAsyncWithDI()
         {
@@ -159,14 +179,16 @@ namespace FastGeoMesh.Tests.Integration
                 .Build();
 
             // Act
-            var result = await mesher.MeshAsync(structure, optionsResult.Value);
+            var result = await mesher.MeshAsync(structure, optionsResult.Value).ConfigureAwait(false);
 
             // Assert
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Value);
             Assert.True(result.Value.QuadCount > 0);
         }
-
+        /// <summary>
+        /// Runs test ZLevelBuilderCanBeResolvedAndUsed.
+        /// </summary>
         [Fact]
         public void ZLevelBuilderCanBeResolvedAndUsed()
         {
@@ -192,7 +214,9 @@ namespace FastGeoMesh.Tests.Integration
             Assert.Contains(0.0, levels);
             Assert.Contains(10.0, levels);
         }
-
+        /// <summary>
+        /// Runs test ProximityCheckerCanBeResolvedAndUsed.
+        /// </summary>
         [Fact]
         public void ProximityCheckerCanBeResolvedAndUsed()
         {

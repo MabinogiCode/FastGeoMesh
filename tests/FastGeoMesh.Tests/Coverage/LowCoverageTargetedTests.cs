@@ -9,12 +9,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Tests specifically targeting the lowest coverage files to improve overall coverage percentage.
-    /// Focuses on PerformanceMonitorService, IndexedMeshAdjacencyHelper, SegmentAtZ, MeshPool, and GeometryHelper.
+    /// Tests for class LowCoverageTargetedTests.
     /// </summary>
     public sealed class LowCoverageTargetedTests
     {
-        /// <summary>Tests PerformanceMonitorService functionality completely.</summary>
+        /// <summary>
+        /// Runs test PerformanceMonitorServiceProvidesStatistics.
+        /// </summary>
         [Fact]
         public void PerformanceMonitorServiceProvidesStatistics()
         {
@@ -41,8 +42,9 @@ namespace FastGeoMesh.Tests.Coverage
             statsString.Should().Contain("Triangles:");
             statsString.Should().Contain("Pool Hit Rate:");
         }
-
-        /// <summary>Tests IndexedMeshAdjacencyHelper methods thoroughly.</summary>
+        /// <summary>
+        /// Runs test IndexedMeshAdjacencyHelperBuildsAdjacencyCorrectly.
+        /// </summary>
         [Fact]
         public void IndexedMeshAdjacencyHelperBuildsAdjacencyCorrectly()
         {
@@ -75,8 +77,9 @@ namespace FastGeoMesh.Tests.Coverage
             // Test argument validation
             Assert.Throws<ArgumentNullException>(() => IndexedMeshAdjacencyHelper.BuildAdjacency(null!));
         }
-
-        /// <summary>Tests SegmentAtZ class completely.</summary>
+        /// <summary>
+        /// Runs test SegmentAtZImplementsIElementCorrectly.
+        /// </summary>
         [Fact]
         public void SegmentAtZImplementsIElementCorrectly()
         {
@@ -103,8 +106,9 @@ namespace FastGeoMesh.Tests.Coverage
             segmentAtZ2.Segment.Should().Be(segment2);
             segmentAtZ2.Z.Should().Be(-1.5);
         }
-
-        /// <summary>Tests MeshPool functionality completely.</summary>
+        /// <summary>
+        /// Runs test MeshPoolProvidesImmutableMeshInstances.
+        /// </summary>
         [Fact]
         public void MeshPoolProvidesImmutableMeshInstances()
         {
@@ -125,8 +129,9 @@ namespace FastGeoMesh.Tests.Coverage
             mesh1.QuadCount.Should().Be(0);
             mesh2.TriangleCount.Should().Be(0);
         }
-
-        /// <summary>Tests PooledMeshExtensions methods completely.</summary>
+        /// <summary>
+        /// Runs test PooledMeshExtensionsExecuteOperationsCorrectly.
+        /// </summary>
         [Fact]
         public void PooledMeshExtensionsExecuteOperationsCorrectly()
         {
@@ -164,8 +169,9 @@ namespace FastGeoMesh.Tests.Coverage
 
             complexResult.Should().Be(1);
         }
-
-        /// <summary>Tests Infrastructure GeometryHelper methods (using Utils namespace).</summary>
+        /// <summary>
+        /// Runs test InfrastructureGeometryHelperWorksCorrectly.
+        /// </summary>
         [Fact]
         public void InfrastructureGeometryHelperWorksCorrectly()
         {
@@ -224,8 +230,9 @@ namespace FastGeoMesh.Tests.Coverage
             var area = helper.PolygonArea(square);
             area.Should().Be(16); // 4x4 square
         }
-
-        /// <summary>Tests batch point-in-polygon functionality.</summary>
+        /// <summary>
+        /// Runs test BatchPointInPolygonWorksCorrectly.
+        /// </summary>
         [Fact]
         public void BatchPointInPolygonWorksCorrectly()
         {
@@ -264,8 +271,9 @@ namespace FastGeoMesh.Tests.Coverage
             Assert.Throws<ArgumentException>(() =>
                 helper.BatchPointInPolygon(triangle, testPoints, wrongSizeResults));
         }
-
-        /// <summary>Tests GeometryConfig settings.</summary>
+        /// <summary>
+        /// Runs test GeometryConfigurationCanBeModified.
+        /// </summary>
         [Fact]
         public void GeometryConfigurationCanBeModified()
         {

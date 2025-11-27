@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class LegacyMeshesHaveValidStructureTest.
+    /// </summary>
     public sealed class LegacyMeshesHaveValidStructureTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

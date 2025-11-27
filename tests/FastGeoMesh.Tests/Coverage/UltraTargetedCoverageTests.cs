@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FastGeoMesh.Domain;
 using FluentAssertions;
 using Xunit;
@@ -5,12 +6,14 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Ultra-targeted tests to push specific modules above 80% coverage.
-    /// Focuses on the exact paths needed to reach the threshold.
+    /// Tests for class UltraTargetedCoverageTests.
     /// </summary>
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Tests intentionally catch domain-specific exceptions to be resilient across library versions and optional types.")]
     public sealed class UltraTargetedCoverageTests
     {
-        /// <summary>Tests every EdgeLength operation and boundary.</summary>
+        /// <summary>
+        /// Runs test EdgeLengthEveryOperationAndBoundaryWorks.
+        /// </summary>
         [Fact]
         public void EdgeLengthEveryOperationAndBoundaryWorks()
         {
@@ -59,8 +62,9 @@ namespace FastGeoMesh.Tests.Coverage
                 true.Should().BeTrue("EdgeLength type might not exist");
             }
         }
-
-        /// <summary>Tests every Tolerance operation and boundary.</summary>
+        /// <summary>
+        /// Runs test ToleranceEveryOperationAndBoundaryWorks.
+        /// </summary>
         [Fact]
         public void ToleranceEveryOperationAndBoundaryWorks()
         {
@@ -93,8 +97,9 @@ namespace FastGeoMesh.Tests.Coverage
                 true.Should().BeTrue("Tolerance type might not exist");
             }
         }
-
-        /// <summary>Tests every Result operation and edge case.</summary>
+        /// <summary>
+        /// Runs test ResultEveryOperationAndEdgeCaseWorks.
+        /// </summary>
         [Fact]
         public void ResultEveryOperationAndEdgeCaseWorks()
         {
@@ -125,8 +130,9 @@ namespace FastGeoMesh.Tests.Coverage
                 true.Should().BeTrue("Result type might not exist");
             }
         }
-
-        /// <summary>Tests every Error operation and property.</summary>
+        /// <summary>
+        /// Runs test ErrorEveryOperationAndPropertyWorks.
+        /// </summary>
         [Fact]
         public void ErrorEveryOperationAndPropertyWorks()
         {
@@ -158,8 +164,9 @@ namespace FastGeoMesh.Tests.Coverage
             error1.Equals("not a error").Should().BeFalse();
             // Skip null test to avoid nullable warning
         }
-
-        /// <summary>Tests every Quad operation and property.</summary>
+        /// <summary>
+        /// Runs test QuadEveryOperationAndPropertyWorks.
+        /// </summary>
         [Fact]
         public void QuadEveryOperationAndPropertyWorks()
         {
@@ -199,8 +206,9 @@ namespace FastGeoMesh.Tests.Coverage
             quad1.Equals("not a quad").Should().BeFalse();
             // Skip null test to avoid nullable warning
         }
-
-        /// <summary>Tests every Triangle operation and property.</summary>
+        /// <summary>
+        /// Runs test TriangleEveryOperationAndPropertyWorks.
+        /// </summary>
         [Fact]
         public void TriangleEveryOperationAndPropertyWorks()
         {
@@ -233,8 +241,9 @@ namespace FastGeoMesh.Tests.Coverage
             tri1.Equals("not a triangle").Should().BeFalse();
             // Skip null test to avoid nullable warning
         }
-
-        /// <summary>Tests every Vec2 static and instance operation.</summary>
+        /// <summary>
+        /// Runs test Vec2EveryStaticAndInstanceOperationWorks.
+        /// </summary>
         [Fact]
         public void Vec2EveryStaticAndInstanceOperationWorks()
         {
@@ -274,8 +283,9 @@ namespace FastGeoMesh.Tests.Coverage
             v1.Equals((object)v2).Should().BeFalse();
             v1.Equals("not a vec2").Should().BeFalse();
         }
-
-        /// <summary>Tests every Vec3 static and instance operation.</summary>
+        /// <summary>
+        /// Runs test Vec3EveryStaticAndInstanceOperationWorks.
+        /// </summary>
         [Fact]
         public void Vec3EveryStaticAndInstanceOperationWorks()
         {
@@ -317,4 +327,3 @@ namespace FastGeoMesh.Tests.Coverage
         }
     }
 }
-

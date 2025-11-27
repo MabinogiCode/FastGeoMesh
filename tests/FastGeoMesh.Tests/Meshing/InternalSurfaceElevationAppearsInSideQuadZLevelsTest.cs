@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class InternalSurfaceElevationAppearsInSideQuadZLevelsTest.
+    /// </summary>
     public sealed class InternalSurfaceElevationAppearsInSideQuadZLevelsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -7,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class RectangleCapsMatchExpectedCountsTest.
+    /// </summary>
     public sealed class RectangleCapsMatchExpectedCountsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

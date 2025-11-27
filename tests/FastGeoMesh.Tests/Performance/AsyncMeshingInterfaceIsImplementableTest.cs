@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
+    /// <summary>
+    /// Tests for class AsyncMeshingInterfaceIsImplementableTest.
+    /// </summary>
     public sealed class AsyncMeshingInterfaceIsImplementableTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public async Task Test()
         {
@@ -17,7 +23,7 @@ namespace FastGeoMesh.Tests.Performance
             });
             var structure = new PrismStructureDefinition(polygon, 0, 2);
             var options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
-            var mesh = await mesher.MeshAsync(structure, options, CancellationToken.None);
+            var mesh = await mesher.MeshAsync(structure, options, CancellationToken.None).ConfigureAwait(false);
             mesh.Should().NotBeNull();
             mesh.Value.Quads.Should().NotBeEmpty();
         }

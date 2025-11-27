@@ -7,10 +7,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Exporters
 {
     /// <summary>
-    /// Vérifie que l'export GLTF produit un fichier glTF valide avec buffer embarqué.
+    /// Tests for class GltfExporterExportsGltfWithEmbeddedBuffer.
     /// </summary>
     public sealed class GltfExporterExportsGltfWithEmbeddedBuffer
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -5,12 +5,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Domain
 {
     /// <summary>
-    /// Additional tests to improve coverage of Domain layer types and edge cases.
-    /// Focuses on value objects, edge cases, and error handling paths.
+    /// Tests for class DomainCoverageTests.
     /// </summary>
     public sealed class DomainCoverageTests
     {
-        /// <summary>Tests basic domain types validation and operations.</summary>
+        /// <summary>
+        /// Runs test BasicDomainTypesValidationAndOperationsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void BasicDomainTypesValidationAndOperationsWorkCorrectly()
         {
@@ -38,8 +39,9 @@ namespace FastGeoMesh.Tests.Domain
                 true.Should().BeTrue("Domain type might not exist");
             }
         }
-
-        /// <summary>Tests Tolerance validation and operations - if type exists.</summary>
+        /// <summary>
+        /// Runs test ToleranceValidationAndOperationsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void ToleranceValidationAndOperationsWorkCorrectly()
         {
@@ -76,8 +78,9 @@ namespace FastGeoMesh.Tests.Domain
                 true.Should().BeTrue("Tolerance type might not exist");
             }
         }
-
-        /// <summary>Tests EdgeLength validation boundaries and edge cases - if type exists.</summary>
+        /// <summary>
+        /// Runs test EdgeLengthValidationCoversAllBoundaries.
+        /// </summary>
         [Fact]
         public void EdgeLengthValidationCoversAllBoundaries()
         {
@@ -107,8 +110,9 @@ namespace FastGeoMesh.Tests.Domain
                 true.Should().BeTrue("EdgeLength type might not exist");
             }
         }
-
-        /// <summary>Tests Polygon2D creation, validation and operations - if type exists.</summary>
+        /// <summary>
+        /// Runs test Polygon2DCreationValidationAndOperationsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void Polygon2DCreationValidationAndOperationsWorkCorrectly()
         {

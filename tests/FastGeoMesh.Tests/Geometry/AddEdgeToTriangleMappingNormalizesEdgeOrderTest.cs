@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class AddEdgeToTriangleMappingNormalizesEdgeOrderTest.
+    /// </summary>
     public sealed class AddEdgeToTriangleMappingNormalizesEdgeOrderTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

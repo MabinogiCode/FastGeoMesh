@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class TShapeWithExtraGeometryIntegratesConstraintsTest.
+    /// </summary>
     public sealed class TShapeWithExtraGeometryIntegratesConstraintsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class ObjLikeFormatExportWorksTest.
+    /// </summary>
     public sealed class ObjLikeFormatExportWorksTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

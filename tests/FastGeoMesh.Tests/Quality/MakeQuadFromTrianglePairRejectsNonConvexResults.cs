@@ -9,10 +9,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Validates MakeQuadFromTrianglePair rejects non-convex results or produces convex quads only.
+    /// Tests for class MakeQuadFromTrianglePairRejectsNonConvexResults.
     /// </summary>
     public sealed class MakeQuadFromTrianglePairRejectsNonConvexResults
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

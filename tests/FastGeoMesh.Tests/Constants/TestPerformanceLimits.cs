@@ -1,16 +1,19 @@
 namespace FastGeoMesh.Tests;
-
 /// <summary>
-/// Performance test limits and constraints.
+/// Tests for class TestPerformanceLimits.
 /// </summary>
 public static class TestPerformanceLimits
 {
-    /// <summary>Maximum number of iterations for performance tests.</summary>
+    /// <summary>
+    /// Constant MaxTestIterations used in tests.
+    /// </summary>
     public const int MaxTestIterations = 1000;
-
-    /// <summary>Minimum number of iterations for performance tests.</summary>
+    /// <summary>
+    /// Constant MinTestIterations used in tests.
+    /// </summary>
     public const int MinTestIterations = 10;
-
-    /// <summary>Iteration limit for property-based tests.</summary>
+    /// <summary>
+    /// Constant PropertyBasedTestLimit used in tests.
+    /// </summary>
     public const int PropertyBasedTestLimit = 20;
 }

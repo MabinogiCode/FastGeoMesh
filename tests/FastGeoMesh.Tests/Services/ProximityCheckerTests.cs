@@ -5,17 +5,24 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Services
 {
+    /// <summary>
+    /// Tests for class ProximityCheckerTests.
+    /// </summary>
     public class ProximityCheckerTests
     {
         private readonly ProximityChecker _checker;
         private readonly GeometryService _geometryService;
-
+        /// <summary>
+        /// Runs test ProximityCheckerTests.
+        /// </summary>
         public ProximityCheckerTests()
         {
             _checker = new ProximityChecker();
             _geometryService = new GeometryService();
         }
-
+        /// <summary>
+        /// Runs test IsNearAnyHoleReturnsTrueWhenPointIsNearHoleBoundary.
+        /// </summary>
         [Fact]
         public void IsNearAnyHoleReturnsTrueWhenPointIsNearHoleBoundary()
         {
@@ -40,7 +47,9 @@ namespace FastGeoMesh.Tests.Services
             // Assert
             Assert.True(result);
         }
-
+        /// <summary>
+        /// Runs test IsNearAnyHoleReturnsFalseWhenPointIsFarFromHoles.
+        /// </summary>
         [Fact]
         public void IsNearAnyHoleReturnsFalseWhenPointIsFarFromHoles()
         {
@@ -65,7 +74,9 @@ namespace FastGeoMesh.Tests.Services
             // Assert
             Assert.False(result);
         }
-
+        /// <summary>
+        /// Runs test IsNearAnyHoleReturnsFalseWhenNoHoles.
+        /// </summary>
         [Fact]
         public void IsNearAnyHoleReturnsFalseWhenNoHoles()
         {
@@ -82,7 +93,9 @@ namespace FastGeoMesh.Tests.Services
             // Assert
             Assert.False(result);
         }
-
+        /// <summary>
+        /// Runs test IsNearAnySegmentReturnsTrueWhenPointIsNearSegment.
+        /// </summary>
         [Fact]
         public void IsNearAnySegmentReturnsTrueWhenPointIsNearSegment()
         {
@@ -105,7 +118,9 @@ namespace FastGeoMesh.Tests.Services
             // Assert
             Assert.True(result);
         }
-
+        /// <summary>
+        /// Runs test IsNearAnySegmentReturnsFalseWhenPointIsFarFromSegments.
+        /// </summary>
         [Fact]
         public void IsNearAnySegmentReturnsFalseWhenPointIsFarFromSegments()
         {
@@ -128,7 +143,9 @@ namespace FastGeoMesh.Tests.Services
             // Assert
             Assert.False(result);
         }
-
+        /// <summary>
+        /// Runs test IsInsideAnyHoleReturnsTrueWhenPointIsInsideHole.
+        /// </summary>
         [Fact]
         public void IsInsideAnyHoleReturnsTrueWhenPointIsInsideHole()
         {
@@ -153,7 +170,9 @@ namespace FastGeoMesh.Tests.Services
             // Assert
             Assert.True(result);
         }
-
+        /// <summary>
+        /// Runs test IsInsideAnyHoleReturnsFalseWhenPointIsOutsideAllHoles.
+        /// </summary>
         [Fact]
         public void IsInsideAnyHoleReturnsFalseWhenPointIsOutsideAllHoles()
         {
@@ -178,7 +197,9 @@ namespace FastGeoMesh.Tests.Services
             // Assert
             Assert.False(result);
         }
-
+        /// <summary>
+        /// Runs test IsInsideAnyHoleReturnsFalseWhenNoHoles.
+        /// </summary>
         [Fact]
         public void IsInsideAnyHoleReturnsFalseWhenNoHoles()
         {

@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class SvgExporterWorksWithoutEdgesProducesEmptyLinesIfNoEdgesTest.
+    /// </summary>
     public sealed class SvgExporterWorksWithoutEdgesProducesEmptyLinesIfNoEdgesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

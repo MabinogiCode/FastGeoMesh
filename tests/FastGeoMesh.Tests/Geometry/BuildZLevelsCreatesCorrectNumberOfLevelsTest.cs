@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class BuildZLevelsCreatesCorrectNumberOfLevelsTest.
+    /// </summary>
     public sealed class BuildZLevelsCreatesCorrectNumberOfLevelsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

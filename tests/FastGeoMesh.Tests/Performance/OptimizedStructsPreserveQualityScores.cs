@@ -7,10 +7,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Performance
 {
     /// <summary>
-    /// Validates that optimized structs preserve quality scores correctly.
+    /// Tests for class OptimizedStructsPreserveQualityScores.
     /// </summary>
     public sealed class OptimizedStructsPreserveQualityScores
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

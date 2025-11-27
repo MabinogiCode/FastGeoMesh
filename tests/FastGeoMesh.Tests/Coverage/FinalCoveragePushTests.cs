@@ -6,12 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Final coverage push tests to reach 80%+ coverage.
-    /// Targets remaining untested paths and edge cases.
+    /// Tests for class FinalCoveragePushTests.
     /// </summary>
     public sealed class FinalCoveragePushTests
     {
-        /// <summary>Tests additional MesherOptions validation paths.</summary>
+        /// <summary>
+        /// Runs test AdditionalMesherOptionsValidationPathsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void AdditionalMesherOptionsValidationPathsWorkCorrectly()
         {
@@ -66,8 +67,9 @@ namespace FastGeoMesh.Tests.Coverage
                 true.Should().BeTrue("MesherOptions validation might throw InvalidOperationException");
             }
         }
-
-        /// <summary>Tests performance monitoring and statistics if available.</summary>
+        /// <summary>
+        /// Runs test PerformanceMonitoringAndStatisticsIfAvailableWorkCorrectly.
+        /// </summary>
         [Fact]
         public void PerformanceMonitoringAndStatisticsIfAvailableWorkCorrectly()
         {
@@ -134,8 +136,9 @@ namespace FastGeoMesh.Tests.Coverage
                 true.Should().BeTrue("Performance monitoring might throw InvalidOperationException");
             }
         }
-
-        /// <summary>Tests additional Vec2/Vec3 operations and edge cases.</summary>
+        /// <summary>
+        /// Runs test AdditionalVec2Vec3OperationsAndEdgeCasesWorkCorrectly.
+        /// </summary>
         [Fact]
         public void AdditionalVec2Vec3OperationsAndEdgeCasesWorkCorrectly()
         {
@@ -208,8 +211,9 @@ namespace FastGeoMesh.Tests.Coverage
                 normalizedTiny3.Length().Should().BeApproximately(1.0, 1e-10);
             }
         }
-
-        /// <summary>Tests edge cases in meshing operations.</summary>
+        /// <summary>
+        /// Runs test EdgeCasesInMeshingOperationsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void EdgeCasesInMeshingOperationsWorkCorrectly()
         {
@@ -269,8 +273,9 @@ namespace FastGeoMesh.Tests.Coverage
                 true.Should().BeTrue("Mesher operations might throw InvalidOperationException");
             }
         }
-
-        /// <summary>Tests additional Result pattern operations and edge cases.</summary>
+        /// <summary>
+        /// Runs test AdditionalResultPatternOperationsAndEdgeCasesWorkCorrectly.
+        /// </summary>
         [Fact]
         public void AdditionalResultPatternOperationsAndEdgeCasesWorkCorrectly()
         {
@@ -351,4 +356,3 @@ namespace FastGeoMesh.Tests.Coverage
         }
     }
 }
-

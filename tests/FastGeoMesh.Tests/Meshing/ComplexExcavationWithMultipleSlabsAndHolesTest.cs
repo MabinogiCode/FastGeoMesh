@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class ComplexExcavationWithMultipleSlabsAndHolesTest.
+    /// </summary>
     public sealed class ComplexExcavationWithMultipleSlabsAndHolesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -52,6 +58,9 @@ namespace FastGeoMesh.Tests.Meshing
 
     internal static class ComplexExcavationWithMultipleSlabsAndHolesTestHelpers
     {
+        /// <summary>
+        /// Runs test IsQuadAtZ.
+        /// </summary>
         public static bool IsQuadAtZ(Quad q, double expectedZ)
         {
             const double Epsilon = 1e-9;

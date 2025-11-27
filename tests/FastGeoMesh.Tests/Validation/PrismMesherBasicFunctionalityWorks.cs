@@ -7,10 +7,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Validation
 {
     /// <summary>
-    /// Validates that synchronous meshing produces a valid mesh with expected properties.
+    /// Tests for class PrismMesherBasicFunctionalityWorks.
     /// </summary>
     public sealed class PrismMesherBasicFunctionalityWorks
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class IsNearAnyHoleDetectsProximityCorrectlyTest.
+    /// </summary>
     public sealed class IsNearAnyHoleDetectsProximityCorrectlyTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

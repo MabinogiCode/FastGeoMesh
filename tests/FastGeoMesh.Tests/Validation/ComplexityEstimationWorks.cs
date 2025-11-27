@@ -7,10 +7,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Validation
 {
     /// <summary>
-    /// Validates that complexity estimation works and returns expected values.
+    /// Tests for class ComplexityEstimationWorks.
     /// </summary>
     public sealed class ComplexityEstimationWorks
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public async Task Test()
         {
@@ -25,7 +28,7 @@ namespace FastGeoMesh.Tests.Validation
             var provider = services.BuildServiceProvider();
             var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
-            var estimate = await asyncMesher.EstimateComplexityAsync(structure, options);
+            var estimate = await asyncMesher.EstimateComplexityAsync(structure, options).ConfigureAwait(false);
             estimate.Should().NotBeNull();
             estimate.EstimatedQuadCount.Should().BeGreaterThan(0);
             estimate.EstimatedTriangleCount.Should().BeGreaterThan(0);

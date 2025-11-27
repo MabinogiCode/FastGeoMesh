@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class BuildZLevelsIncludesConstraintSegmentLevelsTest.
+    /// </summary>
     public sealed class BuildZLevelsIncludesConstraintSegmentLevelsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

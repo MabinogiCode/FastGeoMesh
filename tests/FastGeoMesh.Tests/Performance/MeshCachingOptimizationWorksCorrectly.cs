@@ -7,10 +7,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Performance
 {
     /// <summary>
-    /// Validates that mesh caching optimization works correctly.
+    /// Tests for class MeshCachingOptimizationWorksCorrectly.
     /// </summary>
     public sealed class MeshCachingOptimizationWorksCorrectly
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

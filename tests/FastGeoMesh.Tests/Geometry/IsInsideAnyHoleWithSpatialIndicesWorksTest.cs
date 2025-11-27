@@ -7,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class IsInsideAnyHoleWithSpatialIndicesWorksTest.
+    /// </summary>
     public sealed class IsInsideAnyHoleWithSpatialIndicesWorksTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

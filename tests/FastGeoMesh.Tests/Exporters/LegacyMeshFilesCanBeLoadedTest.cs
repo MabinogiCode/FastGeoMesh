@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class LegacyMeshFilesCanBeLoadedTest.
+    /// </summary>
     public sealed class LegacyMeshFilesCanBeLoadedTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -32,21 +38,26 @@ namespace FastGeoMesh.Tests.Exporters
             }
 
             var legacyFiles = Directory.GetFiles(legacyMeshDir, "*.txt");
-            if (legacyFiles.Length == 0)
-            {
-                return;
-            }
-
             foreach (var path in legacyFiles)
             {
-                var legacy = IndexedMeshFileOperations.ReadCustomTxt(path);
-                legacy.Should().NotBeNull();
-                legacy.Vertices.Should().NotBeEmpty();
-                foreach (var vertex in legacy.Vertices)
+                var mesh = IndexedMeshFileOperations.ReadCustomTxt(path);
+                foreach (var quad in mesh.Quads)
                 {
-                    double.IsFinite(vertex.X).Should().BeTrue();
-                    double.IsFinite(vertex.Y).Should().BeTrue();
-                    double.IsFinite(vertex.Z).Should().BeTrue();
+                    quad.Item1.Should().BeInRange(0, mesh.Vertices.Count - 1);
+                    quad.Item2.Should().BeInRange(0, mesh.Vertices.Count - 1);
+                    quad.Item3.Should().BeInRange(0, mesh.Vertices.Count - 1);
+                    quad.Item4.Should().BeInRange(0, mesh.Vertices.Count - 1);
+                }
+                foreach (var triangle in mesh.Triangles)
+                {
+                    triangle.Item1.Should().BeInRange(0, mesh.Vertices.Count - 1);
+                    triangle.Item2.Should().BeInRange(0, mesh.Vertices.Count - 1);
+                    triangle.Item3.Should().BeInRange(0, mesh.Vertices.Count - 1);
+                }
+                foreach (var edge in mesh.Edges)
+                {
+                    edge.Item1.Should().BeInRange(0, mesh.Vertices.Count - 1);
+                    edge.Item2.Should().BeInRange(0, mesh.Vertices.Count - 1);
                 }
             }
         }

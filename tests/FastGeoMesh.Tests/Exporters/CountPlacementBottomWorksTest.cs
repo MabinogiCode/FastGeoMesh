@@ -7,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class CountPlacementBottomWorksTest.
+    /// </summary>
     public sealed class CountPlacementBottomWorksTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

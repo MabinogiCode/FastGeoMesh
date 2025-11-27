@@ -7,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class GenerateSideQuadsRespectsOutwardFlagOrientationTest.
+    /// </summary>
     public sealed class GenerateSideQuadsRespectsOutwardFlagOrientationTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

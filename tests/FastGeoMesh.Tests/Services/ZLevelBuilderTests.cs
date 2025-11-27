@@ -4,15 +4,22 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Services
 {
+    /// <summary>
+    /// Tests for class ZLevelBuilderTests.
+    /// </summary>
     public class ZLevelBuilderTests
     {
         private readonly ZLevelBuilder _builder;
-
+        /// <summary>
+        /// Runs test ZLevelBuilderTests.
+        /// </summary>
         public ZLevelBuilderTests()
         {
             _builder = new ZLevelBuilder();
         }
-
+        /// <summary>
+        /// Runs test BuildZLevelsReturnsBaseAndTopElevations.
+        /// </summary>
         [Fact]
         public void BuildZLevelsReturnsBaseAndTopElevations()
         {
@@ -35,7 +42,9 @@ namespace FastGeoMesh.Tests.Services
             Assert.Contains(0.0, levels);
             Assert.Contains(10.0, levels);
         }
-
+        /// <summary>
+        /// Runs test BuildZLevelsCreatesUniformSubdivisions.
+        /// </summary>
         [Fact]
         public void BuildZLevelsCreatesUniformSubdivisions()
         {
@@ -57,7 +66,9 @@ namespace FastGeoMesh.Tests.Services
             Assert.NotNull(levels);
             Assert.True(levels.Count >= 5); // At least 5 levels for 10.0 range with 2.5 target
         }
-
+        /// <summary>
+        /// Runs test BuildZLevelsIncludesInternalSurfaceElevations.
+        /// </summary>
         [Fact]
         public void BuildZLevelsIncludesInternalSurfaceElevations()
         {
@@ -81,7 +92,9 @@ namespace FastGeoMesh.Tests.Services
             // Assert
             Assert.Contains(5.0, levels);
         }
-
+        /// <summary>
+        /// Runs test BuildZLevelsReturnsDistinctSortedLevels.
+        /// </summary>
         [Fact]
         public void BuildZLevelsReturnsDistinctSortedLevels()
         {
@@ -104,7 +117,9 @@ namespace FastGeoMesh.Tests.Services
             Assert.Equal(levels.Distinct().Count(), levels.Count); // All levels are unique
             Assert.Equal(levels.OrderBy(z => z).ToArray(), levels.ToArray()); // Sorted ascending
         }
-
+        /// <summary>
+        /// Runs test BuildZLevelsHandlesMinimalStructure.
+        /// </summary>
         [Fact]
         public void BuildZLevelsHandlesMinimalStructure()
         {

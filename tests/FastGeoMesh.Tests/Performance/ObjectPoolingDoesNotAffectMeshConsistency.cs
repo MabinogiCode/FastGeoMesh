@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Performance
 {
     /// <summary>
-    /// Validates that object pooling does not affect mesh consistency.
+    /// Tests for class ObjectPoolingDoesNotAffectMeshConsistency.
     /// </summary>
     public sealed class ObjectPoolingDoesNotAffectMeshConsistency
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

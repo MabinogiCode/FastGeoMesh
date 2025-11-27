@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Validation
 {
     /// <summary>
-    /// Validates that asynchronous meshing handles cancellation tokens correctly.
+    /// Tests for class AsyncMesherWithCancellationThrowsCorrectly.
     /// </summary>
     public sealed class AsyncMesherWithCancellationThrowsCorrectly
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public async Task Test()
         {
@@ -22,10 +25,10 @@ namespace FastGeoMesh.Tests.Validation
             var mesher = TestServiceProvider.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
             using var cts = new CancellationTokenSource();
-            await cts.CancelAsync();
+            await cts.CancelAsync().ConfigureAwait(false);
             try
             {
-                var result = await asyncMesher.MeshAsync(structure, options, cts.Token);
+                var result = await asyncMesher.MeshAsync(structure, options, cts.Token).ConfigureAwait(false);
                 cts.Token.IsCancellationRequested.Should().BeTrue("Cancellation token should be cancelled");
                 result.Should().NotBeNull("Valid result or cancellation exception are both acceptable");
             }

@@ -5,11 +5,18 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.PropertyBased
 {
+    /// <summary>
+    /// Tests for class EdgeLengthConstraintEdgesRespectMaximumTargetTest.
+    /// </summary>
     public sealed class EdgeLengthConstraintEdgesRespectMaximumTargetTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Theory]
         [InlineData(3)]
         [InlineData(5)]
+        [InlineData(8)]
         [InlineData(8)]
         public void Test(int targetLength)
         {

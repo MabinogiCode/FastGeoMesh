@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class SvgExporterHandlesHolesAndRefinementTest.
+    /// </summary>
     public sealed class SvgExporterHandlesHolesAndRefinementTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

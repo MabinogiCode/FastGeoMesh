@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
+    /// <summary>
+    /// Tests for class TessPoolStatisticsWorkTest.
+    /// </summary>
     public sealed class TessPoolStatisticsWorkTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

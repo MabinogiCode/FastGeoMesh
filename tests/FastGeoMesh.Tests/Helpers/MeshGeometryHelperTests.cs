@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Helpers
 {
+    /// <summary>
+    /// Tests for class MeshGeometryHelperTests.
+    /// </summary>
     public class MeshGeometryHelperTests
     {
+        /// <summary>
+        /// Runs test ComputeAreaReturnsCorrectAreaForSquare.
+        /// </summary>
         [Fact]
         public void ComputeAreaReturnsCorrectAreaForSquare()
         {
@@ -24,7 +30,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.Equal(100.0, area, precision: 6);
         }
-
+        /// <summary>
+        /// Runs test ComputeAreaReturnsCorrectAreaForRectangle.
+        /// </summary>
         [Fact]
         public void ComputeAreaReturnsCorrectAreaForRectangle()
         {
@@ -43,7 +51,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.Equal(100.0, area, precision: 6);
         }
-
+        /// <summary>
+        /// Runs test ComputeAreaReturnsCorrectAreaForTriangle.
+        /// </summary>
         [Fact]
         public void ComputeAreaReturnsCorrectAreaForTriangle()
         {
@@ -61,7 +71,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.Equal(50.0, area, precision: 6);
         }
-
+        /// <summary>
+        /// Runs test ComputeAreaReturnsZeroForNullPolygon.
+        /// </summary>
         [Fact]
         public void ComputeAreaReturnsZeroForNullPolygon()
         {
@@ -74,7 +86,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.Equal(0.0, area);
         }
-
+        /// <summary>
+        /// Runs test ComputeAreaReturnsZeroForLessThan3Vertices.
+        /// </summary>
         [Fact]
         public void ComputeAreaReturnsZeroForLessThan3Vertices()
         {
@@ -91,7 +105,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.Equal(0.0, area);
         }
-
+        /// <summary>
+        /// Runs test ComputeAreaReturnsCorrectAreaForLShape.
+        /// </summary>
         [Fact]
         public void ComputeAreaReturnsCorrectAreaForLShape()
         {
@@ -113,7 +129,9 @@ namespace FastGeoMesh.Tests.Helpers
             // L-shape area = 10*10 - 5*5 = 75
             Assert.Equal(75.0, area, precision: 6);
         }
-
+        /// <summary>
+        /// Runs test ComputeAreaIsIndependentOfWindingOrder.
+        /// </summary>
         [Fact]
         public void ComputeAreaIsIndependentOfWindingOrder()
         {
@@ -143,7 +161,9 @@ namespace FastGeoMesh.Tests.Helpers
             Assert.Equal(100.0, areaCCW, precision: 6);
             Assert.Equal(areaCW, areaCCW, precision: 6);
         }
-
+        /// <summary>
+        /// Runs test ComputeAreaReturnsCorrectAreaForPentagon.
+        /// </summary>
         [Fact]
         public void ComputeAreaReturnsCorrectAreaForPentagon()
         {
@@ -165,7 +185,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert - Regular pentagon area ≈ 2.378 for unit circle
             Assert.True(area > 2.0 && area < 3.0);
         }
-
+        /// <summary>
+        /// Runs test ComputeAreaHandlesVerySmallPolygons.
+        /// </summary>
         [Fact]
         public void ComputeAreaHandlesVerySmallPolygons()
         {
@@ -183,7 +205,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.Equal(0.0000005, area, precision: 10);
         }
-
+        /// <summary>
+        /// Runs test ComputeAreaHandlesLargePolygons.
+        /// </summary>
         [Fact]
         public void ComputeAreaHandlesLargePolygons()
         {

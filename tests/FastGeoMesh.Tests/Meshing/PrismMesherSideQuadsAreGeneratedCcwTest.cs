@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class PrismMesherSideQuadsAreGeneratedCcwTest.
+    /// </summary>
     public sealed class PrismMesherSideQuadsAreGeneratedCcwTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

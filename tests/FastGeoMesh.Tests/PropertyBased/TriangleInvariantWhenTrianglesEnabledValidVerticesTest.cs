@@ -5,10 +5,17 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.PropertyBased
 {
+    /// <summary>
+    /// Tests for class TriangleInvariantWhenTrianglesEnabledValidVerticesTest.
+    /// </summary>
     public sealed class TriangleInvariantWhenTrianglesEnabledValidVerticesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Theory]
         [InlineData(4)]
+        [InlineData(6)]
         [InlineData(6)]
         public void Test(int size)
         {

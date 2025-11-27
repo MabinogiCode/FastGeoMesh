@@ -3,8 +3,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
 {
+    /// <summary>
+    /// Tests for class CoverageOutputDirectoryStructureIsValidTest.
+    /// </summary>
     public sealed class CoverageOutputDirectoryStructureIsValidTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -5,12 +5,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Additional targeted tests to reach 80%+ coverage on Domain and Infrastructure layers.
-    /// Focuses on less-used but important code paths.
+    /// Tests for class TargetedCoverageTests.
     /// </summary>
     public sealed class TargetedCoverageTests
     {
-        /// <summary>Tests additional Polygon2D methods and edge cases.</summary>
+        /// <summary>
+        /// Runs test Polygon2DAdditionalMethodsAndEdgeCasesWorkCorrectly.
+        /// </summary>
         [Fact]
         public void Polygon2DAdditionalMethodsAndEdgeCasesWorkCorrectly()
         {
@@ -67,8 +68,9 @@ namespace FastGeoMesh.Tests.Coverage
             }
             vertices.Should().HaveCount(4);
         }
-
-        /// <summary>Tests MeshingGeometry additional operations.</summary>
+        /// <summary>
+        /// Runs test MeshingGeometryAdditionalOperationsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void MeshingGeometryAdditionalOperationsWorkCorrectly()
         {
@@ -111,8 +113,9 @@ namespace FastGeoMesh.Tests.Coverage
             newGeometry.Points.Should().HaveCount(1);
             newGeometry.Segments.Should().HaveCount(1);
         }
-
-        /// <summary>Tests ImmutableMesh additional operations and edge cases.</summary>
+        /// <summary>
+        /// Runs test ImmutableMeshAdditionalOperationsAndEdgeCasesWorkCorrectly.
+        /// </summary>
         [Fact]
         public void ImmutableMeshAdditionalOperationsAndEdgeCasesWorkCorrectly()
         {
@@ -171,8 +174,9 @@ namespace FastGeoMesh.Tests.Coverage
             mesh.Points.Should().HaveCount(2);
             mesh.InternalSegments.Should().HaveCount(2);
         }
-
-        /// <summary>Tests PrismStructureDefinition additional operations.</summary>
+        /// <summary>
+        /// Runs test PrismStructureDefinitionAdditionalOperationsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void PrismStructureDefinitionAdditionalOperationsWorkCorrectly()
         {
@@ -246,8 +250,9 @@ namespace FastGeoMesh.Tests.Coverage
             structure.Geometry.Points.Should().HaveCount(1);
             structure.Geometry.Segments.Should().HaveCount(1);
         }
-
-        /// <summary>Tests IndexedMesh additional operations and adjacency building.</summary>
+        /// <summary>
+        /// Runs test IndexedMeshAdditionalOperationsAndAdjacencyBuildingWorkCorrectly.
+        /// </summary>
         [Fact]
         public void IndexedMeshAdditionalOperationsAndAdjacencyBuildingWorkCorrectly()
         {
@@ -303,8 +308,9 @@ namespace FastGeoMesh.Tests.Coverage
                 edge.a.Should().NotBe(edge.b);
             }
         }
-
-        /// <summary>Tests complex MesherOptions builder scenarios.</summary>
+        /// <summary>
+        /// Runs test ComplexMesherOptionsBuilderScenariosWorkCorrectly.
+        /// </summary>
         [Fact]
         public void ComplexMesherOptionsBuilderScenariosWorkCorrectly()
         {
@@ -359,8 +365,9 @@ namespace FastGeoMesh.Tests.Coverage
 
             chainedOptions.Should().NotBeNull();
         }
-
-        /// <summary>Tests error handling and validation edge cases.</summary>
+        /// <summary>
+        /// Runs test ErrorHandlingAndValidationEdgeCasesWorkCorrectly.
+        /// </summary>
         [Fact]
         public void ErrorHandlingAndValidationEdgeCasesWorkCorrectly()
         {
@@ -415,4 +422,3 @@ namespace FastGeoMesh.Tests.Coverage
         }
     }
 }
-

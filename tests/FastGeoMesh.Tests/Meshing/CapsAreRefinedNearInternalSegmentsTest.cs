@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class CapsAreRefinedNearInternalSegmentsTest.
+    /// </summary>
     public sealed class CapsAreRefinedNearInternalSegmentsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

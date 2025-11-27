@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Geometry
 {
     /// <summary>
-    /// Vérifie que la détection d'adjacence identifie correctement les voisins et les arêtes frontières.
+    /// Tests for class MeshAdjacencyDetectsNeighborsAndBoundaryEdges.
     /// </summary>
     public sealed class MeshAdjacencyDetectsNeighborsAndBoundaryEdges
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

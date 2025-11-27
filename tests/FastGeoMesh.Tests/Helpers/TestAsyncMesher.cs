@@ -4,46 +4,51 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FastGeoMesh.Tests.Helpers
 {
-    /// <summary>Test implementation of async mesher interface for performance optimization tests.</summary>
     internal sealed class TestAsyncMesher : IAsyncMesher
     {
         private readonly IAsyncMesher _actualMesher;
-
+        /// <summary>
+        /// Runs test TestAsyncMesher.
+        /// </summary>
         public TestAsyncMesher()
             : this(TestServiceProvider.CreateDefaultProvider().GetRequiredService<IAsyncMesher>())
         {
         }
-
+        /// <summary>
+        /// Runs test TestAsyncMesher.
+        /// </summary>
         public TestAsyncMesher(IAsyncMesher actualMesher)
         {
             _actualMesher = actualMesher;
         }
-
         /// <summary>
-        /// Synchronously meshes the provided structure definition with the supplied options.
+        /// Runs test Mesh.
         /// </summary>
         public Result<ImmutableMesh> Mesh(PrismStructureDefinition structureDefinition, MesherOptions options)
             => _actualMesher.Mesh(structureDefinition, options);
-
         /// <summary>
-        /// Asynchronously meshes the provided structure definition simulating async workload.
+        /// Runs test MeshAsync.
         /// </summary>
         public async ValueTask<Result<ImmutableMesh>> MeshAsync(PrismStructureDefinition structureDefinition, MesherOptions options, CancellationToken cancellationToken = default)
-            => await _actualMesher.MeshAsync(structureDefinition, options, cancellationToken).ConfigureAwait(false);
-
-        /// <summary>Generate mesh asynchronously with progress reporting and cancellation support.</summary>
+            => await _actualMesher.MeshAsync(structureDefinition, options, cancellationToken).ConfigureAwait(true);
+        /// <summary>
+        /// Runs test MeshWithProgressAsync.
+        /// </summary>
         public ValueTask<Result<ImmutableMesh>> MeshWithProgressAsync(PrismStructureDefinition structureDefinition, MesherOptions options, IProgress<MeshingProgress>? progress, CancellationToken cancellationToken = default)
             => _actualMesher.MeshWithProgressAsync(structureDefinition, options, progress, cancellationToken);
-
-        /// <summary>Generate multiple meshes in parallel with load balancing.</summary>
+        /// <summary>
+        /// Runs test MeshBatchAsync.
+        /// </summary>
         public ValueTask<Result<IReadOnlyList<ImmutableMesh>>> MeshBatchAsync(IEnumerable<PrismStructureDefinition> structures, MesherOptions options, int maxDegreeOfParallelism = -1, IProgress<MeshingProgress>? progress = null, CancellationToken cancellationToken = default)
             => _actualMesher.MeshBatchAsync(structures, options, maxDegreeOfParallelism, progress, cancellationToken);
-
-        /// <summary>Estimates the computational complexity and memory requirements for a meshing operation.</summary>
+        /// <summary>
+        /// Runs test EstimateComplexityAsync.
+        /// </summary>
         public ValueTask<MeshingComplexityEstimate> EstimateComplexityAsync(PrismStructureDefinition structureDefinition, MesherOptions options)
             => _actualMesher.EstimateComplexityAsync(structureDefinition, options);
-
-        /// <summary>Gets real-time performance statistics for monitoring and optimization.</summary>
+        /// <summary>
+        /// Runs test GetLivePerformanceStatsAsync.
+        /// </summary>
         public ValueTask<PerformanceStatistics> GetLivePerformanceStatsAsync()
             => _actualMesher.GetLivePerformanceStatsAsync();
     }

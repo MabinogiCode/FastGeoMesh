@@ -7,12 +7,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Additional Infrastructure layer coverage tests.
-    /// Focuses on exporters, performance monitoring, and utility classes.
+    /// Tests for class InfrastructureLayerCoverageTests.
     /// </summary>
     public sealed class InfrastructureLayerCoverageTests
     {
-        /// <summary>Tests mesh validation and helper operations.</summary>
+        /// <summary>
+        /// Runs test MeshValidationAndHelperOperationsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void MeshValidationAndHelperOperationsWorkCorrectly()
         {
@@ -47,8 +48,9 @@ namespace FastGeoMesh.Tests.Coverage
             adjacency.BoundaryEdges.Should().NotBeEmpty();
             adjacency.NonManifoldEdges.Should().BeEmpty();
         }
-
-        /// <summary>Tests async meshing operations and progress reporting.</summary>
+        /// <summary>
+        /// Runs test AsyncMeshingOperationsAndProgressReportingWorkCorrectly.
+        /// </summary>
         [Fact]
         public async Task AsyncMeshingOperationsAndProgressReportingWorkCorrectly()
         {
@@ -69,12 +71,12 @@ namespace FastGeoMesh.Tests.Coverage
             var asyncMesher = (IAsyncMesher)mesher;
 
             // Test basic async meshing
-            var result = await asyncMesher.MeshAsync(structure, options);
+            var result = await asyncMesher.MeshAsync(structure, options).ConfigureAwait(false);
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
 
             // Test complexity estimation
-            var estimate = await asyncMesher.EstimateComplexityAsync(structure, options);
+            var estimate = await asyncMesher.EstimateComplexityAsync(structure, options).ConfigureAwait(false);
             estimate.Should().NotBeNull();
             estimate.EstimatedQuadCount.Should().BeGreaterThan(0);
             estimate.EstimatedTriangleCount.Should().BeGreaterThanOrEqualTo(0);
@@ -86,7 +88,7 @@ namespace FastGeoMesh.Tests.Coverage
             var progress = new Progress<MeshingProgress>(p => progressReports.Add(p));
 
             var resultWithProgress = await asyncMesher.MeshWithProgressAsync(
-                structure, options, progress);
+                structure, options, progress).ConfigureAwait(false);
             resultWithProgress.IsSuccess.Should().BeTrue();
 
             // Progress should be reported (at least start and end)
@@ -100,17 +102,18 @@ namespace FastGeoMesh.Tests.Coverage
                 new PrismStructureDefinition(polygon, 4, 6)
             };
 
-            var batchResult = await asyncMesher.MeshBatchAsync(structures, options);
+            var batchResult = await asyncMesher.MeshBatchAsync(structures, options).ConfigureAwait(false);
             batchResult.IsSuccess.Should().BeTrue();
             batchResult.Value.Should().HaveCount(3);
 
             // Test performance statistics
-            var stats = await asyncMesher.GetLivePerformanceStatsAsync();
+            var stats = await asyncMesher.GetLivePerformanceStatsAsync().ConfigureAwait(false);
             stats.Should().NotBeNull();
             stats.MeshingOperations.Should().BeGreaterThanOrEqualTo(0);
         }
-
-        /// <summary>Tests various meshing scenarios with different geometries.</summary>
+        /// <summary>
+        /// Runs test VariousMeshingScenariosWithDifferentGeometriesWorkCorrectly.
+        /// </summary>
         [Fact]
         public void VariousMeshingScenariosWithDifferentGeometriesWorkCorrectly()
         {
@@ -185,8 +188,9 @@ namespace FastGeoMesh.Tests.Coverage
             auxMesh.Points.Should().HaveCount(1);
             auxMesh.InternalSegments.Should().HaveCount(1);
         }
-
-        /// <summary>Tests different meshing options and presets.</summary>
+        /// <summary>
+        /// Runs test DifferentMeshingOptionsAndPresetsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void DifferentMeshingOptionsAndPresetsWorkCorrectly()
         {
@@ -253,8 +257,9 @@ namespace FastGeoMesh.Tests.Coverage
             var totalBottomElements = bottomElements.Count + bottomTriangles.Count;
             totalBottomElements.Should().BeGreaterThan(0);
         }
-
-        /// <summary>Tests complex scenarios with constraints and internal surfaces.</summary>
+        /// <summary>
+        /// Runs test ComplexScenariosWithConstraintsAndInternalSurfacesWorkCorrectly.
+        /// </summary>
         [Fact]
         public void ComplexScenariosWithConstraintsAndInternalSurfacesWorkCorrectly()
         {
@@ -316,4 +321,3 @@ namespace FastGeoMesh.Tests.Coverage
         }
     }
 }
-

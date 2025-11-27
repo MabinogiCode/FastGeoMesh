@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class ObjContainsTriangleFacesWhenCapTrianglesEnabledTest.
+    /// </summary>
     public sealed class ObjContainsTriangleFacesWhenCapTrianglesEnabledTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

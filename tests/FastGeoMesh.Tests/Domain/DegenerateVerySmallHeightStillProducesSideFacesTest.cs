@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Domain
 {
+    /// <summary>
+    /// Tests for class DegenerateVerySmallHeightStillProducesSideFacesTest.
+    /// </summary>
     public sealed class DegenerateVerySmallHeightStillProducesSideFacesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

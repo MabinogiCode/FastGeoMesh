@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.ComplexScenario
 {
+    /// <summary>
+    /// Tests for class MultipleHolesWithRefinementTest.
+    /// </summary>
     public sealed class MultipleHolesWithRefinementTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

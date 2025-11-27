@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Domain
 {
+    /// <summary>
+    /// Tests for class AreaInvariantRectangleCapsApproximateFootprintAreaMinusHolesTest.
+    /// </summary>
     public sealed class AreaInvariantRectangleCapsApproximateFootprintAreaMinusHolesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

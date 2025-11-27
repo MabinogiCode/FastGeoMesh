@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class ExcavationSlabDoesNotInterferewithSideFacesTest.
+    /// </summary>
     public sealed class ExcavationSlabDoesNotInterferewithSideFacesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
@@ -49,7 +55,9 @@ namespace FastGeoMesh.Tests.Meshing
     internal static class ExcavationSlabDoesNotInterferewithSideFacesTestHelpers
     {
         private const double Epsilon = 1e-9;
-
+        /// <summary>
+        /// Runs test IsQuadAtZ.
+        /// </summary>
         public static bool IsQuadAtZ(Quad q, double expectedZ)
         {
             return Math.Abs(q.V0.Z - expectedZ) < Epsilon &&
@@ -57,7 +65,9 @@ namespace FastGeoMesh.Tests.Meshing
                    Math.Abs(q.V2.Z - expectedZ) < Epsilon &&
                    Math.Abs(q.V3.Z - expectedZ) < Epsilon;
         }
-
+        /// <summary>
+        /// Runs test IsCapQuad.
+        /// </summary>
         public static bool IsCapQuad(Quad q)
         {
             return Math.Abs(q.V0.Z - q.V1.Z) < Epsilon &&

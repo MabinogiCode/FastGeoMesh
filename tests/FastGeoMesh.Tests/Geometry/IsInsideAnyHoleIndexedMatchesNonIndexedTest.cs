@@ -7,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class IsInsideAnyHoleIndexedMatchesNonIndexedTest.
+    /// </summary>
     public sealed class IsInsideAnyHoleIndexedMatchesNonIndexedTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

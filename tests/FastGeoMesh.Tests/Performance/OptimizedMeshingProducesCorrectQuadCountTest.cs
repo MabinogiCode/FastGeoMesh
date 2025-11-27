@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
+    /// <summary>
+    /// Tests for class OptimizedMeshingProducesCorrectQuadCountTest.
+    /// </summary>
     public sealed class OptimizedMeshingProducesCorrectQuadCountTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Ensures side quads have no quality scores assigned (only caps should have scores).
+    /// Tests for class SideQuadsHaveNoQualityScores.
     /// </summary>
     public sealed class SideQuadsHaveNoQualityScores
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

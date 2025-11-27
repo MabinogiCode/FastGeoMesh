@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class ExportsTopViewSvgTest.
+    /// </summary>
     public sealed class ExportsTopViewSvgTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -7,10 +7,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Validation
 {
     /// <summary>
-    /// Validates that asynchronous meshing produces a valid mesh with expected properties.
+    /// Tests for class AsyncMesherBasicFunctionalityWorks.
     /// </summary>
     public sealed class AsyncMesherBasicFunctionalityWorks
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public async Task Test()
         {
@@ -26,7 +29,7 @@ namespace FastGeoMesh.Tests.Validation
             var provider = services.BuildServiceProvider();
             var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
-            var mesh = await asyncMesher.MeshAsync(structure, options);
+            var mesh = await asyncMesher.MeshAsync(structure, options).ConfigureAwait(false);
             mesh.Value.Should().NotBeNull();
             mesh.Value.QuadCount.Should().BeGreaterThan(0);
             mesh.Value.Points.Should().NotBeEmpty();

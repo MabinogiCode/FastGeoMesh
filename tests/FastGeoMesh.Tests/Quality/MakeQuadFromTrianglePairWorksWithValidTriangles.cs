@@ -9,10 +9,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Verifies MakeQuadFromTrianglePair succeeds with two triangles forming a quad.
+    /// Tests for class MakeQuadFromTrianglePairWorksWithValidTriangles.
     /// </summary>
     public sealed class MakeQuadFromTrianglePairWorksWithValidTriangles
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

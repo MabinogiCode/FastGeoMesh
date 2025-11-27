@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class GeometryServiceTests.
+    /// </summary>
     public sealed class GeometryServiceTests
     {
+        /// <summary>
+        /// Runs test DistancePointToSegmentHandlesDegenerateSegment.
+        /// </summary>
         [Fact]
         public void DistancePointToSegmentHandlesDegenerateSegment()
         {
@@ -22,7 +28,9 @@ namespace FastGeoMesh.Tests.Geometry
             var d = helper.DistancePointToSegment(p, a, b);
             d.Should().BeApproximately(Math.Sqrt(3 * 3 + 4 * 4), 1e-9);
         }
-
+        /// <summary>
+        /// Runs test PointInPolygonTreatsBoundaryAsInside.
+        /// </summary>
         [Fact]
         public void PointInPolygonTreatsBoundaryAsInside()
         {
@@ -38,7 +46,9 @@ namespace FastGeoMesh.Tests.Geometry
             // edge
             helper.PointInPolygon(square, 5, 0).Should().BeTrue();
         }
-
+        /// <summary>
+        /// Runs test BatchPointInPolygonThrowsOnMismatchedResultsLength.
+        /// </summary>
         [Fact]
         public void BatchPointInPolygonThrowsOnMismatchedResultsLength()
         {
@@ -53,7 +63,9 @@ namespace FastGeoMesh.Tests.Geometry
 
             Assert.Throws<ArgumentException>(() => helper.BatchPointInPolygon(triangle, points, results));
         }
-
+        /// <summary>
+        /// Runs test PolygonAreaComputesExpectedValues.
+        /// </summary>
         [Fact]
         public void PolygonAreaComputesExpectedValues()
         {

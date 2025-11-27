@@ -7,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class GenericCapsProduceQualityScoresWithinRangeTest.
+    /// </summary>
     public sealed class GenericCapsProduceQualityScoresWithinRangeTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

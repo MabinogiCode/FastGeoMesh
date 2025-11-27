@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class HoleRefinementIncreasesQuadDensityAroundHoleTest.
+    /// </summary>
     public sealed class HoleRefinementIncreasesQuadDensityAroundHoleTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Performance
 {
+    /// <summary>
+    /// Tests for class OptimizedMeshingWithHolesExcludesHoleAreasTest.
+    /// </summary>
     public sealed class OptimizedMeshingWithHolesExcludesHoleAreasTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Ensures cap quads have quality scores in valid [0,1] range.
+    /// Tests for class CapsQuadsExposeQualityScoresBetween0And1.
     /// </summary>
     public sealed class CapsQuadsExposeQualityScoresBetween0And1
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

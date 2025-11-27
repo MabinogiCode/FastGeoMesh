@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class GenericConcavePolygonWithHoleCapsGeneratedAndManifoldTest.
+    /// </summary>
     public sealed class GenericConcavePolygonWithHoleCapsGeneratedAndManifoldTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

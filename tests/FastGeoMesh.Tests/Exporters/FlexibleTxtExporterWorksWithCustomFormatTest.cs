@@ -8,8 +8,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class FlexibleTxtExporterWorksWithCustomFormatTest.
+    /// </summary>
     public sealed class FlexibleTxtExporterWorksWithCustomFormatTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

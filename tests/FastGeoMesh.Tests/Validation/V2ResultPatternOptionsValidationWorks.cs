@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Validation
 {
+    /// <summary>
+    /// Tests for class V2ResultPatternOptionsValidationWorks.
+    /// </summary>
     public sealed class V2ResultPatternOptionsValidationWorks
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

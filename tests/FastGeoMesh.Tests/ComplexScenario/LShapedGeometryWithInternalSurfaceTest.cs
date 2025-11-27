@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.ComplexScenario
 {
+    /// <summary>
+    /// Tests for class LShapedGeometryWithInternalSurfaceTest.
+    /// </summary>
     public sealed class LShapedGeometryWithInternalSurfaceTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

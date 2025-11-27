@@ -6,16 +6,19 @@ using Xunit;
 namespace FastGeoMesh.Tests.Validation
 {
     /// <summary>
-    /// Validates that performance monitoring works and returns statistics.
+    /// Tests for class PerformanceMonitoringWorks.
     /// </summary>
     public sealed class PerformanceMonitoringWorks
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public async Task Test()
         {
             var mesher = TestServiceProvider.CreatePrismMesher();
             var asyncMesher = (IAsyncMesher)mesher;
-            var stats = await asyncMesher.GetLivePerformanceStatsAsync();
+            var stats = await asyncMesher.GetLivePerformanceStatsAsync().ConfigureAwait(false);
             stats.Should().NotBeNull();
             stats.MeshingOperations.Should().BeGreaterThanOrEqualTo(0);
         }

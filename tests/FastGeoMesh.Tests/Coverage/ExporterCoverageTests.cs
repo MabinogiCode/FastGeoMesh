@@ -7,12 +7,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Additional coverage tests for exporters and core functionality to reach 90%+ coverage.
-    /// Covers remaining edge cases in exporters, geometry helpers, and mesh operations.
+    /// Tests for class ExporterCoverageTests.
     /// </summary>
     public sealed class ExporterCoverageTests
     {
-        /// <summary>Tests ObjExporter with empty mesh.</summary>
+        /// <summary>
+        /// Runs test ObjExporterWithEmptyMeshHandlesGracefully.
+        /// </summary>
         [Fact]
         public void ObjExporterWithEmptyMeshHandlesGracefully()
         {
@@ -37,8 +38,9 @@ namespace FastGeoMesh.Tests.Coverage
                 }
             }
         }
-
-        /// <summary>Tests GltfExporter with empty mesh.</summary>
+        /// <summary>
+        /// Runs test GltfExporterWithEmptyMeshHandlesGracefully.
+        /// </summary>
         [Fact]
         public void GltfExporterWithEmptyMeshHandlesGracefully()
         {
@@ -63,8 +65,9 @@ namespace FastGeoMesh.Tests.Coverage
                 }
             }
         }
-
-        /// <summary>Tests SvgExporter with empty mesh.</summary>
+        /// <summary>
+        /// Runs test SvgExporterWithEmptyMeshHandlesGracefully.
+        /// </summary>
         [Fact]
         public void SvgExporterWithEmptyMeshHandlesGracefully()
         {
@@ -89,8 +92,9 @@ namespace FastGeoMesh.Tests.Coverage
                 }
             }
         }
-
-        /// <summary>Tests exporters with mesh containing only points.</summary>
+        /// <summary>
+        /// Runs test ExportersWithPointsOnlyMeshHandleGracefully.
+        /// </summary>
         [Fact]
         public void ExportersWithPointsOnlyMeshHandleGracefully()
         {
@@ -131,8 +135,9 @@ namespace FastGeoMesh.Tests.Coverage
                 }
             }
         }
-
-        /// <summary>Tests IndexedMesh with extreme epsilon values.</summary>
+        /// <summary>
+        /// Runs test IndexedMeshWithExtremeEpsilonHandlesCorrectly.
+        /// </summary>
         [Fact]
         public void IndexedMeshWithExtremeEpsilonHandlesCorrectly()
         {
@@ -152,8 +157,9 @@ namespace FastGeoMesh.Tests.Coverage
             indexed.Vertices.Count.Should().BeLessThan(8); // Should merge some vertices
             indexed.Quads.Count.Should().Be(2);
         }
-
-        /// <summary>Tests IndexedMesh with tiny epsilon.</summary>
+        /// <summary>
+        /// Runs test IndexedMeshWithTinyEpsilonPreservesVertices.
+        /// </summary>
         [Fact]
         public void IndexedMeshWithTinyEpsilonPreservesVertices()
         {
@@ -173,8 +179,9 @@ namespace FastGeoMesh.Tests.Coverage
             indexed.Vertices.Count.Should().Be(8); // Should keep all vertices separate
             indexed.Quads.Count.Should().Be(2);
         }
-
-        /// <summary>Tests Mesh.AddInternalSegment functionality.</summary>
+        /// <summary>
+        /// Runs test MeshAddInternalSegmentAddsCorrectly.
+        /// </summary>
         [Fact]
         public void MeshAddInternalSegmentAddsCorrectly()
         {
@@ -189,8 +196,9 @@ namespace FastGeoMesh.Tests.Coverage
             mesh.InternalSegments.Should().HaveCount(1);
             mesh.InternalSegments[0].Should().Be(segment);
         }
-
-        /// <summary>Tests Mesh quad and triangle count properties.</summary>
+        /// <summary>
+        /// Runs test MeshCountPropertiesReflectActualCounts.
+        /// </summary>
         [Fact]
         public void MeshCountPropertiesReflectActualCounts()
         {
@@ -208,8 +216,9 @@ namespace FastGeoMesh.Tests.Coverage
             mesh.QuadCount.Should().Be(1);
             mesh.TriangleCount.Should().Be(1);
         }
-
-        /// <summary>Tests MesherOptions builder validation paths.</summary>
+        /// <summary>
+        /// Runs test MesherOptionsBuilderValidationPathsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void MesherOptionsBuilderValidationPathsWorkCorrectly()
         {
@@ -246,8 +255,9 @@ namespace FastGeoMesh.Tests.Coverage
             directOptions.GenerateBottomCap.Should().BeTrue();
             directOptions.GenerateTopCap.Should().BeFalse();
         }
-
-        /// <summary>Tests Polygon2D with collinear points.</summary>
+        /// <summary>
+        /// Runs test Polygon2DWithCollinearPointsHandlesCorrectly.
+        /// </summary>
         [Fact]
         public void Polygon2DWithCollinearPointsHandlesCorrectly()
         {
@@ -268,8 +278,9 @@ namespace FastGeoMesh.Tests.Coverage
             polygon.Count.Should().Be(5);
             polygon.Vertices.Should().HaveCount(5);
         }
-
-        /// <summary>Tests Vec2 and Vec3 math operations.</summary>
+        /// <summary>
+        /// Runs test VectorTypesMathOperationsWorkCorrectly.
+        /// </summary>
         [Fact]
         public void VectorTypesMathOperationsWorkCorrectly()
         {
@@ -289,8 +300,9 @@ namespace FastGeoMesh.Tests.Coverage
             (v3b - v3a).Should().Be(new Vec3(3, 3, 3));
             (v3a * 3).Should().Be(new Vec3(3, 6, 9));
         }
-
-        /// <summary>Tests PrismStructureDefinition method chaining.</summary>
+        /// <summary>
+        /// Runs test PrismStructureDefinitionMethodChainingWorksCorrectly.
+        /// </summary>
         [Fact]
         public void PrismStructureDefinitionMethodChainingWorksCorrectly()
         {

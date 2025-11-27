@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class InternalSurfaceWithoutOuterCapStillGeneratesOnlyPlateTest.
+    /// </summary>
     public sealed class InternalSurfaceWithoutOuterCapStillGeneratesOnlyPlateTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

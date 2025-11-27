@@ -5,12 +5,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Coverage
 {
     /// <summary>
-    /// Tests for PerformanceMonitor and related metrics functionality to improve code coverage.
-    /// Covers performance tracking, activity monitoring, and statistics collection.
+    /// Tests for class PerformanceMonitorCoverageTests.
     /// </summary>
     public sealed class PerformanceMonitorCoverageTests
     {
-        /// <summary>Tests PerformanceMonitor.Counters basic functionality.</summary>
+        /// <summary>
+        /// Runs test PerformanceMonitorCountersTracksOperations.
+        /// </summary>
         [Fact]
         public void PerformanceMonitorCountersTracksOperations()
         {
@@ -26,8 +27,9 @@ namespace FastGeoMesh.Tests.Coverage
             var finalStats = PerformanceMonitorCounters.GetStatistics();
             (finalStats.MeshingOperations - initialOperations).Should().Be(2);
         }
-
-        /// <summary>Tests PerformanceMonitor activity creation.</summary>
+        /// <summary>
+        /// Runs test PerformanceMonitorStartMeshingActivityCreatesActivity.
+        /// </summary>
         [Fact]
         public void PerformanceMonitorStartMeshingActivityCreatesActivity()
         {
@@ -40,8 +42,9 @@ namespace FastGeoMesh.Tests.Coverage
             // Assert
             activity.Should().NotBeNull();
         }
-
-        /// <summary>Tests PerformanceMonitor statistics properties.</summary>
+        /// <summary>
+        /// Runs test PerformanceMonitorStatisticsHasAllProperties.
+        /// </summary>
         [Fact]
         public void PerformanceMonitorStatisticsHasAllProperties()
         {

@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class EmitsTrianglesWhenOptionEnabledAndQualityHighTest.
+    /// </summary>
     public sealed class EmitsTrianglesWhenOptionEnabledAndQualityHighTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

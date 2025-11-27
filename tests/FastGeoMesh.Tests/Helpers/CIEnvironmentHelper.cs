@@ -1,12 +1,12 @@
 namespace FastGeoMesh.Tests.Helpers
 {
     /// <summary>
-    /// Helper to detect CI environments and adjust performance thresholds accordingly.
+    /// Tests for class CIEnvironmentHelper.
     /// </summary>
     public static class CIEnvironmentHelper
     {
         /// <summary>
-        /// Detects if we're running in a CI environment.
+        /// Public API used by tests.
         /// </summary>
         public static bool IsCI =>
             !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CI")) ||
@@ -14,25 +14,19 @@ namespace FastGeoMesh.Tests.Helpers
             !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_PIPELINES")) ||
             !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("JENKINS_URL")) ||
             !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("TEAMCITY_VERSION"));
-
         /// <summary>
-        /// Gets a multiplier for performance thresholds based on environment.
-        /// CI environments get much more lenient thresholds due to variable performance.
+        /// Public API used by tests.
         /// </summary>
         public static double PerformanceMultiplier => IsCI ? 20.0 : 1.0;
-
         /// <summary>
-        /// Adjusts a base threshold for the current environment.
+        /// Runs test AdjustThreshold.
         /// </summary>
-        /// <param name="baseThreshold">Base threshold for development environment</param>
-        /// <returns>Adjusted threshold for current environment</returns>
         public static double AdjustThreshold(double baseThreshold)
         {
             return baseThreshold * PerformanceMultiplier;
         }
-
         /// <summary>
-        /// Gets environment info for logging.
+        /// Runs test GetEnvironmentInfo.
         /// </summary>
         public static string GetEnvironmentInfo()
         {

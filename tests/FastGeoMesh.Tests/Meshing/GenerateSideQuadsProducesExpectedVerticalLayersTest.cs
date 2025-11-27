@@ -7,8 +7,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class GenerateSideQuadsProducesExpectedVerticalLayersTest.
+    /// </summary>
     public sealed class GenerateSideQuadsProducesExpectedVerticalLayersTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

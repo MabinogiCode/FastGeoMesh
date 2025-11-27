@@ -8,10 +8,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Ensures MakeQuadFromTrianglePair returns null when triangles don't share an edge.
+    /// Tests for class MakeQuadFromTrianglePairReturnsNullForInvalidTriangles.
     /// </summary>
     public sealed class MakeQuadFromTrianglePairReturnsNullForInvalidTriangles
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

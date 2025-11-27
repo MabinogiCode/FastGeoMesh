@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.ComplexScenario
 {
+    /// <summary>
+    /// Tests for class StarShapedPolygonWithHoleTest.
+    /// </summary>
     public sealed class StarShapedPolygonWithHoleTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

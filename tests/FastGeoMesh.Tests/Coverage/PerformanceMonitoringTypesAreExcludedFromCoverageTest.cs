@@ -4,9 +4,16 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
 {
+    /// <summary>
+    /// Tests for class PerformanceMonitoringTypesAreExcludedFromCoverageTest.
+    /// </summary>
     public sealed class PerformanceMonitoringTypesAreExcludedFromCoverageTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
+        [SuppressMessage("Globalization", "CA1303", Justification = "Test output strings are non-localized test artifacts")]
         [SuppressMessage("Globalization", "CA1303", Justification = "Test output strings are non-localized test artifacts")]
         public void Test()
         {

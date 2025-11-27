@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class PointInPolygonDetectsInsideAndOutsideTest.
+    /// </summary>
     public sealed class PointInPolygonDetectsInsideAndOutsideTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class IsNearAnySegmentDetectsProximityTest.
+    /// </summary>
     public sealed class IsNearAnySegmentDetectsProximityTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

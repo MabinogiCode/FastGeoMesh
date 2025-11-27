@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class PointInPolygonHandlesEdgeCasesTheoryTest.
+    /// </summary>
     public sealed class PointInPolygonHandlesEdgeCasesTheoryTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Theory]
         [InlineData(0, 0, true)]
         [InlineData(5, 0, true)]
@@ -14,6 +20,7 @@ namespace FastGeoMesh.Tests.Geometry
         [InlineData(-1, 5, false)]
         [InlineData(11, 5, false)]
         [InlineData(5, -1, false)]
+        [InlineData(5, 11, false)]
         [InlineData(5, 11, false)]
         public void Test(double x, double y, bool expected)
         {

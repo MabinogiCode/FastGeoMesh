@@ -4,13 +4,11 @@ using FastGeoMesh.Infrastructure.Services;
 
 namespace FastGeoMesh.Tests.Helpers
 {
-    /// <summary>
-    /// Factory helper for creating PrismMesher instances in tests.
-    /// Provides easy access to properly configured meshers without DI container setup.
-    /// </summary>
     internal static class TestMesherFactory
     {
-        /// <summary>Creates a PrismMesher with all default dependencies.</summary>
+        /// <summary>
+        /// Runs test CreatePrismMesher.
+        /// </summary>
         public static PrismMesher CreatePrismMesher()
         {
             var geometryService = new GeometryService();
@@ -18,8 +16,9 @@ namespace FastGeoMesh.Tests.Helpers
             var proximityChecker = new ProximityChecker();
             return new PrismMesher(geometryService, zLevelBuilder, proximityChecker);
         }
-
-        /// <summary>Creates a GeometryService for tests.</summary>
+        /// <summary>
+        /// Runs test CreateGeometryService.
+        /// </summary>
         public static IGeometryService CreateGeometryService() => new GeometryService();
     }
 }

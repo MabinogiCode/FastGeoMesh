@@ -7,16 +7,16 @@ using Xunit;
 namespace FastGeoMesh.Tests.Meshing
 {
     /// <summary>
-    /// Comprehensive tests for v1.4.0 async capabilities to improve code coverage.
-    /// Covers all async methods, progress reporting, batch processing, and monitoring.
+    /// Tests for class AsyncMeshingCoverageTests.
     /// </summary>
     public sealed class AsyncMeshingCoverageTests
     {
         private readonly IPrismMesher _mesher;
         private readonly IAsyncMesher _asyncMesher;
         private readonly MesherOptions _options;
-
-        /// <summary>Initializes the test class with mesher, async mesher, and options.</summary>
+        /// <summary>
+        /// Runs test AsyncMeshingCoverageTests.
+        /// </summary>
         public AsyncMeshingCoverageTests()
         {
             var services = new ServiceCollection();
@@ -26,13 +26,15 @@ namespace FastGeoMesh.Tests.Meshing
             _asyncMesher = (IAsyncMesher)_mesher;
             _options = MesherOptions.CreateBuilder().WithFastPreset().Build().UnwrapForTests();
         }
-
-        /// <summary>Tests all paths in EstimateComplexityAsync for different structure sizes.</summary>
+        /// <summary>
+        /// Runs test EstimateComplexityAsyncCategorizesDifferentSizesCorrectly.
+        /// </summary>
         [Theory]
         [InlineData(3, MeshingComplexity.Trivial)]    // < 10 vertices
         [InlineData(25, MeshingComplexity.Simple)]    // < 50 vertices
         [InlineData(100, MeshingComplexity.Moderate)] // < 200 vertices
         [InlineData(500, MeshingComplexity.Complex)]  // < 1000 vertices
+        [InlineData(1500, MeshingComplexity.Extreme)] // >= 1000 vertices
         [InlineData(1500, MeshingComplexity.Extreme)] // >= 1000 vertices
         public async Task EstimateComplexityAsyncCategorizesDifferentSizesCorrectly(int vertexCount, MeshingComplexity expectedComplexity)
         {
@@ -57,10 +59,8 @@ namespace FastGeoMesh.Tests.Meshing
             estimate.RecommendedParallelism.Should().BeGreaterThan(0);
             estimate.PerformanceHints.Should().NotBeNull();
         }
-
         /// <summary>
-        /// Tests that async meshing produces the same result as synchronous meshing for a simple rectangular structure.
-        /// Validates consistency between async and sync implementations across the core meshing algorithms.
+        /// Runs test MeshAsyncSimpleStructureProducesSameResultAsSync.
         /// </summary>
         [Fact]
         public async Task MeshAsyncSimpleStructureProducesSameResultAsSync()
@@ -79,10 +79,8 @@ namespace FastGeoMesh.Tests.Meshing
             asyncMesh.Value.TriangleCount.Should().Be(syncMesh.TriangleCount);
             asyncMesh.Value.Points.Count.Should().Be(syncMesh.Points.Count);
         }
-
         /// <summary>
-        /// Tests that async meshing with cancellation properly throws OperationCanceledException.
-        /// Validates that the cancellation token is respected in async operations and proper cleanup occurs.
+        /// Runs test MeshAsyncWithCancellationThrowsOperationCanceledException.
         /// </summary>
         [Fact]
         public async Task MeshAsyncWithCancellationThrowsOperationCanceledException()

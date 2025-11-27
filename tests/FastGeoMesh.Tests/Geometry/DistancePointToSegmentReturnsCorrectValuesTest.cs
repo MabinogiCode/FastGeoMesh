@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class DistancePointToSegmentReturnsCorrectValuesTest.
+    /// </summary>
     public sealed class DistancePointToSegmentReturnsCorrectValuesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

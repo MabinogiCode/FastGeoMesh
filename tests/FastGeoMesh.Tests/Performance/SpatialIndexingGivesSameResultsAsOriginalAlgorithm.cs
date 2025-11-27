@@ -7,10 +7,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Performance
 {
     /// <summary>
-    /// Validates that spatial indexing gives the same results as the original algorithm.
+    /// Tests for class SpatialIndexingGivesSameResultsAsOriginalAlgorithm.
     /// </summary>
     public sealed class SpatialIndexingGivesSameResultsAsOriginalAlgorithm
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Integration
 {
+    /// <summary>
+    /// Tests for class GeneratedMeshMatchesReferenceFileTest.
+    /// </summary>
     public sealed class GeneratedMeshMatchesReferenceFileTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

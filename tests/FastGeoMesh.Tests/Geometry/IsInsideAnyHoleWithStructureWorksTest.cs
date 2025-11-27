@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class IsInsideAnyHoleWithStructureWorksTest.
+    /// </summary>
     public sealed class IsInsideAnyHoleWithStructureWorksTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

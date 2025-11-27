@@ -1,16 +1,19 @@
 namespace FastGeoMesh.Tests;
-
 /// <summary>
-/// Centralized constants for test tolerance values and numerical precision.
+/// Tests for class TestTolerances.
 /// </summary>
 public static class TestTolerances
 {
-    /// <summary>Standard epsilon for floating-point comparisons in tests.</summary>
+    /// <summary>
+    /// Constant Epsilon used in tests.
+    /// </summary>
     public const double Epsilon = 1e-9;
-
-    /// <summary>Default tolerance for numerical precision tests.</summary>
+    /// <summary>
+    /// Constant DefaultTolerance used in tests.
+    /// </summary>
     public const double DefaultTolerance = 1e-12;
-
-    /// <summary>Tolerance for quad quality score comparisons.</summary>
+    /// <summary>
+    /// Constant QualityTolerance used in tests.
+    /// </summary>
     public const double QualityTolerance = 1e-6;
 }

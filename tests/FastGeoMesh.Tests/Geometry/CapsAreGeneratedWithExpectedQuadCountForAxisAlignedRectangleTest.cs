@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Geometry
 {
+    /// <summary>
+    /// Tests for class CapsAreGeneratedWithExpectedQuadCountForAxisAlignedRectangleTest.
+    /// </summary>
     public sealed class CapsAreGeneratedWithExpectedQuadCountForAxisAlignedRectangleTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,12 +6,12 @@ using Xunit;
 namespace FastGeoMesh.Tests.ComplexScenario
 {
     /// <summary>
-    /// Geotechnical scenario tests including slabs with holes and external support / brace integration.
+    /// Tests for class GeotechnicalScenariosTests.
     /// </summary>
     public sealed class GeotechnicalScenariosTests
     {
         /// <summary>
-        /// Ensures holes are not meshed as caps and internal vertical faces are generated around hole perimeters.
+        /// Runs test SlabWithHolesDoesNotMeshHolesOnCapsAndGeneratesInnerSideFaces.
         /// </summary>
         [Fact]
         public void SlabWithHolesDoesNotMeshHolesOnCapsAndGeneratesInnerSideFaces()
@@ -32,9 +32,8 @@ namespace FastGeoMesh.Tests.ComplexScenario
             var adj = im.BuildAdjacency();
             adj.NonManifoldEdges.Should().BeEmpty();
         }
-
         /// <summary>
-        /// Ensures external support geometry endpoints are carried into the mesh as internal segment endpoints.
+        /// Runs test BraceFootingOutsideIsCarriedAsInternalSegment.
         /// </summary>
         [Fact]
         public void BraceFootingOutsideIsCarriedAsInternalSegment()

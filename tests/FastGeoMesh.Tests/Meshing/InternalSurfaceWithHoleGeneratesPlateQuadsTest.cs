@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class InternalSurfaceWithHoleGeneratesPlateQuadsTest.
+    /// </summary>
     public sealed class InternalSurfaceWithHoleGeneratesPlateQuadsTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

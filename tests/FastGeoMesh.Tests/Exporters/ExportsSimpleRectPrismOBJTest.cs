@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Exporters
 {
+    /// <summary>
+    /// Tests for class ExportsSimpleRectPrismOBJTest.
+    /// </summary>
     public sealed class ExportsSimpleRectPrismOBJTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

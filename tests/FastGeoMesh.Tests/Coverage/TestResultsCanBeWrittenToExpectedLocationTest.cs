@@ -3,8 +3,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Coverage
 {
+    /// <summary>
+    /// Tests for class TestResultsCanBeWrittenToExpectedLocationTest.
+    /// </summary>
     public sealed class TestResultsCanBeWrittenToExpectedLocationTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

@@ -6,8 +6,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Meshing
 {
+    /// <summary>
+    /// Tests for class GenericPolygonWithoutHolesProducesTopAndBottomCapsWithQuadsOnlyTest.
+    /// </summary>
     public sealed class GenericPolygonWithoutHolesProducesTopAndBottomCapsWithQuadsOnlyTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

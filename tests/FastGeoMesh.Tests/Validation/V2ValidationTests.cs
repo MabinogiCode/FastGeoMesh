@@ -6,14 +6,12 @@ using Xunit;
 namespace FastGeoMesh.Tests.Validation
 {
     /// <summary>
-    /// Validation tests for FastGeoMesh v2.0 Clean Architecture.
-    /// Ensures the core functionality works with the new Result pattern.
+    /// Tests for class V2ValidationTests.
     /// </summary>
     public sealed class V2ValidationTests
     {
         /// <summary>
-        /// Tests that v2.0 Result pattern for options validation works correctly.
-        /// Validates the new error handling approach and ensures proper validation feedback.
+        /// Runs test V2ResultPatternOptionsValidationWorks.
         /// </summary>
         [Fact]
         public void V2ResultPatternOptionsValidationWorks()
@@ -38,10 +36,8 @@ namespace FastGeoMesh.Tests.Validation
             invalidResult.IsFailure.Should().BeTrue();
             invalidResult.Error.Description.Should().NotBeEmpty();
         }
-
         /// <summary>
-        /// Tests that v2.0 Result pattern for meshing operations works correctly.
-        /// Validates the enhanced error handling and success/failure result patterns.
+        /// Runs test V2ResultPatternMeshingWorks.
         /// </summary>
         [Fact]
         public void V2ResultPatternMeshingWorks()
@@ -77,10 +73,8 @@ namespace FastGeoMesh.Tests.Validation
             indexed.VertexCount.Should().BeGreaterThan(0);
             indexed.QuadCount.Should().BeGreaterThan(0);
         }
-
         /// <summary>
-        /// Tests that v2.0 async pattern works correctly with proper error handling.
-        /// Validates asynchronous operations in the new Clean Architecture implementation.
+        /// Runs test V2AsyncPatternWorks.
         /// </summary>
         [Fact]
         public async Task V2AsyncPatternWorks()
@@ -103,17 +97,15 @@ namespace FastGeoMesh.Tests.Validation
             var provider = services.BuildServiceProvider();
             var mesher = provider.GetRequiredService<IPrismMesher>();
             var asyncMesher = (IAsyncMesher)mesher;
-            var asyncResult = await asyncMesher.MeshAsync(structure, options);
+            var asyncResult = await asyncMesher.MeshAsync(structure, options).ConfigureAwait(false);
 
             // Assert
             asyncResult.IsSuccess.Should().BeTrue();
             asyncResult.Value.Should().NotBeNull();
             asyncResult.Value.QuadCount.Should().BeGreaterThan(0);
         }
-
         /// <summary>
-        /// Tests that v2.0 Clean Architecture layer separation works correctly.
-        /// Validates proper namespace organization and dependency management across layers.
+        /// Runs test V2CleanArchitectureLayerSeparationWorks.
         /// </summary>
         [Fact]
         public void V2CleanArchitectureLayerSeparationWorks()
@@ -138,10 +130,8 @@ namespace FastGeoMesh.Tests.Validation
             structure.Should().NotBeNull();
             mesher.Should().NotBeNull();
         }
-
         /// <summary>
-        /// Tests that v2.0 handles complex structures with holes correctly.
-        /// Validates advanced meshing capabilities in the new architecture with complex geometries.
+        /// Runs test V2ComplexStructureWithHoleWorks.
         /// </summary>
         [Fact]
         public void V2ComplexStructureWithHoleWorks()

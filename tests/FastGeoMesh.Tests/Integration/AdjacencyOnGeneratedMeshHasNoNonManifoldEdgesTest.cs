@@ -5,8 +5,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Integration
 {
+    /// <summary>
+    /// Tests for class AdjacencyOnGeneratedMeshHasNoNonManifoldEdgesTest.
+    /// </summary>
     public sealed class AdjacencyOnGeneratedMeshHasNoNonManifoldEdgesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {

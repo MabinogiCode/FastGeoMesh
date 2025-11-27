@@ -5,11 +5,18 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.PropertyBased
 {
+    /// <summary>
+    /// Tests for class QuadInvariantAllQuadsHaveValidVertexIndicesTest.
+    /// </summary>
     public sealed class QuadInvariantAllQuadsHaveValidVertexIndicesTest
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Theory]
         [InlineData(8, 6)]
         [InlineData(12, 10)]
+        [InlineData(6, 4)]
         [InlineData(6, 4)]
         public void Test(int width, int height)
         {

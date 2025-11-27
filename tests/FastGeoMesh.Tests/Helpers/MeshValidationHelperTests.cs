@@ -4,8 +4,14 @@ using Xunit;
 
 namespace FastGeoMesh.Tests.Helpers
 {
+    /// <summary>
+    /// Tests for class MeshValidationHelperTests.
+    /// </summary>
     public class MeshValidationHelperTests
     {
+        /// <summary>
+        /// Runs test ValidatePolygonReturnsTrueForValidSquare.
+        /// </summary>
         [Fact]
         public void ValidatePolygonReturnsTrueForValidSquare()
         {
@@ -24,7 +30,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.True(result);
         }
-
+        /// <summary>
+        /// Runs test ValidatePolygonReturnsTrueForValidTriangle.
+        /// </summary>
         [Fact]
         public void ValidatePolygonReturnsTrueForValidTriangle()
         {
@@ -42,7 +50,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.True(result);
         }
-
+        /// <summary>
+        /// Runs test ValidatePolygonReturnsFalseForNullPolygon.
+        /// </summary>
         [Fact]
         public void ValidatePolygonReturnsFalseForNullPolygon()
         {
@@ -55,7 +65,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.False(result);
         }
-
+        /// <summary>
+        /// Runs test ValidatePolygonReturnsFalseForLessThan3Vertices.
+        /// </summary>
         [Fact]
         public void ValidatePolygonReturnsFalseForLessThan3Vertices()
         {
@@ -72,7 +84,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.False(result);
         }
-
+        /// <summary>
+        /// Runs test ValidatePolygonReturnsFalseForDuplicateConsecutiveVertices.
+        /// </summary>
         [Fact]
         public void ValidatePolygonReturnsFalseForDuplicateConsecutiveVertices()
         {
@@ -92,7 +106,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.False(result);
         }
-
+        /// <summary>
+        /// Runs test ValidatePolygonReturnsFalseForSelfIntersectingPolygon.
+        /// </summary>
         [Fact]
         public void ValidatePolygonReturnsFalseForSelfIntersectingPolygon()
         {
@@ -111,7 +127,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.False(result);
         }
-
+        /// <summary>
+        /// Runs test ValidatePolygonReturnsTrueForComplexValidPolygon.
+        /// </summary>
         [Fact]
         public void ValidatePolygonReturnsTrueForComplexValidPolygon()
         {
@@ -132,7 +150,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.True(result);
         }
-
+        /// <summary>
+        /// Runs test ValidatePolygonReturnsTrueForConvexHexagon.
+        /// </summary>
         [Fact]
         public void ValidatePolygonReturnsTrueForConvexHexagon()
         {
@@ -153,7 +173,9 @@ namespace FastGeoMesh.Tests.Helpers
             // Assert
             Assert.True(result);
         }
-
+        /// <summary>
+        /// Runs test ValidatePolygonReturnsFalseForNearlyDuplicateVertices.
+        /// </summary>
         [Fact]
         public void ValidatePolygonReturnsFalseForNearlyDuplicateVertices()
         {

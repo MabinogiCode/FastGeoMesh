@@ -6,10 +6,13 @@ using Xunit;
 namespace FastGeoMesh.Tests.Quality
 {
     /// <summary>
-    /// Tests that minimum cap quad quality rejects poor quality quad pairs.
+    /// Tests for class MinCapQuadQualityRejectsPoorPairs.
     /// </summary>
     public sealed class MinCapQuadQualityRejectsPoorPairs
     {
+        /// <summary>
+        /// Runs test Test.
+        /// </summary>
         [Fact]
         public void Test()
         {
