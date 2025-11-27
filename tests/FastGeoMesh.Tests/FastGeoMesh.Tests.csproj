@@ -1,84 +1,85 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <IsPackable>false</IsPackable>
-    <TargetFramework>net8.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors>IDE0005;IDE0160;IDE0052;IDE0054;xUnit1030;CA2007</WarningsAsErrors>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <TargetFramework>net8.0</TargetFramework>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <WarningsAsErrors>IDE0005;IDE0160;IDE0052;IDE0054;xUnit1030;CA2007</WarningsAsErrors>
+        <NoWarn>CA2007</NoWarn>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
 
-    <!-- Code coverage settings optimized for .NET 8 -->
-    <CollectCoverage>true</CollectCoverage>
-    <CoverletOutputFormat>opencover,cobertura</CoverletOutputFormat>
-    <!-- Remove lcov format which causes deterministic report errors -->
-    <CoverletOutput>./tests/TestResults/coverage/</CoverletOutput>
-    <UseSourceLink>true</UseSourceLink>
-    <IncludeTestAssembly>false</IncludeTestAssembly>
-    <SingleHit>false</SingleHit>
-    <SkipAutoProps>true</SkipAutoProps>
+        <!-- Code coverage settings optimized for .NET 8 -->
+        <CollectCoverage>true</CollectCoverage>
+        <CoverletOutputFormat>opencover,cobertura</CoverletOutputFormat>
+        <!-- Remove lcov format which causes deterministic report errors -->
+        <CoverletOutput>./tests/TestResults/coverage/</CoverletOutput>
+        <UseSourceLink>true</UseSourceLink>
+        <IncludeTestAssembly>false</IncludeTestAssembly>
+        <SingleHit>false</SingleHit>
+        <SkipAutoProps>true</SkipAutoProps>
 
-    <!-- Disable analyzers during test project builds to avoid CA rule failures in tests -->
-    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
-    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+        <!-- Disable analyzers during test project builds to avoid CA rule failures in tests -->
+        <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
 
-    <!-- Disable coverage thresholds for individual test runs (enabled only in CI) -->
-    <Threshold Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' OR '$(CI)' == 'true'">40</Threshold>
-    <ThresholdType Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' OR '$(CI)' == 'true'">line,branch,method</ThresholdType>
-    <ThresholdStat Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' OR '$(CI)' == 'true'">Total</ThresholdStat>
+        <!-- Disable coverage thresholds for individual test runs (enabled only in CI) -->
+        <Threshold Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' OR '$(CI)' == 'true'">40</Threshold>
+        <ThresholdType Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' OR '$(CI)' == 'true'">line,branch,method</ThresholdType>
+        <ThresholdStat Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' OR '$(CI)' == 'true'">Total</ThresholdStat>
 
-    <!-- Performance optimizations for large test suites -->
-    <Deterministic>true</Deterministic>
-    <ReportGenerator_ReportTypes>HtmlInline_AzurePipelines;Cobertura;Badges</ReportGenerator_ReportTypes>
-  </PropertyGroup>
+        <!-- Performance optimizations for large test suites -->
+        <Deterministic>true</Deterministic>
+        <ReportGenerator_ReportTypes>HtmlInline_AzurePipelines;Cobertura;Badges</ReportGenerator_ReportTypes>
+    </PropertyGroup>
 
-  <PropertyGroup>
-    <NoWarn>$(NoWarn)</NoWarn>
-  </PropertyGroup>
+    <PropertyGroup>
+        <NoWarn>$(NoWarn)</NoWarn>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="8.7.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0"/>
+        <PackageReference Include="xunit" Version="2.9.3"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="FluentAssertions" Version="8.7.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
 
-    <!-- Modern coverage collection for .NET 8 -->
-    <PackageReference Include="coverlet.collector" Version="6.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+        <!-- Modern coverage collection for .NET 8 -->
+        <PackageReference Include="coverlet.collector" Version="6.0.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.msbuild" Version="6.0.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
 
-    <!-- Enhanced reporting capabilities -->
-    <PackageReference Include="ReportGenerator" Version="5.4.16">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+        <!-- Enhanced reporting capabilities -->
+        <PackageReference Include="ReportGenerator" Version="5.4.16">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
 
-    <!-- Property-based testing -->
-    <PackageReference Include="FsCheck" Version="3.3.1" />
-    <PackageReference Include="FsCheck.Xunit" Version="3.3.1" />
-  </ItemGroup>
+        <!-- Property-based testing -->
+        <PackageReference Include="FsCheck" Version="3.3.1"/>
+        <PackageReference Include="FsCheck.Xunit" Version="3.3.1"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../../src/FastGeoMesh/FastGeoMesh.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../src/FastGeoMesh/FastGeoMesh.csproj"/>
+    </ItemGroup>
 
-  <!-- Coverage exclusions for performance-critical or generated code -->
-  <ItemGroup>
-    <CoverletExclude Include="[*]*.GlobalUsings" />
-    <CoverletExclude Include="[*]*AssemblyInfo*" />
-    <CoverletExclude Include="[FastGeoMesh]FastGeoMesh.Utils.PerformanceMonitor+*" />
-    <CoverletExclude Include="[FastGeoMesh]FastGeoMesh.Properties.*" />
-  </ItemGroup>
+    <!-- Coverage exclusions for performance-critical or generated code -->
+    <ItemGroup>
+        <CoverletExclude Include="[*]*.GlobalUsings"/>
+        <CoverletExclude Include="[*]*AssemblyInfo*"/>
+        <CoverletExclude Include="[FastGeoMesh]FastGeoMesh.Utils.PerformanceMonitor+*"/>
+        <CoverletExclude Include="[FastGeoMesh]FastGeoMesh.Properties.*"/>
+    </ItemGroup>
 </Project>
